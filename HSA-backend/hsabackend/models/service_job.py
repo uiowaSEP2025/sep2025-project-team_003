@@ -1,7 +1,7 @@
 from django.db import models
-from . import service, job
+from . import job,service
 
 class ServiceJob(models.Model):
-    job_ID = models.ForeignKey(job.Job)
-    service_ID = models.ForeignKey(service.Service)
+    job_ID = models.ForeignKey(job.Job, on_delete=models.CASCADE)
+    service_ID = models.ForeignKey(service.Service, on_delete=models.CASCADE)
     

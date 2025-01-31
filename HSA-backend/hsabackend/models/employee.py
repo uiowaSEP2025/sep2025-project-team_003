@@ -1,5 +1,4 @@
 from django.db import models
-from . import customer
 
 class Employee(models.Model):
     first_name = models.CharField(max_length=50)
