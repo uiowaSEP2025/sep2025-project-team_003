@@ -8,7 +8,6 @@ class Job(models.Model):
     start_date = models.DateField
     end_date = models.DateField
     description = models.CharField(max_length=200)
-    customer_id = models.ForeignKey(Customer)
 
     def __str__(self):
         return f"<Job, organization: {self.organization}, customer: {self.customer}, description: {self.description}>"

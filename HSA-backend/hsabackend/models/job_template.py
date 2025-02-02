@@ -3,7 +3,6 @@ from service import Service
 
 class JobTemplate(models.Model):
     """A preset template that can be used by an organization to create jobs"""
-    service = models.ManyToManyField(Service)
     description = models.CharField(200)
 
     def __str__(self):

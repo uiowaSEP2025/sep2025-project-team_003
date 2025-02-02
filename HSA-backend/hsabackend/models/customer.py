@@ -3,7 +3,6 @@ from organization import Organization
 
 class Customer(models.Model):
     """A person that has a pending or fulfilled job"""
-    orginationID = models.ForeignKey(Organization)
     first_name = models.CharField(50)
     last_name = models.CharField(50)
     email = models.CharField(max_length=100)

@@ -3,7 +3,6 @@ from customer import Customer
 
 class Inovice(models.Model):
     """A bill sent to a customer from an organization on a monthly basis"""
-    customer = models.ManyToOneRel(Customer)
     issuance_date = models.DateField()
     due_date = models.DateField()
     status = models.CharField
