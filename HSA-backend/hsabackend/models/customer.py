@@ -11,5 +11,5 @@ class Customer(models.Model):
     notes = models.CharField(max_length=200)
 
     def __str__(self):
-        return f"<Customer, first_name: {self.first_name}, last_name: {self.last_name}>"
+        return f"<Customer, first_name: {self.first_name}, last_name: {self.last_name}, organization: organization>"
     
