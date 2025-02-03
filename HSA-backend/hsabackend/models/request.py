@@ -12,6 +12,8 @@ class Request(models.Model):
     requestor_address = models.CharField(max_length=100)
     description = models.CharField(max_length=200)
     status = models.CharField(max_length=50) # what are we storing for this field?
+    organization = models.ManyToOneRel(Organization)
+    service = models.ManyToManyRel(Service)
 
     def __str__(self):
         return f"<Request, name: {self.requestor_name}, address: {self.requestor_address}>"
