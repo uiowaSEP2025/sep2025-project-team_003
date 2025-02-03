@@ -8,7 +8,8 @@ class Customer(models.Model):
     email = models.CharField(max_length=100)
     phone_no = models.CharField(max_length=10)
     notes = models.CharField(max_length=200)
+    organization = models.ManyToOneRel(Organization)
 
     def __str__(self):
-        return f"<Customer, first_name: {self.first_name}, last_name: {self.last_name}, organization: organization>"
+        return f"<Customer, first_name: {self.first_name}, last_name: {self.last_name}, organization: {self.organization}>"
     

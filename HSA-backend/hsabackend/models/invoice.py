@@ -7,6 +7,7 @@ class Inovice(models.Model):
     due_date = models.DateField()
     status = models.CharField
     price = models.FloatField()
+    customer = models.ManyToOneRel(Customer)
 
     def __str__(self):
         return f"<Invoice, customer: {self.customer}, price: {self.price}>"
