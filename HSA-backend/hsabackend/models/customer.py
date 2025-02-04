@@ -5,7 +5,7 @@ class Customer(models.Model):
     """A person that has a pending or fulfilled job"""
     first_name = models.CharField(50)
     last_name = models.CharField(50)
-    email = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100)
     phone_no = models.CharField(max_length=10)
     notes = models.CharField(max_length=200)
     organization = models.ForeignKey(organization.Organization, on_delete=models.CASCADE)
