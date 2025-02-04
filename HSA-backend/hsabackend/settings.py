@@ -79,12 +79,12 @@ WSGI_APPLICATION = 'hsabackend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'HSADB',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'hsadb',
         "USER": os.environ["DATABASE_USERNAME"],
         "PASSWORD": os.environ["DATABASE_PASSWORD"],
         "HOST": "127.0.0.1",
-        "PORT": "3306",
+        "PORT": "5432",
     }
 }
 

@@ -1,5 +1,5 @@
 from django.db import models
-from organization import Organization
+from . import organization
 
 class Customer(models.Model):
     """A person that has a pending or fulfilled job"""
@@ -8,8 +8,8 @@ class Customer(models.Model):
     email = models.CharField(max_length=100)
     phone_no = models.CharField(max_length=10)
     notes = models.CharField(max_length=200)
-    organization = models.ManyToOneRel(Organization)
+    organization = models.ForeignKey(organization.Organization, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"<Customer, first_name: {self.first_name}, last_name: {self.last_name}, organization: {self.organization}>"
+        return f"<Customer: {self.pk}>"
     

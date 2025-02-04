@@ -1,8 +1,6 @@
 from django.db import models
-from job import Job
-from discount_type import DiscountType
-from job import Job
-
+from . import job
+from . import discount_type
 class Quote(models.Model):
     """The price for a job that the organization sends to the customer for approval"""
     issuance_date = models.DateField()
@@ -10,8 +8,8 @@ class Quote(models.Model):
     status = models.CharField(max_length=50)
     material_subtotal = models.IntegerField()
     total_price = models.IntegerField()
-    jobID = models.OneToOneField(Job)
-    discount_type = models.ManyToOneRel(DiscountType)
+    jobID = models.OneToOneField(job.Job, on_delete= models.CASCADE)
+    discount_type = models.ForeignKey(discount_type.DiscountType, on_delete=models.CASCADE)
     
     def __str__(self):
         return f"<Quote, job: {self.jobID}>"
