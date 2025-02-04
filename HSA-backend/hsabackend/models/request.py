@@ -1,0 +1,23 @@
+from django.db import models
+from . import organization, service, model_validators
+
+class Request(models.Model):
+    """A request for service that a potential customer creates"""
+    status_choices = [
+        ('received', 'received')
+        ('approved', 'approved')
+    ]
+
+    requestor_name = models.CharField(max_length=100,validators=[model_validators.isNonEmpty])
+    requestor_email = models.CharField(max_length=100)
+    requestor_city = models.CharField(max_length=50,validators=[model_validators.isNonEmpty])
+    requestor_state = models.CharField(max_length=50,validators=[model_validators.isNonEmpty])
+    requestor_zip = models.CharField(max_length=10,validators=[model_validators.isNonEmpty])
+    requestor_address = models.CharField(max_length=100,validators=[model_validators.isNonEmpty])
+    description = models.CharField(max_length=200, validators=[model_validators.isNonEmpty])
+    status = models.CharField(max_length=50, choices=status_choices) 
+    organization = models.ForeignKey(organization.Organization, on_delete=models.CASCADE)
+    service = models.ManyToManyField(service.Service)
+
+    def __str__(self):
+        return f"<Request, name: {self.requestor_name}, address: {self.requestor_address}>"
