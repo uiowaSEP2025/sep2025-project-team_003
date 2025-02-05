@@ -4,8 +4,8 @@ from . import organization, service, model_validators
 class Request(models.Model):
     """A request for service that a potential customer creates"""
     status_choices = [
-        ('received', 'received')
-        ('approved', 'approved')
+        ('received', 'received'),
+        ('approved', 'approved'),
     ]
 
     requestor_name = models.CharField(max_length=100,validators=[model_validators.isNonEmpty])
@@ -15,7 +15,7 @@ class Request(models.Model):
     requestor_zip = models.CharField(max_length=10,validators=[model_validators.isNonEmpty])
     requestor_address = models.CharField(max_length=100,validators=[model_validators.isNonEmpty])
     description = models.CharField(max_length=200, validators=[model_validators.isNonEmpty])
-    status = models.CharField(max_length=50, choices=status_choices) 
+    status = models.CharField(max_length=50, choices=status_choices, default="received") 
     organization = models.ForeignKey(organization.Organization, on_delete=models.CASCADE)
     service = models.ManyToManyField(service.Service)
 

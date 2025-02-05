@@ -20,6 +20,7 @@
           "options": {
             "outputPath": "dist/hsa-frontend",
             "index": "src/index.html",
+            "deployUrl":"/static/",
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
@@ -99,5 +100,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

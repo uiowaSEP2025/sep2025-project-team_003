@@ -58,7 +58,7 @@ ROOT_URLCONF = 'hsabackend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -80,10 +80,10 @@ WSGI_APPLICATION = 'hsabackend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'hsadb',
+        'NAME': os.environ["DATABASE_NAME"],
         "USER": os.environ["DATABASE_USERNAME"],
         "PASSWORD": os.environ["DATABASE_PASSWORD"],
-        "HOST": "127.0.0.1",
+        "HOST": os.environ["DATABASE_IP"],
         "PORT": "5432",
     }
 }
@@ -124,6 +124,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles' # this is for collectstatic (in case we use it)
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

@@ -10,7 +10,7 @@ class Quote(models.Model):
 
     issuance_date = models.DateField()
     due_date = models.DateField()
-    status = models.CharField(max_length=50, choices=status_choices)
+    status = models.CharField(max_length=50, choices=status_choices, default="created")
     material_subtotal = models.FloatField()
     total_price = models.FloatField()
     jobID = models.OneToOneField(job.Job, on_delete= models.CASCADE)
