@@ -52,7 +52,7 @@ describe('LoginComponent', () => {
     const compiled = fixture.debugElement.nativeElement;
     const buttonsArray:Element[] = Array.from(compiled.querySelectorAll('button'));
     const loginButton = buttonsArray.filter((el:Element) => (el.textContent == 'Login'))[0]
-    expect(loginButton).toBeTruthy();
+    expect(loginButton).toBeTruthy(); 
     (loginButton as HTMLElement).click();
     
     fixture.detectChanges(); // needed to detect the error field
@@ -64,15 +64,26 @@ describe('LoginComponent', () => {
     const compiled = fixture.debugElement.nativeElement;
     const buttonsArray:Element[] = Array.from(compiled.querySelectorAll('button'));
     const loginButton = buttonsArray.filter((el:Element) => (el.textContent == 'Login'))[0]
+
+    const formfields = compiled.querySelectorAll('mat-form-field')
+    const usernameInput = formfields[0].querySelector('input')
+    const passwordInput = formfields[1].querySelector('input')
+
+    usernameInput.value = 'testuser';
+    passwordInput.value = 'testpassword';
+
+    usernameInput.dispatchEvent(new Event('input'));
+    passwordInput.dispatchEvent(new Event('input'));
+
+    fixture.detectChanges(); 
+    
     expect(loginButton).toBeTruthy();
     (loginButton as HTMLElement).click();
     
     fixture.detectChanges(); // needed to detect the error field
     const passwordError = compiled.querySelectorAll('mat-form-field')[1].querySelector('mat-error');
-    expect(errorTextElement).toEqual(null);
+    const userNameError = compiled.querySelectorAll('mat-form-field')[0].querySelector('mat-error');
+    expect(userNameError).toBeFalsy()
+    expect(passwordError).toBeFalsy()
   });
-
-
-
-
 });
