@@ -60,6 +60,19 @@ describe('LoginComponent', () => {
     expect(errorTextElement.textContent).toEqual('Password is required');
   });
 
+  it('should be valid when username and password are there', () => {
+    const compiled = fixture.debugElement.nativeElement;
+    const buttonsArray:Element[] = Array.from(compiled.querySelectorAll('button'));
+    const loginButton = buttonsArray.filter((el:Element) => (el.textContent == 'Login'))[0]
+    expect(loginButton).toBeTruthy();
+    (loginButton as HTMLElement).click();
+    
+    fixture.detectChanges(); // needed to detect the error field
+    const passwordError = compiled.querySelectorAll('mat-form-field')[1].querySelector('mat-error');
+    expect(errorTextElement).toEqual(null);
+  });
+
+
 
 
 });
