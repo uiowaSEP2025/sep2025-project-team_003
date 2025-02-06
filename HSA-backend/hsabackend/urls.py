@@ -26,7 +26,7 @@ urlpatterns = [
 
     # API
 
-    # Standard routing
+    # all non API routes should redirect to angular
     re_path(r'.*', hview.main_view)   
 ]
 
