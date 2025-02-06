@@ -11,7 +11,7 @@ class Inovice(models.Model):
 
     issuance_date = models.DateField()
     due_date = models.DateField()
-    status = models.CharField(max_length=50, choices=status_choices)
+    status = models.CharField(max_length=50, choices=status_choices, default="created")
     price = models.FloatField()
     customer = models.ForeignKey(customer.Customer, on_delete=models.CASCADE)
 
