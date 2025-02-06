@@ -47,11 +47,14 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+#if prod, enable crsf
+if 'ENV' in os.environ:
+    MIDDLEWARE.append('django.middleware.csrf.CsrfViewMiddleware')
 
 ROOT_URLCONF = 'hsabackend.urls'
 
