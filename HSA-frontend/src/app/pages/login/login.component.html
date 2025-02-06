@@ -4,9 +4,9 @@
     <mat-form-field>
       <mat-label>Username</mat-label>
       <input matInput 
-        [formControl]="requiredFormControl" [errorStateMatcher]="matcher"
+        [formControl]="usernameFormControl" [errorStateMatcher]="matcher"
         placeholder="username">
-        @if (requiredFormControl.hasError('required')) {
+        @if (usernameFormControl.hasError('required')) {
           <mat-error>Username is <strong>required</strong></mat-error>
         }
     </mat-form-field>
@@ -14,8 +14,8 @@
     <mat-form-field>
       <mat-label>Password</mat-label>
       <input matInput placeholder="password" type="password"
-        [formControl]="requiredFormControl" [errorStateMatcher]="matcher">
-        @if (requiredFormControl.hasError('required')) {
+        [formControl]="passwordFormControl" [errorStateMatcher]="matcher">
+        @if (passwordFormControl.hasError('required')) {
           <mat-error>Password is <strong>required</strong></mat-error>
         }
     </mat-form-field>

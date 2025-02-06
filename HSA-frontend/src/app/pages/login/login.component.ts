@@ -28,6 +28,6 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 })
 export class LoginComponent {
   matcher = new MyErrorStateMatcher();
-  requiredFormControl = new FormControl('', [Validators.required]);
-
+  usernameFormControl = new FormControl('', [Validators.required]);
+  passwordFormControl = new FormControl('', [Validators.required]);
 }
