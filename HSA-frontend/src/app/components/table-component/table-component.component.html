@@ -1,12 +1,12 @@
 <div class="mat-elevation-z8">
     <div class="flex justify-between">
-        <mat-form-field class="example-full-width">
+        <mat-form-field>
             <mat-label>Search Here</mat-label>
-            <input matInput>
+            <input matInput [formControl]="searchControl">
           </mat-form-field>
         <mat-form-field>
             <mat-label>Choose a header</mat-label>
-            <mat-select>
+            <mat-select [formControl]="selectControl">
               @for (header of headers; track header) {
                 <mat-option [value]="header">{{header}}</mat-option>
               }
