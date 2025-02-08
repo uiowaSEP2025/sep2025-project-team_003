@@ -15,7 +15,6 @@ export class TableComponentComponent implements AfterViewInit {
   headers = ['header1','header2','header3','header4']
   data = new MatTableDataSource(rows) 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  searchField = input(0);
   ngAfterViewInit() {
     this.data.paginator = this.paginator;
   }

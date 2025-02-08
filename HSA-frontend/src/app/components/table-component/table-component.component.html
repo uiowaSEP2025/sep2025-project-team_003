@@ -1,16 +1,18 @@
 <div class="mat-elevation-z8">
-    <mat-form-field class="full-width">
-        <div>
-            <input matInput placeholder="Search for {{searchField()}}">
-            <mat-label>Select an option</mat-label>
-            <mat-select class="half-width">
-                <mat-option>None</mat-option>
-                <mat-option value="option1">Option 1</mat-option>
-                <mat-option value="option2">Option 2</mat-option>
-                <mat-option value="option3">Option 3</mat-option>
+    <div class="flex justify-between">
+        <mat-form-field class="example-full-width">
+            <mat-label>Search Here</mat-label>
+            <input matInput>
+          </mat-form-field>
+        <mat-form-field>
+            <mat-label>Choose a header</mat-label>
+            <mat-select>
+              @for (header of headers; track header) {
+                <mat-option [value]="header">{{header}}</mat-option>
+              }
             </mat-select>
-        </div>
-    </mat-form-field>
+          </mat-form-field>
+    </div>
     <table mat-table [dataSource]="data">
 
         <!-- Position Column -->
@@ -41,6 +43,6 @@
         <tr mat-row *matRowDef="let row; columns: headers;"></tr>
     </table>
 
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons [length]="data.data.length">
     </mat-paginator>
 </div>
