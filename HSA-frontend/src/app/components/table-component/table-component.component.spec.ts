@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 import { TableComponentComponent } from './table-component.component';
 
@@ -8,9 +9,10 @@ describe('TableComponentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TableComponentComponent]
+      imports: [TableComponentComponent],
+      providers: [provideAnimationsAsync()]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(TableComponentComponent);
     component = fixture.componentInstance;

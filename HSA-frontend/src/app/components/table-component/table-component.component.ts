@@ -18,11 +18,9 @@ class MyErrorStateMatcher implements ErrorStateMatcher {
 export const formValidator: ValidatorFn = (
   control: AbstractControl,
 ): ValidationErrors | null => {
-  console.log('called')
   const searchText = control.get('searchControl')?.value;
   const select = control.get('selectControl')?.value;
   if (searchText && !select) {
-    console.log("mustselect")
     return {mustSelect: true}
   }
   if (!searchText && select) {
