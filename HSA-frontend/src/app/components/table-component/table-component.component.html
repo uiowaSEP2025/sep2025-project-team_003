@@ -1,18 +1,24 @@
 <div class="mat-elevation-z8">
-    <div class="flex justify-between">
+    <form class="flex justify-between">
+        
         <mat-form-field>
-            <mat-label>Search Here</mat-label>
-            <input matInput [formControl]="searchControl">
+            <mat-label>Search Here {{queryGroup.errors}}</mat-label>
+            <input matInput [formControl]="queryGroup.controls.searchControl"
+            [errorStateMatcher]="matcher">
+            @if (true) {
+                <mat-error>Please enter a valid email address</mat-error>
+              }
           </mat-form-field>
         <mat-form-field>
             <mat-label>Choose a header</mat-label>
-            <mat-select [formControl]="selectControl">
+            <mat-select [formControl]="queryGroup.controls.selectControl"
+            [errorStateMatcher]="matcher">
               @for (header of headers; track header) {
                 <mat-option [value]="header">{{header}}</mat-option>
               }
             </mat-select>
           </mat-form-field>
-    </div>
+        </form>
     <table mat-table [dataSource]="data">
 
         <!-- Position Column -->
