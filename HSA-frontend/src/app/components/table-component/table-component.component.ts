@@ -11,7 +11,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 /** Error when invalid control is dirty, touched, or submitted. */
 class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
-    return !!(control?.parent && control.parent.invalid && (control.dirty || control.touched));
+    return !!(control?.parent && control.parent.invalid && (control.parent.dirty || control.parent.touched));
   }
 }
 

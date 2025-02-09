@@ -5,9 +5,9 @@
             <mat-label>Search Here</mat-label>
             <input matInput [formControl]="queryGroup.controls.searchControl"
             [errorStateMatcher]="matcher">
-            <!-- @if (true) { -->
-            <mat-error *ngIf="true">FromTime Should be less than ToTime if choose a same date</mat-error>
-              <!-- } -->
+            @if (queryGroup.hasError('mustSearch')) {
+                <mat-error>Please enter a search term</mat-error>
+              }
           </mat-form-field>
         <mat-form-field>
             <mat-label>Choose a header</mat-label>
@@ -17,6 +17,9 @@
                 <mat-option [value]="header">{{header}}</mat-option>
               }
             </mat-select>
+            @if (queryGroup.hasError('mustSelect')) {
+                <mat-error>Please select a search header</mat-error>
+              }
           </mat-form-field>
         </form>
     <table mat-table [dataSource]="data">
