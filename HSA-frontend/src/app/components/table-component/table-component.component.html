@@ -2,12 +2,12 @@
     <form class="flex justify-between">
         
         <mat-form-field>
-            <mat-label>Search Here {{queryGroup.errors}}</mat-label>
+            <mat-label>Search Here</mat-label>
             <input matInput [formControl]="queryGroup.controls.searchControl"
             [errorStateMatcher]="matcher">
-            @if (true) {
-                <mat-error>Please enter a valid email address</mat-error>
-              }
+            <!-- @if (true) { -->
+            <mat-error *ngIf="true">FromTime Should be less than ToTime if choose a same date</mat-error>
+              <!-- } -->
           </mat-form-field>
         <mat-form-field>
             <mat-label>Choose a header</mat-label>
