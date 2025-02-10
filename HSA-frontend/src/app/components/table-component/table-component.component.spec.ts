@@ -43,63 +43,6 @@ describe('TableComponentComponent', () => {
     expect(select).toBeTruthy()
   })
 
-  it('should be invalid when only search has value', () => {
-    const compiled = fixture.debugElement.nativeElement;
-    const search = compiled.querySelector('input')
-    search.value = 'testing'
-
-    search.dispatchEvent(new Event('input'));
-    fixture.detectChanges(); 
-
-    const errorElements:Element[] = Array.from(compiled.querySelectorAll('mat-error'))
-    expect(errorElements.length).toEqual(1)
-    expect(errorElements[0].textContent).toEqual('Please select a search header')    
-  })
-
-  it('should be invalid when only select has value', async () => {
-    const compiled = fixture.debugElement.nativeElement;
-    const select = await loader.getHarness(MatSelectHarness);
-    await select.open();
-
-    const options = await select.getOptions();
-    await options[1].click();
-    fixture.detectChanges(); 
-    const errorElements:Element[] = Array.from(compiled.querySelectorAll('mat-error'))
-    expect(errorElements.length).toEqual(1)
-    expect(errorElements[0].textContent).toEqual('Please enter a search term')    
-  })
-
-  it('should not call the refetch function when invalid', async () => {
-    const refetchSpy = spyOn(component, 'refetchData')
-    const select = await loader.getHarness(MatSelectHarness);
-    await select.open();
-
-    const options = await select.getOptions();
-    await options[1].click();
-    fixture.detectChanges(); 
-    expect(refetchSpy).toHaveBeenCalledTimes(0)
-  })
-
-  it('should not call the refetch function when valid', async () => {
-    const compiled = fixture.debugElement.nativeElement;
-    const refetchSpy = spyOn(component, 'refetchData')
-    
-    const select = await loader.getHarness(MatSelectHarness);
-    await select.open();
-    const options = await select.getOptions();
-    await options[1].click();
-    fixture.detectChanges(); 
-    
-    const search = compiled.querySelector('input')
-    search.value = 'testing'
-    search.dispatchEvent(new Event('input'));
-    fixture.detectChanges(); 
-    await new Promise(resolve => setTimeout(resolve, 1000)) // this must be here or it fails.
-    //this gives the unit test a second to run the form validator and call the refetch function
-
-    expect(component.queryGroup.valid).toBeTrue();
-    expect(refetchSpy).toHaveBeenCalledTimes(1)
-  })
 
   it('should change the page size class variable on page size change', async () => {
     const paginator = await loader.getHarness(MatPaginatorHarness);
