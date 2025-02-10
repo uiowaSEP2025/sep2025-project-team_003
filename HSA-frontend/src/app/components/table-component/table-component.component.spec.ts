@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { TableComponentComponent } from './table-component.component';
-import {MatSelectHarness} from '@angular/material/select/testing';
 import { HarnessLoader } from '@angular/cdk/testing';
 import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
 import {MatPaginatorHarness} from '@angular/material/paginator/testing';
