@@ -4,7 +4,7 @@ import { TableComponentComponent } from './table-component.component';
 import {MatSelectHarness} from '@angular/material/select/testing';
 import { HarnessLoader } from '@angular/cdk/testing';
 import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
-
+import {MatPaginatorHarness} from '@angular/material/paginator/testing';
 
 describe('TableComponentComponent', () => {
   let component: TableComponentComponent;
@@ -99,6 +99,19 @@ describe('TableComponentComponent', () => {
 
     expect(component.queryGroup.valid).toBeTrue();
     expect(refetchSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('should change the page size class variable on page size change', async () => {
+    const paginator = await loader.getHarness(MatPaginatorHarness);
+    await paginator.setPageSize(10)
+    expect(component.pageSize).toEqual(10)
+  }) 
+
+  it('should change the page offset class variable on page change', async () => {
+    const paginator = await loader.getHarness(MatPaginatorHarness);
+    await paginator.setPageSize(10)
+    await paginator.goToNextPage();
+    expect(component.page).toEqual(1)
   })
 
 });
