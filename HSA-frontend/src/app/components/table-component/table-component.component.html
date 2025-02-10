@@ -13,7 +13,7 @@
             <mat-label>Choose a header</mat-label>
             <mat-select [formControl]="queryGroup.controls.selectControl"
             [errorStateMatcher]="matcher">
-              @for (header of headers; track header) {
+              @for (header of headersAndEmpty; track header) {
                 <mat-option [value]="header">{{header}}</mat-option>
               }
             </mat-select>
@@ -24,29 +24,12 @@
         </form>
     <table mat-table [dataSource]="data">
 
-        <!-- Position Column -->
-        <ng-container matColumnDef="header1">
-            <th mat-header-cell *matHeaderCellDef> No. </th>
-            <td mat-cell *matCellDef="let element"> {{element.header1}} </td>
-        </ng-container>
-
-        <!-- Name Column -->
-        <ng-container matColumnDef="header2">
-            <th mat-header-cell *matHeaderCellDef> Name </th>
-            <td mat-cell *matCellDef="let element"> {{element.header2}} </td>
-        </ng-container>
-
-        <!-- Weight Column -->
-        <ng-container matColumnDef="header3">
-            <th mat-header-cell *matHeaderCellDef> Weight </th>
-            <td mat-cell *matCellDef="let element"> {{element.header3}} </td>
-        </ng-container>
-
-        <!-- Symbol Column -->
-        <ng-container matColumnDef="header4">
-            <th mat-header-cell *matHeaderCellDef> Symbol </th>
-            <td mat-cell *matCellDef="let element"> {{element.header4}} </td>
-        </ng-container>
+        @for (header of headers; track header) {
+            <ng-container [matColumnDef]="header">
+                <th mat-header-cell *matHeaderCellDef> {{ header }} </th>
+                <td mat-cell *matCellDef="let element"> {{ element[header] }} </td>
+            </ng-container>
+        }
 
         <tr mat-header-row *matHeaderRowDef="headers"></tr>
         <tr mat-row *matRowDef="let row; columns: headers;"></tr>

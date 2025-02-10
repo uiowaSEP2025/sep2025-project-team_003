@@ -8,7 +8,7 @@ import { ReactiveFormsModule, FormControl, ValidatorFn, ValidationErrors,
 import { ErrorStateMatcher } from '@angular/material/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
-/** Error when invalid control is dirty, touched, or submitted. */
+/** Error when invalid formgroup is dirty, touched, or submitted. */
 class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
     return !!(control?.parent && control.parent.invalid && (control.parent.dirty || control.parent.touched));
@@ -41,10 +41,10 @@ export class TableComponentComponent implements AfterViewInit {
     searchControl: new FormControl(''),
     selectControl: new FormControl('', )
   }, { validators: formValidator })
-
   page:number | null = null // null when unspecified
   pageSize:number | null = null // null when unspecified
   headers = ['header1', 'header2', 'header3', 'header4']
+  headersAndEmpty = [...this.headers, '']
   data = new MatTableDataSource(rows)
   matcher = new MyErrorStateMatcher();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
