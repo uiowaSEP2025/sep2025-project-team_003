@@ -8,27 +8,6 @@ import { ReactiveFormsModule, FormControl, ValidatorFn, ValidationErrors,
 import { ErrorStateMatcher } from '@angular/material/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
-/** Error when invalid formgroup is dirty, touched, or submitted. */
-class MyErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
-    return !!(control?.parent && control.parent.invalid && (control.parent.dirty || control.parent.touched));
-  }
-}
-
-export const formValidator: ValidatorFn = (
-  control: AbstractControl,
-): ValidationErrors | null => {
-  const searchText = control.get('searchControl')?.value;
-  const select = control.get('selectControl')?.value;
-  if (searchText && !select) {
-    return {mustSelect: true}
-  }
-  if (!searchText && select) {
-    return {mustSearch: true}
-  }
-  return null
-};
-
 // TODO: for data fetching, add a service: https://stackademic.com/blog/fetching-data-from-an-api-in-angular
 @Component({
   selector: 'app-table-component',
@@ -37,49 +16,36 @@ export const formValidator: ValidatorFn = (
   styleUrl: './table-component.component.scss'
 })
 export class TableComponentComponent implements AfterViewInit {
-  queryGroup = new FormGroup({
-    searchControl: new FormControl(''),
-    selectControl: new FormControl('', )
-  }, { validators: formValidator })
+  searchControl = new FormControl('')
   page:number | null = null // null when unspecified
   pageSize:number | null = null // null when unspecified
   headers = ['header1', 'header2', 'header3', 'header4']
   headersAndEmpty = [...this.headers, '']
   data = new MatTableDataSource(rows)
-  matcher = new MyErrorStateMatcher();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  refetchData(searchTerm: string | null, searchHeader: string | null) {
+  refetchData(searchTerm: string | null) {
     // TODO: fix it in service ticket, add a mock in the test to ensure that it only fetches when valid
-    console.log(`Fetching data with search term: ${searchTerm}, header: ${searchHeader}
+    console.log(`Fetching data with search term: ${searchTerm}
       pageSize: ${this.pageSize}, pageIndex: ${this.page}`);
   }
 
   ngAfterViewInit() {
     this.data.paginator = this.paginator;
-    this.queryGroup.controls.searchControl.valueChanges
+    this.searchControl.valueChanges
       .pipe(
         debounceTime(300), // Wait for 300ms after the last change
         distinctUntilChanged() // Only emit if the value has changed
       )
       .subscribe((searchTerm) => {
-        if (this.queryGroup.valid) {this.refetchData(searchTerm,this.queryGroup.controls.selectControl.value);}
+        this.refetchData(searchTerm);
         
       });
     
-    this.queryGroup.controls.selectControl.valueChanges
-      .pipe(
-        debounceTime(300), 
-        distinctUntilChanged()
-      )
-      .subscribe(headerName => {
-        if (this.queryGroup.valid) {this.refetchData(this.queryGroup.controls.searchControl.value,headerName);}
-      });
-
       this.paginator.page.subscribe((page) => {
         this.page = page.pageIndex;
         this.pageSize = page.pageSize;
-        if (this.queryGroup.valid) {this.refetchData(this.queryGroup.controls.searchControl.value,this.queryGroup.controls.selectControl.value);}
+        this.refetchData(this.searchControl.value);
       })}
 }
 
