@@ -50,7 +50,7 @@ export class TableComponentComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   refetchData(searchTerm: string | null, searchHeader: string | null) {
-    // TODO: fix it in service ticket
+    // TODO: fix it in service ticket, add a mock in the test to ensure that it only fetches when valid
     console.log(`Fetching data with search term: ${searchTerm}, header: ${searchHeader}
       pageSize: ${this.pageSize}, pageIndex: ${this.page}`);
   }
@@ -63,7 +63,8 @@ export class TableComponentComponent implements AfterViewInit {
         distinctUntilChanged() // Only emit if the value has changed
       )
       .subscribe((searchTerm) => {
-        this.refetchData(searchTerm,this.queryGroup.controls.selectControl.value);
+        if (this.queryGroup.valid) {this.refetchData(searchTerm,this.queryGroup.controls.selectControl.value);}
+        
       });
     
     this.queryGroup.controls.selectControl.valueChanges
@@ -72,13 +73,13 @@ export class TableComponentComponent implements AfterViewInit {
         distinctUntilChanged()
       )
       .subscribe(headerName => {
-        this.refetchData(this.queryGroup.controls.searchControl.value,headerName);
+        if (this.queryGroup.valid) {this.refetchData(this.queryGroup.controls.searchControl.value,headerName);}
       });
 
       this.paginator.page.subscribe((page) => {
         this.page = page.pageIndex;
         this.pageSize = page.pageSize;
-        this.refetchData(this.queryGroup.controls.searchControl.value,this.queryGroup.controls.selectControl.value);
+        if (this.queryGroup.valid) {this.refetchData(this.queryGroup.controls.searchControl.value,this.queryGroup.controls.selectControl.value);}
       })}
 }
 
