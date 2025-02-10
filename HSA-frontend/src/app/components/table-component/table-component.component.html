@@ -1,40 +1,24 @@
 <div class="mat-elevation-z8 table">
-    <form class="flex justify-between form">
-        
-        <mat-form-field>
-            <mat-label>Search Here</mat-label>
-            <input matInput [formControl]="queryGroup.controls.searchControl"
-            [errorStateMatcher]="matcher">
-            @if (queryGroup.hasError('mustSearch')) {
-                <mat-error>Please enter a search term</mat-error>
-              }
-          </mat-form-field>
-        <mat-form-field>
-            <mat-label>Choose a header</mat-label>
-            <mat-select [formControl]="queryGroup.controls.selectControl"
-            [errorStateMatcher]="matcher">
-              @for (header of headersAndEmpty; track header) {
-                <mat-option [value]="header">{{header}}</mat-option>
-              }
-            </mat-select>
-            @if (queryGroup.hasError('mustSelect')) {
-                <mat-error>Please select a search header</mat-error>
-              }
-          </mat-form-field>
-        </form>
-    <table mat-table [dataSource]="data">
+  <form class="flex justify-between form">
 
-        @for (header of headers; track header) {
-            <ng-container [matColumnDef]="header">
-                <th mat-header-cell *matHeaderCellDef> {{ header }} </th>
-                <td mat-cell *matCellDef="let element"> {{ element[header] }} </td>
-            </ng-container>
-        }
+    <mat-form-field class="w-full">
+      <mat-label>Search Here</mat-label>
+      <input matInput [formControl]="queryGroup.controls.searchControl">
+    </mat-form-field>
+  </form>
+  <table mat-table [dataSource]="data">
 
-        <tr mat-header-row *matHeaderRowDef="headers"></tr>
-        <tr mat-row *matRowDef="let row; columns: headers;"></tr>
-    </table>
+    @for (header of headers; track header) {
+    <ng-container [matColumnDef]="header">
+      <th mat-header-cell *matHeaderCellDef> {{ header }} </th>
+      <td mat-cell *matCellDef="let element"> {{ element[header] }} </td>
+    </ng-container>
+    }
 
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons [length]="data.data.length">
-    </mat-paginator>
+    <tr mat-header-row *matHeaderRowDef="headers"></tr>
+    <tr mat-row *matRowDef="let row; columns: headers;"></tr>
+  </table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons [length]="data.data.length">
+  </mat-paginator>
 </div>
