@@ -6,12 +6,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatIconModule } from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
 
 
 // TODO: for data fetching, add a service: https://stackademic.com/blog/fetching-data-from-an-api-in-angular
 @Component({
   selector: 'app-table-component',
-  imports: [MatTableModule, MatPaginatorModule, MatInputModule, MatSelectModule, ReactiveFormsModule,MatIconModule],
+  imports: [MatTableModule, MatPaginatorModule, MatInputModule, MatSelectModule, ReactiveFormsModule,MatIconModule,MatButtonModule],
   templateUrl: './table-component.component.html',
   styleUrl: './table-component.component.scss'
 })
