@@ -3,15 +3,15 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { ReactiveFormsModule, FormControl, ValidatorFn, ValidationErrors,
-  FormGroup, AbstractControl, FormGroupDirective, NgForm } from '@angular/forms';
-import { ErrorStateMatcher } from '@angular/material/core';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { MatIconModule } from '@angular/material/icon';
+
 
 // TODO: for data fetching, add a service: https://stackademic.com/blog/fetching-data-from-an-api-in-angular
 @Component({
   selector: 'app-table-component',
-  imports: [MatTableModule, MatPaginatorModule, MatInputModule, MatSelectModule, ReactiveFormsModule],
+  imports: [MatTableModule, MatPaginatorModule, MatInputModule, MatSelectModule, ReactiveFormsModule,MatIconModule],
   templateUrl: './table-component.component.html',
   styleUrl: './table-component.component.scss'
 })
@@ -20,7 +20,7 @@ export class TableComponentComponent implements AfterViewInit {
   page:number | null = null // null when unspecified
   pageSize:number | null = null // null when unspecified
   headers = ['header1', 'header2', 'header3', 'header4']
-  headersAndEmpty = [...this.headers, '']
+  headersWithActions = [...this.headers, 'actions']
   data = new MatTableDataSource(rows)
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -39,8 +39,9 @@ export class TableComponentComponent implements AfterViewInit {
       )
       .subscribe((searchTerm) => {
         this.refetchData(searchTerm);
-        
       });
+
+      console.log(this.headersWithActions)
     
       this.paginator.page.subscribe((page) => {
         this.page = page.pageIndex;
