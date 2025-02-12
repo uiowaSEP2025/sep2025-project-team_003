@@ -1,7 +1,6 @@
 import {PersonalInformationHelper} from './interface-helpers/personal-information-helper.interface';
 
-export interface Customer extends PersonalInformationHelper {
-  customerID: number;
+export interface Contractor extends PersonalInformationHelper {
+  contractorID: number;
   organizationID: number;
-  notes: string;
 }
