@@ -1,4 +1,4 @@
 export interface TableApiResponse<T> {
-    data: T;
-    pageCount: number
+    data: T[];
+    totalCount: number
 }

@@ -34,20 +34,26 @@ describe('TableComponentComponent', () => {
     expect(paginator).toBeTruthy()
   })
 
-  it('should render the search and select', () => {
+  it('should render the search bar', () => {
     const compiled = fixture.debugElement.nativeElement;
     const search = compiled.querySelector('input')
-    const select = compiled.querySelector('mat-select')
     expect(search).toBeTruthy()
-    expect(select).toBeTruthy()
   })
-
 
   it('should change the page size class variable on page size change', async () => {
     const paginator = await loader.getHarness(MatPaginatorHarness);
     await paginator.setPageSize(10)
     expect(component.pageSize).toEqual(10)
   }) 
+
+  it('should render the edit and delete icons in the row', () => {
+    const compiled = fixture.debugElement.nativeElement;
+    const row = compiled.querySelector('table').querySelectorAll('tr')[1]
+    const icons = row.querySelectorAll('mat-icon')
+    expect(icons.length).toEqual(2)
+    expect(icons[0].textContent).toEqual('edit')
+    expect(icons[1].textContent).toEqual('delete')
+  })
 
   it('should change the page offset class variable on page change', async () => {
     const paginator = await loader.getHarness(MatPaginatorHarness);
@@ -56,4 +62,16 @@ describe('TableComponentComponent', () => {
     expect(component.page).toEqual(1)
   })
 
+  it('should change the page size class variable on page change', async () => {
+    const paginator = await loader.getHarness(MatPaginatorHarness);
+    await paginator.setPageSize(10)
+    await paginator.goToNextPage();
+    expect(component.pageSize).toEqual(10)
+  })
+
+  it('should render the search hint text', () => {
+    const compiled = fixture.debugElement.nativeElement;
+    const hint = compiled.querySelector('mat-hint')
+    expect(hint.textContent).toEqual('Use me to search the data')
+  })
 });
