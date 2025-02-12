@@ -21,7 +21,7 @@ import {
 } from '@angular/forms';
 import {MatFormFieldControl, MatLabel, MatFormFieldModule} from '@angular/material/form-field';
 import {Subject} from 'rxjs';
-
+import { MatIconModule } from '@angular/material/icon';
 
 /** Custom `MatFormFieldControl` for telephone number input. */
 @Component({
@@ -210,7 +210,7 @@ export class PhoneNumberInputComponent
   selector: 'form-field-custom-control',
   templateUrl: 'form-field-custom-control-example.html',
   styleUrls: ['form-field-custom-control-example.css'],
-  imports: [MatLabel, MatFormFieldModule, PhoneNumberInputComponent, ReactiveFormsModule]
+  imports: [MatLabel, MatFormFieldModule, PhoneNumberInputComponent, ReactiveFormsModule, MatIconModule]
 })
 export class FormFieldCustomControl {
   form: FormGroup = new FormGroup({
