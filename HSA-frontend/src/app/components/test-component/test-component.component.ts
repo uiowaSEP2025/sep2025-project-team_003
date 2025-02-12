@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-
+import { PhoneNumberInputComponent } from '../phone-number-input/phone-number-input.component';
 @Component({
   selector: 'app-test-component',
-  imports: [],
+  imports: [PhoneNumberInputComponent],
   templateUrl: './test-component.component.html',
   styleUrl: './test-component.component.scss'
 })
