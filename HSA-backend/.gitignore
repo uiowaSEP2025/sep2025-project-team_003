@@ -1,6 +1,5 @@
 .venv
 __pycache__
-.env
 
 # this removal is to prevent commits of angular->django
 # because angular is being served through static files, we shouldn't use the staticdir for important assets.
