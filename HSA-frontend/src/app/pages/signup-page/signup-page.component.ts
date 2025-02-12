@@ -1,9 +1,12 @@
-import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ChangeDetectionStrategy, Component, Injectable, OnInit} from '@angular/core';
+import { Router } from '@angular/router';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
-import {merge} from 'rxjs';
+import {MatButton} from '@angular/material/button';
+import {MatOption, MatSelect} from '@angular/material/select';
+import {HttpClient} from '@angular/common/http';
+
 
 @Component({
   selector: 'app-signup-page',
@@ -11,28 +14,56 @@ import {merge} from 'rxjs';
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatButton,
+    MatSelect,
+    MatOption
   ],
   templateUrl: './signup-page.component.html',
   styleUrl: './signup-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SignupPageComponent {
-  readonly organizationName = new FormControl('', [Validators.required]);
 
-  errorMessage = signal('');
+@Injectable({providedIn: 'root'})
+export class SignupPageComponent implements OnInit {
+  registrationForm: FormGroup;
+  states: any[] = [];
 
-  constructor() {
-    merge(this.organizationName.statusChanges, this.organizationName.valueChanges)
-      .pipe(takeUntilDestroyed())
-      .subscribe(() => this.updateErrorMessage(''));
+  constructor(private router: Router, private registrationFormBuilder: FormBuilder, private http: HttpClient) {
+    this.registrationForm = this.registrationFormBuilder.group({
+      organizationName: ['', Validators.required],
+      organizationEmail: ['', [Validators.required, Validators.email]],
+      addressOne: ['', Validators.required],
+      ownerName: ['', Validators.required],
+      stateSelect: ['', Validators.required],
+    });
   }
 
-  updateErrorMessage(message: string) {
-    if (this.organizationName.hasError('required')) {
-      this.errorMessage.set(message);
+  ngOnInit() {
+    this.loadStates();
+  }
+
+  loadStates() {
+    this.http.get<any[]>('states.json').subscribe(
+        (data: any[]) => {
+        this.states = data;
+      }
+    )
+  }
+
+  onSubmit() {
+    if (this.registrationForm.invalid) {
+      this.registrationForm.markAllAsTouched();
+
+      const invalidFields = Object.keys(this.registrationForm.controls).filter(key => this.registrationForm.get(key)?.invalid);
+
+      return;
     } else {
-      this.errorMessage.set('');
+      console.log("Submitted");
     }
+  }
+
+  navigateToPage(pagePath: string) {
+    this.router.navigate([`/${pagePath}`]).then(r => {});
   }
 }
