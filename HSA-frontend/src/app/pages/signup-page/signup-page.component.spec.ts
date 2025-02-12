@@ -116,7 +116,7 @@ describe('SignupPageComponent', () => {
     expect(ownerNameErrorText.textContent).toEqual('Valid Owner is required');
   });
 
-  it('should be an invalid email', () => {
+  it('should be an invalid email', async () => {
     const compiled = fixture.debugElement.nativeElement;
     const request = httpMock.expectOne('states.json');
     expect(request.request.method).toBe('GET');
@@ -126,9 +126,9 @@ describe('SignupPageComponent', () => {
     expect(createButton).toBeTruthy();
     expect(organizationEmailField).toBeTruthy();
 
-    (organizationEmailField as HTMLElement).click();
-    organizationEmailField.value = "P";
-    organizationEmailField.dispatchEvent(new Event('input'));
+    const emailInput = organizationEmailField.querySelector('input')
+    emailInput.value = "P";
+    emailInput.dispatchEvent(new Event('input'));
     (createButton as HTMLElement).click();
 
     fixture.detectChanges(); // needed to detect the error field
