@@ -22,7 +22,7 @@ export class TableComponentComponent implements AfterViewInit {
   headers = ['header1', 'header2', 'header3', 'header4']
   headersWithActions = [...this.headers, 'actions']
   searchHint = input<string>("Use me to search the data")
-  // TODO: figure out how to do this when the backend is integrated
+  // TODO: figure out how to do edit and delete redirects when the backend is integrated
   editRedirect = input.required<string>() // the URL to edit the component
   deleteEndpoint = input.required<string>()
   data = new MatTableDataSource(rows);   
