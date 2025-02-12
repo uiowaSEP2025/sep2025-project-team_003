@@ -29,7 +29,7 @@
         <mat-error>Organization Email is required</mat-error>
       }
       @if (registrationForm.get('organizationEmail')?.touched && registrationForm.get('organizationEmail')?.hasError('email')) {
-        <mat-error>Email format is incorrect</mat-error>
+        <mat-error>Email format is invalid</mat-error>
       }
     </mat-form-field>
 
@@ -79,7 +79,7 @@
         placeholder="Ex: John Smith"
       >
       @if (registrationForm.get('ownerName')?.touched && registrationForm.get('ownerName')?.hasError('required')) {
-        <mat-error>Primary Address is required</mat-error>
+        <mat-error>Valid Owner is required</mat-error>
       }
     </mat-form-field>
 
