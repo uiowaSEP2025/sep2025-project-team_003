@@ -1,0 +1,40 @@
+<div class="flex flex-col items-center">
+  <form class="flex flex-col justify-center">
+    <mat-form-field>
+      <mat-label>Organization Name</mat-label>
+      <input
+        matInput
+        placeholder="Ex: Handyman LLC"
+        required
+        (blur)="updateErrorMessage('You must enter an organization name')"
+      >
+      @if (organizationName.invalid) {
+        <mat-error>{{errorMessage()}}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Organization Email</mat-label>
+      <input
+        matInput
+        required
+        (blur)="updateErrorMessage('You must enter an organization email')"
+      >
+      @if (organizationName.invalid) {
+        <mat-error>{{errorMessage()}}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Address 1</mat-label>
+      <input
+        matInput
+        required
+        (blur)="updateErrorMessage('You must enter an address')"
+      >
+      @if (organizationName.invalid) {
+        <mat-error>{{errorMessage()}}</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</div>
