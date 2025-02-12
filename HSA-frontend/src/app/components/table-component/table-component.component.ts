@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, input } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
@@ -7,7 +7,6 @@ import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatIconModule } from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
-
 
 // TODO: for data fetching, add a service: https://stackademic.com/blog/fetching-data-from-an-api-in-angular
 @Component({
@@ -22,7 +21,11 @@ export class TableComponentComponent implements AfterViewInit {
   pageSize:number | null = null // null when unspecified
   headers = ['header1', 'header2', 'header3', 'header4']
   headersWithActions = [...this.headers, 'actions']
-  data = new MatTableDataSource(rows)
+  searchHint = input<string>("Use me to search the data")
+  // TODO: figure out how to do this when the backend is integrated
+  editRedirect = input.required<string>() // the URL to edit the component
+  deleteEndpoint = input.required<string>()
+  data = new MatTableDataSource(rows);   
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   refetchData(searchTerm: string | null) {
@@ -42,8 +45,6 @@ export class TableComponentComponent implements AfterViewInit {
         this.refetchData(searchTerm);
       });
 
-      console.log(this.headersWithActions)
-    
       this.paginator.page.subscribe((page) => {
         this.page = page.pageIndex;
         this.pageSize = page.pageSize;
