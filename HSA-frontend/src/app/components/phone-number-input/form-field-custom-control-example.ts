@@ -16,7 +16,8 @@ import {
   NgControl,
   Validators,
   FormControl,
-  AbstractControl
+  AbstractControl,
+  ReactiveFormsModule
 } from '@angular/forms';
 import {MatFormFieldControl, MatLabel, MatFormFieldModule} from '@angular/material/form-field';
 import {Subject} from 'rxjs';
@@ -24,29 +25,30 @@ import {Subject} from 'rxjs';
 
 /** Custom `MatFormFieldControl` for telephone number input. */
 @Component({
-  selector: 'example-tel-input',
+  selector: 'app-phone-number-input',
   templateUrl: 'example-tel-input-example.html',
   styleUrls: ['example-tel-input-example.css'],
-  providers: [{ provide: MatFormFieldControl, useExisting: MyTelInput }],
+  providers: [{ provide: MatFormFieldControl, useExisting: PhoneNumberInputComponent }],
+  imports: [ReactiveFormsModule],
   host: {
     '[class.example-floating]': 'shouldLabelFloat',
     '[id]': 'id',
     '[attr.aria-describedby]': 'describedBy'
   }
 })
-export class MyTelInput
+export class PhoneNumberInputComponent
   implements ControlValueAccessor, MatFormFieldControl<MyTel>, OnDestroy {
   static nextId = 0;
-  @ViewChild('area') areaInput: HTMLInputElement;
-  @ViewChild('exchange') exchangeInput: HTMLInputElement;
-  @ViewChild('subscriber') subscriberInput: HTMLInputElement;
+  @ViewChild('area') areaInput!: HTMLInputElement;
+  @ViewChild('exchange') exchangeInput!: HTMLInputElement;
+  @ViewChild('subscriber') subscriberInput!: HTMLInputElement;
 
   parts: FormGroup;
   stateChanges = new Subject<void>();
   focused = false;
   errorState = false;
   controlType = 'example-tel-input';
-  id = `example-tel-input-${MyTelInput.nextId++}`;
+  id = `example-tel-input-${PhoneNumberInputComponent.nextId++}`;
   describedBy = '';
   onChange = (_: any) => {};
   onTouched = () => {};
@@ -71,7 +73,7 @@ export class MyTelInput
     this._placeholder = value;
     this.stateChanges.next();
   }
-  private _placeholder: string;
+  private _placeholder!: string;
 
   @Input()
   get required(): boolean {
@@ -166,11 +168,11 @@ export class MyTelInput
   }
 
   onContainerClick(event: MouseEvent) {
-    if (this.parts.controls.subscriber.valid) {
+    if (this.parts.controls['subscriber'].valid) {
       this._focusMonitor.focusVia(this.subscriberInput, 'program');
-    } else if (this.parts.controls.exchange.valid) {
+    } else if (this.parts.controls['exchange'].valid) {
       this._focusMonitor.focusVia(this.subscriberInput, 'program');
-    } else if (this.parts.controls.area.valid) {
+    } else if (this.parts.controls['area'].valid) {
       this._focusMonitor.focusVia(this.exchangeInput, 'program');
     } else {
       this._focusMonitor.focusVia(this.areaInput, 'program');
@@ -208,9 +210,9 @@ export class MyTelInput
   selector: 'form-field-custom-control',
   templateUrl: 'form-field-custom-control-example.html',
   styleUrls: ['form-field-custom-control-example.css'],
-  imports: [MatLabel, MatFormFieldModule, MyTelInput]
+  imports: [MatLabel, MatFormFieldModule, PhoneNumberInputComponent, ReactiveFormsModule]
 })
-export class FormFieldCustomControlExample {
+export class FormFieldCustomControl {
   form: FormGroup = new FormGroup({
     tel: new FormControl(new MyTel('', '', ''))
   });
