@@ -33,7 +33,7 @@ import { ValidatorFn } from '@angular/forms';
   selector: 'internal-input-manager',
   templateUrl: 'internal-input-manager.html',
   styleUrls: ['internal-input-manager.css'],
-  providers: [{ provide: MatFormFieldControl, useExisting: internalInputManager }],
+  providers: [{ provide: MatFormFieldControl, useExisting: InternalInputManager }],
   imports: [ReactiveFormsModule],
   host: {
     '[class.example-floating]': 'shouldLabelFloat',
@@ -41,7 +41,7 @@ import { ValidatorFn } from '@angular/forms';
     '[attr.aria-describedby]': 'describedBy'
   }
 })
-export class internalInputManager
+export class InternalInputManager
   implements ControlValueAccessor, MatFormFieldControl<MyTel>, OnDestroy {
   static nextId = 0;
   @ViewChild('area') areaInput!: HTMLInputElement;
@@ -53,7 +53,7 @@ export class internalInputManager
   focused = false;
   errorState = false;
   controlType = 'example-tel-input';
-  id = `example-tel-input-${internalInputManager.nextId++}`;
+  id = `example-tel-input-${InternalInputManager.nextId++}`;
   describedBy = '';
   onChange = (_: any) => { };
   onTouched = () => { };
@@ -249,24 +249,7 @@ const validateParentComponent: ValidatorFn = (control: AbstractControl) => {
   return null
 }
 
-/** @title Form field with custom telephone number input control. */
-@Component({
-  selector: 'app-phone-number-input',
-  templateUrl: 'phone-number-input-component.html',
-  styleUrls: ['phone-number-input-component.css'],
-  imports: [MatLabel, MatFormFieldModule, internalInputManager, ReactiveFormsModule, MatIconModule]
-})
-export class PhoneNumberInputComponent {
-  form: FormGroup = new FormGroup({
-    tel: new FormControl(new MyTel('', '', ''), [validateParentComponent]),
 
-  });
-
-  cl() {
-    console.log(this.form)
-  }
-
-}
 
 /** Data structure for holding telephone number. */
 export class MyTel {

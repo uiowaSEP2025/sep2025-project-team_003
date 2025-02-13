@@ -29,7 +29,11 @@
           <mat-error>Email is <strong>required</strong></mat-error>
         }
     </mat-form-field> 
-    <app-phone-number-input [formControl]="phoneControl"></app-phone-number-input>
+    <mat-form-field appearance="fill" >
+      <mat-label>Phone number</mat-label>
+      <internal-input-manager [formControl]="phoneControl" required></internal-input-manager>
+      <mat-icon matSuffix>phone</mat-icon>
+    </mat-form-field>
     <mat-form-field class="example-full-width">
       <mat-label>Add Notes</mat-label>
       <textarea matInput placeholder=""
@@ -38,3 +42,4 @@
     <button mat-raised-button>Create</button>
     
   </form>
+<button (onclick)="cl()">debug</button>

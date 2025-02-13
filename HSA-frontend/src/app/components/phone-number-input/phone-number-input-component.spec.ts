@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PhoneNumberInputComponent } from './phone-number-input-component';
+import { InternalInputManager } from './phone-number-input-component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 describe('TableComponentComponent', () => {
-  let component: PhoneNumberInputComponent;
-  let fixture: ComponentFixture<PhoneNumberInputComponent>;
+  let component: InternalInputManager;
+  let fixture: ComponentFixture<InternalInputManager>;
 
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PhoneNumberInputComponent],
+      imports: [InternalInputManager],
       providers: [provideAnimationsAsync()]
     })
       .compileComponents();
 
-    fixture = TestBed.createComponent(PhoneNumberInputComponent);
+    fixture = TestBed.createComponent(InternalInputManager);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
