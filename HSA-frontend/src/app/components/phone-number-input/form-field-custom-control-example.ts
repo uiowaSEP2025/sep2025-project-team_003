@@ -27,8 +27,8 @@ import { ValidatorFn } from '@angular/forms';
 /** Custom `MatFormFieldControl` for telephone number input. */
 @Component({
   selector: 'app-phone-number-input',
-  templateUrl: 'example-tel-input-example.html',
-  styleUrls: ['example-tel-input-example.css'],
+  templateUrl: 'internal-input-manager.html',
+  styleUrls: ['internal-input-manager.css'],
   providers: [{ provide: MatFormFieldControl, useExisting: PhoneNumberInputComponent }],
   imports: [ReactiveFormsModule],
   host: {
