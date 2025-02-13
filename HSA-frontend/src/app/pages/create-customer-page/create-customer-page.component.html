@@ -4,6 +4,37 @@
       <input matInput 
         [formControl]="firstNameControl" [errorStateMatcher]="matcher"
         placeholder="First Name">
+        @if (firstNameControl.hasError('required')) {
+          <mat-error>First name is <strong>required</strong></mat-error>
+        }
     </mat-form-field>
-    <app-phone-number-input></app-phone-number-input>
+    <mat-form-field>
+      <mat-label>Last Name</mat-label>
+      <input matInput 
+        [formControl]="lastNameControl" [errorStateMatcher]="matcher"
+        placeholder="Last Name">
+        @if (lastNameControl.hasError('required')) {
+          <mat-error>Last Name is <strong>required</strong></mat-error>
+        }
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input matInput 
+        [formControl]="emailControl" [errorStateMatcher]="matcher"
+        placeholder="Email">
+        @if (emailControl.hasError('required')) {
+          <mat-error>Email is <strong>required</strong></mat-error>
+        }
+        @if (emailControl.hasError('email')) {
+          <mat-error>Email is <strong>required</strong></mat-error>
+        }
+    </mat-form-field> 
+    <app-phone-number-input [formControl]="phoneControl"></app-phone-number-input>
+    <mat-form-field class="example-full-width">
+      <mat-label>Add Notes</mat-label>
+      <textarea matInput placeholder=""
+      [formControl]="notesControl"></textarea>
+    </mat-form-field>
+    <button mat-raised-button>Create</button>
+    
   </form>
