@@ -1,6 +1,9 @@
-<form>
-    <input> <!--fn-->
-    <input> <!--ln-->
-    <input> <!--fn-->
-    <input> <!---->     
+<form class="flex flex-col justify-center">
+    <mat-form-field>
+      <mat-label>First Name</mat-label>
+      <input matInput 
+        [formControl]="firstNameControl" [errorStateMatcher]="matcher"
+        placeholder="First Name">
+    </mat-form-field>
+    <form-field-custom-control></form-field-custom-control>
 </form>
