@@ -1,3 +1,7 @@
+/**
+ * DO NOT TOUCH THIS FILE! IT IS HELD TOGETHER BY DUCT-TAPE AND PRAYERS!
+ * YOU BREAK IT YOU BUY IT!
+ */
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import {
@@ -234,7 +238,6 @@ export class internalInputManager
 const validateParentComponent: ValidatorFn = (control: AbstractControl) => {
   const val = control.value
   if (val.area === '' && val.subscriber === '' && val.exchange === '') {
-    console.log('empty')
     return { required: true }
   }
   if (val.area.length !== 3 || val.subscriber.length !== 4 || val.exchange.length !== 3) {
