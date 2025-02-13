@@ -235,6 +235,7 @@ export class PhoneNumberInputComponent
 const validateParentComponent: ValidatorFn = (control: AbstractControl) => {
   const val = control.value
   if (val.area === '' && val.subscriber === '' && val.exchange === '') {
+    console.log('empty')
     return { required: true }
   }
   if (val.area.length !== 3 || val.subscriber.length !== 4 || val.exchange.length !== 3) {
@@ -259,6 +260,10 @@ export class FormFieldCustomControl {
     tel: new FormControl(new MyTel('', '', ''), [validateParentComponent]),
 
   });
+
+  cl() {
+    console.log(this.form)
+  }
 
 }
 
