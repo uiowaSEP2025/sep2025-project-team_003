@@ -5,7 +5,7 @@
         [formControl]="firstNameControl" [errorStateMatcher]="matcher"
         placeholder="First Name">
         @if (firstNameControl.hasError('required')) {
-          <mat-error>First name is <strong>required</strong></mat-error>
+          <mat-error>First Name is <strong>required</strong></mat-error>
         }
     </mat-form-field>
     <mat-form-field>
@@ -46,5 +46,4 @@
       [formControl]="notesControl"></textarea>
     </mat-form-field>
     <button mat-raised-button>Create</button>
-    
   </form>
