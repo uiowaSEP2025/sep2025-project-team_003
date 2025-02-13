@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { PhoneNumberInputComponent } from '../phone-number-input/phone-number-input.component';
+import { PhoneNumberInputComponent } from '../phone-number-input/form-field-custom-control-example';
+
 @Component({
   selector: 'app-test-component',
   imports: [PhoneNumberInputComponent],

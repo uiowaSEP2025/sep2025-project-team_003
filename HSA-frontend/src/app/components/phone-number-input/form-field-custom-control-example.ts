@@ -222,7 +222,6 @@ export class PhoneNumberInputComponent
   }
 
   _handleInput(control: AbstractControl, nextElement?: HTMLInputElement): void {
-    console.log(this.isEmpty())
     this.errorState = this.isEmpty()
     this.autoFocusNext(control, nextElement);
     this.onChange(this.value);
