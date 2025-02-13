@@ -30,7 +30,7 @@ import { ValidatorFn } from '@angular/forms';
 
 /** Custom `MatFormFieldControl` for telephone number input. */
 @Component({
-  selector: 'app-phone-number-input',
+  selector: 'internal-input-manager',
   templateUrl: 'internal-input-manager.html',
   styleUrls: ['internal-input-manager.css'],
   providers: [{ provide: MatFormFieldControl, useExisting: internalInputManager }],
@@ -251,7 +251,7 @@ const validateParentComponent: ValidatorFn = (control: AbstractControl) => {
 
 /** @title Form field with custom telephone number input control. */
 @Component({
-  selector: 'form-field-custom-control',
+  selector: 'app-phone-number-input',
   templateUrl: 'phone-number-input-component.html',
   styleUrls: ['phone-number-input-component.css'],
   imports: [MatLabel, MatFormFieldModule, internalInputManager, ReactiveFormsModule, MatIconModule]

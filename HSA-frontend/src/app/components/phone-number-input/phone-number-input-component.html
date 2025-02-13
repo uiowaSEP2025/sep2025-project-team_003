@@ -1,7 +1,7 @@
 <div [formGroup]="form">
 	<mat-form-field appearance="fill" >
 		<mat-label>Phone number</mat-label>
-		<app-phone-number-input formControlName="tel" required></app-phone-number-input>
+		<internal-input-manager formControlName="tel" required></internal-input-manager>
 		<mat-icon matSuffix>phone</mat-icon>
 		@if (form.controls['tel'].getError('required')) {
 			<mat-error>phone number is <strong>required</strong></mat-error>
