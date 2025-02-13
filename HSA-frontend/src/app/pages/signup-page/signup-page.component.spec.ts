@@ -55,7 +55,8 @@ describe('SignupPageComponent', () => {
     expect(formFields[3].querySelector('mat-label').textContent).toContain('Address 2');
     expect(formFields[4].querySelector('mat-label').textContent).toContain('City');
     expect(formFields[5].querySelector('mat-label').textContent).toContain('State');
-    expect(formFields[6].querySelector('mat-label').textContent).toContain('Owner Name');
+    expect(formFields[6].querySelector('mat-label').textContent).toContain('Zip Code');
+    expect(formFields[7].querySelector('mat-label').textContent).toContain('Owner Name');
 
     const buttonsArray:Element[] = Array.from(compiled.querySelectorAll('button'));
     const createButton = buttonsArray.filter((el:Element) => (el.textContent == 'Create'))[0];
@@ -112,7 +113,7 @@ describe('SignupPageComponent', () => {
     const organizationEmailErrorText = compiled.querySelectorAll('mat-form-field')[1].querySelector('mat-error');
     const addressOneErrorText = compiled.querySelectorAll('mat-form-field')[2].querySelector('mat-error');
     const stateErrorText = compiled.querySelectorAll('mat-form-field')[5].querySelector('mat-error');
-    const ownerNameErrorText = compiled.querySelectorAll('mat-form-field')[6].querySelector('mat-error');
+    const ownerNameErrorText = compiled.querySelectorAll('mat-form-field')[7].querySelector('mat-error');
     expect(organizationNameErrorText.textContent).toEqual('Organization Name is required');
     expect(organizationEmailErrorText.textContent).toEqual('Organization Email is required');
     expect(addressOneErrorText.textContent).toEqual('Primary Address is required');
