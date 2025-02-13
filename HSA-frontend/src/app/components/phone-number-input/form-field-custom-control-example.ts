@@ -1,5 +1,5 @@
-import {FocusMonitor} from '@angular/cdk/a11y';
-import {coerceBooleanProperty} from '@angular/cdk/coercion';
+import { FocusMonitor } from '@angular/cdk/a11y';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import {
   Component,
   ElementRef,
@@ -19,9 +19,10 @@ import {
   AbstractControl,
   ReactiveFormsModule
 } from '@angular/forms';
-import {MatFormFieldControl, MatLabel, MatFormFieldModule} from '@angular/material/form-field';
-import {Subject} from 'rxjs';
+import { MatFormFieldControl, MatLabel, MatFormFieldModule } from '@angular/material/form-field';
+import { interval, Subject } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
+import { ValidatorFn } from '@angular/forms';
 
 /** Custom `MatFormFieldControl` for telephone number input. */
 @Component({
@@ -50,8 +51,26 @@ export class PhoneNumberInputComponent
   controlType = 'example-tel-input';
   id = `example-tel-input-${PhoneNumberInputComponent.nextId++}`;
   describedBy = '';
-  onChange = (_: any) => {};
-  onTouched = () => {};
+  onChange = (_: any) => { };
+  onTouched = () => { };
+
+  isValid = () => {
+    const {
+      value: { area, exchange, subscriber }
+    } = this.parts
+    if (area === '' && subscriber === '' && exchange === '') {
+      return false
+    }
+    if (area.length !== 3 || subscriber.length != 4 || exchange.length !== 3) {
+      return false
+    }
+    if (!isNaN(Number(area)) || !isNaN(Number(subscriber)) || !isNaN(Number(exchange))) {
+      return false
+    }
+    return true
+
+  }
+
 
   get empty() {
     const {
@@ -98,13 +117,10 @@ export class PhoneNumberInputComponent
 
   @Input()
   get value(): MyTel | null {
-    if (this.parts.valid) {
-      const {
-        value: { area, exchange, subscriber }
-      } = this.parts;
-      return new MyTel(area, exchange, subscriber);
-    }
-    return null;
+    const {
+      value: { area, exchange, subscriber }
+    } = this.parts;
+    return new MyTel(area, exchange, subscriber);
   }
   set value(tel: MyTel | null) {
     const { area, exchange, subscriber } = tel || new MyTel('', '', '');
@@ -139,12 +155,18 @@ export class PhoneNumberInputComponent
       }
       this.focused = !!origin;
       this.stateChanges.next();
+      if (origin === null) {
+        // this is triggered when use clicks off the input
+        console.log()
+        this.errorState = !this.isValid()
+      }
     });
 
     if (this.ngControl != null) {
       this.ngControl.valueAccessor = this;
     }
   }
+
 
   autoFocusNext(control: AbstractControl, nextElement?: HTMLInputElement): void {
     if (!control.errors && !!nextElement) {
@@ -204,6 +226,19 @@ export class PhoneNumberInputComponent
   static ngAcceptInputType_required: boolean | string | null | undefined;
 }
 
+const validateParentComponent: ValidatorFn = (control: AbstractControl) => {
+  const val = control.value
+  if (val.area === '' && val.subscriber === '' && val.exchange === '') {
+    return { required: true }
+  }
+  if (val.area.length !== 3 || val.subscriber.length != 4 || val.exchange.length !== 3) {
+    return { invalid: true }
+  }
+  if (!isNaN(Number(val.area)) || !isNaN(Number(val.subscriber)) || !isNaN(Number(val.exchange))) {
+    return { invalid: true }
+  }
+  return null
+}
 
 /** @title Form field with custom telephone number input control. */
 @Component({
@@ -213,9 +248,12 @@ export class PhoneNumberInputComponent
   imports: [MatLabel, MatFormFieldModule, PhoneNumberInputComponent, ReactiveFormsModule, MatIconModule]
 })
 export class FormFieldCustomControl {
+  @ViewChild(PhoneNumberInputComponent) input !: PhoneNumberInputComponent;
   form: FormGroup = new FormGroup({
-    tel: new FormControl(new MyTel('', '', ''))
+    tel: new FormControl(new MyTel('', '', ''), [validateParentComponent]),
+
   });
+
 }
 
 /** Data structure for holding telephone number. */
@@ -224,5 +262,5 @@ export class MyTel {
     public area: string,
     public exchange: string,
     public subscriber: string
-  ) {}
+  ) { }
 }
