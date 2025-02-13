@@ -22,7 +22,7 @@ import {HttpClient} from '@angular/common/http';
   templateUrl: './signup-page.component.html',
   styleUrl: './signup-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-});
+})
 
 @Injectable({providedIn: 'root'})
 export class SignupPageComponent implements OnInit {
@@ -45,7 +45,7 @@ export class SignupPageComponent implements OnInit {
 
   loadStates() {
     this.http.get<any[]>('states.json').subscribe(
-        (data: any[]) => {
+      (data: any[]) => {
         this.states = data;
       }
     )
