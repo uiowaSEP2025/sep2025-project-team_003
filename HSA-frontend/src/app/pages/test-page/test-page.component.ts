@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { FormFieldCustomControl } from '../../components/phone-number-input/form-field-custom-control-example';
+import { PhoneNumberInputComponent } from '../../components/phone-number-input/phone-number-input-component';
 
 @Component({
   selector: 'app-test-page',
-  imports: [FormFieldCustomControl],
+  imports: [PhoneNumberInputComponent],
   templateUrl: './test-page.component.html',
   styleUrl: './test-page.component.scss'
 })

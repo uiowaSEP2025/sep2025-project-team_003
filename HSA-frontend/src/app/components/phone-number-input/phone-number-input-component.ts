@@ -29,7 +29,7 @@ import { ValidatorFn } from '@angular/forms';
   selector: 'app-phone-number-input',
   templateUrl: 'internal-input-manager.html',
   styleUrls: ['internal-input-manager.css'],
-  providers: [{ provide: MatFormFieldControl, useExisting: PhoneNumberInputComponent }],
+  providers: [{ provide: MatFormFieldControl, useExisting: internalInputManager }],
   imports: [ReactiveFormsModule],
   host: {
     '[class.example-floating]': 'shouldLabelFloat',
@@ -37,7 +37,7 @@ import { ValidatorFn } from '@angular/forms';
     '[attr.aria-describedby]': 'describedBy'
   }
 })
-export class PhoneNumberInputComponent
+export class internalInputManager
   implements ControlValueAccessor, MatFormFieldControl<MyTel>, OnDestroy {
   static nextId = 0;
   @ViewChild('area') areaInput!: HTMLInputElement;
@@ -49,7 +49,7 @@ export class PhoneNumberInputComponent
   focused = false;
   errorState = false;
   controlType = 'example-tel-input';
-  id = `example-tel-input-${PhoneNumberInputComponent.nextId++}`;
+  id = `example-tel-input-${internalInputManager.nextId++}`;
   describedBy = '';
   onChange = (_: any) => { };
   onTouched = () => { };
@@ -249,12 +249,11 @@ const validateParentComponent: ValidatorFn = (control: AbstractControl) => {
 /** @title Form field with custom telephone number input control. */
 @Component({
   selector: 'form-field-custom-control',
-  templateUrl: 'form-field-custom-control-example.html',
-  styleUrls: ['form-field-custom-control-example.css'],
-  imports: [MatLabel, MatFormFieldModule, PhoneNumberInputComponent, ReactiveFormsModule, MatIconModule]
+  templateUrl: 'phone-number-input-component.html',
+  styleUrls: ['phone-number-input-component.css'],
+  imports: [MatLabel, MatFormFieldModule, internalInputManager, ReactiveFormsModule, MatIconModule]
 })
-export class FormFieldCustomControl {
-  @ViewChild(PhoneNumberInputComponent) input !: PhoneNumberInputComponent;
+export class PhoneNumberInputComponent {
   form: FormGroup = new FormGroup({
     tel: new FormControl(new MyTel('', '', ''), [validateParentComponent]),
 
