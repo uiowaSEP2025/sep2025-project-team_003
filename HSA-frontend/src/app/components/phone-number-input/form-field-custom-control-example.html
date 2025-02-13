@@ -3,8 +3,8 @@
 		<mat-label>Phone number</mat-label>
 		<app-phone-number-input formControlName="tel" required></app-phone-number-input>
 		<mat-icon matSuffix>phone</mat-icon>
-		@if (true) {
-			<mat-error>shit</mat-error>
+		@if (form.hasError('required')) {
+			<mat-error>phone number is <strong>required</strong></mat-error>
 		  }
 	</mat-form-field>
 </div>

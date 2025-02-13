@@ -20,7 +20,7 @@ import {
   ReactiveFormsModule
 } from '@angular/forms';
 import { MatFormFieldControl, MatLabel, MatFormFieldModule } from '@angular/material/form-field';
-import { interval, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { ValidatorFn } from '@angular/forms';
 
@@ -64,13 +64,18 @@ export class PhoneNumberInputComponent
     if (area.length !== 3 || subscriber.length != 4 || exchange.length !== 3) {
       return false
     }
-    if (!isNaN(Number(area)) || !isNaN(Number(subscriber)) || !isNaN(Number(exchange))) {
+    if (isNaN(Number(area)) || isNaN(Number(subscriber)) || isNaN(Number(exchange))) {
       return false
     }
     return true
-
   }
 
+  isEmpty = () => {
+    const {
+      value: { area, exchange, subscriber }
+    } = this.parts
+    return area === '' && subscriber === '' && exchange === '' ? true : false
+  }
 
   get empty() {
     const {
@@ -157,7 +162,6 @@ export class PhoneNumberInputComponent
       this.stateChanges.next();
       if (origin === null) {
         // this is triggered when use clicks off the input
-        console.log()
         this.errorState = !this.isValid()
       }
     });
@@ -218,6 +222,8 @@ export class PhoneNumberInputComponent
   }
 
   _handleInput(control: AbstractControl, nextElement?: HTMLInputElement): void {
+    console.log(this.isEmpty())
+    this.errorState = this.isEmpty()
     this.autoFocusNext(control, nextElement);
     this.onChange(this.value);
   }
@@ -231,10 +237,10 @@ const validateParentComponent: ValidatorFn = (control: AbstractControl) => {
   if (val.area === '' && val.subscriber === '' && val.exchange === '') {
     return { required: true }
   }
-  if (val.area.length !== 3 || val.subscriber.length != 4 || val.exchange.length !== 3) {
+  if (val.area.length !== 3 || val.subscriber.length !== 4 || val.exchange.length !== 3) {
     return { invalid: true }
   }
-  if (!isNaN(Number(val.area)) || !isNaN(Number(val.subscriber)) || !isNaN(Number(val.exchange))) {
+  if (isNaN(Number(val.area)) || isNaN(Number(val.subscriber)) || isNaN(Number(val.exchange))) {
     return { invalid: true }
   }
   return null
