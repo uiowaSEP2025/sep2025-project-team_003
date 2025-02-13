@@ -22,7 +22,7 @@ import {HttpClient} from '@angular/common/http';
   templateUrl: './signup-page.component.html',
   styleUrl: './signup-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-})
+});
 
 @Injectable({providedIn: 'root'})
 export class SignupPageComponent implements OnInit {
@@ -54,9 +54,6 @@ export class SignupPageComponent implements OnInit {
   onSubmit() {
     if (this.registrationForm.invalid) {
       this.registrationForm.markAllAsTouched();
-
-      const invalidFields = Object.keys(this.registrationForm.controls).filter(key => this.registrationForm.get(key)?.invalid);
-
       return;
     } else {
       console.log("Submitted");
@@ -64,6 +61,6 @@ export class SignupPageComponent implements OnInit {
   }
 
   navigateToPage(pagePath: string) {
-    this.router.navigate([`/${pagePath}`]).then(r => {});
+    this.router.navigate([`/${pagePath}`]);
   }
 }
