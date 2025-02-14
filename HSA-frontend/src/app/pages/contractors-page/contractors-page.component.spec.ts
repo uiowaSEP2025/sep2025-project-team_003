@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ContractorsPageComponent } from './contractors-page.component';
 
 describe('ContractorsPageComponent', () => {
@@ -8,7 +8,8 @@ describe('ContractorsPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ContractorsPageComponent]
+      imports: [ContractorsPageComponent],
+      providers: [provideAnimationsAsync()]
     })
     .compileComponents();
 

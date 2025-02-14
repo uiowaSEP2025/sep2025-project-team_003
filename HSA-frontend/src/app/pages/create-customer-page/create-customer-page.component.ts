@@ -5,7 +5,6 @@ import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-sta
 import {MatButtonModule} from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-create-customer-page',
