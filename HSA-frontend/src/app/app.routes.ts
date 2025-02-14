@@ -4,8 +4,8 @@ import { TestPageComponent } from './pages/test-page/test-page.component';
 import { LoginComponent } from './pages/login/login.component';
 import { CustomersPageComponent } from './pages/customers-page/customers-page.component';
 import { CreateCustomerPageComponent } from './pages/create-customer-page/create-customer-page.component';
-import { EditCustomerPageComponent } from './pages/edit-customer-page/edit-customer-page.component';{}
-
+import { EditCustomerPageComponent } from './pages/edit-customer-page/edit-customer-page.component';
+import {SignupPageComponent} from './pages/signup-page/signup-page.component';
 
 export const routes: Routes = [
   {
@@ -15,7 +15,10 @@ export const routes: Routes = [
     path: 'home', component: HomePageComponent,
   },
   {
-    path: 'test', component: TestPageComponent
+    path: 'test', component: TestPageComponent,
+  },
+  {
+    path: 'signup', component: SignupPageComponent,
   },
   {
     path: 'login', component: LoginComponent

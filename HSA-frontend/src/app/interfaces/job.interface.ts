@@ -1,0 +1,9 @@
+export interface Job {
+  jobID: number;
+  organizationID: number;
+  customerID: number;
+  jobStatus: string;
+  jobStartDate: Date;
+  jobEndDate: Date;
+  jobDescription: string;
+}
