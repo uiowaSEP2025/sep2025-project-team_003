@@ -114,7 +114,6 @@ describe('CreateCustomerPageComponent', () => {
     create.click()
     fixture.detectChanges()
     const errors = Array.from(compiled.querySelectorAll('mat-error'))
-    console.log(errors) 
     expect(errors.length).toEqual(0)
   })
 
