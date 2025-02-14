@@ -14,7 +14,6 @@ import { ViewChild } from '@angular/core';
   styleUrl: './create-customer-page.component.scss'
 })
 export class CreateCustomerPageComponent {
-  @ViewChild('telInputContainer') phoneInput!: HTMLElement;
   firstNameControl = new FormControl('', Validators.required)
   lastNameControl = new FormControl('', Validators.required)
   emailControl = new FormControl('', [Validators.email, Validators.required])
