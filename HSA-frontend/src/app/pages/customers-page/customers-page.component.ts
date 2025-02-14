@@ -15,9 +15,7 @@ export class CustomersPageComponent {
   constructor(private router: Router) {}
 
   redirectCreate() {
-    this.router.navigate(['/customers/create'],{
-      
-    });
+    this.router.navigate(['/customers/create']);
   }
 
 }
