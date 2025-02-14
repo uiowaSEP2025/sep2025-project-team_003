@@ -56,7 +56,7 @@ export class TableComponentComponent implements AfterViewInit {
 
       redirectEdit() {
         //TODO: find out how to pass the query params properly on backend integrate
-        this.router.navigate(['/customers/edit/1'],{
+        this.router.navigate([`${this.editRedirect()}/1`],{
           queryParams: { email: 'aguo2@uiowa.edu', fname: 'alex', lname: 'guo', phoneNo: '1111111111' }
         });
         

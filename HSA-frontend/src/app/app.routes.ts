@@ -5,7 +5,10 @@ import { LoginComponent } from './pages/login/login.component';
 import { CustomersPageComponent } from './pages/customers-page/customers-page.component';
 import { CreateCustomerPageComponent } from './pages/create-customer-page/create-customer-page.component';
 import { EditCustomerPageComponent } from './pages/edit-customer-page/edit-customer-page.component';
-import {SignupPageComponent} from './pages/signup-page/signup-page.component';
+import { SignupPageComponent } from './pages/signup-page/signup-page.component';
+import { ContractorsPageComponent } from './pages/contractors-page/contractors-page.component';
+import { EditContractorsPageComponent } from './pages/edit-contractors-page/edit-contractors-page.component';
+import { CreateContractorsPageComponent } from './pages/create-contractors-page/create-contractors-page.component';
 
 export const routes: Routes = [
   {
@@ -31,5 +34,14 @@ export const routes: Routes = [
   },
   {
     path: 'customers/edit/:id', component: EditCustomerPageComponent
-  }
+  },
+  {
+    path: 'contractors', component: ContractorsPageComponent
+  },
+  {
+    path: 'contractors/edit/:id', component: EditContractorsPageComponent
+  },
+  {
+    path: 'contractors/create', component: CreateContractorsPageComponent 
+  },
 ];
