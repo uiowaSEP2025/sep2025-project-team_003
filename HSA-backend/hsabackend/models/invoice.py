@@ -1,7 +1,7 @@
 from django.db import models
 from . import customer
 
-class Inovice(models.Model):
+class Invoice(models.Model):
     """A bill sent to a customer from an organization on a monthly basis"""
     status_choices = [
         ('created', 'created'),

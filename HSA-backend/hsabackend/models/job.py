@@ -12,8 +12,8 @@ class Job(models.Model):
 
 
     job_status = models.CharField(max_length=50, choices=status_choices, default="created")
-    start_date = models.DateField
-    end_date = models.DateField
+    start_date = models.DateField()
+    end_date = models.DateField()
     description = models.CharField(max_length=200)
     contractor = models.ManyToManyField(contractor.Contractor)
     organization = models.ForeignKey(organization.Organization, on_delete=models.CASCADE)
