@@ -7,7 +7,7 @@ class Organization(models.Model):
     org_name = models.CharField(max_length=100, validators=[model_validators.isNonEmpty])
     org_email = models.EmailField(max_length=100)
     org_city = models.CharField(max_length=50, validators=[model_validators.isNonEmpty])
-    org_requestor_state = models.CharField(max_length=50, validators=[model_validators.isNonEmpty])
+    org_requestor_state = models.CharField(max_length=50, validators=[model_validators.isNonEmpty, model_validators.validate_state])
     org_requestor_zip = models.CharField(max_length=10, validators=[model_validators.isNonEmpty])
     org_requestor_address = models.CharField(max_length=100, validators=[model_validators.isNonEmpty])
     org_owner_first_name = models.CharField(max_length=100, validators=[model_validators.isNonEmpty])
