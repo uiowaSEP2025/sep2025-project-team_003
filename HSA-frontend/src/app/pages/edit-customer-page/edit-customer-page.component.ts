@@ -33,7 +33,7 @@ export class EditCustomerPageComponent {
       this.email = params['email'];
       this.firstName = params['fname'];
       this.lastName = params['lname'];
-      this.phoneNo = params['fname'];
+      this.phoneNo = params['phoneno'];
       this.firstNameControl.setValue(this.firstName);
       this.lastNameControl.setValue(this.lastName);
       this.emailControl.setValue(this.email);
