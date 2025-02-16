@@ -17,7 +17,7 @@ if [ -z "$SSHURL" ]; then
 fi
 
 # Build Docker image
-# docker build -t hsa-app .
+docker build -t hsa-app .
 
 # Transfer Docker image to remote host
 if [ "$1" == "pass" ]; then
@@ -25,7 +25,7 @@ if [ "$1" == "pass" ]; then
     echo "Error: SSHPASS is not set."
     exit 1
   fi
-  docker save hsa-app | sshpass -p "$SSHPASS" ssh -o "StrictHostKeyChecking no" -C "$SSHURL" "docker load"
+  docker save hsa-app | sshpass -p "$SSHPASS" ssh -o "StrictHostKeyChecking no" -C "$SSHURL" "ctr image import"
 else
-  docker save hsa-app | ssh -o "StrictHostKeyChecking no" -C "$SSHURL" docker load
+  docker save hsa-app | ssh -o "StrictHostKeyChecking no" -C "$SSHURL" ctr image import
 fi
