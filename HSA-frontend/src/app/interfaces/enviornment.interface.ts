@@ -1,3 +1,4 @@
 export interface EnviornmentInterface {
-    apiUrl: string
+    apiUrl: string,
+    requireCors: boolean
 }
