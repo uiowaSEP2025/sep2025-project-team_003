@@ -20,14 +20,14 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 import hsabackend.views.index as hview
-from hsabackend.views import example_api
+from hsabackend.views.example_api import simple_text_response
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     # API
     
-    path("api/example", example_api.simple_text_response),
+    path("api/example", simple_text_response),
 
     # all non API routes should redirect to angular
     # must be at the bottom!!!
