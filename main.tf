@@ -40,11 +40,10 @@ resource "kubernetes_deployment" "hsa-dp" {
       spec {
         container {
           name  = "hsa-ct"
-          image = "hsa:latest"  # Replace with your desired Docker image
-          image_pull_policy = "Never"
-          # Optionally, expose a port from the container.
+          image = "hsa-app:latest"
+          # image_pull_policy = "Never"
           port {
-            container_port = 80
+            container_port = 8000
           }
         }
       }
