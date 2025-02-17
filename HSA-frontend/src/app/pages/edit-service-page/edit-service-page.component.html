@@ -1,7 +1,7 @@
 <div class="parent">
   <div class="main-heading">
     <h1>
-      <span>Edit {{this.serviceForm.controls["serviceName"].value}} service</span>
+      <span>Edit {{this.currentServiceName}} service</span>
     </h1>
   </div>
   <form class="parent" [formGroup]="serviceForm" (ngSubmit)="onSubmit()">

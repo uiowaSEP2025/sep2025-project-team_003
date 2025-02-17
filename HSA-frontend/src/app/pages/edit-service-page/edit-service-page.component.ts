@@ -20,17 +20,20 @@ import {ActivatedRoute, Router} from '@angular/router';
 })
 export class EditServicePageComponent {
   serviceForm: FormGroup;
+  public currentServiceName: string;
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute, private serviceFormBuilder: FormBuilder) {
     this.serviceForm = this.serviceFormBuilder.group({
       serviceName: ['', Validators.required],
-      serviceDescription: ['', Validators.required],
+      serviceDescription: [''],
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
       this.serviceForm.controls['serviceName'].setValue(params['fname']);
       this.serviceForm.controls['serviceDescription'].setValue(params['lname']);
     })
+
+    this.currentServiceName = this.serviceForm.controls['serviceName'].value
   }
 
   onSubmit() {
