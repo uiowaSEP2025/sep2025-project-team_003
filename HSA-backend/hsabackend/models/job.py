@@ -1,8 +1,9 @@
 from django.db import models
-from . import contractor
-from . import organization
-from . import material
-from . import service
+from hsabackend.models.contractor import Contractor
+from hsabackend.models.organization import Organization
+from hsabackend.models.material import Material
+from hsabackend.models.service import Service
+
 class Job(models.Model):
     """A request for service from a customer to an organization"""
     status_choices = [
@@ -12,13 +13,13 @@ class Job(models.Model):
 
 
     job_status = models.CharField(max_length=50, choices=status_choices, default="created")
-    start_date = models.DateField
-    end_date = models.DateField
+    start_date = models.DateField()
+    end_date = models.DateField()
     description = models.CharField(max_length=200)
-    contractor = models.ManyToManyField(contractor.Contractor)
-    organization = models.ForeignKey(organization.Organization, on_delete=models.CASCADE)
-    materials = models.ManyToManyField(material.Material, through="MaterialJob")
-    service = models.ManyToManyField(service.Service)
+    contractor = models.ManyToManyField(Contractor)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    materials = models.ManyToManyField(Material, through="MaterialJob")
+    service = models.ManyToManyField(Service)
 
     def __str__(self):
         return f"<Job, organization: {self.organization}, description: {self.description}>"
@@ -28,4 +29,4 @@ class MaterialJob(models.Model):
     unit_cost = models.FloatField()
     units_used = models.IntegerField()
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
-    material = models.ForeignKey(material.Material, on_delete=models.CASCADE)
+    material = models.ForeignKey(Material, on_delete=models.CASCADE)

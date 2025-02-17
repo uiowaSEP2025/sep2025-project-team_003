@@ -20,7 +20,7 @@
           "options": {
             "outputPath": "dist/hsa-frontend",
             "index": "src/index.html",
-            "deployUrl":"/static/",
+            "deployUrl": "/static/",
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
@@ -97,11 +97,26 @@
             ],
             "scripts": []
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
   },
   "cli": {
-    "analytics": false
+    "analytics": false,
+    "cache": {
+      "enabled": false
+    },
+    "schematicCollections": [
+      "angular-eslint"
+    ]
   }
 }
