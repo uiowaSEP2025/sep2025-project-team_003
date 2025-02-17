@@ -19,6 +19,6 @@ export class UserAuthService {
   constructor(private http: HttpClient) {}
 
   login(data: LoginPostData): Observable<StandardApiResponse> {
-    return this.http.post(this.apiUrl, data);
+    return this.http.post<StandardApiResponse>(this.apiUrl, data);
   }
 }
