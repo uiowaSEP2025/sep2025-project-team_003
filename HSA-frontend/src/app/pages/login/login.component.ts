@@ -31,7 +31,7 @@ export class LoginComponent {
         username: this.usernameFormControl.value,
         password: this.passwordFormControl.value
       }).subscribe({
-        next: (response) => {
+        next: () => {
           this.snackBar.open('Login Successfull', '', {
             duration: 3000
           });

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatFormFieldModule, } from '@angular/material/form-field';
 import { ReactiveFormsModule, FormControl, Validators, FormsModule } from '@angular/forms';
@@ -12,7 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
   templateUrl: './edit-customer-page.component.html',
   styleUrl: './edit-customer-page.component.scss'
 })
-export class EditCustomerPageComponent {
+export class EditCustomerPageComponent implements OnInit {
   email!: string
   firstName!: string
   lastName!: string

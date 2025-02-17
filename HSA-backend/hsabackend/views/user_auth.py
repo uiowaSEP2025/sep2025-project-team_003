@@ -13,4 +13,4 @@ def loginView(request):
         login(request, user)
         return Response({"message": "Login successful!"}, status=status.HTTP_200_OK)
     else:
-        return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
