@@ -7,7 +7,6 @@ from django.contrib.auth import authenticate, login
 def loginView(request):
     user_name = request.data.get('username','')
     password = request.data.get('password', '')
-    print(user_name,password)
     user = authenticate(username=user_name, password=password)
     if user:
         login(request, user)

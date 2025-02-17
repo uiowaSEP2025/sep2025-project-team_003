@@ -3,7 +3,7 @@
 # It's mostly supposed to be for docker environment.
 
 if [ "$#" -lt 1 ]; then
-  echo "Usage: $0 <development|staging|prod> "
+  echo "Usage: $0 <development|staging|production> "
   exit 1
 fi
 
