@@ -1,0 +1,12 @@
+<div class="parent">
+  <div class="main-heading">
+    <h1>
+      <span>Services</span>
+    </h1>
+    <app-table-component editRedirect="/services/edit" deleteEndpoint="1234"></app-table-component>
+  </div>
+  <button mat-fab extended class="m-10" id="add-service-button" (click)="redirectCreate()">
+    <mat-icon>note_add</mat-icon>
+    Add a Service
+  </button>
+</div>
