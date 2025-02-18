@@ -1,0 +1,31 @@
+<div class="parent">
+  <div class="main-heading">
+    <h1>
+      <span>Add new Material</span>
+    </h1>
+  </div>
+  <form class="parent" [formGroup]="materialForm" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <mat-label>Material Name</mat-label>
+      <input
+        formControlName = "materialName"
+        matInput
+        placeholder="Ex: Valspar White Paint"
+        required
+      >
+      @if (materialForm.get('materialName')?.touched && materialForm.get('materialName')?.hasError('required')) {
+        <mat-error>Material Name is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Description</mat-label>
+      <textarea matInput placeholder=""></textarea>
+    </mat-form-field>
+
+    <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
+      <button mat-flat-button type="submit">Add</button>
+      <button mat-stroked-button (click)="navigateToPage('materials')">Cancel</button>
+    </div>
+  </form>
+</div>

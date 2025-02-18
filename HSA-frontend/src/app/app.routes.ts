@@ -19,7 +19,13 @@ import {ServicePageComponent} from './pages/service-page/service-page.component'
 =======
 import { CreateServicePageComponent } from './pages/create-service-page/create-service-page.component';
 import { EditServicePageComponent } from './pages/edit-service-page/edit-service-page.component';
+<<<<<<< HEAD
 >>>>>>> 762b519 (HSA 26 add route to services)
+=======
+import {MaterialsPageComponent} from './pages/materials-page/materials-page.component';
+import {CreateMaterialPageComponent} from './pages/create-material-page/create-material-page.component';
+import {EditMaterialPageComponent} from './pages/edit-material-page/edit-material-page.component';
+>>>>>>> eb2a7f7 (HSA 27 Add pages for material and tests.)
 
 export const routes: Routes = [
   {
@@ -49,7 +55,19 @@ export const routes: Routes = [
     path: 'services/edit/:id', component: EditServicePageComponent
   },
   {
+<<<<<<< HEAD
 >>>>>>> 762b519 (HSA 26 add route to services)
+=======
+    path: 'materials', component: MaterialsPageComponent
+  },
+  {
+    path: 'materials/create', component: CreateMaterialPageComponent
+  },
+  {
+    path: 'materials/edit/:id', component: EditMaterialPageComponent
+  },
+  {
+>>>>>>> eb2a7f7 (HSA 27 Add pages for material and tests.)
     path: 'customers', component: CustomersPageComponent
   },
   {
