@@ -17,7 +17,7 @@ import {TableComponentComponent} from '../../components/table-component/table-co
 export class MaterialsPageComponent {
   constructor(private router: Router) {}
 
-  redirectCreate() {
-    this.router.navigate(['/materials/create']);
+  navigateToPage(pagePath: string) {
+    this.router.navigate([`/${pagePath}`]);
   }
 }

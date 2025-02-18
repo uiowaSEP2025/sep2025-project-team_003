@@ -17,7 +17,7 @@ import {Router} from '@angular/router';
 export class ServicePageComponent {
   constructor(private router: Router) {}
 
-  redirectCreate() {
-    this.router.navigate(['/services/create']);
+  navigateToPage(pagePath: string) {
+    this.router.navigate([`/${pagePath}`]);
   }
 }
