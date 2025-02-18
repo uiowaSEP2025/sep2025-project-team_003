@@ -39,7 +39,7 @@ describe('ServicePageComponent', () => {
 
   it('should call router.navigate with the correct route when redirectCreate is called', () => {
     spyOn(router, "navigate")
-    component.redirectCreate();
+    component.navigateToPage('services/create');
     expect(router.navigate).toHaveBeenCalledWith(['/services/create']);
   });
 
@@ -51,5 +51,15 @@ describe('ServicePageComponent', () => {
     addButton.click();
     fixture.detectChanges();
     expect(router.navigate).toHaveBeenCalledWith(['/services/create']);
+  });
+
+  it ('should navigate to material page when click on material list', () => {
+    const compiled = fixture.debugElement.nativeElement;
+    const materialListButton = compiled.querySelector('#material-list-button');
+    spyOn(router, "navigate")
+
+    materialListButton.click();
+    fixture.detectChanges();
+    expect(router.navigate).toHaveBeenCalledWith(['/materials']);
   });
 });

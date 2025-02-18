@@ -5,8 +5,14 @@
     </h1>
     <app-table-component editRedirect="/services/edit" deleteEndpoint="1234"></app-table-component>
   </div>
-  <button mat-fab extended class="m-10" id="add-service-button" (click)="redirectCreate()">
-    <mat-icon>note_add</mat-icon>
-    Add a Service
-  </button>
+  <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
+    <button mat-fab extended class="m-10" id="add-service-button" (click)="navigateToPage('services/create')">
+      <mat-icon>note_add</mat-icon>
+      Add a Service
+    </button>
+    <button mat-fab extended class="m-10" id="material-list-button" (click)="navigateToPage('materials')">
+      <mat-icon>list</mat-icon>
+      Material lists
+    </button>
+  </div>
 </div>
