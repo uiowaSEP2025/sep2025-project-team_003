@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ServicePageComponent } from './service-page.component';
+import { MaterialsPageComponent } from './materials-page.component';
 import {provideRouter, Router} from '@angular/router';
 import {provideAnimations} from '@angular/platform-browser/animations';
 
-describe('ServicePageComponent', () => {
-  let component: ServicePageComponent;
-  let fixture: ComponentFixture<ServicePageComponent>;
+describe('MaterialsPageComponent', () => {
+  let component: MaterialsPageComponent;
+  let fixture: ComponentFixture<MaterialsPageComponent>;
   let router!: Router;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ServicePageComponent],
+      imports: [MaterialsPageComponent],
       providers: [
         provideAnimations(),
         provideRouter([])
@@ -19,7 +19,7 @@ describe('ServicePageComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ServicePageComponent);
+    fixture = TestBed.createComponent(MaterialsPageComponent);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
     fixture.detectChanges();
@@ -39,27 +39,27 @@ describe('ServicePageComponent', () => {
 
   it('should call router.navigate with the correct route when redirectCreate is called', () => {
     spyOn(router, "navigate")
-    component.navigateToPage('services/create');
-    expect(router.navigate).toHaveBeenCalledWith(['/services/create']);
+    component.navigateToPage('materials/create');
+    expect(router.navigate).toHaveBeenCalledWith(['/materials/create']);
   });
 
-  it ('should navigate to create service page when click on add new service', () => {
+  it ('should navigate to add material page when click on add new material', () => {
     const compiled = fixture.debugElement.nativeElement;
-    const addButton = compiled.querySelector('#add-service-button');
+    const addButton = compiled.querySelector('#add-material-button');
     spyOn(router, "navigate")
 
     addButton.click();
     fixture.detectChanges();
-    expect(router.navigate).toHaveBeenCalledWith(['/services/create']);
+    expect(router.navigate).toHaveBeenCalledWith(['/materials/create']);
   });
 
-  it ('should navigate to material page when click on material list', () => {
+  it ('should navigate to service page when click on service list', () => {
     const compiled = fixture.debugElement.nativeElement;
-    const materialListButton = compiled.querySelector('#material-list-button');
+    const serviceListButton = compiled.querySelector('#service-list-button');
     spyOn(router, "navigate")
 
-    materialListButton.click();
+    serviceListButton.click();
     fixture.detectChanges();
-    expect(router.navigate).toHaveBeenCalledWith(['/materials']);
+    expect(router.navigate).toHaveBeenCalledWith(['/services']);
   });
 });

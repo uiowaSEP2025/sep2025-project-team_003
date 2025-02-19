@@ -1,20 +1,20 @@
 import { Component } from '@angular/core';
+import {Router} from '@angular/router';
 import {MatFabButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {TableComponentComponent} from '../../components/table-component/table-component.component';
-import {Router} from '@angular/router';
 
 @Component({
-  selector: 'app-service-page',
+  selector: 'app-materials-page',
   imports: [
-    TableComponentComponent,
     MatFabButton,
-    MatIcon
+    MatIcon,
+    TableComponentComponent
   ],
-  templateUrl: './service-page.component.html',
-  styleUrl: './service-page.component.scss'
+  templateUrl: './materials-page.component.html',
+  styleUrl: './materials-page.component.scss'
 })
-export class ServicePageComponent {
+export class MaterialsPageComponent {
   constructor(private router: Router) {}
 
   navigateToPage(pagePath: string) {

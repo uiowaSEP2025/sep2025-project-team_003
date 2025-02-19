@@ -24,7 +24,7 @@ export class CreateServicePageComponent {
   constructor(private router: Router, private serviceFormBuilder: FormBuilder) {
     this.serviceForm = this.serviceFormBuilder.group({
       serviceName: ['', Validators.required],
-      serviceDescription: ['', Validators.required],
+      serviceDescription: [''],
     });
   }
 
