@@ -4,8 +4,8 @@ from hsabackend.models.organization import Organization
 
 class Customer(models.Model):
     """A person that has a pending or fulfilled job"""
-    first_name = models.CharField(50, validators=[isNonEmpty])
-    last_name = models.CharField(50, validators=[isNonEmpty])
+    first_name = models.CharField(max_length=50, validators=[isNonEmpty])
+    last_name = models.CharField(max_length=50, validators=[isNonEmpty])
     email = models.EmailField(max_length=100)
     phone_no = models.CharField(max_length=10, validators=[isValidPhone])
     notes = models.CharField(max_length=200)
