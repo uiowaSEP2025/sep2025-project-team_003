@@ -14,3 +14,12 @@ class Customer(models.Model):
     def __str__(self):
         return f"<Customer: {self.pk}>"
     
+    def json(self):
+                return {
+            'id': self.pk,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'email': self.email,
+            'phone_no': self.phone_no,
+            'notes': self.notes,
+        }
