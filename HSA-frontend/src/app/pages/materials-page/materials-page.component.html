@@ -1,0 +1,18 @@
+<div class="parent">
+  <div class="main-heading">
+    <h1>
+      <span>Materials</span>
+    </h1>
+    <app-table-component editRedirect="/materials/edit" deleteEndpoint="1234"></app-table-component>
+  </div>
+  <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
+    <button mat-fab extended class="m-10" id="add-material-button" (click)="navigateToPage('materials/create')">
+      <mat-icon>note_add</mat-icon>
+      Add a Material
+    </button>
+    <button mat-fab extended class="m-10" id="service-list-button" (click)="navigateToPage('services')">
+      <mat-icon>list</mat-icon>
+      Service lists
+    </button>
+  </div>
+</div>
