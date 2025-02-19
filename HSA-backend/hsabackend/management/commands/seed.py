@@ -31,10 +31,13 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR(f'Error flushing the database: {e}'))
         try: 
             User.objects.create_user("devuser", "dev@uiowa.edu", "SepTeam003!")
+            User.objects.create_user("testuser", "test@uiowa.edu", "SepTeam003!")
             usr  = User.objects.first()
+            usr1  = User.objects.last()
+            
             org = Organization.objects.create(
-                org_name = "org1",
-                org_email = "org1@org1.dev",
+                org_name = "org",
+                org_email = "org@org.dev",
                 org_city = "Iowa City",
                 org_requestor_state = "IA",
                 org_requestor_zip = "52240",
@@ -44,23 +47,51 @@ class Command(BaseCommand):
                 owning_User = usr
                 )
             org.save()
+            org1 = Organization.objects.create(
+                org_name = "org1",
+                org_email = "org1@org1.dev",
+                org_city = "Iowa City",
+                org_requestor_state = "IA",
+                org_requestor_zip = "52240",
+                org_requestor_address = "123 main st",
+                org_owner_first_name = "Test",
+                org_owner_last_name = "User",
+                owning_User = usr1
+                )
+            org1.save()
             
             service_data = [
                 {"name": "Window Cleaning", "description": "Cleaning of windows for residential and commercial properties."},
                 {"name": "Pest Control", "description": "Extermination and prevention of pests."},
                 {"name": "Handyman Services", "description": "General repair and maintenance services."},
                 ]
+            
+            service_data1 = [
+                {"name": "Window Cleaning", "description": "Cleaning of windows for residential and commercial properties. (test user)"},
+                {"name": "Pest Control", "description": "Extermination and prevention of pests. (test user)"},
+                {"name": "Handyman Services", "description": "General repair and maintenance services. (test user)"},
+                ]
 
             # Create services in a loop
             for data in service_data:
-                Service.objects.create(
+                s1 = Service.objects.create(
                     service_name=data["name"],
                     service_description=data["description"],
                     organization=org
                 )
+                s1.save
+
+            for data in service_data1:
+                s2 = Service.objects.create(
+                    service_name=data["name"],
+                    service_description=data["description"],
+                    organization=org1
+                )
+                s2.save
+
 
             for i in range(5):
-                Customer.objects.create(
+                c1 = Customer.objects.create(
                     first_name=f"First{i}",
                     last_name=f"Last{i}",
                     email=f"user{i}@example.com",
@@ -68,6 +99,17 @@ class Command(BaseCommand):
                     notes=f"Sample notes for user {i}",
                     organization=org
                 )
+                c1.save()
+
+                c2 = Customer.objects.create(
+                    first_name=f"First{i} testuser",
+                    last_name=f"Last{i} testuser",
+                    email=f"testuser{i}@example.com",
+                    phone_no=f"{random.randint(1000000000, 9999999999)}",
+                    notes=f"Sample notes for test user {i}",
+                    organization=org1
+                )
+                c2.save()
 
                 material_names = [
                     "Steel Beam",
@@ -78,10 +120,17 @@ class Command(BaseCommand):
                 ]
 
             for i in range(5):
-                Material.objects.create(
+                m = Material.objects.create(
                     material_name=material_names[i],   
                     organization=org  # Cycle through organizations
                 )
+                m.save()
+
+                m1 = Material.objects.create(
+                    material_name=f"{material_names[i]} testuser",   
+                    organization=org1 # Cycle through organizations
+                )
+                m1.save()
 
             mock_requests = [
                 {
@@ -136,7 +185,7 @@ class Command(BaseCommand):
                 },
             ]
             for data in mock_requests:
-                Request.objects.create(
+                r = Request.objects.create(
                     requestor_name=data["requestor_name"],
                     requestor_email=data["requestor_email"],
                     requestor_city=data["requestor_city"],
@@ -147,6 +196,20 @@ class Command(BaseCommand):
                     status=data["status"],
                     organization=org,
                 )
+                r.save()
+
+                r = Request.objects.create(
+                    requestor_name=data["requestor_name"].split()[0] + " test",
+                    requestor_email=data["requestor_email"],
+                    requestor_city=data["requestor_city"],
+                    requestor_state=data["requestor_state"],
+                    requestor_zip=data["requestor_zip"],
+                    requestor_address=data["requestor_address"],
+                    description=data["description"],
+                    status=data["status"],
+                    organization=org1,
+                )
+                r.save()
 
                         # List of realistic job descriptions
             job_descriptions = [
@@ -159,25 +222,46 @@ class Command(BaseCommand):
 
             # Generate 5 mock Job instances
             for i in range(5):
-                Job.objects.create(
+                j = Job.objects.create(
                     job_status=random.choice(['created', 'completed']),
                     start_date=timezone.now().date(),
                     end_date=timezone.now().date() + timezone.timedelta(days=random.randint(1, 30)),
                     description=random.choice(job_descriptions),
                     organization=org,
                 )
+                j.save()
+
+                j = Job.objects.create(
+                    job_status=random.choice(['created', 'completed']),
+                    start_date=timezone.now().date(),
+                    end_date=timezone.now().date() + timezone.timedelta(days=random.randint(1, 30)),
+                    description=random.choice(job_descriptions) + " test",
+                    organization=org1,
+                )
+                j.save()
+
 
             discount_names = ["Summer Sale", "Black Friday", "Holiday Special", "New Year Discount", "Clearance Sale"]
 
             for i in range(5):
-                DiscountType.objects.create(
+                d = DiscountType.objects.create(
                     discount_name=random.choice(discount_names),
                     discount_percent=round(random.uniform(5.0, 50.0)),
                     organization=org
                 )
+                d.save()
 
-            jobs = Job.objects.all()[:5]
-            discounts = DiscountType.objects.all()[:5]
+                d = DiscountType.objects.create(
+                    discount_name=random.choice(discount_names) + " test",
+                    discount_percent=round(random.uniform(5.0, 50.0)),
+                    organization=org1
+                )
+                d.save()
+
+            jobs_org_1 = Job.objects.filter(organization__pk=org1.pk)[:5]
+            jobs_org = Job.objects.filter(organization__pk=org.pk)[:5]
+            discounts_1 = DiscountType.objects.filter(organization__pk=org1.pk)[:5]
+            discounts = DiscountType.objects.filter(organization__pk=org.pk)[:5]
 
             for i in range(5):
                 issuance_date = timezone.now().date()
@@ -185,10 +269,29 @@ class Command(BaseCommand):
                 status = 'created' if i % 2 == 0 else 'accepted'
                 material_subtotal = 1000.0 * (i + 1)
                 total_price = material_subtotal * 0.9  # 10% discount
-                jobID = jobs[i]
+                jobID = jobs_org_1[i]
                 
 
-                Quote.objects.create(
+                q = Quote.objects.create(
+                    issuance_date=issuance_date,
+                    due_date=due_date,
+                    status=status,
+                    material_subtotal=material_subtotal,
+                    total_price=total_price,
+                    jobID=jobID,
+                    discount_type = random.choice(discounts_1)
+                    )
+                q.save()
+
+                issuance_date = timezone.now().date()
+                due_date = issuance_date + timezone.timedelta(days=30)
+                status = 'created' if i % 2 == 0 else 'accepted'
+                material_subtotal = 1000.0 * (i + 1)
+                total_price = material_subtotal * 0.9  # 10% discount
+                jobID = jobs_org[i]
+                
+
+                q = Quote.objects.create(
                     issuance_date=issuance_date,
                     due_date=due_date,
                     status=status,
@@ -197,31 +300,57 @@ class Command(BaseCommand):
                     jobID=jobID,
                     discount_type = random.choice(discounts)
                     )
+                q.save()
+
+
+        
+            customers = Customer.objects.filter(organization=org.pk)
+            customers_1 = Customer.objects.filter(organization=org.pk)
+
+
+            for i in range(5):
+                iv = Invoice.objects.create(
+                    issuance_date=timezone.now().date(),
+                    due_date=timezone.now().date() + timezone.timedelta(days=30),
+                    status='issued',
+                    price=100.0 * (i + 1),
+                    customer=customers[i]
+                )
+                iv.save()
+
+                iv = Invoice.objects.create(
+                    issuance_date=timezone.now().date(),
+                    due_date=timezone.now().date() + timezone.timedelta(days=30),
+                    status='issued',
+                    price=100.0 * (i + 1),
+                    customer=customers_1[i]
+                )
+                iv.save()
+
+            for i in range(5):
+                j = JobTemplate.objects.create(
+                    description=f"Job Template Description {i+1}",
+                    organization=org)
+                j.save()
+                j = JobTemplate.objects.create(
+                    description=f"Job Template Description {i+1}",
+                    organization=org1)
+                j.save()
             
-                customers = Customer.objects.all()[:5]
+            job_templates = JobTemplate.objects.filter(organization=org.pk)[:5]
+            job_templates_1 = JobTemplate.objects.filter(organization=org.pk)[:5]
+            for i in range(5):
+                Subscription.objects.create(
+                    description=f"Sample Job Description {i+1}",
+                    price=100.0 * (i + 1),
+                    job_template=job_templates[i]
+                ).save()
+                Subscription.objects.create(
+                    description=f"Sample Job Description {i+1}",
+                    price=100.0 * (i + 1),
+                    job_template=job_templates_1[i]
+                ).save()
 
-
-                for i in range(5):
-                    Invoice.objects.create(
-                        issuance_date=timezone.now().date(),
-                        due_date=timezone.now().date() + timezone.timedelta(days=30),
-                        status='issued',
-                        price=100.0 * (i + 1),
-                        customer=customers[i]
-                    )
-
-                for i in range(5):
-                    JobTemplate.objects.create(
-                        description=f"Job Template Description {i+1}",
-                        organization=org)
-                
-                job_templates = JobTemplate.objects.all()[:5]
-                for i in range(5):
-                    Subscription.objects.create(
-                        description=f"Sample Job Description {i+1}",
-                        price=100.0 * (i + 1),
-                        job_template=job_templates[i]
-                    )
             
             self.stdout.write(self.style.SUCCESS("Database seeded successfully!"))
 
