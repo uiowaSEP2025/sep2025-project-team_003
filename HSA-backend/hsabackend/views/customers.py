@@ -53,7 +53,7 @@ def create_customer(request):
     email = request.data.get('email', '')
     phone_no = request.data.get('phoneno', '')
     notes = request.data.get('notes', '')
-    customer = Customer.objects.create(
+    customer = Customer(
         first_name = first_name,
         last_name = last_name,
         email = email,
@@ -67,3 +67,4 @@ def create_customer(request):
         return Response({"message": "Customer created successfully"}, status=status.HTTP_201_CREATED)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+
