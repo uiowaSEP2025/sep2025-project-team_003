@@ -28,7 +28,7 @@ if 'ENV' in os.environ and os.environ['ENV'] == 'PROD':
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if 'ENV' not in os.environ else False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["172.233.214.92"]
 
 
 # Application definition

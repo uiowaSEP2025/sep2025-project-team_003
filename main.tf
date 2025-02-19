@@ -33,6 +33,20 @@ variable "DATABASE_PASSWORD" {
 }
 
 
+variable "SSHURL" {
+  description = "User+URL of SSH provider (e.g, bob@10.1.1.1)"
+  type        = string
+  sensitive   = true
+}
+
+
+variable "SSHPASS" {
+  description = "Password of SSH provider"
+  type        = string
+  sensitive   = true
+}
+
+
 # Configure the Kubernetes provider. This example uses your local kubeconfig.
 provider "kubernetes" {
   config_path = "~/.kube/config"
@@ -53,6 +67,24 @@ resource "kubernetes_secret" "hsa-secrets" {
   type = "Opaque"
 }
 
+resource "null_resource" "build_and_send_image" {
+  triggers = {
+    always_run = timestamp()
+    # this is to force TF to run everytime.
+    # It is too complex to keep track of checksums of directory,
+    # and main branch expects to run very little.
+  }
+
+  provisioner "local-exec" {
+    command = "./docker-build-stage.sh pass"
+    environment = {
+      SSHURL = var.SSHURL
+      SSHPASS = var.SSHPASS
+    }
+  }
+
+
+}
 
 # Define a Kubernetes Deployment that runs a single container from a Docker image.
 resource "kubernetes_deployment" "hsa-dp" {
@@ -60,6 +92,10 @@ resource "kubernetes_deployment" "hsa-dp" {
     name = "hsa-dp"
     labels = {
       app = "hsa"
+    }
+    annotations = {
+      # This annotation changes every time the null_resource runs
+      build_timestamp = null_resource.build_and_send_image.triggers.always_run
     }
   }
 
@@ -80,11 +116,10 @@ resource "kubernetes_deployment" "hsa-dp" {
       }
 
       spec {
-        host_network = true  # in case host uses DB with VPC
+        host_network = true
 
         container {
           name  = "hsa-ct"
-          # force utilize local docker
           image_pull_policy = "Never"
           image = "docker.io/library/hsa-app:latest"
 
@@ -97,18 +132,26 @@ resource "kubernetes_deployment" "hsa-dp" {
               name = kubernetes_secret.hsa-secrets.metadata[0].name
             }
           }
-
         }
       }
     }
   }
+
+  depends_on = [null_resource.build_and_send_image]
 }
+
 
 resource "kubernetes_service" "hsa-service" {
   metadata {
     name = "hsa-service"
+      annotations = {
+      # This annotation changes every time the null_resource runs
+      build_timestamp = null_resource.build_and_send_image.triggers.always_run
+    }
+
   }
 
+  
   spec {
     selector = {
       app = "hsa"
@@ -122,4 +165,5 @@ resource "kubernetes_service" "hsa-service" {
 
     type = "NodePort"  # Expose it as a NodePort
   }
+  depends_on = [null_resource.build_and_send_image]
 }

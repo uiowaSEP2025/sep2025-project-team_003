@@ -25,7 +25,9 @@ if [ "$1" == "pass" ]; then
     echo "Error: SSHPASS is not set."
     exit 1
   fi
-  docker save hsa-app | sshpass -p "$SSHPASS" ssh -o "StrictHostKeyChecking no" -C "$SSHURL" "ctr image import"
+  # clean on host
+  sshpass -p "$SSHPASS" ssh -o StrictHostKeyChecking=no "$SSHURL" 'ctr images rm hsa-app:latest'
+  docker save hsa-app | sshpass -p "$SSHPASS" ssh -o "StrictHostKeyChecking no" -C "$SSHURL" "ctr image import -"
 else
-  docker save hsa-app | ssh -o "StrictHostKeyChecking no" -C "$SSHURL" ctr image import
+  echo "Non-auto is not supported. Please run this with "pass" and set SSHPASS"
 fi
