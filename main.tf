@@ -67,7 +67,7 @@ resource "kubernetes_secret" "hsa-secrets" {
   type = "Opaque"
 }
 
-resource "null_resource" "build_and_send_image" {
+resource "null_resource" "always_run" {
   triggers = {
     always_run = timestamp()
     # this is to force TF to run everytime.
@@ -93,10 +93,12 @@ resource "kubernetes_deployment" "hsa-dp" {
     labels = {
       app = "hsa"
     }
-    annotations = {
-      # This annotation changes every time the null_resource runs
-      build_timestamp = null_resource.build_and_send_image.triggers.always_run
-    }
+  }
+
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
   }
 
   spec {
@@ -137,18 +139,19 @@ resource "kubernetes_deployment" "hsa-dp" {
     }
   }
 
-  depends_on = [null_resource.build_and_send_image]
+  depends_on = [null_resource.always_run]
 }
 
 
 resource "kubernetes_service" "hsa-service" {
   metadata {
     name = "hsa-service"
-      annotations = {
-      # This annotation changes every time the null_resource runs
-      build_timestamp = null_resource.build_and_send_image.triggers.always_run
-    }
+  }
 
+  lifecycle {
+    replace_triggered_by = [
+      null_resource.always_run
+    ]
   }
 
   
@@ -165,5 +168,5 @@ resource "kubernetes_service" "hsa-service" {
 
     type = "NodePort"  # Expose it as a NodePort
   }
-  depends_on = [null_resource.build_and_send_image]
+  depends_on = [null_resource.always_run]
 }
