@@ -4,7 +4,7 @@ from rest_framework import status
 from django.contrib.auth import authenticate, login
 
 @api_view(["POST"])
-def loginView(request):
+def login_view(request):
     user_name = request.data.get('username','')
     password = request.data.get('password', '')
     user = authenticate(username=user_name, password=password)
