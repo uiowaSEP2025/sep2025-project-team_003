@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Injectable, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -7,6 +7,10 @@ import {MatButton} from '@angular/material/button';
 import {MatOption, MatSelect} from '@angular/material/select';
 import {HttpClient} from '@angular/common/http';
 
+interface State {
+  name: string,
+  code: string
+}
 
 @Component({
   selector: 'app-signup-page',
@@ -24,10 +28,9 @@ import {HttpClient} from '@angular/common/http';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
-@Injectable({providedIn: 'root'})
 export class SignupPageComponent implements OnInit {
   registrationForm: FormGroup;
-  states: any[] = [];
+  states: State[] = [];
 
   constructor(private router: Router, private registrationFormBuilder: FormBuilder, private http: HttpClient) {
     this.registrationForm = this.registrationFormBuilder.group({
@@ -44,8 +47,8 @@ export class SignupPageComponent implements OnInit {
   }
 
   loadStates() {
-    this.http.get<any[]>('states.json').subscribe(
-      (data: any[]) => {
+    this.http.get<State[]>('states.json').subscribe(
+      (data: State[]) => {
         this.states = data;
       }
     )

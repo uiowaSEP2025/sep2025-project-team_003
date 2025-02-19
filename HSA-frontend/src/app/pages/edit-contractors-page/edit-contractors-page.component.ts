@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,7 +12,7 @@ import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-sta
   templateUrl: './edit-contractors-page.component.html',
   styleUrl: './edit-contractors-page.component.scss'
 })
-export class EditContractorsPageComponent {
+export class EditContractorsPageComponent implements OnInit {
   email!: string
   firstName!: string
   lastName!: string
