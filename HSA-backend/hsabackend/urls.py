@@ -15,6 +15,7 @@ urlpatterns = [
     path("api/login", login_view),
     path("api/get/customers", get_customer_table_data),
     path("api/create/customer", create_customer),
+    path("api/edit/customer/<int:id>", create_customer),
 
     # all non API routes should redirect to angular
     # must be at the bottom!!!

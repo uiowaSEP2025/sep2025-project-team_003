@@ -68,3 +68,26 @@ def create_customer(request):
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
+def edit_customer(request):
+    if not request.user.is_authenticated:
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    org = Organization.objects.get(owning_User=request.user)
+    first_name = request.data.get('firstn', '')
+    last_name = request.data.get('lastn', '')
+    email = request.data.get('email', '')
+    phone_no = request.data.get('phoneno', '')
+    notes = request.data.get('notes', '')
+    customer = Customer.objects.get(pk=id, organization=org)
+    if not customer:
+        return Response({"message": "The customer does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    
+    customer.first_name = first_name
+    customer.last_name = last_name
+    customer.email = email
+    customer.phone_no = phone_no
+    customer.notes = notes
+    
+    # Save the updated customer record
+    customer.save()
+    
+    return Response({"message": "Customer updated successfully"}, status=status.HTTP_200_OK)
