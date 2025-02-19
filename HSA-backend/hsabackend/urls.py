@@ -5,7 +5,7 @@ from django.conf import settings
 
 import hsabackend.views.index as hview
 from hsabackend.views.user_auth import login_view
-from hsabackend.views.customers import get_customer_table_data,create_customer
+from hsabackend.views.customers import get_customer_table_data,create_customer,edit_customer
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -15,7 +15,7 @@ urlpatterns = [
     path("api/login", login_view),
     path("api/get/customers", get_customer_table_data),
     path("api/create/customer", create_customer),
-    path("api/edit/customer/<int:id>", create_customer),
+    path("api/edit/customer/<int:id>", edit_customer),
 
     # all non API routes should redirect to angular
     # must be at the bottom!!!
