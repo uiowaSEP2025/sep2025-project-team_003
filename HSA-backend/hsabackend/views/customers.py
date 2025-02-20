@@ -72,7 +72,7 @@ def edit_customer(request, id):
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
     org = Organization.objects.get(owning_User=request.user)
-    customer = Customer.objects.filter(pk=id, organization=org)
+    customer = Customer.objects.get(pk=id, organization=org)
     if not customer:
         return Response({"message": "The customer does not exist"}, status=status.HTTP_404_NOT_FOUND)
     first_name = request.data.get('firstn', '')
