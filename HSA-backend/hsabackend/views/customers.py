@@ -15,10 +15,11 @@ def get_customer_table_data(request):
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset',0)
+    print(f"pagesize {pagesize}",f"offset {offset}")
     
     if not pagesize or not offset:
         return Response({"message": "missing pagesize or offset"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     try:
         pagesize = int(pagesize)
         offset = int(offset)
