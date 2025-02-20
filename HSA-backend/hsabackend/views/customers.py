@@ -6,16 +6,14 @@ from hsabackend.models.customer import Customer
 from django.db.models import Q
 from django.core.exceptions import ValidationError
 
-
 @api_view(["GET"])
 def get_customer_table_data(request):
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user)
+    org = Organization.objects.get(owning_User=request.user.pk)
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset',0)
-    print(f"pagesize {pagesize}",f"offset {offset}")
     
     if not pagesize or not offset:
         return Response({"message": "missing pagesize or offset"}, status=status.HTTP_400_BAD_REQUEST)
