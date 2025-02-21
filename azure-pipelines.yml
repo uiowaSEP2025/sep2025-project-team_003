@@ -3,27 +3,37 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- dev
+- none
+
+pr:
+  branches:
+    include:
+      - dev
 
 resources:
 - repo: self
 
 variables:
   tag: '$(Build.BuildId)'
+  imageName: 'hsa'
 
 stages:
-- stage: Build
-  displayName: Build image
+- stage: BuildAndTest
+  displayName: Build and Test in Docker
   jobs:
   - job: Build
-    displayName: Build
+    displayName: Build Docker Image
     pool:
       vmImage: ubuntu-latest
     steps:
     - task: Docker@2
-      displayName: Build an image
+      displayName: Build Docker Image
       inputs:
         command: build
-        dockerfile: '**/Dockerfile'
-        tags: |
-          $(tag)
+        repository: '(imageName)′
+        dockerfile: ′∗∗/Dockerfile′
+        tags: ∣(imageName)′
+
+    - script: |
+        echo "Running Angular tests..."
+        docker run --rm "(imageName):(imageName):(tag)" ng test --watch=false --browsers=ChromeHeadless'
