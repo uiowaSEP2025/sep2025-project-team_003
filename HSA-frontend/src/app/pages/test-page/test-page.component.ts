@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { environment } from '../../../environments/environment'
+
 
 @Component({
   selector: 'app-test-page',
@@ -7,5 +9,5 @@ import { Component } from '@angular/core';
   styleUrl: './test-page.component.scss'
 })
 export class TestPageComponent {
-
+  url = environment.apiUrl
 }

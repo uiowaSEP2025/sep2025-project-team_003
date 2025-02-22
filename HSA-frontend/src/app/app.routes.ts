@@ -6,10 +6,10 @@ import { ServicePageComponent } from './pages/service-page/service-page.componen
 import { CustomersPageComponent } from './pages/customers-page/customers-page.component';
 import { CreateCustomerPageComponent } from './pages/create-customer-page/create-customer-page.component';
 import { EditCustomerPageComponent } from './pages/edit-customer-page/edit-customer-page.component';
-import { SignupPageComponent } from './pages/signup-page/signup-page.component';
 import { ContractorsPageComponent } from './pages/contractors-page/contractors-page.component';
 import { EditContractorsPageComponent } from './pages/edit-contractors-page/edit-contractors-page.component';
 import { CreateContractorsPageComponent } from './pages/create-contractors-page/create-contractors-page.component';
+import {SignupPageComponent} from './pages/signup-page/signup-page.component';
 import { CreateServicePageComponent } from './pages/create-service-page/create-service-page.component';
 import { EditServicePageComponent } from './pages/edit-service-page/edit-service-page.component';
 import {MaterialsPageComponent} from './pages/materials-page/materials-page.component';
@@ -68,4 +68,8 @@ export const routes: Routes = [
   {
     path: 'contractors/create', component: CreateContractorsPageComponent
   },
+  {
+    path: 'service', component: ServicePageComponent
+  }
+
 ];
