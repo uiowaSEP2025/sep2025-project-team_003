@@ -1,0 +1,18 @@
+[report]
+exclude_also =
+    def __repr__
+    if self.debug:
+    if settings.DEBUG
+
+omit =
+  */__init__.py 
+  hsabackend/management/*
+  hsabackend/middleware/*
+  hsabackend/migrations/*
+  hsabackend/asgi.py
+  hsabackend/models.py  
+  hsabackend/urls.py
+  hsabackend/views/index.py
+  hsabackend/wsgi.py
+  hsabackend/settings.py
+  hsabackend/tests/*
