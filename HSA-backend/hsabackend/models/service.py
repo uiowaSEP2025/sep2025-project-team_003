@@ -11,3 +11,9 @@ class Service(models.Model):
     def __str__(self):
         return f"<Service, service_name: {self.service_name}, owning_org: {self.organization}>"
     
+    def json(self):
+        return {
+            'id': self.pk,
+            'service_name': self.service_name,
+            'service_description': self.service_description,
+        }
