@@ -42,3 +42,49 @@ def get_service_table_data(request):
         'totalCount': count
     }    
     return Response(res, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+def create_service(request):
+    if not request.user.is_authenticated:
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    org = Organization.objects.get(owning_User=request.user)
+    service_name = request.data.get('service_name', '')
+    service_description = request.data.get('service_description', '')
+
+    service = Service(
+        service_name = service_name,
+        service_description = service_description,
+        organization = org
+    )
+
+    try:
+        service.full_clean()  # Validate the model instance
+        service.save()
+        return Response({"message": "service created successfully"}, status=status.HTTP_201_CREATED)
+    except ValidationError as e:
+        return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(["POST"])
+def edit_service(request, id):
+    if not request.user.is_authenticated:
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    org = Organization.objects.get(owning_User=request.user)
+    service = Service.objects.get(pk=id, organization=org)
+
+    if not service:
+        return Response({"message": "The service does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    
+    service_name = request.data.get('service_name', '')
+    service_description = request.data.get('service_description', '')
+    
+    service.service_name = service_name
+    service.service_description = service_description
+    
+    try:
+        service.full_clean()  # Validate the model instance
+        service.save()
+        return Response({"message": "service edited successfully"}, status=status.HTTP_200_OK)
+    except ValidationError as e:
+        return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
