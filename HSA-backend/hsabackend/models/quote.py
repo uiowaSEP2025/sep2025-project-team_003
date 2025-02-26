@@ -1,6 +1,7 @@
 from django.db import models
-from . import job
-from . import discount_type
+from hsabackend.models.discount_type import DiscountType
+from hsabackend.models.job import Job
+
 class Quote(models.Model):
     """The price for a job that the organization sends to the customer for approval"""
     status_choices = [
@@ -13,8 +14,8 @@ class Quote(models.Model):
     status = models.CharField(max_length=50, choices=status_choices, default="created")
     material_subtotal = models.FloatField()
     total_price = models.FloatField()
-    jobID = models.OneToOneField(job.Job, on_delete= models.CASCADE)
-    discount_type = models.ForeignKey(discount_type.DiscountType, on_delete=models.CASCADE)
+    jobID = models.OneToOneField(Job, on_delete= models.CASCADE)
+    discount_type = models.ForeignKey(DiscountType, on_delete=models.CASCADE)
     
     def __str__(self):
         return f"<Quote, job: {self.jobID}>"

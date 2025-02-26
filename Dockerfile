@@ -6,7 +6,7 @@ WORKDIR /HSA-frontend
 RUN npm install -g @angular/cli
 RUN npm install
 
-RUN ./stream.sh
+RUN ./stream.sh staging
 
 FROM python:3.11 AS backend
 

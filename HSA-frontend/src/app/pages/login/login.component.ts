@@ -2,23 +2,15 @@ import { Component } from '@angular/core';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatButtonModule} from '@angular/material/button';
-import {ErrorStateMatcher} from '@angular/material/core';
 import {
   FormControl,
-  FormGroupDirective,
-  NgForm,
   Validators,
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
-
-
-export class MyErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
-    const isSubmitted = form && form.submitted;
-    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
-  }
-}
+import {MatSnackBar} from '@angular/material/snack-bar';
+import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
+import { UserAuthService } from '../../services/user-auth.service';
 
 @Component({
   selector: 'app-login',
@@ -27,7 +19,31 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
-  matcher = new MyErrorStateMatcher();
+  matcher = new GenericFormErrorStateMatcher();
   usernameFormControl = new FormControl('', [Validators.required]);
   passwordFormControl = new FormControl('', [Validators.required]);
+
+  constructor(private authService: UserAuthService, private snackBar: MatSnackBar) {}
+
+  onSubmit() {
+    if (this.usernameFormControl.valid && this.passwordFormControl.valid) {
+      this.authService.login({
+        username: this.usernameFormControl.value,
+        password: this.passwordFormControl.value
+      }).subscribe({
+        next: () => {
+          this.snackBar.open('Login Successfull', '', {
+            duration: 3000
+          });
+        },
+        error: (error) => {
+          if (error.status === 401) {
+            this.snackBar.open('Invalid login', '', {
+              duration: 3000
+            });
+          }
+        }
+      });
+    }
+  }
 }
