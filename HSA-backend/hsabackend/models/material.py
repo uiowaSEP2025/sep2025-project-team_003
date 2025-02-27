@@ -10,3 +10,8 @@ class Material(models.Model):
     def __str__(self):
         return f"<Material, name: {self.material_name}, organization: {self.organization}>"
     
+    def json(self):
+        return {
+            'id': self.pk,
+            'material_name': self.material_name,
+        }
