@@ -21,7 +21,7 @@ urlpatterns = [
     path("api/delete/customer/<int:id>", delete_customer),
 
     # request
-    path("api/get/request", get_org_request_data),
+    path("api/get/requests", get_org_request_data),
     path("api/delete/request/<int:id>", delete_customer),
 
     # all non API routes should redirect to angular

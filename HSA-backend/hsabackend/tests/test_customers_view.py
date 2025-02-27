@@ -247,5 +247,4 @@ class CustomerViewTest(APITestCase):
         request = factory.get('/api/delete/customers/1')
         request.user = mock_user  
         response = delete_customer(request,1)
-        print(response.status_code)
         assert response.status_code == status.HTTP_200_OK
