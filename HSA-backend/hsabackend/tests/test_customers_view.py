@@ -231,8 +231,21 @@ class CustomerViewTest(APITestCase):
         request = factory.get('/api/delete/customers/1')
         request.user = mock_user  
         response = delete_customer(request,1)
-        print(response.status_code)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    def test_delete_success(self):
-        pass
+    @patch('hsabackend.views.customers.Customer.objects.filter')
+    @patch('hsabackend.views.customers.Organization.objects.get')
+    def test_delete_success(self, org, cust):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True 
+        org.return_value = Organization()
+        cust_query_set = MagicMock()
+        cust_query_set.exists.return_value = True
+        cust.return_value = cust_query_set
+
+        factory = APIRequestFactory()
+        request = factory.get('/api/delete/customers/1')
+        request.user = mock_user  
+        response = delete_customer(request,1)
+        print(response.status_code)
+        assert response.status_code == status.HTTP_200_OK
