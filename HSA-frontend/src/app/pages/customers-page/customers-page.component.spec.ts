@@ -25,6 +25,7 @@ describe('CustomersPageComponent', () => {
         { provide: Router, useClass: MockRouter }]
     })
     .compileComponents();
+    spyOn(router, "navigate").and.returnValue(Promise.resolve(true))
 
     fixture = TestBed.createComponent(CustomersPageComponent);
     router = TestBed.inject(Router);
@@ -45,8 +46,6 @@ describe('CustomersPageComponent', () => {
   })
 
   it('should call router.navigate with the correct route when navigate is called', () => {
-    spyOn(router, "navigate").and.returnValue(Promise.resolve(true))
-    window.onbeforeunload = jasmine.createSpy();
     component.navigateToPage('customers/create');
     expect(router.navigate).toHaveBeenCalledWith(['/customers/create']);
   });

@@ -22,6 +22,7 @@ describe('ServicePageComponent', () => {
       ]
     })
     .compileComponents();
+    spyOn(router, "navigate").and.returnValue(Promise.resolve(true))
 
     fixture = TestBed.createComponent(ServicePageComponent);
     component = fixture.componentInstance;
@@ -42,8 +43,6 @@ describe('ServicePageComponent', () => {
   })
 
   it('should call router.navigate with the correct route when redirectCreate is called', () => {
-    spyOn(router, "navigate").and.returnValue(Promise.resolve(true))
-    window.onbeforeunload = jasmine.createSpy();
     component.navigateToPage('services/create');
     expect(router.navigate).toHaveBeenCalledWith(['/services/create']);
   });
@@ -54,8 +53,6 @@ describe('ServicePageComponent', () => {
 
     addButton.click();
     fixture.detectChanges();
-    spyOn(router, "navigate").and.returnValue(Promise.resolve(true))
-    window.onbeforeunload = jasmine.createSpy();
     expect(router.navigate).toHaveBeenCalledWith(['/services/create']);
   });
 
@@ -65,8 +62,6 @@ describe('ServicePageComponent', () => {
 
     materialListButton.click();
     fixture.detectChanges();
-    spyOn(router, "navigate").and.returnValue(Promise.resolve(true))
-    window.onbeforeunload = jasmine.createSpy();
     expect(router.navigate).toHaveBeenCalledWith(['/materials']);
   });
 
