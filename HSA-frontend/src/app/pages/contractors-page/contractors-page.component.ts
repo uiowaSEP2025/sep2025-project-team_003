@@ -3,6 +3,7 @@ import { TableComponentComponent } from '../../components/table-component/table-
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { Router } from '@angular/router';
+import { ContractorService } from '../../services/contractor.service';
 
 @Component({
   selector: 'app-contractors-page',
@@ -11,10 +12,13 @@ import { Router } from '@angular/router';
   styleUrl: './contractors-page.component.scss'
 })
 export class ContractorsPageComponent {
-  constructor(private router: Router) {}
+  contractorService: ContractorService
 
-  redirectCreate() {
-    this.router.navigate(['/contractors/create']);
+  constructor(private router: Router, contractorService: ContractorService) {
+    this.contractorService = contractorService
   }
 
+  navigateToPage(pagePath: string) {
+    this.router.navigate([`/${pagePath}`]);
+  }
 }
