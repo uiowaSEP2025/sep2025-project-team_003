@@ -43,7 +43,6 @@ export class MaterialsPageComponent implements OnInit {
       }
     })
   }
-  
 
   navigateToPage(pagePath: string) {
     this.router.navigate([`/${pagePath}`]).then(() => {

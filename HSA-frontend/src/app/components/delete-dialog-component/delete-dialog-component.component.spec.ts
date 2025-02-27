@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DeleteDialogComponentComponent } from './delete-dialog-component.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 describe('DeleteDialogComponentComponent', () => {
   let component: DeleteDialogComponentComponent;
@@ -8,7 +9,11 @@ describe('DeleteDialogComponentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DeleteDialogComponentComponent]
+      imports: [DeleteDialogComponentComponent],
+      providers: [
+        { provide: MatDialogRef, useValue: {} },
+        { provide: MAT_DIALOG_DATA, useValue: {} }
+      ]
     })
     .compileComponents();
 

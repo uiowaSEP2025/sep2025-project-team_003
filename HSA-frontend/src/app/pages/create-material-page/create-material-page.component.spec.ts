@@ -2,16 +2,21 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CreateMaterialPageComponent } from './create-material-page.component';
 import {provideAnimations} from '@angular/platform-browser/animations';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('CreateMaterialPageComponent', () => {
   let component: CreateMaterialPageComponent;
   let fixture: ComponentFixture<CreateMaterialPageComponent>;
+  let httpMock: HttpTestingController;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CreateMaterialPageComponent],
       providers: [
-        provideAnimations()
+        provideAnimations(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
       ],
     })
     .compileComponents();
