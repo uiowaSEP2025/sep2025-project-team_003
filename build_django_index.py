@@ -26,5 +26,5 @@ with open(file_path, "w", encoding="utf-8") as f:
 
 print("File processed successfully!")
 print("copying updated file...")
-shutil.copyfile(file_path, dest_path)
+shutil.move(file_path, dest_path)
 print("File copied successfully!")
