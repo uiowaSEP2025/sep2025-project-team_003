@@ -5,7 +5,6 @@ def isValidPhone(phone:str) -> bool:
     """validates a phone number without any separating parentheses 
     ex: not (123) - 456 - 7890, instead use 1234567890
     """
-    print('validator called')
     if len(phone) != 10:
         raise ValidationError(
             _("%(phone)s is not a valid length"),
