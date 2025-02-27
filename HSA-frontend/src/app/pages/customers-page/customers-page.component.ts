@@ -13,10 +13,22 @@ import { CustomerService } from '../../services/customer.service';
   styleUrl: './customers-page.component.scss'
 })
 export class CustomersPageComponent {
+  customers: any
   customerService: CustomerService
 
   constructor(private router: Router, customerService: CustomerService) {
     this.customerService = customerService
+  }
+
+  loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {
+    this.customerService.getCustomer({ search: searchTerm, pagesize: pageSize, offset: offSet}).subscribe({
+      next: (response) => {
+        this.customers = response
+      },
+      error: (error) => {
+        
+      }
+    })
   }
 
   navigateToPage(pagePath: string) {

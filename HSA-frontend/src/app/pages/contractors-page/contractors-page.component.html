@@ -1,5 +1,9 @@
 <div class="flex flex-col items-center">
-    <app-table-component editRedirect="/contractors/edit" deleteEndpoint="FIX ME LATER" [serviceRequest]="contractorService.deleteContractor.bind(contractorService)"></app-table-component>
+    <app-table-component 
+    editRedirect="/contractors/edit" 
+    [fetchedData]="contractors" 
+    [deleteRequest]="contractorService.deleteContractor.bind(contractorService)"
+    [loadDataToTable]="this.loadDataToTable.bind(this)"></app-table-component>
     <button mat-fab extended class="m-10" (click)="navigateToPage('contractors/create')">
         <mat-icon>note_add</mat-icon>
         Add a Contractor

@@ -12,10 +12,22 @@ import { ContractorService } from '../../services/contractor.service';
   styleUrl: './contractors-page.component.scss'
 })
 export class ContractorsPageComponent {
+  contractors: any
   contractorService: ContractorService
 
   constructor(private router: Router, contractorService: ContractorService) {
     this.contractorService = contractorService
+  }
+
+  loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {
+    this.contractorService.getContractor({ search: searchTerm, pagesize: pageSize, offset: offSet}).subscribe({
+      next: (response) => {
+        this.contractors = response
+      },
+      error: (error) => {
+        
+      }
+    })
   }
 
   navigateToPage(pagePath: string) {

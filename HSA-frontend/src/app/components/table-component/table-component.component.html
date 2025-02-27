@@ -11,18 +11,18 @@
     @for (header of headersWithActions; track header) {
     <ng-container [matColumnDef]="header">
       <th mat-header-cell *matHeaderCellDef> {{ header }} </th>
-      <td mat-cell *matCellDef="let element; let i = $index">
-        @if (header === "actions") {
+      <td mat-cell *matCellDef="let element; let i = $index;">
+        @if (header === "Actions") {
         <div class="flex justify-between">
           <button mat-mini-fab (click)="redirectEdit($index, element)">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-mini-fab (click)="openDeleteDialog($index, element)">
+          <button mat-mini-fab (click)="openDeleteDialog(element)">
             <mat-icon>delete</mat-icon>
           </button>
         </div>
         } @else {
-        {{ element[header] }}
+        {{ element[stringFormatter.formatCamelToSnake(header)] }}
         }
       </td>
     </ng-container>

@@ -4,6 +4,7 @@ import {MatFabButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {TableComponentComponent} from '../../components/table-component/table-component.component';
 import { MaterialService } from '../../services/material.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-materials-page',
@@ -20,10 +21,9 @@ export class MaterialsPageComponent implements OnInit {
   materialService: MaterialService
   @ViewChild(TableComponentComponent) tableComponent!: TableComponentComponent 
 
-  constructor(private router: Router, materialService: MaterialService) {
+  constructor(private router: Router, materialService: MaterialService, private snackBar: MatSnackBar) {
     this.materialService = materialService
   }
-  
 
   ngOnInit(): void {
     this.loadDataToTable("", 20, 0);
@@ -35,13 +35,13 @@ export class MaterialsPageComponent implements OnInit {
         this.materials = response
       },
       error: (error) => {
-        
+        if (error.status === 401) {
+          this.snackBar.open(`There is something wrong when retrieving data`, '', {
+            duration: 3000
+          });
+        }
       }
     })
-  }
-
-  onPageChange(event: { searchTerm: string; pageSize: number; offset: number }): void {
-    this.loadDataToTable(event.searchTerm, event.pageSize, event.offset);
   }
   
 
