@@ -104,12 +104,12 @@ class ServiceViewTest(APITestCase):
 
     @patch('hsabackend.views.services.Organization.objects.get')
     @patch('hsabackend.views.services.Service')
-    def test_calls_save_if_valid(self, cust, org):
+    def test_calls_save_if_valid(self, service_name, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         org.return_value = Organization()
-        cust_obj = MagicMock(spec=Service)
-        cust.return_value = cust_obj
+        service_name_obj = MagicMock(spec=Service)
+        service_name.return_value = service_name_obj
         
         factory = APIRequestFactory()
         request = factory.post('api/create/service',
@@ -119,7 +119,7 @@ class ServiceViewTest(APITestCase):
                 })
         request.user = mock_user   
         response = create_service(request)
-        cust_obj.save.assert_called_once()
+        service_name_obj.save.assert_called_once()
         assert response.status_code == status.HTTP_201_CREATED
 
     def test_edit_service_unauth(self):
@@ -135,10 +135,10 @@ class ServiceViewTest(APITestCase):
 
     @patch('hsabackend.views.services.Service.objects.get')
     @patch('hsabackend.views.services.Organization.objects.get')
-    def test_edit_service_not_found(self,org, cust):
+    def test_edit_service_not_found(self,org, service_name):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        cust.return_value = None
+        service_name.return_value = None
         org.return_value = Organization()
         
         factory = APIRequestFactory()
@@ -150,13 +150,13 @@ class ServiceViewTest(APITestCase):
 
     @patch('hsabackend.views.services.Service.objects.get')
     @patch('hsabackend.views.services.Organization.objects.get')
-    def test_edit_service_invalid(self,org, cust):
+    def test_edit_service_invalid(self,org, service_name):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        mock_cust = MagicMock(spec=Service)
-        cust.return_value = mock_cust
+        mock_service_name = MagicMock(spec=Service)
+        service_name.return_value = mock_service_name
         org.return_value = Organization()
-        mock_cust.full_clean.side_effect = ValidationError({'service_name': ['This field is required.']})
+        mock_service_name.full_clean.side_effect = ValidationError({'service_name': ['This field is required.']})
 
         factory = APIRequestFactory()
         request = factory.post('/api/edit/services/1',
@@ -171,11 +171,11 @@ class ServiceViewTest(APITestCase):
 
     @patch('hsabackend.views.services.Service.objects.get')
     @patch('hsabackend.views.services.Organization.objects.get')
-    def test_edit_service_valid(self,org, cust):
+    def test_edit_service_valid(self,org, service_name):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        mock_cust = MagicMock(spec=Service)
-        cust.return_value = mock_cust
+        mock_service_name = MagicMock(spec=Service)
+        service_name.return_value = mock_service_name
         org.return_value = Organization()
 
         factory = APIRequestFactory()

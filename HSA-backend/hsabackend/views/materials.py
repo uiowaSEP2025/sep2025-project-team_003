@@ -57,7 +57,7 @@ def create_material(request):
     )
 
     try:
-        material.full_clean()  # Validate the model instance
+        material.full_clean()
         material.save()
         return Response({"message": "material created successfully"}, status=status.HTTP_201_CREATED)
     except ValidationError as e:
