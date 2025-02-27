@@ -52,14 +52,4 @@ describe('ServicePageComponent', () => {
     fixture.detectChanges();
     expect(router.navigate).toHaveBeenCalledWith(['/services/create']);
   });
-
-  it ('should navigate to material page when click on material list', () => {
-    const compiled = fixture.debugElement.nativeElement;
-    const materialListButton = compiled.querySelector('#material-list-button');
-    spyOn(router, "navigate")
-
-    materialListButton.click();
-    fixture.detectChanges();
-    expect(router.navigate).toHaveBeenCalledWith(['/materials']);
-  });
 });

@@ -8,6 +8,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatIconModule } from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import { Router } from '@angular/router';
+import 
 
 // TODO: for data fetching, add a service: https://stackademic.com/blog/fetching-data-from-an-api-in-angular
 @Component({
@@ -29,7 +30,7 @@ export class TableComponentComponent implements AfterViewInit {
   // TODO: figure out how to do edit and delete redirects when the backend is integrated
   editRedirect = input.required<string>() // the URL to edit the component
   deleteEndpoint = input.required<string>()
-  data = new MatTableDataSource(rows);   
+  data = new MatTableDataSource(this.dataInput().data);   
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   refetchData(searchTerm: string | null) {
@@ -62,21 +63,3 @@ export class TableComponentComponent implements AfterViewInit {
         
       }
 }
-
-const rows = [
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' }
-]
