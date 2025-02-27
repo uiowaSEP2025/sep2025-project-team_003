@@ -5,13 +5,10 @@ from django.conf import settings
 
 import hsabackend.views.index as hview
 from hsabackend.views.user_auth import login_view
-<<<<<<< HEAD
 from hsabackend.views.customers import get_customer_table_data,create_customer,edit_customer, delete_customer
 from hsabackend.views.requests import get_org_request_data,delete_request
-=======
 from hsabackend.views.customers import get_customer_table_data,create_customer,edit_customer
 from hsabackend.views.services import get_service_table_data, create_service, edit_service
->>>>>>> dev
 
 urlpatterns = [
     path('admin/', admin.site.urls),
