@@ -34,7 +34,7 @@ def get_customer_table_data(request):
     
     count = Customer.objects.filter(organization=org.pk).filter(
         Q(first_name__icontains=search) | Q(last_name__icontains=search)
-    ).count()
+    ).count() if search else Customer.objects.filter(organization=org.pk).count()
 
     res = {
         'data': data,
@@ -72,8 +72,8 @@ def edit_customer(request, id):
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
     org = Organization.objects.get(owning_User=request.user)
-    customer = Customer.objects.get(pk=id, organization=org)
-    if not customer:
+    customer = Customer.objects.filter(pk=id, organization=org)
+    if not customer.exists():
         return Response({"message": "The customer does not exist"}, status=status.HTTP_404_NOT_FOUND)
     first_name = request.data.get('firstn', '')
     last_name = request.data.get('lastn', '')
@@ -93,3 +93,13 @@ def edit_customer(request, id):
         return Response({"message": "Customer edited successfully"}, status=status.HTTP_200_OK)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+    
+def delete_customer(request, id):
+    if not request.user.is_authenticated:
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    org = Organization.objects.get(owning_User=request.user.pk)
+    cust = Customer.objects.filter(pk=id, organization=org)
+    if not cust.exists():
+        return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    cust[0].delete()
+    return Response({"message": "Customer Deleted successfully"}, status=status.HTTP_200_OK)

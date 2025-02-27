@@ -3,6 +3,7 @@ from hsabackend.models.contractor import Contractor
 from hsabackend.models.organization import Organization
 from hsabackend.models.material import Material
 from hsabackend.models.service import Service
+from hsabackend.models.model_validators import isNonEmpty, validate_state
 
 class Job(models.Model):
     """A request for service from a customer to an organization"""
@@ -20,6 +21,10 @@ class Job(models.Model):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     materials = models.ManyToManyField(Material, through="MaterialJob")
     service = models.ManyToManyField(Service)
+    requestor_city = models.CharField(max_length=50,validators=[isNonEmpty])
+    requestor_state = models.CharField(max_length=50,validators=[isNonEmpty,validate_state])
+    requestor_zip = models.CharField(max_length=10,validators=[isNonEmpty])
+    requestor_address = models.CharField(max_length=100,validators=[isNonEmpty])
 
     def __str__(self):
         return f"<Job, organization: {self.organization}, description: {self.description}>"
