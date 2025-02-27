@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 from unittest.mock import Mock
 from unittest.mock import patch
 from django.contrib.auth.models import User
-from hsabackend.views.services import get_service_table_data, create_service, edit_service
+from hsabackend.views.services import get_service_table_data, create_service, edit_service, delete_service
 from rest_framework.test import APITestCase
 from hsabackend.models.organization import Organization
 from django.db.models import QuerySet
@@ -188,3 +188,20 @@ class ServiceViewTest(APITestCase):
         response = edit_service(request, 1)
         
         assert response.status_code == status.HTTP_200_OK
+
+    def test_delete_unauth(self):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = False
+        
+        factory = APIRequestFactory()
+        request = factory.get('/api/delete/service/1')
+        request.user = mock_user  
+        response = delete_service(request,1)
+        
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_delete_not_found(self):
+        pass
+
+    def test_delete_success(self):
+        pass
