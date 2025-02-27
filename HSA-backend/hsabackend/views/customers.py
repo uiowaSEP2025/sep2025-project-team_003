@@ -99,6 +99,7 @@ def delete_customer(request, id):
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
     org = Organization.objects.get(owning_User=request.user.pk)
     cust = Customer.objects.filter(pk=id, organization=org)
+    print(cust.exists, cust)
     if not cust.exists():
         return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
     cust[0].delete()

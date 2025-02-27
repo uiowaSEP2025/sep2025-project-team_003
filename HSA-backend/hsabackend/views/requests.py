@@ -65,14 +65,12 @@ def approve_request(request, id):
     the_req.delete()
 
     new_job = Job(
-        description = "",
         requestor_city = the_req.requestor_city,
         requestor_state = the_req.requestor_state,
         requestor_zip = the_req.requestor_zip,
         requestor_address = the_req.requestor_address,
         description = f"Customer name: {the_req.requestor_name}, Customer email: {the_req.requestor_email}" + "\n\n" + the_req.description 
     )
-
     try:
         new_job.full_clean()  # Validate the model instance
         new_job.save()
