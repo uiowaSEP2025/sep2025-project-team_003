@@ -211,10 +211,9 @@ class CustomerViewTest(APITestCase):
         mock_user.is_authenticated = False
         
         factory = APIRequestFactory()
-        request = factory.get('/api/delete/customers/1')
+        request = factory.post('/api/delete/customers/1')
         request.user = mock_user  
-        response = get_customer_table_data(request)
-        
+        response = delete_customer(request,1)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     @patch('hsabackend.views.customers.Customer.objects.filter')
@@ -228,7 +227,7 @@ class CustomerViewTest(APITestCase):
         cust.return_value = cust_query_set
 
         factory = APIRequestFactory()
-        request = factory.get('/api/delete/customers/1')
+        request = factory.post('/api/delete/customers/1')
         request.user = mock_user  
         response = delete_customer(request,1)
         assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -244,7 +243,7 @@ class CustomerViewTest(APITestCase):
         cust.return_value = cust_query_set
 
         factory = APIRequestFactory()
-        request = factory.get('/api/delete/customers/1')
+        request = factory.post('/api/delete/customers/1')
         request.user = mock_user  
         response = delete_customer(request,1)
         assert response.status_code == status.HTTP_200_OK

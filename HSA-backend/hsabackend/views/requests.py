@@ -42,7 +42,7 @@ def get_org_request_data(request):
     }    
     return Response(res, status=status.HTTP_200_OK)
     
-@api_view(["GET"])
+@api_view(["POST"])
 def delete_request(request,id):
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
@@ -53,6 +53,7 @@ def delete_request(request,id):
     req[0].delete()
     return Response({"message": "Request Deleted successfully"}, status=status.HTTP_200_OK)
 
+@api_view(["POST"])
 def approve_request(request, id):
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
@@ -61,6 +62,7 @@ def approve_request(request, id):
     if not req.exists():
         return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
     the_req = req[0]
+    print(the_req)
     the_req.delete()
 
     new_job = Job(
@@ -70,9 +72,5 @@ def approve_request(request, id):
         requestor_address = the_req.requestor_address,
         description = f"Customer name: {the_req.requestor_name}, Customer email: {the_req.requestor_email}" + "\n\n" + the_req.description 
     )
-    try:
-        new_job.full_clean()  # Validate the model instance
-        new_job.save()
-        return Response({"message": "Request approved successfully"}, status=status.HTTP_200_OK)
-    except ValidationError as e:
-        return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+    new_job.save() # don't need to validate when based off a valid request
+    return Response({"message": "Request approved successfully"}, status=status.HTTP_200_OK)

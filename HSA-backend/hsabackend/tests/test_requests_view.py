@@ -5,7 +5,7 @@ from unittest.mock import patch
 from django.contrib.auth.models import User
 from rest_framework.test import APIRequestFactory
 from rest_framework import status
-from hsabackend.views.requests import get_org_request_data, delete_request
+from hsabackend.views.requests import get_org_request_data, delete_request, approve_request
 from hsabackend.models.organization import Organization
 from django.db.models import QuerySet
 from django.db.models import Q
@@ -77,7 +77,7 @@ class UserAuthViewTest(APITestCase):
         mock_user.is_authenticated = False
         
         factory = APIRequestFactory()
-        request = factory.get('/api/delete/request/1')
+        request = factory.post('/api/delete/request/1')
         request.user = mock_user  
         response = delete_request(request,1)
         
@@ -97,7 +97,7 @@ class UserAuthViewTest(APITestCase):
 
 
         factory = APIRequestFactory()
-        request = factory.get('/api/delete/request/1')
+        request = factory.post('/api/delete/request/1')
         request.user = mock_user  
         response = delete_request(request,1)
 
@@ -115,10 +115,60 @@ class UserAuthViewTest(APITestCase):
         req_qs.exists.return_value = True
         req.return_value = req_qs
 
-
         factory = APIRequestFactory()
-        request = factory.get('/api/delete/request/1')
+        request = factory.post('/api/delete/request/1')
         request.user = mock_user  
         response = delete_request(request,1)
 
         assert response.status_code == status.HTTP_200_OK
+
+    def test_approve_unauth(self):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = False
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/approve/request/1')
+        request.user = mock_user  
+        response = approve_request(request,1)
+        
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    @patch('hsabackend.views.requests.Organization.objects.get')
+    @patch('hsabackend.views.requests.Request.objects.filter')
+    def test_approve_not_exists(self,filter, org):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        org.return_value = Organization()
+        factory = APIRequestFactory()
+        qs = MagicMock()
+        qs.exists.return_value = False
+        filter.return_value = qs
+        request = factory.post('/api/approve/request/1')
+        request.user = mock_user  
+        response = approve_request(request,1)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    @patch('hsabackend.views.requests.Job')
+    @patch('hsabackend.views.requests.Organization.objects.get')
+    @patch('hsabackend.views.requests.Request.objects.filter')
+    def test_approve_valid(self,filter, org, job):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        org.return_value = Organization()
+        factory = APIRequestFactory()
+        qs = MagicMock(name= "req qs")
+        qs.exists.return_value = True
+
+        the_req_mock = MagicMock(name = 'the req mock')
+        qs.__getitem__.side_effect = lambda x: the_req_mock
+
+        job_mock = MagicMock()
+        job.return_value = job_mock
+
+        filter.return_value = qs
+        request = factory.post('/api/approve/request/1')
+        request.user = mock_user  
+        response = approve_request(request,1)
+        assert response.status_code == status.HTTP_200_OK
+        the_req_mock.delete.assert_called_once()
+        job_mock.save.assert_called_once()

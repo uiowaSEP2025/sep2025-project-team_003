@@ -93,7 +93,8 @@ def edit_customer(request, id):
         return Response({"message": "Customer edited successfully"}, status=status.HTTP_200_OK)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
-    
+
+@api_view(["POST"])
 def delete_customer(request, id):
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)

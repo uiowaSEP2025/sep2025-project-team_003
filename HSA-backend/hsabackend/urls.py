@@ -23,6 +23,7 @@ urlpatterns = [
     # request
     path("api/get/requests", get_org_request_data),
     path("api/delete/request/<int:id>", delete_customer),
+    path("api/approve/request/<int:id>", delete_customer),
 
     # all non API routes should redirect to angular
     # must be at the bottom!!!
