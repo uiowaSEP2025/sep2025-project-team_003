@@ -115,20 +115,3 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   }
 }
 
-const rows = [
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' },
-  { header1: 'cat', header2: 'dog', header3: 'fish', header4: 'snake' }
-]
