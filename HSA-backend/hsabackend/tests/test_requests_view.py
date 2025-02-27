@@ -5,7 +5,7 @@ from unittest.mock import patch
 from django.contrib.auth.models import User
 from rest_framework.test import APIRequestFactory
 from rest_framework import status
-from hsabackend.views.requests import get_org_request_data
+from hsabackend.views.requests import get_org_request_data, delete_request
 from hsabackend.models.organization import Organization
 from django.db.models import QuerySet
 from django.db.models import Q
@@ -71,3 +71,54 @@ class UserAuthViewTest(APITestCase):
         
         assert response.status_code == status.HTTP_200_OK
         filter.assert_called_with(organization=1) 
+
+    def test_delete_unauth(self):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = False
+        
+        factory = APIRequestFactory()
+        request = factory.get('/api/delete/request/1')
+        request.user = mock_user  
+        response = delete_request(request,1)
+        
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    @patch('hsabackend.views.requests.Organization.objects.get')
+    @patch('hsabackend.views.requests.Request.objects.filter')
+    def test_delete_not_found(self, req, get):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        org = Mock(spec=Organization)
+        org.pk = 1
+        get.return_value = org
+        req_qs = MagicMock(id="request_queryset")
+        req_qs.exists.return_value = False
+        req.return_value = req_qs
+
+
+        factory = APIRequestFactory()
+        request = factory.get('/api/delete/request/1')
+        request.user = mock_user  
+        response = delete_request(request,1)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    @patch('hsabackend.views.requests.Organization.objects.get')
+    @patch('hsabackend.views.requests.Request.objects.filter')
+    def test_delete_success(self, req,get):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        org = Mock(spec=Organization)
+        org.pk = 1
+        get.return_value = org
+        req_qs = MagicMock(id="request_queryset")
+        req_qs.exists.return_value = True
+        req.return_value = req_qs
+
+
+        factory = APIRequestFactory()
+        request = factory.get('/api/delete/request/1')
+        request.user = mock_user  
+        response = delete_request(request,1)
+
+        assert response.status_code == status.HTTP_200_OK
