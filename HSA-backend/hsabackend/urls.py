@@ -30,6 +30,7 @@ urlpatterns = [
     path("api/get/services", get_service_table_data),
     path("api/create/service", create_service),
     path("api/edit/service/<int:id>", edit_service),
+    path("api/delete/service/<int:id>", delete_request),
 
 
     # all non API routes should redirect to angular
