@@ -87,3 +87,19 @@ def edit_material(request, id):
         return Response({"message": "material edited successfully"}, status=status.HTTP_200_OK)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(["POST"])
+def delete_material(request, id):
+    if not request.user.is_authenticated:
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    org = Organization.objects.get(owning_User=request.user)
+    material = Material.objects.filter(pk=id, organization=org)
+
+    if not material.exists():
+        return Response({"message": "The material does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    
+    material[0].delete()
+
+    return Response({"message": "The material was deleted"}, status=status.HTTP_200_OK)

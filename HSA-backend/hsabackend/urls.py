@@ -7,7 +7,7 @@ import hsabackend.views.index as hview
 from hsabackend.views.user_auth import login_view
 from hsabackend.views.customers import get_customer_table_data,create_customer,edit_customer
 from hsabackend.views.services import get_service_table_data, create_service, edit_service
-from hsabackend.views.materials import get_material_table_data, create_material, edit_material
+from hsabackend.views.materials import get_material_table_data, create_material, edit_material, delete_material
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,6 +24,7 @@ urlpatterns = [
     path("api/get/materials", get_material_table_data),
     path("api/create/material", create_material),
     path("api/edit/material/<int:id>", edit_material),
+    path("api/delete/material/<int:id>", delete_material),
 
     # all non API routes should redirect to angular
     # must be at the bottom!!!
