@@ -66,9 +66,9 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
       })}
 
       
-      redirectEdit(id: number) {
-        this.queryParams = this.fetchedData.data[0]
-        this.router.navigate([`${this.editRedirect()}/${id}`],{
+      redirectEdit(id: number, args: any) {
+        this.queryParams = args
+        this.router.navigate([`${this.editRedirect()}/${args.id}`],{
           queryParams: this.queryParams
         });
       }
