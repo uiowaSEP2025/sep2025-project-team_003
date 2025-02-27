@@ -194,14 +194,29 @@ class ServiceViewTest(APITestCase):
         mock_user.is_authenticated = False
         
         factory = APIRequestFactory()
-        request = factory.get('/api/delete/service/1')
+        request = factory.post('/api/delete/service/1')
+        request.user = mock_user  
+        response = delete_service(request,1)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    @patch('hsabackend.views.services.Service.objects.get')
+    @patch('hsabackend.views.services.Organization.objects.get')
+    def test_delete_not_found(self, org, service):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        mock_org = MagicMock()
+        mock_org.pk = 1 # this makes django think that the model is saved
+        org.return_value = mock_org 
+        mock_service_qs = MagicMock()
+        service.return_value = mock_service_qs
+        mock_service_qs.exists.return_value = False
+
+        factory = APIRequestFactory()
+        request = factory.post('/api/delete/service/1')
         request.user = mock_user  
         response = delete_service(request,1)
         
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
-    def test_delete_not_found(self):
-        pass
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_delete_success(self):
         pass

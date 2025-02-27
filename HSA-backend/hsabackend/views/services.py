@@ -94,8 +94,8 @@ def edit_service(request, id):
 def delete_service(request, id):
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
     org = Organization.objects.get(owning_User=request.user)
+    print(org.pk, id)
     service = Service.objects.filter(pk=id, organization=org)
     if not service.exists():
         return Response({"message": "The service does not exist"}, status=status.HTTP_404_NOT_FOUND)
