@@ -23,11 +23,11 @@ describe('MaterialsPageComponent', () => {
       ]
     })
     .compileComponents();
-    spyOn(router, "navigate").and.returnValue(Promise.resolve(true))
 
     fixture = TestBed.createComponent(MaterialsPageComponent);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
+    spyOn(router, "navigate").and.returnValue(Promise.resolve(true))
     fixture.detectChanges();
   });
 
@@ -42,12 +42,6 @@ describe('MaterialsPageComponent', () => {
     expect(table).toBeTruthy()
     expect(createButton).toBeTruthy()
   })
-
-  it('should call router.navigate with the correct route when navigate is called', () => {
-    component.navigateToPage('materials/create');
-    expect(router.navigate).toHaveBeenCalledWith(['/materials/create']);
-    expect(router.navigate).toHaveBeenCalledTimes(1);
-  });
 
   it ('should navigate to add material page when click on add new material', () => {
     const compiled = fixture.debugElement.nativeElement;

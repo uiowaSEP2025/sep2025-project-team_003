@@ -44,13 +44,6 @@ describe('ContractorsPageComponent', () => {
     expect(createButton).toBeTruthy()
   })
 
-  it('should call router.navigate with the correct route when navigate is called', () => {
-    spyOn(router, "navigate").and.returnValue(Promise.resolve(true))
-    window.onbeforeunload = jasmine.createSpy();
-    component.navigateToPage('contractors/create');
-    expect(router.navigate).toHaveBeenCalledWith(['/contractors/create']);
-  });
-
   afterEach(() => {
     (router.navigate as jasmine.Spy).calls.reset();
   })

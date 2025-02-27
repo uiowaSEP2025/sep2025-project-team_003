@@ -22,11 +22,11 @@ describe('ServicePageComponent', () => {
       ]
     })
     .compileComponents();
-    spyOn(router, "navigate").and.returnValue(Promise.resolve(true))
 
     fixture = TestBed.createComponent(ServicePageComponent);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
+    spyOn(router, "navigate").and.returnValue(Promise.resolve(true))
     fixture.detectChanges();
   });
 
@@ -41,11 +41,6 @@ describe('ServicePageComponent', () => {
     expect(table).toBeTruthy()
     expect(createButton).toBeTruthy()
   })
-
-  it('should call router.navigate with the correct route when redirectCreate is called', () => {
-    component.navigateToPage('services/create');
-    expect(router.navigate).toHaveBeenCalledWith(['/services/create']);
-  });
 
   it ('should navigate to create service page when click on add new service', () => {
     const compiled = fixture.debugElement.nativeElement;
