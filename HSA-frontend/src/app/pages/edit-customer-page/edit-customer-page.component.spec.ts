@@ -3,11 +3,14 @@ import { ActivatedRoute } from '@angular/router';
 import { EditCustomerPageComponent } from './edit-customer-page.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { of } from 'rxjs';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 
 describe('EditCustomerPageComponent', () => {
   let component: EditCustomerPageComponent;
   let fixture: ComponentFixture<EditCustomerPageComponent>;
+  let httpMock: HttpTestingController;
 
   beforeEach(async () => {
     const activatedRouteMock = {
@@ -15,7 +18,12 @@ describe('EditCustomerPageComponent', () => {
     };
     await TestBed.configureTestingModule({
       imports: [EditCustomerPageComponent],
-      providers: [{ provide: ActivatedRoute, useValue: activatedRouteMock },provideAnimationsAsync()] // Provide mock ActivatedRoute
+      providers: [
+        { provide: ActivatedRoute, useValue: activatedRouteMock },
+        provideAnimationsAsync(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ]
     })
     .compileComponents();
 

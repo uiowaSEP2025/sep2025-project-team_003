@@ -16,10 +16,22 @@ import { ServiceService } from '../../services/service.service';
   styleUrl: './service-page.component.scss'
 })
 export class ServicePageComponent {
+  services: any
   serviceService: ServiceService
   
   constructor(private router: Router, serviceService: ServiceService) {
     this.serviceService = serviceService
+  }
+
+  loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {
+    this.serviceService.getService({ search: searchTerm, pagesize: pageSize, offset: offSet}).subscribe({
+      next: (response) => {
+        this.services = response
+      },
+      error: (error) => {
+        
+      }
+    })
   }
 
   navigateToPage(pagePath: string) {

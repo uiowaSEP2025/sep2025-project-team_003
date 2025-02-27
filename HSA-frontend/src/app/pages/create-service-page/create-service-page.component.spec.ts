@@ -2,16 +2,21 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CreateServicePageComponent } from './create-service-page.component';
 import {provideAnimations} from '@angular/platform-browser/animations';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('CreateServicePageComponent', () => {
   let component: CreateServicePageComponent;
   let fixture: ComponentFixture<CreateServicePageComponent>;
+  let httpMock: HttpTestingController;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CreateServicePageComponent],
       providers: [
-        provideAnimations()
+        provideAnimations(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
       ],
     })
     .compileComponents();

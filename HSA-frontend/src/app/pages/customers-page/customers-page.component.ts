@@ -15,8 +15,8 @@ import { Customer } from '../../interfaces/customer.interface';
   styleUrl: './customers-page.component.scss'
 })
 export class CustomersPageComponent {
+  customers: any
   customerService: CustomerService
-  custommer: TableApiResponse<Customer>
 
   constructor(private router: Router, customerService: CustomerService) {
     this.customerService = customerService
@@ -25,16 +25,12 @@ export class CustomersPageComponent {
   loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {
     this.customerService.getCustomer({ search: searchTerm, pagesize: pageSize, offset: offSet}).subscribe({
       next: (response) => {
-        this.materials = response
+        this.customers = response
       },
       error: (error) => {
         
       }
     })
-  }
-
-  onPageChange(event: { searchTerm: string; pageSize: number; offset: number }): void {
-    this.loadDataToTable(event.searchTerm, event.pageSize, event.offset);
   }
 
   navigateToPage(pagePath: string) {

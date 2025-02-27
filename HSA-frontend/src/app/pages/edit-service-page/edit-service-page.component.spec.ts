@@ -4,11 +4,14 @@ import { EditServicePageComponent } from './edit-service-page.component';
 import {provideRouter, Router} from '@angular/router';
 import {provideAnimations} from '@angular/platform-browser/animations';
 import {of} from 'rxjs';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('EditServicePageComponent', () => {
   let component: EditServicePageComponent;
   let fixture: ComponentFixture<EditServicePageComponent>;
   let router: Router;
+  let httpMock: HttpTestingController;
 
   beforeEach(async () => {
     const activatedRouteMock = {
@@ -20,6 +23,8 @@ describe('EditServicePageComponent', () => {
       providers: [
         provideRouter([]),
         provideAnimations(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
       ]
     })
     .compileComponents();

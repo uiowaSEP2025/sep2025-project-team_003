@@ -3,11 +3,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { EditMaterialPageComponent } from './edit-material-page.component';
 import {provideRouter, Router} from '@angular/router';
 import {provideAnimations} from '@angular/platform-browser/animations';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('EditMaterialPageComponent', () => {
   let component: EditMaterialPageComponent;
   let fixture: ComponentFixture<EditMaterialPageComponent>;
   let router: Router;
+  let httpMock: HttpTestingController;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -15,6 +18,8 @@ describe('EditMaterialPageComponent', () => {
       providers: [
         provideRouter([]),
         provideAnimations(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
       ]
     })
     .compileComponents();
