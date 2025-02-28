@@ -6,7 +6,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatIconModule } from '@angular/material/icon';
-import {MatButtonModule} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteDialogComponentComponent } from '../delete-dialog-component/delete-dialog-component.component';
@@ -19,10 +19,10 @@ import { StringFormatter } from '../../utils/string-formatter';
 @Component({
   selector: 'app-table-component',
   imports: [
-    MatTableModule, 
-    MatPaginatorModule, 
-    MatInputModule, 
-    MatSelectModule, 
+    MatTableModule,
+    MatPaginatorModule,
+    MatInputModule,
+    MatSelectModule,
     ReactiveFormsModule,
     MatIconModule,
     MatButtonModule
@@ -37,24 +37,24 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   @Input() hideValues: string[] = []; // Make this optional, and initialize it with an empty array if not provided.
   searchHint = input<string>("Use me to search the data")
 
-  constructor(private router: Router, public dialog: MatDialog, private snackBar: MatSnackBar,) {}
+  constructor(private router: Router, public dialog: MatDialog, private snackBar: MatSnackBar,) { }
 
   searchControl = new FormControl('')
   stringFormatter = new StringFormatter()
   private searchSubscription: Subscription | null = null
   private dataSubscription: Subscription | null = null
-  page: number | null = null 
+  page: number | null = null
   pageSize: number | null = null
   dataSize: number | null = null
   headers = ['header1', 'header2', 'header3', 'header4']
   headersWithActions = [...this.headers, 'Actions']
-  
+
   queryParams: any;
 
   // TODO: figure out how to do edit and delete redirects when the backend is integrated
   editRedirect = input.required<string>()
 
-  data = new MatTableDataSource(this.fetchedData ?? []);   
+  data = new MatTableDataSource(this.fetchedData ?? []);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngAfterViewInit() {
@@ -67,9 +67,9 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
     }
 
     this.searchSubscription = this.searchControl.valueChanges.pipe(
-        debounceTime(0), // Wait for 300ms after the last change
-        distinctUntilChanged() // Only emit if the value has changed
-      )
+      debounceTime(0), // Wait for 300ms after the last change
+      distinctUntilChanged() // Only emit if the value has changed
+    )
       .subscribe((searchTerm) => {
         this.refetch(searchTerm ?? "")
       });
@@ -85,15 +85,17 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
       this.refetch(this.searchControl.value ?? "");
     });
   }
-    
+
   redirectEdit(id: number, args: any) {
+    console.log(id, args)
     this.queryParams = args
-    this.router.navigate([`${this.editRedirect()}/${args.id}`],{
+    this.router.navigate([`${this.editRedirect()}/${id}`], {
       queryParams: this.queryParams
     });
   }
 
   openDeleteDialog(args: any) {
+    console.log(args)
     const dialogRef = this.dialog.open(DeleteDialogComponentComponent, {
       width: '300px',
       data: args
@@ -138,7 +140,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
           console.log(!this.hideValues.includes(header), header)
           return !this.hideValues.includes(header)
         })
-      } 
+      }
     }
   }
 
@@ -148,7 +150,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
     }
 
     if (this.dataSubscription) {
-      this.dataSubscription.unsubscribe(); 
+      this.dataSubscription.unsubscribe();
     }
   }
 

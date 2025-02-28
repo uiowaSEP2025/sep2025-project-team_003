@@ -40,6 +40,7 @@ urlpatterns = [
     path("api/edit/material/<int:id>", edit_material),
     path("api/delete/material/<int:id>", delete_material),
 
+    # TODO: catch all for API requests and return 404
 
     # all non API routes should redirect to angular
     # must be at the bottom!!!
