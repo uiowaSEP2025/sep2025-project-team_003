@@ -10,7 +10,13 @@
 
     @for (header of headersWithActions; track header) {
     <ng-container [matColumnDef]="header">
-      <th mat-header-cell *matHeaderCellDef> {{ header }} </th>
+      <th mat-header-cell *matHeaderCellDef>
+        @if (!hideValues.includes(header)) {
+          <ng-container>
+            {{ header}}
+          </ng-container>
+        }
+      </th>
       <td mat-cell *matCellDef="let element; let i = $index;">
         @if (header === "Actions") {
         <div class="flex justify-between">
@@ -21,7 +27,7 @@
             <mat-icon>delete</mat-icon>
           </button>
         </div>
-        } @else {
+        } @else  {
         {{ element[stringFormatter.formatCamelToSnake(header)] }}
         }
       </td>

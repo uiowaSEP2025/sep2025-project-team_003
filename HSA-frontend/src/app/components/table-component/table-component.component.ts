@@ -34,6 +34,8 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   @Input() fetchedData: any = null
   @Input({ required: true }) deleteRequest!: (data: any) => Observable<StandardApiResponse>
   @Input({ required: true }) loadDataToTable!: (search: string, pageSize: number, offSet: number) => void
+  @Input() hideValues: string[] = []; // Make this optional, and initialize it with an empty array if not provided.
+  searchHint = input<string>("Use me to search the data")
 
   constructor(private router: Router, public dialog: MatDialog, private snackBar: MatSnackBar,) {}
 
@@ -46,7 +48,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   dataSize: number | null = null
   headers = ['header1', 'header2', 'header3', 'header4']
   headersWithActions = [...this.headers, 'Actions']
-  searchHint = input<string>("Use me to search the data")
+  
   queryParams: any;
 
   // TODO: figure out how to do edit and delete redirects when the backend is integrated
