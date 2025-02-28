@@ -26,7 +26,7 @@ export class MaterialsPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadDataToTable("", 20, 0);
+    this.loadDataToTable("", 5, 0);
   }
 
   loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {

@@ -41,7 +41,8 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   stringFormatter = new StringFormatter()
   private searchSubscription: Subscription | null = null
   page: number | null = null 
-  pageSize: number | null = null 
+  pageSize: number | null = null
+  dataSize: number | null = null
   headers = ['header1', 'header2', 'header3', 'header4']
   headersWithActions = [...this.headers, 'Actions']
   searchHint = input<string>("Use me to search the data")
@@ -58,19 +59,24 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
       this.searchSubscription.unsubscribe();  //Unsubscribe after any request make to prevent duplication of requests
     }
 
-    this.data.paginator = this.paginator;
     this.searchSubscription = this.searchControl.valueChanges.pipe(
         debounceTime(300), // Wait for 300ms after the last change
         distinctUntilChanged() // Only emit if the value has changed
       )
       .subscribe((searchTerm) => {
-        this.onTextFieldChange(searchTerm ?? "")
+        this.refetch(searchTerm ?? "")
       });
 
-    this.paginator.page.subscribe((page) => {
-      this.page = page.pageIndex;
-      this.pageSize = page.pageSize;
-    })}
+      this.paginator.page.pipe(
+        debounceTime(300), // Wait for 300ms after the last page change
+        distinctUntilChanged((prev, curr) => prev.pageIndex === curr.pageIndex && prev.pageSize === curr.pageSize) // Only emit if the page or page size has changed
+      ).subscribe((page) => {
+        console.log('Paginator page change');
+        this.page = page.pageIndex;
+        this.pageSize = page.pageSize;
+        this.refetch(this.searchControl.value ?? "");
+      });
+    }
 
     
     redirectEdit(id: number, args: any) {
@@ -112,9 +118,11 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
     }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes["fetchedData"]?.currentValue || changes["dataSource"] || changes["formControl"]) {
+    console.log('fuickckck')
+    if (changes["fetchedData"]?.currentValue || changes["formControl"]) {
       this.fetchedData = changes["fetchedData"].currentValue;
       this.data = new MatTableDataSource(this.fetchedData.data ?? []);
+      this.dataSize = this.fetchedData.totalCount
       if (this.fetchedData.data[0] !== undefined) {
         this.headers = Object.keys(this.fetchedData.data[0]);
         this.headers = this.headers.map(header => this.stringFormatter.formatSnakeToCamel(header))
@@ -131,7 +139,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
     }
   }
 
-  onTextFieldChange(textField: string) {
+  refetch(textField: string) {
     this.loadDataToTable(textField, this.pageSize ?? 20, this.page ?? 0)
   }
 }

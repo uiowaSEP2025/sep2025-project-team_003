@@ -32,6 +32,8 @@
     <tr mat-row *matRowDef="let row; columns: headersWithActions;"></tr>
   </table>
 
-  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons [length]="data.data.length">
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons [length]="dataSize">
+  
   </mat-paginator>
+  <div>{{dataSize}}</div>
 </div>
