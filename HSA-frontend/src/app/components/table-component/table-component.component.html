@@ -11,11 +11,9 @@
     @for (header of headersWithActions; track header) {
     <ng-container [matColumnDef]="header">
       <th mat-header-cell *matHeaderCellDef>
-        @if (!hideValues.includes(header)) {
-          <ng-container>
-            {{ header}}
-          </ng-container>
-        }
+        <ng-container>
+          {{ header }}
+        </ng-container>
       </th>
       <td mat-cell *matCellDef="let element; let i = $index;">
         @if (header === "Actions") {
@@ -37,6 +35,6 @@
     <tr mat-header-row *matHeaderRowDef="headersWithActions"></tr>
     <tr mat-row *matRowDef="let row; columns: headersWithActions;"></tr>
   </table>
-
+  <div>{{headersWithActions}}</div>
   <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons [length]="dataSize"></mat-paginator>
 </div>

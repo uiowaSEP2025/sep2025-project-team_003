@@ -134,7 +134,10 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
       if (this.fetchedData.data[0] !== undefined) {
         this.headers = Object.keys(this.fetchedData.data[0]);
         this.headers = this.headers.map(header => this.stringFormatter.formatSnakeToCamel(header))
-        this.headersWithActions = [...this.headers, 'Actions']
+        this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
+          console.log(!this.hideValues.includes(header), header)
+          return !this.hideValues.includes(header)
+        })
       } 
     }
   }
