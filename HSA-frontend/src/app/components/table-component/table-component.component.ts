@@ -60,7 +60,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
     }
 
     this.searchSubscription = this.searchControl.valueChanges.pipe(
-        debounceTime(300), // Wait for 300ms after the last change
+        debounceTime(0), // Wait for 300ms after the last change
         distinctUntilChanged() // Only emit if the value has changed
       )
       .subscribe((searchTerm) => {
@@ -68,7 +68,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
       });
 
       this.paginator.page.pipe(
-        debounceTime(300), // Wait for 300ms after the last page change
+        debounceTime(0), // Wait for 300ms after the last page change
         distinctUntilChanged((prev, curr) => prev.pageIndex === curr.pageIndex && prev.pageSize === curr.pageSize) // Only emit if the page or page size has changed
       ).subscribe((page) => {
         console.log('Paginator page change');
@@ -118,8 +118,9 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
     }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('fuickckck')
+    
     if (changes["fetchedData"]?.currentValue || changes["formControl"]) {
+    
       this.fetchedData = changes["fetchedData"].currentValue;
       this.data = new MatTableDataSource(this.fetchedData.data ?? []);
       this.dataSize = this.fetchedData.totalCount
@@ -127,9 +128,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
         this.headers = Object.keys(this.fetchedData.data[0]);
         this.headers = this.headers.map(header => this.stringFormatter.formatSnakeToCamel(header))
         this.headersWithActions = [...this.headers, 'Actions']
-      }
-      
-      this.ngAfterViewInit()
+      } 
     }
   }
 
