@@ -40,6 +40,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   searchControl = new FormControl('')
   stringFormatter = new StringFormatter()
   private searchSubscription: Subscription | null = null
+  private dataSubscription: Subscription | null = null
   page: number | null = null 
   pageSize: number | null = null
   dataSize: number | null = null
@@ -55,6 +56,10 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngAfterViewInit() {
+    if (this.dataSubscription) {
+      this.dataSubscription.unsubscribe();
+    }
+
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();  //Unsubscribe after any request make to prevent duplication of requests
     }
@@ -67,63 +72,63 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
         this.refetch(searchTerm ?? "")
       });
 
-      this.paginator.page.pipe(
-        debounceTime(0), // Wait for 300ms after the last page change
-        distinctUntilChanged((prev, curr) => prev.pageIndex === curr.pageIndex && prev.pageSize === curr.pageSize) // Only emit if the page or page size has changed
-      ).subscribe((page) => {
-        console.log('Paginator page change');
-        this.page = page.pageIndex;
-        this.pageSize = page.pageSize;
-        this.refetch(this.searchControl.value ?? "");
-      });
-    }
 
+    this.dataSubscription = this.paginator.page.pipe(
+      debounceTime(100), // Wait for 300ms after the last page change
+      distinctUntilChanged((prev, curr) => prev.pageIndex === curr.pageIndex && prev.pageSize === curr.pageSize) // Only emit if the page or page size has changed
+    ).subscribe((page) => {
+      console.log('Paginator page change');
+      this.page = page.pageIndex;
+      this.pageSize = page.pageSize;
+      this.refetch(this.searchControl.value ?? "");
+    });
+  }
     
-    redirectEdit(id: number, args: any) {
-      this.queryParams = args
-      this.router.navigate([`${this.editRedirect()}/${args.id}`],{
-        queryParams: this.queryParams
-      });
-    }
+  redirectEdit(id: number, args: any) {
+    this.queryParams = args
+    this.router.navigate([`${this.editRedirect()}/${args.id}`],{
+      queryParams: this.queryParams
+    });
+  }
 
-    openDeleteDialog(args: any) {
-      const dialogRef = this.dialog.open(DeleteDialogComponentComponent, {
-        width: '300px',
-        data: args
-      });
+  openDeleteDialog(args: any) {
+    const dialogRef = this.dialog.open(DeleteDialogComponentComponent, {
+      width: '300px',
+      data: args
+    });
 
-      setTimeout(() => {
-        document.getElementById('modal')?.removeAttribute('aria-hidden');
-      }, 10);
-  
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.deleteRequest(args).subscribe({
-            next: () => {
-              this.snackBar.open(`Delete successfully`, '', {
+    setTimeout(() => {
+      document.getElementById('modal')?.removeAttribute('aria-hidden');
+    }, 10);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.deleteRequest(args).subscribe({
+          next: () => {
+            this.snackBar.open(`Delete successfully`, '', {
+              duration: 3000
+            });
+            window.location.reload(); //reload for now, may have a better solution
+          },
+          error: (error) => {
+            if (error.status === 401) {
+              this.snackBar.open(`There is something wrong when deleting`, '', {
                 duration: 3000
               });
-              window.location.reload(); //reload for now, may have a better solution
-            },
-            error: (error) => {
-              if (error.status === 401) {
-                this.snackBar.open(`There is something wrong when deleting`, '', {
-                  duration: 3000
-                });
-              }
             }
-          });
-        }
-      });
-    }
+          }
+        });
+      }
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
-    
-    if (changes["fetchedData"]?.currentValue || changes["formControl"]) {
-    
+
+    if (changes["fetchedData"]?.currentValue || changes["dataSource"] || changes["formControl"]) {
       this.fetchedData = changes["fetchedData"].currentValue;
       this.data = new MatTableDataSource(this.fetchedData.data ?? []);
       this.dataSize = this.fetchedData.totalCount
+
       if (this.fetchedData.data[0] !== undefined) {
         this.headers = Object.keys(this.fetchedData.data[0]);
         this.headers = this.headers.map(header => this.stringFormatter.formatSnakeToCamel(header))
@@ -135,6 +140,10 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   ngOnDestroy() {
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();
+    }
+
+    if (this.dataSubscription) {
+      this.dataSubscription.unsubscribe(); 
     }
   }
 
