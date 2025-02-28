@@ -16,10 +16,8 @@ class Customer(models.Model):
     
     def json(self):
                 return {
-            'id': self.pk,
             'first_name': self.first_name,
             'last_name': self.last_name,
             'email': self.email,
             'phone_no': self.phone_no,
-            'notes': self.notes,
         }

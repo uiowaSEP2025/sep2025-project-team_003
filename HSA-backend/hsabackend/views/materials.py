@@ -24,7 +24,7 @@ def get_material_table_data(request):
         offset = int(offset)
     except:
         return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
-    
+    offset = offset * pagesize
     materials = Material.objects.filter(organization=org.pk).filter(
         Q(material_name__icontains=search) 
     )[offset:offset + pagesize] if search else Material.objects.filter(organization=org.pk)[offset:offset + pagesize]
