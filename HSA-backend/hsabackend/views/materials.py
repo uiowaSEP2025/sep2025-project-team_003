@@ -5,7 +5,7 @@ from hsabackend.models.organization import Organization
 from hsabackend.models.material import Material
 from django.db.models import Q
 from django.core.exceptions import ValidationError
-
+ 
 @api_view(["GET"])
 def get_material_table_data(request):
     if not request.user.is_authenticated:
@@ -18,17 +18,17 @@ def get_material_table_data(request):
     
     if not pagesize or not offset:
         return Response({"message": "missing pagesize or offset"}, status=status.HTTP_400_BAD_REQUEST)
-
+ 
     try:
         pagesize = int(pagesize)
         offset = int(offset)
     except:
         return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
-    
+    offset = offset * pagesize
     materials = Material.objects.filter(organization=org.pk).filter(
-        Q(material_name__icontains=search) 
+        Q(material_name__icontains=search)
     )[offset:offset + pagesize] if search else Material.objects.filter(organization=org.pk)[offset:offset + pagesize]
-
+ 
     data = []
     for material in materials:
         data.append(material.json())
@@ -36,13 +36,13 @@ def get_material_table_data(request):
     count = Material.objects.filter(organization=org.pk).filter(
         Q(material_name__icontains=search)
     ).count()
-
+ 
     res = {
         'data': data,
         'totalCount': count
     }    
     return Response(res, status=status.HTTP_200_OK)
-
+ 
 @api_view(["POST"])
 def create_material(request):
     if not request.user.is_authenticated:
@@ -50,19 +50,19 @@ def create_material(request):
     
     org = Organization.objects.get(owning_User=request.user)
     material_name = request.data.get('material_name', '')
-
+ 
     material = Material(
         material_name = material_name,
         organization = org
     )
-
+ 
     try:
         material.full_clean()
         material.save()
         return Response({"message": "material created successfully"}, status=status.HTTP_201_CREATED)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
-
+ 
 @api_view(["POST"])
 def edit_material(request, id):
     if not request.user.is_authenticated:
@@ -73,12 +73,12 @@ def edit_material(request, id):
         material = Material.objects.get(pk=id, organization=org)
     except Material.DoesNotExist:
         return Response({"message": "The material does not exist"}, status=status.HTTP_404_NOT_FOUND)
-
+ 
     if not material:
         return Response({"message": "The material does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
     material_name = request.data.get('material_name', '')
-
+ 
     material.material_name = material_name
     
     try:
@@ -88,7 +88,7 @@ def edit_material(request, id):
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
     
-
+ 
 @api_view(["POST"])
 def delete_material(request, id):
     if not request.user.is_authenticated:
@@ -96,10 +96,10 @@ def delete_material(request, id):
     
     org = Organization.objects.get(owning_User=request.user)
     material = Material.objects.filter(pk=id, organization=org)
-
+ 
     if not material.exists():
         return Response({"message": "The material does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
     material[0].delete()
-
+ 
     return Response({"message": "The material was deleted"}, status=status.HTTP_200_OK)
