@@ -62,7 +62,6 @@ def approve_request(request, id):
     if not req.exists():
         return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
     the_req = req[0]
-    print(the_req)
     the_req.delete()
 
     new_job = Job(
