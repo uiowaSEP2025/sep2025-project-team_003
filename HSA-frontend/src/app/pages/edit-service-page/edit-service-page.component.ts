@@ -29,8 +29,8 @@ export class EditServicePageComponent {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      this.serviceForm.controls['serviceName'].setValue(params['fname']);
-      this.serviceForm.controls['serviceDescription'].setValue(params['lname']);
+      this.serviceForm.controls['serviceName'].setValue(params['service_name']);
+      this.serviceForm.controls['serviceDescription'].setValue(params['service_description']);
     })
 
     this.currentServiceName = this.serviceForm.controls['serviceName'].value
