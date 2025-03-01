@@ -4,6 +4,7 @@ import {MatError, MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from '@angular/router';
+import { ServiceService } from '../../services/service.service';
 
 @Component({
   selector: 'app-edit-service-page',
@@ -21,8 +22,9 @@ import {ActivatedRoute, Router} from '@angular/router';
 export class EditServicePageComponent {
   serviceForm: FormGroup;
   public currentServiceName: string;
+  serviceID: number | null = null
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute, private serviceFormBuilder: FormBuilder) {
+  constructor(private router: Router, private activatedRoute: ActivatedRoute, private serviceFormBuilder: FormBuilder, private serviceService: ServiceService) {
     this.serviceForm = this.serviceFormBuilder.group({
       serviceName: ['', Validators.required],
       serviceDescription: [''],
@@ -33,15 +35,32 @@ export class EditServicePageComponent {
       this.serviceForm.controls['serviceDescription'].setValue(params['service_description']);
     })
 
+    this.activatedRoute.paramMap.subscribe(params => {
+      this.serviceID = Number(params.get('id'));
+    })
+
     this.currentServiceName = this.serviceForm.controls['serviceName'].value
   }
 
   onSubmit() {
     if (this.serviceForm.invalid) {
       this.serviceForm.markAllAsTouched();
-      return;
-    } else {
-    }
+      return;}
+      const data = {
+        id: this.serviceID,
+        service_name: this.serviceForm.controls['serviceName'].value,
+        service_description: this.serviceForm.controls['serviceDescription'].value
+      }
+      this.serviceService.editService(data).subscribe(
+        {next: (response) => {
+          this.router.navigate(['/services']);
+        },
+        error: (error) => {
+          if (error.status === 401) {
+            this.router.navigate(['/login']);
+          }
+        }}
+      )
   }
 
   navigateToPage(pagePath: string) {
