@@ -65,7 +65,6 @@ export class EditCustomerPageComponent implements OnInit {
         this.router.navigate(['/customers']);
       },
       error: (error) => {
-        // TODO: Bounce to login
         if (error.status === 401) {
           this.router.navigate(['/login']);
         }

@@ -51,7 +51,6 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
 
   queryParams: any;
 
-  // TODO: figure out how to do edit and delete redirects when the backend is integrated
   editRedirect = input.required<string>()
 
   data = new MatTableDataSource(this.fetchedData ?? []);
