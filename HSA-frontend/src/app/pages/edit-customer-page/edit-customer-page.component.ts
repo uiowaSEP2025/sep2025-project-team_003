@@ -50,7 +50,24 @@ export class EditCustomerPageComponent implements OnInit {
     })
   }
 
+  private isFormValid(): boolean {
+    if (this.firstNameControl.valid &&
+      this.lastNameControl.valid &&
+      this.emailControl.valid &&
+      this.phoneControl.valid &&
+      this.notesControl) 
+      {
+        return true
+      }
+      return false
+    }
+    
+  
+
   handleSave() {
+    if (!this.isFormValid()) {
+      return
+    }
     const args = {
       id: this.custId,
       firstn: this.firstNameControl.value,

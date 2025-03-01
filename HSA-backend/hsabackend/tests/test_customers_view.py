@@ -179,7 +179,6 @@ class CustomerViewTest(APITestCase):
                     })
         request.user = mock_user  
         response = edit_customer(request, 1)
-        print(response.status_code)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @patch('hsabackend.views.customers.Customer.objects.filter')

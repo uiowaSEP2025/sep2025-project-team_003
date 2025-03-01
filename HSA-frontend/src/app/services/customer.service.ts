@@ -54,6 +54,7 @@ export class CustomerService {
     
   
     public createCustomer(data:CustomerCreatePostData): Observable<StandardApiResponse> {
+      console.log('sending post the customers')
       return this.http.post<StandardApiResponse>(this.apiCreateUrl, data);
     }
   

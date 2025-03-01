@@ -4,7 +4,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { CustomerService } from '../../services/customer.service';
-
 @Component({
   selector: 'app-customers-page',
   imports: [TableComponentComponent, MatButtonModule, MatIconModule],
@@ -29,7 +28,9 @@ export class CustomersPageComponent implements OnInit {
         this.customers = response
       },
       error: (error) => {
-        
+          if (error.status === 401) {
+            this.router.navigate(['/login']);
+          }
       }
     })
   }

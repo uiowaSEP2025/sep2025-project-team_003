@@ -14,7 +14,6 @@ def get_customer_table_data(request):
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset',0)
-    
     if not pagesize or not offset:
         return Response({"message": "missing pagesize or offset"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -24,6 +23,7 @@ def get_customer_table_data(request):
     except:
         return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
     
+    offset = offset * pagesize
     customers = Customer.objects.filter(organization=org.pk).filter(
         Q(first_name__icontains=search) | Q(last_name__icontains=search) 
     )[offset:offset + pagesize] if search else Customer.objects.filter(organization=org.pk)[offset:offset + pagesize]
@@ -50,7 +50,7 @@ def create_customer(request):
     first_name = request.data.get('firstn', '')
     last_name = request.data.get('lastn', '')
     email = request.data.get('email', '')
-    phone_no = request.data.get('phoneno', '')
+    phone_no = request.data.get('phoneno', '').replace("-","")
     notes = request.data.get('notes', '')
     customer = Customer(
         first_name = first_name,
@@ -58,7 +58,7 @@ def create_customer(request):
         email = email,
         phone_no = phone_no,
         notes = notes,
-        organization = org
+        organization = org,
     )
     try:
         customer.full_clean()  # Validate the model instance
