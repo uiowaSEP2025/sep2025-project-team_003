@@ -33,7 +33,6 @@ export class CreateServicePageComponent {
       this.serviceForm.markAllAsTouched();
       return;
     } else {
-      console.log("Submitted");
     }
   }
 

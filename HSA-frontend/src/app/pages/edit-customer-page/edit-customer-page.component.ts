@@ -51,7 +51,6 @@ export class EditCustomerPageComponent implements OnInit {
   }
 
   handleSave() {
-    console.log('here')
     const args = {
       id: this.custId,
       firstn: this.firstNameControl.value,

@@ -40,7 +40,6 @@ def get_customer_table_data(request):
         'data': data,
         'totalCount': count
     }    
-    print(res)
     return Response(res, status=status.HTTP_200_OK)
     
 @api_view(["POST"])
@@ -82,7 +81,6 @@ def edit_customer(request, id):
     email = request.data.get('email', '')
     phone_no = request.data.get('phoneno', '')
     notes = request.data.get('notes', '')
-    
     customer.first_name = first_name
     customer.last_name = last_name
     customer.email = email

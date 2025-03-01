@@ -78,7 +78,6 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
       debounceTime(100), // Wait for 300ms after the last page change
       distinctUntilChanged((prev, curr) => prev.pageIndex === curr.pageIndex && prev.pageSize === curr.pageSize) // Only emit if the page or page size has changed
     ).subscribe((page) => {
-      console.log('Paginator page change');
       this.page = page.pageIndex;
       this.pageSize = page.pageSize;
       this.refetch(this.searchControl.value ?? "");
@@ -86,7 +85,6 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   }
 
   redirectEdit(id: number, args: any) {
-    console.log(id, args)
     this.queryParams = args
     this.router.navigate([`${this.editRedirect()}/${id}`], {
       queryParams: this.queryParams
@@ -94,7 +92,6 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   }
 
   openDeleteDialog(args: any) {
-    console.log(args)
     const dialogRef = this.dialog.open(DeleteDialogComponentComponent, {
       width: '300px',
       data: args
@@ -136,7 +133,6 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
         this.headers = Object.keys(this.fetchedData.data[0]);
         this.headers = this.headers.map(header => this.stringFormatter.formatSnakeToCamel(header))
         this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
-          console.log(!this.hideValues.includes(header), header)
           return !this.hideValues.includes(header)
         })
       }

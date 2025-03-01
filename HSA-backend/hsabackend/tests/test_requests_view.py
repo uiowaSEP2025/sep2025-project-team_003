@@ -10,7 +10,7 @@ from hsabackend.models.organization import Organization
 from django.db.models import QuerySet
 from django.db.models import Q
 
-class UserAuthViewTest(APITestCase):
+class RequestView(APITestCase):
     def test_get_customer_table_data_unauth(self):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = False
@@ -148,10 +148,11 @@ class UserAuthViewTest(APITestCase):
         response = approve_request(request,1)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
+    @patch('hsabackend.views.requests.Customer.objects.create')
     @patch('hsabackend.views.requests.Job')
     @patch('hsabackend.views.requests.Organization.objects.get')
     @patch('hsabackend.views.requests.Request.objects.filter')
-    def test_approve_valid(self,filter, org, job):
+    def test_approve_valid(self,filter, org, job, customer):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         org.return_value = Organization()
@@ -164,7 +165,9 @@ class UserAuthViewTest(APITestCase):
 
         job_mock = MagicMock()
         job.return_value = job_mock
-
+        cust_mock = MagicMock(name="cust mock")
+        customer.return_value = cust_mock
+        
         filter.return_value = qs
         request = factory.post('/api/approve/request/1')
         request.user = mock_user  
@@ -172,3 +175,4 @@ class UserAuthViewTest(APITestCase):
         assert response.status_code == status.HTTP_200_OK
         the_req_mock.delete.assert_called_once()
         job_mock.save.assert_called_once()
+        customer.assert_called_once()

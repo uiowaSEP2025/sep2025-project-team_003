@@ -136,7 +136,6 @@ class CustomerViewTest(APITestCase):
         request = factory.post('/api/edit/customers/1')
         request.user = mock_user  
         response = edit_customer(request,1)
-        
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     @patch('hsabackend.views.customers.Customer.objects.filter')
@@ -161,10 +160,12 @@ class CustomerViewTest(APITestCase):
     def test_edit_customer_invalid(self,org, cust):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        mock_cust = MagicMock()
-        mock_cust.exists.return_value = True
-        cust.return_value = mock_cust
+        cust_qs = MagicMock()
+        cust_qs.exists.return_value = True
+        cust.return_value = cust_qs
         org.return_value = Organization()
+        mock_cust = MagicMock(name="mock cust")
+        cust_qs.__getitem__.side_effect = lambda x: mock_cust
         mock_cust.full_clean.side_effect = ValidationError({'firstn': ['This field is required.']})
 
         factory = APIRequestFactory()
@@ -178,7 +179,7 @@ class CustomerViewTest(APITestCase):
                     })
         request.user = mock_user  
         response = edit_customer(request, 1)
-        
+        print(response.status_code)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @patch('hsabackend.views.customers.Customer.objects.filter')

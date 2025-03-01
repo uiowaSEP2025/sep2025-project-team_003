@@ -59,7 +59,6 @@ export class SignupPageComponent implements OnInit {
       this.registrationForm.markAllAsTouched();
       return;
     } else {
-      console.log("Submitted");
     }
   }
 

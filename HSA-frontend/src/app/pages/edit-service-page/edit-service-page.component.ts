@@ -41,7 +41,6 @@ export class EditServicePageComponent {
       this.serviceForm.markAllAsTouched();
       return;
     } else {
-      console.log("Submitted");
     }
   }
 
