@@ -40,6 +40,7 @@ def get_customer_table_data(request):
         'data': data,
         'totalCount': count
     }    
+    print(res)
     return Response(res, status=status.HTTP_200_OK)
     
 @api_view(["POST"])
@@ -72,9 +73,10 @@ def edit_customer(request, id):
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
     org = Organization.objects.get(owning_User=request.user)
-    customer = Customer.objects.filter(pk=id, organization=org)
-    if not customer.exists():
+    customer_qs = Customer.objects.filter(pk=id, organization=org)
+    if not customer_qs.exists():
         return Response({"message": "The customer does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    customer = customer_qs[0]
     first_name = request.data.get('firstn', '')
     last_name = request.data.get('lastn', '')
     email = request.data.get('email', '')
@@ -84,7 +86,7 @@ def edit_customer(request, id):
     customer.first_name = first_name
     customer.last_name = last_name
     customer.email = email
-    customer.phone_no = phone_no
+    customer.phone_no = phone_no.replace("-",'')
     customer.notes = notes
     
     try:

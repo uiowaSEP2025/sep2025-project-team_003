@@ -26,6 +26,7 @@ export class CustomersPageComponent implements OnInit {
   loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {
     this.customerService.getCustomer({ search: searchTerm, pagesize: pageSize, offset: offSet}).subscribe({
       next: (response) => {
+        console.log(response)
         this.customers = response
       },
       error: (error) => {

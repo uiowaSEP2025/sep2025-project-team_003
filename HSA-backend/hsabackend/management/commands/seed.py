@@ -111,6 +111,9 @@ class Command(BaseCommand):
                 )
                 c2.save()
 
+                customers = Customer.objects.filter(organization=org.pk)
+                customers_1 = Customer.objects.filter(organization=org.pk)
+
                 material_names = [
                     "Steel Beam",
                     "Concrete Mix",
@@ -228,6 +231,7 @@ class Command(BaseCommand):
                     end_date=timezone.now().date() + timezone.timedelta(days=random.randint(1, 30)),
                     description=random.choice(job_descriptions),
                     organization=org,
+                    customer=customers[i]
                 )
                 j.save()
 
@@ -237,6 +241,7 @@ class Command(BaseCommand):
                     end_date=timezone.now().date() + timezone.timedelta(days=random.randint(1, 30)),
                     description=random.choice(job_descriptions) + " test",
                     organization=org1,
+                    customer=customers_1[i]
                 )
                 j.save()
 
@@ -301,11 +306,6 @@ class Command(BaseCommand):
                     discount_type = random.choice(discounts)
                     )
                 q.save()
-
-
-        
-            customers = Customer.objects.filter(organization=org.pk)
-            customers_1 = Customer.objects.filter(organization=org.pk)
 
 
             for i in range(5):
