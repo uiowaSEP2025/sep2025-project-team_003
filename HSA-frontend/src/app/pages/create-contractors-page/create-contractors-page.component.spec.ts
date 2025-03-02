@@ -21,6 +21,7 @@ describe('CreateContractorsPageComponent', () => {
       .compileComponents();
 
     fixture = TestBed.createComponent(CreateContractorsPageComponent);
+    httpMock = TestBed.inject(HttpTestingController);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

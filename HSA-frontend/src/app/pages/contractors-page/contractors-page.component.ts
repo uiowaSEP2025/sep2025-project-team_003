@@ -25,7 +25,9 @@ export class ContractorsPageComponent {
         this.contractors = response
       },
       error: (error) => {
-        
+        if (error.status === 401) {
+          this.router.navigate(['/login']);
+        }
       }
     })
   }
