@@ -31,6 +31,7 @@ export class CreateServicePageComponent {
   }
 
   onSubmit() {
+    console.log('sub')
     if (this.serviceForm.invalid) {
       this.serviceForm.markAllAsTouched();
       return;
@@ -41,7 +42,7 @@ export class CreateServicePageComponent {
       }
       this.serviceService.createService(data).subscribe({
         next: () => {
-          this.snackBar.open('Create material successfully', '', {
+          this.snackBar.open('Created service successfully', '', {
             duration: 3000
           });
           this.navigateToPage('services');

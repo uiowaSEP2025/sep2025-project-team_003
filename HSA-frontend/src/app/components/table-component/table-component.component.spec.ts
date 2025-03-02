@@ -105,4 +105,32 @@ describe('TableComponentComponent', () => {
     const hint = compiled.querySelector('mat-hint')
     expect(hint.textContent).toEqual('Use me to search the data')
   })
+
+  it('should refetch when the search is changed', () => {})
+  
+  it('should refetch when the paginator is changed', () => {})
+
+  it('should hide the row properly', () => {
+    const compiled = fixture.debugElement.nativeElement;
+    // Have to manually trigger the event or it won't work :()
+    const mockData = {
+      data: [
+        { id: 1, name: 'John Doe', email: 'john@example.com' },
+        { id: 2, name: 'Jane Doe', email: 'jane@example.com' }
+      ],
+      totalCount: 100
+    };
+    const changes: SimpleChanges = {
+      fetchedData: new SimpleChange(null, mockData, true) // true indicates it's the first change
+    };
+    component.hideValues = ["Name"]
+    component.ngOnChanges(changes);
+    fixture.detectChanges(); // Trigger change detection
+    const row = compiled.querySelector('table').querySelectorAll('tr')[1]
+
+    const icons = row.querySelectorAll('mat-icon')
+    expect(icons.length).toEqual(2)
+    expect(icons[0].textContent).toEqual('edit')
+    expect(icons[1].textContent).toEqual('delete')
+  })
 });

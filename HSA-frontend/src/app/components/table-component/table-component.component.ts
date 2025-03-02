@@ -56,7 +56,6 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngAfterViewInit() {
-    console.log(this.data.data, this.fetchedData)
     if (this.dataSubscription) {
       this.dataSubscription.unsubscribe();
     }
@@ -123,7 +122,6 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('here')
     if (changes["fetchedData"]?.currentValue || changes["dataSource"] || changes["formControl"]) {
       this.fetchedData = changes["fetchedData"].currentValue;
       this.data = new MatTableDataSource(this.fetchedData.data ?? []);
