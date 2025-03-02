@@ -6,19 +6,13 @@ import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
 import {MatPaginatorHarness} from '@angular/material/paginator/testing';
 import { SimpleChanges, SimpleChange } from '@angular/core';
 
-
-interface UserData {
-  id: number;
-  name: string;
-  email: string;
-}
-
 describe('TableComponentComponent', () => {
   let component: TableComponentComponent;
   let fixture: ComponentFixture<TableComponentComponent>;
   let loader: HarnessLoader;
   let mockLoadData: (search: string, pageSize: number, offSet: number) => void;
   let deleteFNMock: any
+  let refetchMock: any
   beforeEach(async () => {
     const mockData = {
       data: [
@@ -30,7 +24,9 @@ describe('TableComponentComponent', () => {
 
     mockLoadData = jasmine.createSpy('loadData');
     deleteFNMock = jasmine.createSpy('delete');
-
+    
+    
+    
     await TestBed.configureTestingModule({
       imports: [TableComponentComponent],
       providers: [provideAnimationsAsync()]
@@ -106,9 +102,25 @@ describe('TableComponentComponent', () => {
     expect(hint.textContent).toEqual('Use me to search the data')
   })
 
-  it('should refetch when the search is changed', () => {})
+  it('should refetch when the search is changed', async () => {
+    const compiled = fixture.debugElement.nativeElement;
+    refetchMock = jasmine.createSpy('refetch');
+    component.refetch = refetchMock
+    const search = compiled.querySelector('input')
+    search.value = "search param"
+    search.dispatchEvent(new Event('input'));
+    fixture.detectChanges()
+    await (new Promise(resolve => setTimeout(resolve, 1000))) // this has to be here or it fails :(
+    expect(component.refetch).toHaveBeenCalled();
+  })
   
-  it('should refetch when the paginator is changed', () => {})
+  it('should refetch when the paginator is changed', async () => {
+    const paginator = await loader.getHarness(MatPaginatorHarness);
+    component.dataSize = 100
+    await paginator.setPageSize(20)
+    await paginator.goToNextPage();
+    expect(mockLoadData).toHaveBeenCalled();
+  })
 
   it('should hide the row properly', () => {
     const compiled = fixture.debugElement.nativeElement;
@@ -127,10 +139,55 @@ describe('TableComponentComponent', () => {
     component.ngOnChanges(changes);
     fixture.detectChanges(); // Trigger change detection
     const row = compiled.querySelector('table').querySelectorAll('tr')[1]
+    const rowText = row.textContent
 
-    const icons = row.querySelectorAll('mat-icon')
-    expect(icons.length).toEqual(2)
-    expect(icons[0].textContent).toEqual('edit')
-    expect(icons[1].textContent).toEqual('delete')
+    expect(rowText).not.toContain("Name");
+    expect(rowText).not.toContain("name");
   })
+
+  it('should render the header data', async () => {
+      const compiled = fixture.debugElement.nativeElement;
+      // Have to manually trigger the event or it won't work :()
+      const mockData = {
+        data: [
+          { id: 1, name: 'John Doe', email: 'john@example.com' },
+          { id: 2, name: 'Jane Doe', email: 'jane@example.com' }
+        ],
+        totalCount: 100
+      };
+      const changes: SimpleChanges = {
+        fetchedData: new SimpleChange(null, mockData, true) // true indicates it's the first change
+      };
+      component.ngOnChanges(changes);
+      fixture.detectChanges(); // Trigger change detection
+      const row = compiled.querySelector('table').querySelectorAll('tr')[0]
+      const rowText = row.textContent
+      await (new Promise(resolve => setTimeout(resolve, 2000)))
+      expect(rowText).toContain("Name");
+      expect(rowText).toContain("Id");
+      expect(rowText).toContain("Email");
+  })
+
+  it('should render the header data', async () => {
+    const compiled = fixture.debugElement.nativeElement;
+    // Have to manually trigger the event or it won't work :()
+    const mockData = {
+      data: [
+        { id: 1, name: 'John Doe', email: 'john@example.com' },
+        { id: 2, name: 'Jane Doe', email: 'jane@example.com' }
+      ],
+      totalCount: 100
+    };
+    const changes: SimpleChanges = {
+      fetchedData: new SimpleChange(null, mockData, true) // true indicates it's the first change
+    };
+    component.ngOnChanges(changes);
+    fixture.detectChanges(); // Trigger change detection
+    const row = compiled.querySelector('table').querySelectorAll('tr')[1]
+    const rowText = row.textContent
+    await (new Promise(resolve => setTimeout(resolve, 2000)))
+    expect(rowText).toContain("1");
+    expect(rowText).toContain("John Doe");
+    expect(rowText).toContain("john@example.com");
+})
 });

@@ -31,7 +31,6 @@ export class CreateServicePageComponent {
   }
 
   onSubmit() {
-    console.log('sub')
     if (this.serviceForm.invalid) {
       this.serviceForm.markAllAsTouched();
       return;
