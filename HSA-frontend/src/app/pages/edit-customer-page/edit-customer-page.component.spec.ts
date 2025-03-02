@@ -3,33 +3,43 @@ import { ActivatedRoute } from '@angular/router';
 import { EditCustomerPageComponent } from './edit-customer-page.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { of, Subject } from 'rxjs';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { Router } from '@angular/router';
 
+class MockRouter {
+  navigate = jasmine.createSpy('navigate');
+}
 
 describe('EditCustomerPageComponent', () => {
   let component: EditCustomerPageComponent;
   let fixture: ComponentFixture<EditCustomerPageComponent>;
   let paramMapSubject: Subject<any>;
+  let router!: Router;
+  let httpMock: HttpTestingController;
 
   beforeEach(async () => {
     paramMapSubject = new Subject();
     const activatedRouteMock = {
-      paramMap: paramMapSubject.asObservable(), 
+      paramMap: paramMapSubject.asObservable(),
       queryParams: of({ email: '', fname: '', lname: '', phoneNo: '' })
     };
     await TestBed.configureTestingModule({
       imports: [EditCustomerPageComponent],
       providers: [
         { provide: ActivatedRoute, useValue: activatedRouteMock },
+        { provide: Router, useClass: MockRouter },
         provideAnimationsAsync(),
         provideHttpClient(),
-        provideHttpClientTesting(), 
+        provideHttpClientTesting(),
       ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(EditCustomerPageComponent);
+    httpMock = TestBed.inject(HttpTestingController);
+    router = TestBed.inject(Router);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -67,7 +77,7 @@ describe('EditCustomerPageComponent', () => {
     create.click()
     fixture.detectChanges()
     expect(lastName.querySelector('mat-error').textContent).toEqual('Last Name is required')
-    
+
   })
 
   it('should display error when email  is missing', () => {
@@ -133,4 +143,43 @@ describe('EditCustomerPageComponent', () => {
     const errors = Array.from(compiled.querySelectorAll('mat-error'))
     expect(errors.length).toEqual(0)
   })
+
+  describe('observables', () => {
+    beforeEach(() => {
+      const compiled = fixture.debugElement.nativeElement;
+    const create = compiled.querySelector('button')
+    const firstNameinput = compiled.querySelectorAll('mat-form-field')[0].querySelector('input')
+    firstNameinput.value = 'alex'
+    firstNameinput.dispatchEvent(new Event('input'));
+    const lastNameinput = compiled.querySelectorAll('mat-form-field')[1].querySelector('input')
+    lastNameinput.value = 'guo'
+    lastNameinput.dispatchEvent(new Event('input'));
+    const emailInput = compiled.querySelectorAll('mat-form-field')[2].querySelector('input')
+    emailInput.value = 'aguo2@uiowa.edu'
+    emailInput.dispatchEvent(new Event('input'));
+    lastNameinput.dispatchEvent(new Event('input'));
+    const phoneInput = compiled.querySelectorAll('mat-form-field')[3].querySelector('input')
+    phoneInput.value = '111-111-1111'
+    phoneInput.dispatchEvent(new Event('input'));
+    create.click()
+    fixture.detectChanges()
+
+    })
+
+    it('should navigate to login page on 401 unauthorized response', () => {
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/edit/customer/null`);
+      expect(req.request.method).toBe('POST');
+      req.flush(null, { status: 401, statusText: 'Unauthorized' });
+
+      expect(router.navigate).toHaveBeenCalledWith(['/login']);
+    });
+
+    it('should redirect to customers on successful response', () => {
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/edit/customer/null`);
+      expect(req.request.method).toBe('POST');
+      req.flush(null, { status: 200, statusText: 'ok' });
+      expect(router.navigate).toHaveBeenCalledWith(['/customers']);
+
+    });
+  });
 });

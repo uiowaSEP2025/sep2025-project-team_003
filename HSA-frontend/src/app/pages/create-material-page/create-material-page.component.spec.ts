@@ -72,15 +72,16 @@ describe('CreateMaterialPageComponent', () => {
   describe('observables', () => {
     beforeEach(() => {
       const compiled = fixture.debugElement.nativeElement;
-      const createButton = compiled.querySelector('button');
-      const materialNameField = compiled.querySelectorAll('mat-form-field')[0].querySelector('input');
-      materialNameField.value = 'alex';
-      materialNameField.dispatchEvent(new Event('input'));
-      const descriptionField = compiled.querySelectorAll('mat-form-field')[1].querySelector('textarea');
-      descriptionField.value = 'guo';
-      descriptionField.dispatchEvent(new Event('input'));
-      createButton.click();
-      fixture.detectChanges();
+    const createButton = compiled.querySelector('button');
+    const materialNameField = compiled.querySelectorAll('mat-form-field')[0].querySelector('input');
+    materialNameField.value = 'alex';
+    materialNameField.dispatchEvent(new Event('input'));
+    const descriptionField = compiled.querySelectorAll('mat-form-field')[1].querySelector('textarea');
+    descriptionField.value = 'guo';
+    descriptionField.dispatchEvent(new Event('input'));
+    createButton.click();
+    fixture.detectChanges();
+
 
     })
 
