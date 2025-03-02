@@ -3,7 +3,7 @@ import { environment } from '../../../environments/environment';
 import { of, Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { EditMaterialPageComponent } from './edit-material-page.component';
-import { provideRouter, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
