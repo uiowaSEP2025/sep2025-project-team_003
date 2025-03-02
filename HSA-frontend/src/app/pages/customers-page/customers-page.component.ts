@@ -1,25 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TableComponentComponent } from '../../components/table-component/table-component.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { CustomerService } from '../../services/customer.service';
-import { TableApiResponse } from '../../interfaces/table.api.interface';
-import { Customer } from '../../interfaces/customer.interface';
-
-
 @Component({
   selector: 'app-customers-page',
   imports: [TableComponentComponent, MatButtonModule, MatIconModule],
   templateUrl: './customers-page.component.html',
   styleUrl: './customers-page.component.scss'
 })
-export class CustomersPageComponent {
+export class CustomersPageComponent implements OnInit {
   customers: any
   customerService: CustomerService
 
   constructor(private router: Router, customerService: CustomerService) {
     this.customerService = customerService
+  }
+
+  ngOnInit(): void {
+    this.loadDataToTable("", 5, 0);
   }
 
   loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {
@@ -28,7 +28,9 @@ export class CustomersPageComponent {
         this.customers = response
       },
       error: (error) => {
-        
+          if (error.status === 401) {
+            this.router.navigate(['/login']);
+          }
       }
     })
   }

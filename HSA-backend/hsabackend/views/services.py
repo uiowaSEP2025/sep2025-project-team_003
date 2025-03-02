@@ -71,20 +71,34 @@ def edit_service(request, id):
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
     
     org = Organization.objects.get(owning_User=request.user)
-    service = Service.objects.get(pk=id, organization=org)
+    service = Service.objects.filter(pk=id, organization=org)
 
-    if not service:
+    if not service.exists():
         return Response({"message": "The service does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
     service_name = request.data.get('service_name', '')
     service_description = request.data.get('service_description', '')
     
-    service.service_name = service_name
-    service.service_description = service_description
-    
+    service_obj = service[0]
+    service_obj.service_name = service_name
+    service_obj.service_description = service_description
     try:
-        service.full_clean()  # Validate the model instance
-        service.save()
+        service_obj.full_clean()  # Validate the model instance
+        service_obj.save()
         return Response({"message": "service edited successfully"}, status=status.HTTP_200_OK)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(["POST"])
+def delete_service(request, id):
+    if not request.user.is_authenticated:
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    org = Organization.objects.get(owning_User=request.user)
+    service = Service.objects.filter(pk=id, organization=org)
+
+    if not service.exists():
+        return Response({"message": "The service does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    
+    service[0].delete()
+    return Response({"message": "The service does not exist"}, status=status.HTTP_200_OK)

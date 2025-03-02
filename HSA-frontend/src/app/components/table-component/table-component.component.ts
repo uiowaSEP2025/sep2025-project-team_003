@@ -6,7 +6,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatIconModule } from '@angular/material/icon';
-import {MatButtonModule} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteDialogComponentComponent } from '../delete-dialog-component/delete-dialog-component.component';
@@ -19,10 +19,10 @@ import { StringFormatter } from '../../utils/string-formatter';
 @Component({
   selector: 'app-table-component',
   imports: [
-    MatTableModule, 
-    MatPaginatorModule, 
-    MatInputModule, 
-    MatSelectModule, 
+    MatTableModule,
+    MatPaginatorModule,
+    MatInputModule,
+    MatSelectModule,
     ReactiveFormsModule,
     MatIconModule,
     MatButtonModule
@@ -34,25 +34,25 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   @Input() fetchedData: any = null
   @Input({ required: true }) deleteRequest!: (data: any) => Observable<StandardApiResponse>
   @Input({ required: true }) loadDataToTable!: (search: string, pageSize: number, offSet: number) => void
+  @Input() hideValues: string[] = []; // Make this optional, and initialize it with an empty array if not provided.
+  searchHint = input<string>("Use me to search the data")
 
-  constructor(private router: Router, public dialog: MatDialog, private snackBar: MatSnackBar,) {}
+  constructor(private router: Router, public dialog: MatDialog, private snackBar: MatSnackBar,) { }
 
   searchControl = new FormControl('')
   stringFormatter = new StringFormatter()
   private searchSubscription: Subscription | null = null
   private dataSubscription: Subscription | null = null
-  page: number | null = null 
+  page: number | null = null
   pageSize: number | null = null
   dataSize: number | null = null
   headers = ['header1', 'header2', 'header3', 'header4']
   headersWithActions = [...this.headers, 'Actions']
-  searchHint = input<string>("Use me to search the data")
-  queryParams: any;
 
-  // TODO: figure out how to do edit and delete redirects when the backend is integrated
+
   editRedirect = input.required<string>()
 
-  data = new MatTableDataSource(this.fetchedData ?? []);   
+  data = new MatTableDataSource(this.fetchedData ?? []);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngAfterViewInit() {
@@ -65,28 +65,28 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
     }
 
     this.searchSubscription = this.searchControl.valueChanges.pipe(
-        debounceTime(300), // Wait for 300ms after the last change
-        distinctUntilChanged() // Only emit if the value has changed
-      )
+      debounceTime(0), // Wait for 300ms after the last change
+      distinctUntilChanged() // Only emit if the value has changed
+    )
       .subscribe((searchTerm) => {
         this.refetch(searchTerm ?? "")
       });
+
 
     this.dataSubscription = this.paginator.page.pipe(
       debounceTime(100), // Wait for 300ms after the last page change
       distinctUntilChanged((prev, curr) => prev.pageIndex === curr.pageIndex && prev.pageSize === curr.pageSize) // Only emit if the page or page size has changed
     ).subscribe((page) => {
-      console.log('Paginator page change');
-      this.page = page.pageIndex;
+      this.page = page.pageIndex;   
       this.pageSize = page.pageSize;
       this.refetch(this.searchControl.value ?? "");
     });
   }
-    
+
   redirectEdit(id: number, args: any) {
-    this.queryParams = args
-    this.router.navigate([`${this.editRedirect()}/${args.id}`],{
-      queryParams: this.queryParams
+    const queryParams = args
+    this.router.navigate([`${this.editRedirect()}/${id}`], {
+      queryParams: queryParams
     });
   }
 
@@ -130,10 +130,10 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
       if (this.fetchedData.data[0] !== undefined) {
         this.headers = Object.keys(this.fetchedData.data[0]);
         this.headers = this.headers.map(header => this.stringFormatter.formatSnakeToCamel(header))
-        this.headersWithActions = [...this.headers, 'Actions']
+        this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
+          return !this.hideValues.includes(header)
+        })
       }
-      
-      this.ngAfterViewInit()
     }
   }
 
@@ -143,7 +143,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
     }
 
     if (this.dataSubscription) {
-      this.dataSubscription.unsubscribe(); 
+      this.dataSubscription.unsubscribe();
     }
   }
 

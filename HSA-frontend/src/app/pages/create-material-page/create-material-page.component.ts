@@ -46,9 +46,9 @@ export class CreateMaterialPageComponent {
         },
         error: (error) => {
           if (error.status === 401) {
-            this.snackBar.open('There is something wrong when creating material', '', {
-              duration: 3000
-            });
+            if (error.status === 401) {
+              this.router.navigate(['/login']);
+            }
           }
         }
       });

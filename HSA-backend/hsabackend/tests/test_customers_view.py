@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 from unittest.mock import Mock
 from unittest.mock import patch
 from django.contrib.auth.models import User
-from hsabackend.views.customers import get_customer_table_data, create_customer, edit_customer
+from hsabackend.views.customers import get_customer_table_data, create_customer, edit_customer, delete_customer
 from rest_framework.test import APITestCase
 from hsabackend.models.organization import Organization
 from django.db.models import QuerySet
@@ -136,15 +136,16 @@ class CustomerViewTest(APITestCase):
         request = factory.post('/api/edit/customers/1')
         request.user = mock_user  
         response = edit_customer(request,1)
-        
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    @patch('hsabackend.views.customers.Customer.objects.get')
+    @patch('hsabackend.views.customers.Customer.objects.filter')
     @patch('hsabackend.views.customers.Organization.objects.get')
     def test_edit_customer_not_found(self,org, cust):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        cust.return_value = None
+        mock_cust = MagicMock()
+        mock_cust.exists.return_value = False
+        cust.return_value = mock_cust
         org.return_value = Organization()
         
         factory = APIRequestFactory()
@@ -154,14 +155,17 @@ class CustomerViewTest(APITestCase):
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    @patch('hsabackend.views.customers.Customer.objects.get')
+    @patch('hsabackend.views.customers.Customer.objects.filter')
     @patch('hsabackend.views.customers.Organization.objects.get')
     def test_edit_customer_invalid(self,org, cust):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        mock_cust = MagicMock(spec=Customer)
-        cust.return_value = mock_cust
+        cust_qs = MagicMock()
+        cust_qs.exists.return_value = True
+        cust.return_value = cust_qs
         org.return_value = Organization()
+        mock_cust = MagicMock(name="mock cust")
+        cust_qs.__getitem__.side_effect = lambda x: mock_cust
         mock_cust.full_clean.side_effect = ValidationError({'firstn': ['This field is required.']})
 
         factory = APIRequestFactory()
@@ -175,19 +179,18 @@ class CustomerViewTest(APITestCase):
                     })
         request.user = mock_user  
         response = edit_customer(request, 1)
-        
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    @patch('hsabackend.views.customers.Customer.objects.get')
+    @patch('hsabackend.views.customers.Customer.objects.filter')
     @patch('hsabackend.views.customers.Organization.objects.get')
     def test_edit_customer_valid(self,org, cust):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        mock_cust = MagicMock(spec=Customer)
+        mock_cust = MagicMock()
+        mock_cust.exists.return_value = True
         cust.return_value = mock_cust
+
         org.return_value = Organization()
-
-
 
         factory = APIRequestFactory()
         request = factory.post('/api/edit/customers/1',
@@ -201,4 +204,46 @@ class CustomerViewTest(APITestCase):
         request.user = mock_user  
         response = edit_customer(request, 1)
         
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_delete_unauth(self):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = False
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/delete/customers/1')
+        request.user = mock_user  
+        response = delete_customer(request,1)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    @patch('hsabackend.views.customers.Customer.objects.filter')
+    @patch('hsabackend.views.customers.Organization.objects.get')
+    def test_delete_not_found(self, org, cust):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True 
+        org.return_value = Organization()
+        cust_query_set = MagicMock()
+        cust_query_set.exists.return_value = False
+        cust.return_value = cust_query_set
+
+        factory = APIRequestFactory()
+        request = factory.post('/api/delete/customers/1')
+        request.user = mock_user  
+        response = delete_customer(request,1)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    @patch('hsabackend.views.customers.Customer.objects.filter')
+    @patch('hsabackend.views.customers.Organization.objects.get')
+    def test_delete_success(self, org, cust):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True 
+        org.return_value = Organization()
+        cust_query_set = MagicMock()
+        cust_query_set.exists.return_value = True
+        cust.return_value = cust_query_set
+
+        factory = APIRequestFactory()
+        request = factory.post('/api/delete/customers/1')
+        request.user = mock_user  
+        response = delete_customer(request,1)
         assert response.status_code == status.HTTP_200_OK

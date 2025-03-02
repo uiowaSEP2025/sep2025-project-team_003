@@ -61,9 +61,7 @@ export class EditMaterialPageComponent implements OnInit {
         },
         error: (error) => {
           if (error.status === 401) {
-            this.snackBar.open(`There is something wrong when editing ${this.currentMaterialName} material`, '', {
-              duration: 3000
-            });
+            this.router.navigate(['/login']);
           }
         }
       });
