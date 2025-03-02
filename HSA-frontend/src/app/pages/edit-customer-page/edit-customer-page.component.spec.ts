@@ -2,18 +2,20 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { EditCustomerPageComponent } from './edit-customer-page.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { of } from 'rxjs';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { of, Subject } from 'rxjs';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 
 
 describe('EditCustomerPageComponent', () => {
   let component: EditCustomerPageComponent;
   let fixture: ComponentFixture<EditCustomerPageComponent>;
-  let httpMock: HttpTestingController;
+  let paramMapSubject: Subject<any>;
 
   beforeEach(async () => {
+    paramMapSubject = new Subject();
     const activatedRouteMock = {
+      paramMap: paramMapSubject.asObservable(), 
       queryParams: of({ email: '', fname: '', lname: '', phoneNo: '' })
     };
     await TestBed.configureTestingModule({
@@ -22,7 +24,7 @@ describe('EditCustomerPageComponent', () => {
         { provide: ActivatedRoute, useValue: activatedRouteMock },
         provideAnimationsAsync(),
         provideHttpClient(),
-        provideHttpClientTesting(),
+        provideHttpClientTesting(), 
       ]
     })
     .compileComponents();

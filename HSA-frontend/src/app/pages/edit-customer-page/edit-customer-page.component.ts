@@ -6,7 +6,6 @@ import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-sta
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CustomerService } from '../../services/customer.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import {Router} from '@angular/router';
 
 @Component({
@@ -23,7 +22,7 @@ export class EditCustomerPageComponent implements OnInit {
   custId: number | null = null
   
 
-  constructor(private activatedRoute: ActivatedRoute, private customerService: CustomerService, private snackBar: MatSnackBar, private router:Router) { }
+  constructor(private activatedRoute: ActivatedRoute, private customerService: CustomerService, private router:Router) { }
 
   firstNameControl = new FormControl('', Validators.required)
   lastNameControl = new FormControl('', Validators.required)

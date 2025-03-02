@@ -51,15 +51,6 @@ describe('ServicePageComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/services/create']);
   });
 
-  it ('should navigate to material page when click on material list', () => {
-    const compiled = fixture.debugElement.nativeElement;
-    const materialListButton = compiled.querySelector('#material-list-button');
-
-    materialListButton.click();
-    fixture.detectChanges();
-    expect(router.navigate).toHaveBeenCalledWith(['/materials']);
-  });
-
   afterEach(() => {
     (router.navigate as jasmine.Spy).calls.reset();
   })

@@ -49,7 +49,6 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   headers = ['header1', 'header2', 'header3', 'header4']
   headersWithActions = [...this.headers, 'Actions']
 
-  queryParams: any;
 
   editRedirect = input.required<string>()
 
@@ -57,6 +56,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngAfterViewInit() {
+    console.log(this.data.data, this.fetchedData)
     if (this.dataSubscription) {
       this.dataSubscription.unsubscribe();
     }
@@ -78,16 +78,16 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
       debounceTime(100), // Wait for 300ms after the last page change
       distinctUntilChanged((prev, curr) => prev.pageIndex === curr.pageIndex && prev.pageSize === curr.pageSize) // Only emit if the page or page size has changed
     ).subscribe((page) => {
-      this.page = page.pageIndex;
+      this.page = page.pageIndex;   
       this.pageSize = page.pageSize;
       this.refetch(this.searchControl.value ?? "");
     });
   }
 
   redirectEdit(id: number, args: any) {
-    this.queryParams = args
+    const queryParams = args
     this.router.navigate([`${this.editRedirect()}/${id}`], {
-      queryParams: this.queryParams
+      queryParams: queryParams
     });
   }
 
@@ -123,7 +123,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-
+    console.log('here')
     if (changes["fetchedData"]?.currentValue || changes["dataSource"] || changes["formControl"]) {
       this.fetchedData = changes["fetchedData"].currentValue;
       this.data = new MatTableDataSource(this.fetchedData.data ?? []);
