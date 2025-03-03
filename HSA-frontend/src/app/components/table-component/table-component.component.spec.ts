@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { TableComponentComponent } from './table-component.component';
 import { HarnessLoader } from '@angular/cdk/testing';
-import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
-import {MatPaginatorHarness} from '@angular/material/paginator/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatPaginatorHarness } from '@angular/material/paginator/testing';
 import { SimpleChanges, SimpleChange } from '@angular/core';
 
 describe('TableComponentComponent', () => {
@@ -24,9 +24,9 @@ describe('TableComponentComponent', () => {
 
     mockLoadData = jasmine.createSpy('loadData');
     deleteFNMock = jasmine.createSpy('delete');
-    
-    
-    
+
+
+
     await TestBed.configureTestingModule({
       imports: [TableComponentComponent],
       providers: [provideAnimationsAsync()]
@@ -62,9 +62,9 @@ describe('TableComponentComponent', () => {
     const paginator = await loader.getHarness(MatPaginatorHarness);
     await paginator.setPageSize(20)
     expect(component.pageSize).toEqual(20)
-  }) 
+  })
 
-  it('should render the edit and delete icons in the row',  () => {
+  it('should render the edit and delete icons in the row', () => {
     const compiled = fixture.debugElement.nativeElement;
     // Have to manually trigger the event or it won't work :()
     const mockData = {
@@ -113,7 +113,7 @@ describe('TableComponentComponent', () => {
     await (new Promise(resolve => setTimeout(resolve, 1000))) // this has to be here or it fails :(
     expect(component.refetch).toHaveBeenCalled();
   })
-  
+
   it('should refetch when the paginator is changed', async () => {
     const paginator = await loader.getHarness(MatPaginatorHarness);
     component.dataSize = 100
@@ -146,26 +146,26 @@ describe('TableComponentComponent', () => {
   })
 
   it('should render the header data', async () => {
-      const compiled = fixture.debugElement.nativeElement;
-      // Have to manually trigger the event or it won't work :()
-      const mockData = {
-        data: [
-          { id: 1, name: 'John Doe', email: 'john@example.com' },
-          { id: 2, name: 'Jane Doe', email: 'jane@example.com' }
-        ],
-        totalCount: 100
-      };
-      const changes: SimpleChanges = {
-        fetchedData: new SimpleChange(null, mockData, true) // true indicates it's the first change
-      };
-      component.ngOnChanges(changes);
-      fixture.detectChanges(); // Trigger change detection
-      const row = compiled.querySelector('table').querySelectorAll('tr')[0]
-      const rowText = row.textContent
-      await (new Promise(resolve => setTimeout(resolve, 2000)))
-      expect(rowText).toContain("Name");
-      expect(rowText).toContain("Id");
-      expect(rowText).toContain("Email");
+    const compiled = fixture.debugElement.nativeElement;
+    // Have to manually trigger the event or it won't work :()
+    const mockData = {
+      data: [
+        { id: 1, name: 'John Doe', email: 'john@example.com' },
+        { id: 2, name: 'Jane Doe', email: 'jane@example.com' }
+      ],
+      totalCount: 100
+    };
+    const changes: SimpleChanges = {
+      fetchedData: new SimpleChange(null, mockData, true) // true indicates it's the first change
+    };
+    component.ngOnChanges(changes);
+    fixture.detectChanges(); // Trigger change detection
+    const row = compiled.querySelector('table').querySelectorAll('tr')[0]
+    const rowText = row.textContent
+    await (new Promise(resolve => setTimeout(resolve, 2000)))
+    expect(rowText).toContain("Name");
+    expect(rowText).toContain("Id");
+    expect(rowText).toContain("Email");
   })
 
   it('should render the header data', async () => {
@@ -189,5 +189,72 @@ describe('TableComponentComponent', () => {
     expect(rowText).toContain("1");
     expect(rowText).toContain("John Doe");
     expect(rowText).toContain("john@example.com");
-})
+  })
+
+  describe('checkbox tests', () => {
+    let setCheckedIds:any
+    let checkedIds: number[] = []
+
+    describe('single select', () => {
+      beforeEach(() => {
+        const compiled = fixture.debugElement.nativeElement;
+        // Have to manually trigger the event or it won't work :()
+        const mockData = {
+          data: [
+            { id: 1, name: 'John Doe', email: 'john@example.com' },
+            { id: 2, name: 'Jane Doe', email: 'jane@example.com' }
+          ],
+          totalCount: 100
+        };
+        component.checkbox = "single"
+        component.checkedIds = checkedIds
+        const changes: SimpleChanges = {
+          fetchedData: new SimpleChange(null, mockData, true) // true indicates it's the first change
+        };
+        component.ngOnChanges(changes);
+        fixture.detectChanges(); // Trigger change detection
+        
+      })
+
+      fit('should successfully select a single row', () => {
+        setCheckedIds = jasmine.createSpy().and.callFake((arg) => {
+          checkedIds = [...arg]
+        });
+        component.setCheckedIds = setCheckedIds
+        const compiled = fixture.debugElement.nativeElement;
+        const row = compiled.querySelector('table').querySelectorAll('tr')[1]
+        const checkbox = row.querySelector('input')
+        checkbox.click();
+        fixture.detectChanges(); // Ensure Angular updates the view
+
+        expect(checkbox.checked).toBe(true)
+        expect(setCheckedIds).toHaveBeenCalledWith([1])
+       })
+
+      it('should only allow one row selected')
+
+      it('should successfully unselect')
+
+
+    })
+
+    describe('multiple select', () => {
+
+      it('should successfully select multiple rows', () => {
+
+
+      })
+
+      it('should successfully unselect', () => {
+
+
+      })
+
+    })
+
+    afterEach(() => {
+      setCheckedIds.calls.reset()
+    })
+
+  })
 });
