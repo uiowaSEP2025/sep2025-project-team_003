@@ -29,7 +29,7 @@ if 'ENV' in os.environ and os.environ['ENV'] == 'PROD':
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if 'ENV' not in os.environ else False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -136,12 +136,12 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles' # this is for collectstatic (in case we use it)
+MEDIA_URL = '/media/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / '/static' # this is for collectstatic (in case we use it)
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    BASE_DIR / 'static/browser/',
 ]
 
 # Default primary key field type

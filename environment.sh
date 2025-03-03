@@ -26,7 +26,8 @@ elif [ "$COMMAND" == "run" ]; then
   fi
 
   # Run the Docker container, passing the environment variables
-  docker run --init --name "hsa-app" -p 8000:8000 \
+  docker run --init --name "hsa-app" \
+    -p 8000:8000 \
     --env DATABASE_NAME="$DATABASE_NAME" \
     --env DATABASE_USERNAME="$DATABASE_USERNAME" \
     --env DATABASE_IP="$DATABASE_IP" \
