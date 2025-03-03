@@ -4,14 +4,29 @@ import { TableComponentComponent } from './table-component.component';
 import { HarnessLoader } from '@angular/cdk/testing';
 import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
 import {MatPaginatorHarness} from '@angular/material/paginator/testing';
+import { SimpleChanges, SimpleChange } from '@angular/core';
 
 describe('TableComponentComponent', () => {
   let component: TableComponentComponent;
   let fixture: ComponentFixture<TableComponentComponent>;
   let loader: HarnessLoader;
-
-
+  let mockLoadData: (search: string, pageSize: number, offSet: number) => void;
+  let deleteFNMock: any
+  let refetchMock: any
   beforeEach(async () => {
+    const mockData = {
+      data: [
+        { id: 1, name: 'John Doe', email: 'john@example.com' },
+        { id: 2, name: 'Jane Doe', email: 'jane@example.com' }
+      ],
+      totalCount: 100
+    };
+
+    mockLoadData = jasmine.createSpy('loadData');
+    deleteFNMock = jasmine.createSpy('delete');
+    
+    
+    
     await TestBed.configureTestingModule({
       imports: [TableComponentComponent],
       providers: [provideAnimationsAsync()]
@@ -20,6 +35,9 @@ describe('TableComponentComponent', () => {
 
     fixture = TestBed.createComponent(TableComponentComponent);
     component = fixture.componentInstance;
+    component.fetchedData = mockData;
+    component.loadDataToTable = mockLoadData
+    component.deleteRequest = deleteFNMock
     loader = TestbedHarnessEnvironment.loader(fixture);
     fixture.detectChanges();
   });
@@ -42,13 +60,28 @@ describe('TableComponentComponent', () => {
 
   it('should change the page size class variable on page size change', async () => {
     const paginator = await loader.getHarness(MatPaginatorHarness);
-    await paginator.setPageSize(10)
-    expect(component.pageSize).toEqual(10)
+    await paginator.setPageSize(20)
+    expect(component.pageSize).toEqual(20)
   }) 
 
-  it('should render the edit and delete icons in the row', () => {
+  it('should render the edit and delete icons in the row',  () => {
     const compiled = fixture.debugElement.nativeElement;
+    // Have to manually trigger the event or it won't work :()
+    const mockData = {
+      data: [
+        { id: 1, name: 'John Doe', email: 'john@example.com' },
+        { id: 2, name: 'Jane Doe', email: 'jane@example.com' }
+      ],
+      totalCount: 100
+    };
+    const changes: SimpleChanges = {
+      fetchedData: new SimpleChange(null, mockData, true) // true indicates it's the first change
+    };
+
+    component.ngOnChanges(changes);
+    fixture.detectChanges(); // Trigger change detection
     const row = compiled.querySelector('table').querySelectorAll('tr')[1]
+
     const icons = row.querySelectorAll('mat-icon')
     expect(icons.length).toEqual(2)
     expect(icons[0].textContent).toEqual('edit')
@@ -57,16 +90,10 @@ describe('TableComponentComponent', () => {
 
   it('should change the page offset class variable on page change', async () => {
     const paginator = await loader.getHarness(MatPaginatorHarness);
-    await paginator.setPageSize(10)
+    component.dataSize = 100
+    await paginator.setPageSize(20)
     await paginator.goToNextPage();
     expect(component.page).toEqual(1)
-  })
-
-  it('should change the page size class variable on page change', async () => {
-    const paginator = await loader.getHarness(MatPaginatorHarness);
-    await paginator.setPageSize(10)
-    await paginator.goToNextPage();
-    expect(component.pageSize).toEqual(10)
   })
 
   it('should render the search hint text', () => {
@@ -74,4 +101,93 @@ describe('TableComponentComponent', () => {
     const hint = compiled.querySelector('mat-hint')
     expect(hint.textContent).toEqual('Use me to search the data')
   })
+
+  it('should refetch when the search is changed', async () => {
+    const compiled = fixture.debugElement.nativeElement;
+    refetchMock = jasmine.createSpy('refetch');
+    component.refetch = refetchMock
+    const search = compiled.querySelector('input')
+    search.value = "search param"
+    search.dispatchEvent(new Event('input'));
+    fixture.detectChanges()
+    await (new Promise(resolve => setTimeout(resolve, 1000))) // this has to be here or it fails :(
+    expect(component.refetch).toHaveBeenCalled();
+  })
+  
+  it('should refetch when the paginator is changed', async () => {
+    const paginator = await loader.getHarness(MatPaginatorHarness);
+    component.dataSize = 100
+    await paginator.setPageSize(20)
+    await paginator.goToNextPage();
+    expect(mockLoadData).toHaveBeenCalled();
+  })
+
+  it('should hide the row properly', () => {
+    const compiled = fixture.debugElement.nativeElement;
+    // Have to manually trigger the event or it won't work :()
+    const mockData = {
+      data: [
+        { id: 1, name: 'John Doe', email: 'john@example.com' },
+        { id: 2, name: 'Jane Doe', email: 'jane@example.com' }
+      ],
+      totalCount: 100
+    };
+    const changes: SimpleChanges = {
+      fetchedData: new SimpleChange(null, mockData, true) // true indicates it's the first change
+    };
+    component.hideValues = ["Name"]
+    component.ngOnChanges(changes);
+    fixture.detectChanges(); // Trigger change detection
+    const row = compiled.querySelector('table').querySelectorAll('tr')[1]
+    const rowText = row.textContent
+
+    expect(rowText).not.toContain("Name");
+    expect(rowText).not.toContain("name");
+  })
+
+  it('should render the header data', async () => {
+      const compiled = fixture.debugElement.nativeElement;
+      // Have to manually trigger the event or it won't work :()
+      const mockData = {
+        data: [
+          { id: 1, name: 'John Doe', email: 'john@example.com' },
+          { id: 2, name: 'Jane Doe', email: 'jane@example.com' }
+        ],
+        totalCount: 100
+      };
+      const changes: SimpleChanges = {
+        fetchedData: new SimpleChange(null, mockData, true) // true indicates it's the first change
+      };
+      component.ngOnChanges(changes);
+      fixture.detectChanges(); // Trigger change detection
+      const row = compiled.querySelector('table').querySelectorAll('tr')[0]
+      const rowText = row.textContent
+      await (new Promise(resolve => setTimeout(resolve, 2000)))
+      expect(rowText).toContain("Name");
+      expect(rowText).toContain("Id");
+      expect(rowText).toContain("Email");
+  })
+
+  it('should render the header data', async () => {
+    const compiled = fixture.debugElement.nativeElement;
+    // Have to manually trigger the event or it won't work :()
+    const mockData = {
+      data: [
+        { id: 1, name: 'John Doe', email: 'john@example.com' },
+        { id: 2, name: 'Jane Doe', email: 'jane@example.com' }
+      ],
+      totalCount: 100
+    };
+    const changes: SimpleChanges = {
+      fetchedData: new SimpleChange(null, mockData, true) // true indicates it's the first change
+    };
+    component.ngOnChanges(changes);
+    fixture.detectChanges(); // Trigger change detection
+    const row = compiled.querySelector('table').querySelectorAll('tr')[1]
+    const rowText = row.textContent
+    await (new Promise(resolve => setTimeout(resolve, 2000)))
+    expect(rowText).toContain("1");
+    expect(rowText).toContain("John Doe");
+    expect(rowText).toContain("john@example.com");
+})
 });

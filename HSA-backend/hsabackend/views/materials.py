@@ -2,12 +2,12 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from hsabackend.models.organization import Organization
-from hsabackend.models.service import Service
+from hsabackend.models.material import Material
 from django.db.models import Q
 from django.core.exceptions import ValidationError
-
+ 
 @api_view(["GET"])
-def get_service_table_data(request):
+def get_material_table_data(request):
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
     
@@ -18,87 +18,88 @@ def get_service_table_data(request):
     
     if not pagesize or not offset:
         return Response({"message": "missing pagesize or offset"}, status=status.HTTP_400_BAD_REQUEST)
-
+ 
     try:
         pagesize = int(pagesize)
         offset = int(offset)
     except:
         return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
-    
-    services = Service.objects.filter(organization=org.pk).filter(
-        Q(service_name__icontains=search) | Q(service_description__icontains=search) 
-    )[offset:offset + pagesize] if search else Service.objects.filter(organization=org.pk)[offset:offset + pagesize]
-
+    offset = offset * pagesize
+    materials = Material.objects.filter(organization=org.pk).filter(
+        Q(material_name__icontains=search)
+    )[offset:offset + pagesize] if search else Material.objects.filter(organization=org.pk)[offset:offset + pagesize]
+ 
     data = []
-    for service in services:
-        data.append(service.json())
+    for material in materials:
+        data.append(material.json())
     
-    count = Service.objects.filter(organization=org.pk).filter(
-        Q(service_name__icontains=search) | Q(service_description__icontains=search)
+    count = Material.objects.filter(organization=org.pk).filter(
+        Q(material_name__icontains=search)
     ).count()
-
+ 
     res = {
         'data': data,
         'totalCount': count
     }    
     return Response(res, status=status.HTTP_200_OK)
-
+ 
 @api_view(["POST"])
-def create_service(request):
+def create_material(request):
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
     
     org = Organization.objects.get(owning_User=request.user)
-    service_name = request.data.get('service_name', '')
-    service_description = request.data.get('service_description', '')
-
-    service = Service(
-        service_name = service_name,
-        service_description = service_description,
+    material_name = request.data.get('material_name', '')
+ 
+    material = Material(
+        material_name = material_name,
         organization = org
     )
-
+ 
     try:
-        service.full_clean()  # Validate the model instance
-        service.save()
-        return Response({"message": "service created successfully"}, status=status.HTTP_201_CREATED)
+        material.full_clean()
+        material.save()
+        return Response({"message": "material created successfully"}, status=status.HTTP_201_CREATED)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
-
+ 
 @api_view(["POST"])
-def edit_service(request, id):
+def edit_material(request, id):
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
     
     org = Organization.objects.get(owning_User=request.user)
-    service = Service.objects.filter(pk=id, organization=org)
-
-    if not service.exists():
-        return Response({"message": "The service does not exist"}, status=status.HTTP_404_NOT_FOUND)
-    
-    service_name = request.data.get('service_name', '')
-    service_description = request.data.get('service_description', '')
-    
-    service_obj = service[0]
-    service_obj.service_name = service_name
-    service_obj.service_description = service_description
     try:
-        service_obj.full_clean()  # Validate the model instance
-        service_obj.save()
-        return Response({"message": "service edited successfully"}, status=status.HTTP_200_OK)
+        material = Material.objects.get(pk=id, organization=org)
+    except Material.DoesNotExist:
+        return Response({"message": "The material does not exist"}, status=status.HTTP_404_NOT_FOUND)
+ 
+    if not material:
+        return Response({"message": "The material does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    
+    material_name = request.data.get('material_name', '')
+ 
+    material.material_name = material_name
+    
+    try:
+        material.full_clean()  # Validate the model instance
+        material.save()
+        return Response({"message": "material edited successfully"}, status=status.HTTP_200_OK)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
     
+ 
 @api_view(["POST"])
-def delete_service(request, id):
+def delete_material(request, id):
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
     
     org = Organization.objects.get(owning_User=request.user)
-    service = Service.objects.filter(pk=id, organization=org)
-
-    if not service.exists():
-        return Response({"message": "The service does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    material = Material.objects.filter(pk=id, organization=org)
+ 
+    if not material.exists():
+        return Response({"message": "The material does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
-    service[0].delete()
-    return Response({"message": "The service does not exist"}, status=status.HTTP_200_OK)
+    material[0].delete()
+ 
+    return Response({"message": "The material was deleted"}, status=status.HTTP_200_OK)

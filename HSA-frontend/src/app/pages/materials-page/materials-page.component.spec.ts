@@ -1,27 +1,38 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MaterialsPageComponent } from './materials-page.component';
-import {provideRouter, Router} from '@angular/router';
-import {provideAnimations} from '@angular/platform-browser/animations';
+import { Router } from '@angular/router';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+
+class MockRouter {
+  navigate = jasmine.createSpy('navigate');
+}
 
 describe('MaterialsPageComponent', () => {
   let component: MaterialsPageComponent;
   let fixture: ComponentFixture<MaterialsPageComponent>;
   let router!: Router;
+  let httpMock: HttpTestingController;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MaterialsPageComponent],
       providers: [
         provideAnimations(),
-        provideRouter([])
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: Router, useClass: MockRouter }
       ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(MaterialsPageComponent);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
+    httpMock = TestBed.inject(HttpTestingController);
     fixture.detectChanges();
   });
 
@@ -37,29 +48,57 @@ describe('MaterialsPageComponent', () => {
     expect(createButton).toBeTruthy()
   })
 
-  it('should call router.navigate with the correct route when redirectCreate is called', () => {
-    spyOn(router, "navigate")
-    component.navigateToPage('materials/create');
-    expect(router.navigate).toHaveBeenCalledWith(['/materials/create']);
-  });
-
-  it ('should navigate to add material page when click on add new material', () => {
+  it('should navigate to add material page when click on add new material', () => {
     const compiled = fixture.debugElement.nativeElement;
     const addButton = compiled.querySelector('#add-material-button');
-    spyOn(router, "navigate")
 
     addButton.click();
     fixture.detectChanges();
     expect(router.navigate).toHaveBeenCalledWith(['/materials/create']);
   });
 
-  it ('should navigate to service page when click on service list', () => {
+  it('should navigate to service page when click on service list', () => {
     const compiled = fixture.debugElement.nativeElement;
     const serviceListButton = compiled.querySelector('#service-list-button');
-    spyOn(router, "navigate")
 
     serviceListButton.click();
     fixture.detectChanges();
     expect(router.navigate).toHaveBeenCalledWith(['/services']);
   });
+
+  describe('observable', () => {
+    it('should navigate to login page on 401 unauthorized response', () => {
+      const searchTerm = 'test';
+      const pageSize = 10;
+      const offSet = 0;
+
+      component.loadDataToTable(searchTerm, pageSize, offSet);
+
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/get/materials?search=${searchTerm}&pagesize=${pageSize}&offset=${offSet}`);
+      expect(req.request.method).toBe('GET');
+      req.flush(null, { status: 401, statusText: 'Unauthorized' });
+
+      expect(router.navigate).toHaveBeenCalledWith(['/login']);
+    });
+
+    it('should load data to table on successful response', () => {
+      const mockResponse = [{ id: 1, name: 'Contractor 1' }, { id: 2, name: 'Contractor 2' }];
+      const searchTerm = 'test';
+      const pageSize = 10;
+      const offSet = 0;
+
+      component.loadDataToTable(searchTerm, pageSize, offSet);
+
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/get/materials?search=${searchTerm}&pagesize=${pageSize}&offset=${offSet}`);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockResponse);
+
+      expect(component.materials).toEqual(mockResponse);
+    });
+  })
+
+
+  afterEach(() => {
+    (router.navigate as jasmine.Spy).calls.reset();
+  })
 });

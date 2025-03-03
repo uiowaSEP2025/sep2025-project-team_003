@@ -4,6 +4,7 @@ from hsabackend.models.organization import Organization
 from hsabackend.models.material import Material
 from hsabackend.models.service import Service
 from hsabackend.models.model_validators import isNonEmpty, validate_state
+from hsabackend.models.customer import Customer
 
 class Job(models.Model):
     """A request for service from a customer to an organization"""
@@ -21,6 +22,7 @@ class Job(models.Model):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     materials = models.ManyToManyField(Material, through="MaterialJob")
     service = models.ManyToManyField(Service)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     requestor_city = models.CharField(max_length=50,validators=[isNonEmpty])
     requestor_state = models.CharField(max_length=50,validators=[isNonEmpty,validate_state])
     requestor_zip = models.CharField(max_length=10,validators=[isNonEmpty])

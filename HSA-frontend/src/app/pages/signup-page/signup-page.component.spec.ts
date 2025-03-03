@@ -33,6 +33,7 @@ describe('SignupPageComponent', () => {
     spyOn(component, "ngOnInit").and.callFake(() => {
       component.loadStates();
     });
+    spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
 
     fixture.detectChanges();
   });
@@ -148,7 +149,6 @@ describe('SignupPageComponent', () => {
     const buttonsArray:Element[] = Array.from(compiled.querySelectorAll('button'));
     const cancelButton = buttonsArray.filter((el:Element) => (el.textContent == 'Cancel'))[0];
 
-    spyOn(router, 'navigate');
     (cancelButton as HTMLElement).click();
     tick();
 
@@ -157,5 +157,6 @@ describe('SignupPageComponent', () => {
 
   afterEach(() => {
     httpMock.verify();
+    (router.navigate as jasmine.Spy).calls.reset();
   });
 });

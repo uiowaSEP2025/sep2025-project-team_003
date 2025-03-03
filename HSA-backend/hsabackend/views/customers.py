@@ -14,7 +14,6 @@ def get_customer_table_data(request):
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset',0)
-    
     if not pagesize or not offset:
         return Response({"message": "missing pagesize or offset"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -24,6 +23,7 @@ def get_customer_table_data(request):
     except:
         return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
     
+    offset = offset * pagesize
     customers = Customer.objects.filter(organization=org.pk).filter(
         Q(first_name__icontains=search) | Q(last_name__icontains=search) 
     )[offset:offset + pagesize] if search else Customer.objects.filter(organization=org.pk)[offset:offset + pagesize]
@@ -50,7 +50,7 @@ def create_customer(request):
     first_name = request.data.get('firstn', '')
     last_name = request.data.get('lastn', '')
     email = request.data.get('email', '')
-    phone_no = request.data.get('phoneno', '')
+    phone_no = request.data.get('phoneno', '').replace("-","")
     notes = request.data.get('notes', '')
     customer = Customer(
         first_name = first_name,
@@ -58,7 +58,7 @@ def create_customer(request):
         email = email,
         phone_no = phone_no,
         notes = notes,
-        organization = org
+        organization = org,
     )
     try:
         customer.full_clean()  # Validate the model instance
@@ -72,19 +72,19 @@ def edit_customer(request, id):
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
     org = Organization.objects.get(owning_User=request.user)
-    customer = Customer.objects.filter(pk=id, organization=org)
-    if not customer.exists():
+    customer_qs = Customer.objects.filter(pk=id, organization=org)
+    if not customer_qs.exists():
         return Response({"message": "The customer does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    customer = customer_qs[0]
     first_name = request.data.get('firstn', '')
     last_name = request.data.get('lastn', '')
     email = request.data.get('email', '')
     phone_no = request.data.get('phoneno', '')
     notes = request.data.get('notes', '')
-    
     customer.first_name = first_name
     customer.last_name = last_name
     customer.email = email
-    customer.phone_no = phone_no
+    customer.phone_no = phone_no.replace("-",'')
     customer.notes = notes
     
     try:

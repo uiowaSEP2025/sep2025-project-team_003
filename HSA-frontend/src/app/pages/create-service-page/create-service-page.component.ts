@@ -4,6 +4,8 @@ import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
+import { ServiceService } from '../../services/service.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-create-service-page',
@@ -21,7 +23,7 @@ import {Router} from '@angular/router';
 export class CreateServicePageComponent {
   serviceForm: FormGroup;
 
-  constructor(private router: Router, private serviceFormBuilder: FormBuilder) {
+  constructor(private router: Router, private serviceFormBuilder: FormBuilder, private serviceService: ServiceService, private snackBar: MatSnackBar) {
     this.serviceForm = this.serviceFormBuilder.group({
       serviceName: ['', Validators.required],
       serviceDescription: [''],
@@ -33,7 +35,25 @@ export class CreateServicePageComponent {
       this.serviceForm.markAllAsTouched();
       return;
     } else {
-      console.log("Submitted");
+      const data = {
+        service_name: this.serviceForm.controls["serviceName"].value,
+        service_description: this.serviceForm.controls["serviceDescription"].value,
+      }
+      this.serviceService.createService(data).subscribe({
+        next: () => {
+          this.snackBar.open('Created service successfully', '', {
+            duration: 3000
+          });
+          this.navigateToPage('services');
+        },
+        error: (error) => {
+          if (error.status === 401) {
+            if (error.status === 401) {
+              this.router.navigate(['/login']);
+            }
+          }
+        }
+      });
     }
   }
 
