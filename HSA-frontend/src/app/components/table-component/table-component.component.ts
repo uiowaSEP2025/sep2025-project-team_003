@@ -139,7 +139,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
       if (this.fetchedData.data[0] !== undefined) {
         this.headers = Object.keys(this.fetchedData.data[0]);
         this.headers = this.headers.map(header => this.stringFormatter.formatSnakeToCamel(header))
-        if (this.checkbox === null) {
+        if (this.checkbox === "none") {
           this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
             return !this.hideValues.includes(header)
           })
@@ -188,6 +188,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   }
 
   shouldCheckCheckbox(id: number): boolean {
+    console.log(this.checkbox)
     return this.checkedIds!.includes(id)
   }
 }

@@ -1,6 +1,6 @@
 import { EnviornmentInterface } from "../app/interfaces/enviornment.interface";
 
 export const environment:EnviornmentInterface = {
-    apiUrl: "TODO: fix me prod",
+    apiUrl: "http://localhost:8000",
     requireCors: true   
 };
