@@ -161,6 +161,16 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
       }
       this.setCheckedIds!([id])
     }
+    else if (this.checkbox === "multiple") {
+      let ids = this.checkedIds
+      if (ids?.includes(id)) {
+        ids = ids.filter(element => element !== id);
+        this.setCheckedIds!(ids!)
+        return
+      }
+      ids?.push(id)
+      this.setCheckedIds!(ids!)
+    }
   }
 
   ngOnDestroy() {

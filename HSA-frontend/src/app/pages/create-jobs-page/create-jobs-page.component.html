@@ -3,7 +3,7 @@
     [fetchedData]="services"
     [deleteRequest]="serviceService.deleteService.bind(serviceService)"
     [loadDataToTable]="this.loadServiceToTable.bind(this)"
-    checkbox="single"
+    checkbox="multiple"
     [hideValues]="['Id']"
     [checkedIds]="checkedServices"
     [setCheckedIds]="setCheckedServices.bind(this)" 
