@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewInit, Input, input, OnChanges, SimpleChanges, OnInit } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, Input, input, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
@@ -14,6 +14,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { StandardApiResponse } from '../../interfaces/standard-api-response.interface';
 import { Observable, Subscription } from 'rxjs';
 import { StringFormatter } from '../../utils/string-formatter';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
@@ -25,19 +27,26 @@ import { StringFormatter } from '../../utils/string-formatter';
     MatSelectModule,
     ReactiveFormsModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatCheckboxModule,
+    FormsModule
   ],
   templateUrl: './table-component.component.html',
   styleUrl: './table-component.component.scss'
 })
 export class TableComponentComponent implements AfterViewInit, OnChanges {
   @Input() fetchedData: any = null
-  @Input({ required: true }) deleteRequest!: (data: any) => Observable<StandardApiResponse>
+  @Input() deleteRequest!: (data: any) => Observable<StandardApiResponse>
   @Input({ required: true }) loadDataToTable!: (search: string, pageSize: number, offSet: number) => void
-  @Input() hideValues: string[] = []; // Make this optional, and initialize it with an empty array if not provided.
+  @Input() hideValues: string[] = [];
+  @Input() checkbox: 'none' | 'single' | 'multiple' = 'none';
+  @Input() checkedIds: number[] | null = null;
+  @Input() setCheckedIds: ((checkedIds: number[]) => void) | null = null;
+
   searchHint = input<string>("Use me to search the data")
 
-  constructor(private router: Router, public dialog: MatDialog, private snackBar: MatSnackBar,) { }
+  constructor(private router: Router, public dialog: MatDialog, private snackBar: MatSnackBar, private cdr: ChangeDetectorRef) {
+  }
 
   searchControl = new FormControl('')
   stringFormatter = new StringFormatter()
@@ -77,7 +86,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
       debounceTime(100), // Wait for 300ms after the last page change
       distinctUntilChanged((prev, curr) => prev.pageIndex === curr.pageIndex && prev.pageSize === curr.pageSize) // Only emit if the page or page size has changed
     ).subscribe((page) => {
-      this.page = page.pageIndex;   
+      this.page = page.pageIndex;
       this.pageSize = page.pageSize;
       this.refetch(this.searchControl.value ?? "");
     });
@@ -130,10 +139,27 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
       if (this.fetchedData.data[0] !== undefined) {
         this.headers = Object.keys(this.fetchedData.data[0]);
         this.headers = this.headers.map(header => this.stringFormatter.formatSnakeToCamel(header))
-        this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
-          return !this.hideValues.includes(header)
-        })
+        if (this.checkbox === null) {
+          this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
+            return !this.hideValues.includes(header)
+          })
+        }
+        else {
+          this.headersWithActions = ['Checkbox', ...this.headers].filter((header) => {
+            return !this.hideValues.includes(header)
+          })
+        }
       }
+    }
+  }
+
+  handleCheckBoxClick(id: number) {
+    if (this.checkbox === "single") {
+      if (this.checkedIds?.includes(id)) {
+        this.setCheckedIds!([])
+        return
+      }
+      this.setCheckedIds!([id])
     }
   }
 
@@ -149,5 +175,9 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
 
   refetch(textField: string) {
     this.loadDataToTable(textField, this.pageSize ?? 20, this.page ?? 0)
+  }
+
+  shouldCheckCheckbox(id: number): boolean {
+    return this.checkedIds!.includes(id)
   }
 }
