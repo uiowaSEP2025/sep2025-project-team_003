@@ -154,15 +154,12 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   }
 
   handleCheckBoxClick(id: number) {
-    // console.log(`clicked checkbox with ID: ${id}`)
     if (this.checkbox === "single") {
       if (this.checkedIds?.includes(id)) {
         
         this.setCheckedIds!([])
         return
       }
-      // console.log('about to call setter ps')
-
       this.setCheckedIds!([id])
     }
     else if (this.checkbox === "multiple") {
@@ -192,7 +189,6 @@ export class TableComponentComponent implements AfterViewInit, OnChanges {
   }
 
   shouldCheckCheckbox(id: number): boolean {
-    // console.log(`checking if ${id} is checked. checkedids: ${this.checkedIds}, ischecked: ${this.checkedIds!.includes(id)}`)
     return this.checkedIds!.includes(id)
   }
 }

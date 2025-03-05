@@ -232,11 +232,11 @@ describe('TableComponentComponent', () => {
         expect(await c0.isChecked()).toBe(true)
       })
 
-      fit('should only allow one row selected', async () => {
+      it('should only allow one row selected', async () => {
         setCheckedIds = jasmine.createSpy().and.callFake((arg) => {
           checkedIds = [...arg]
           fixture.detectChanges(); // Trigger update in the component
-          
+
           console.log('setter', checkedIds, arg)
         });
         component.setCheckedIds = setCheckedIds
@@ -244,7 +244,7 @@ describe('TableComponentComponent', () => {
         const checkboxes = await loader.getAllHarnesses(MatCheckboxHarness);
         const c0 = checkboxes[0]
         await c0.toggle()
-        fixture.detectChanges() 
+        fixture.detectChanges()
         expect(JSON.stringify(checkedIds)).toEqual(JSON.stringify([1])) // we make sure that checkedIds has the right value before assigning it
         component.checkedIds = checkedIds // you have to do this or it won't work.
         expect(setCheckedIds).toHaveBeenCalledWith([1])
@@ -261,24 +261,124 @@ describe('TableComponentComponent', () => {
         expect(await c0.isChecked()).toBe(false)
       })
 
-    //   it('should successfully unselect')
+      it('should successfully unselect', async () => {
+        setCheckedIds = jasmine.createSpy().and.callFake((arg) => {
+          checkedIds = [...arg]
+        });
+
+        component.setCheckedIds = setCheckedIds
+        const checkboxes = await loader.getAllHarnesses(MatCheckboxHarness);
+        const c0 = checkboxes[0]
+        await c0.toggle()
+        fixture.detectChanges()
+        
+        expect(setCheckedIds).toHaveBeenCalledWith([1])
+        expect(await c0.isChecked()).toBe(true)
+
+        expect(JSON.stringify(checkedIds)).toEqual(JSON.stringify([1]))
+        component.checkedIds = checkedIds // you have to do this or it won't work.
+
+        await c0.toggle()
+        fixture.detectChanges()
+        expect(setCheckedIds).toHaveBeenCalledWith([1])
+        expect(JSON.stringify(checkedIds)).toEqual(JSON.stringify([]))
+        expect(await c0.isChecked()).toBe(false)
+      })
+
+      describe('multiple select', () => {
+
+        beforeEach(() => {
+          // Have to manually trigger the event or it won't work :()
+          const mockData = {
+            data: [
+              { id: 1, name: 'John Doe', email: 'john@example.com' },
+              { id: 2, name: 'Jane Doe', email: 'jane@example.com' }
+            ],
+            totalCount: 100
+          };
+          component.checkbox = "multiple"
+          component.checkedIds = checkedIds
+          const changes: SimpleChanges = {
+            fetchedData: new SimpleChange(null, mockData, true) // true indicates it's the first change
+          };
+          component.ngOnChanges(changes);
+          fixture.detectChanges(); // Trigger change detection
+  
+        })
+
+        it('should successfully select multiple rows', async () => {
+          setCheckedIds = jasmine.createSpy().and.callFake((arg) => {
+            checkedIds = [...arg]
+          });
+  
+          component.setCheckedIds = setCheckedIds
+          const checkboxes = await loader.getAllHarnesses(MatCheckboxHarness);
+          const c0 = checkboxes[0]
+          await c0.toggle()
+          fixture.detectChanges()
+          
+          expect(setCheckedIds).toHaveBeenCalledWith([1])
+          expect(JSON.stringify(checkedIds)).toEqual(JSON.stringify([1]))
+
+          component.checkedIds = checkedIds
+          expect(await c0.isChecked()).toBe(true)
+
+          const c1 = checkboxes[1]
+          await c1.toggle()
+          fixture.detectChanges()
+          
+          expect(setCheckedIds).toHaveBeenCalledWith([1,2])
+          expect(JSON.stringify(checkedIds)).toEqual(JSON.stringify([1,2]))
+          component.checkedIds = checkedIds
+          expect(await c0.isChecked()).toBe(true)
+          expect(await c1.isChecked()).toBe(true)
+        })
 
 
-    // })
+        fit('should successfully unselect', async() => {
+          setCheckedIds = jasmine.createSpy().and.callFake((arg) => {
+            checkedIds = [...arg]
+          });
+  
+          component.setCheckedIds = setCheckedIds
+          const checkboxes = await loader.getAllHarnesses(MatCheckboxHarness);
+          const c0 = checkboxes[0]
+          await c0.toggle()
+          fixture.detectChanges()
+          
+          expect(setCheckedIds).toHaveBeenCalledWith([1])
+          expect(JSON.stringify(checkedIds)).toEqual(JSON.stringify([1]))
 
-    // describe('multiple select', () => {
+          component.checkedIds = checkedIds
+          expect(await c0.isChecked()).toBe(true)
 
-    //   // it('should successfully select multiple rows', () => {
+          const c1 = checkboxes[1]
+          await c1.toggle()
+          fixture.detectChanges()
+          
+          expect(setCheckedIds).toHaveBeenCalledWith([1,2])
+          expect(JSON.stringify(checkedIds)).toEqual(JSON.stringify([1,2]))
+          component.checkedIds = checkedIds
+          expect(await c0.isChecked()).toBe(true)
+          expect(await c1.isChecked()).toBe(true)
 
+          await c0.toggle()
+          fixture.detectChanges()
+          
+          expect(setCheckedIds).toHaveBeenCalledWith([1])
+          expect(JSON.stringify(checkedIds)).toEqual(JSON.stringify([2]))
+          component.checkedIds = checkedIds
+          expect(await c0.isChecked()).toBe(false)
+          expect(await c1.isChecked()).toBe(true)
 
-    //   // })
-
-    //   // it('should successfully unselect', () => {
-
-
-    //   })
-
-    })
+          await c1.toggle()
+          fixture.detectChanges()
+          
+          expect(setCheckedIds).toHaveBeenCalledWith([2])
+          expect(JSON.stringify(checkedIds)).toEqual(JSON.stringify([]))
+          expect(await c0.isChecked()).toBe(false)
+          expect(await c1.isChecked()).toBe(false)
+        })})})
 
     afterEach(() => {
       setCheckedIds.calls.reset()
