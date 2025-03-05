@@ -4,7 +4,9 @@ import { TableComponentComponent } from './table-component.component';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatPaginatorHarness } from '@angular/material/paginator/testing';
+import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { SimpleChanges, SimpleChange } from '@angular/core';
+
 
 describe('TableComponentComponent', () => {
   let component: TableComponentComponent;
@@ -192,12 +194,11 @@ describe('TableComponentComponent', () => {
   })
 
   describe('checkbox tests', () => {
-    let setCheckedIds:any
+    let setCheckedIds: any
     let checkedIds: number[] = []
 
     describe('single select', () => {
       beforeEach(() => {
-        const compiled = fixture.debugElement.nativeElement;
         // Have to manually trigger the event or it won't work :()
         const mockData = {
           data: [
@@ -213,42 +214,70 @@ describe('TableComponentComponent', () => {
         };
         component.ngOnChanges(changes);
         fixture.detectChanges(); // Trigger change detection
-        
+
       })
 
-      fit('should successfully select a single row', () => {
+      it('should successfully select a single row', async () => {
         setCheckedIds = jasmine.createSpy().and.callFake((arg) => {
           checkedIds = [...arg]
         });
+
+        component.setCheckedIds = setCheckedIds
+        const checkboxes = await loader.getAllHarnesses(MatCheckboxHarness);
+        const c0 = checkboxes[0]
+        await c0.toggle()
+        fixture.detectChanges()
+
+        expect(setCheckedIds).toHaveBeenCalledWith([1])
+        expect(await c0.isChecked()).toBe(true)
+      })
+
+      fit('should only allow one row selected', async () => {
+        setCheckedIds = jasmine.createSpy().and.callFake((arg) => {
+          checkedIds = [...arg]
+          fixture.detectChanges(); // Trigger update in the component
+          
+          console.log('setter', checkedIds, arg)
+        });
         component.setCheckedIds = setCheckedIds
         const compiled = fixture.debugElement.nativeElement;
-        const row = compiled.querySelector('table').querySelectorAll('tr')[1]
-        const checkbox = row.querySelector('input')
-        checkbox.click();
-        fixture.detectChanges(); // Ensure Angular updates the view
-
-        expect(checkbox.checked).toBe(true)
+        const checkboxes = await loader.getAllHarnesses(MatCheckboxHarness);
+        const c0 = checkboxes[0]
+        await c0.toggle()
+        component.checkedIds = checkedIds // you have to do this or it won't work.
+        fixture.detectChanges()
         expect(setCheckedIds).toHaveBeenCalledWith([1])
-       })
-
-      it('should only allow one row selected')
-
-      it('should successfully unselect')
-
-
-    })
-
-    describe('multiple select', () => {
-
-      it('should successfully select multiple rows', () => {
-
-
+        expect(await c0.isChecked()).toBe(true)
+        await fixture.whenStable()
+        console.log(checkedIds, component.checkedIds)
+        
+        const c1 = checkboxes[1]
+        await c1.toggle()
+        component.checkedIds = checkedIds // you have to do this or it won't work.
+        await fixture.whenStable()
+        console.log(checkedIds, component.checkedIds)
+        
+        expect(setCheckedIds).toHaveBeenCalledWith([2])
+        expect(await c1.isChecked()).toBe(true)
+        expect(await c0.isChecked()).toBe(false)
       })
 
-      it('should successfully unselect', () => {
+    //   it('should successfully unselect')
 
 
-      })
+    // })
+
+    // describe('multiple select', () => {
+
+    //   // it('should successfully select multiple rows', () => {
+
+
+    //   // })
+
+    //   // it('should successfully unselect', () => {
+
+
+    //   })
 
     })
 

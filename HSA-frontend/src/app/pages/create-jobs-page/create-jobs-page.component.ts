@@ -22,7 +22,6 @@ export class CreateJobsPageComponent implements OnInit {
 
   setCheckedServices(ids: number[]) {
     this.checkedServices = [...ids] // in order for change
-    console.log(`checked services set to ${this.checkedServices}`)
   }
 
   loadServiceToTable(searchTerm: string, pageSize: number, offSet: number) {
