@@ -8,7 +8,6 @@
 
 # Required environment variables:
 # - SSHURL: SSH target in user@host format
-# - SSHPASS (optional): If using a password (not recommended)
 # - Ensure SSH key authentication is set up for best security.
 
 if [ -z "$SSHURL" ]; then
@@ -20,14 +19,5 @@ fi
 docker build -t hsa-app .
 
 # Transfer Docker image to remote host
-if [ "$1" == "pass" ]; then
-  if [ -z "$SSHPASS" ]; then
-    echo "Error: SSHPASS is not set."
-    exit 1
-  fi
-  # clean on host
-  sshpass -p "$SSHPASS" ssh -o StrictHostKeyChecking=no "$SSHURL" 'ctr images rm hsa-app:latest'
-  docker save hsa-app | sshpass -p "$SSHPASS" ssh -o "StrictHostKeyChecking no" -C "$SSHURL" "ctr image import -"
-else
-  echo "Non-auto is not supported. Please run this with "pass" and set SSHPASS"
-fi
+ssh -i ~/.ssh/id-gcpkey -o StrictHostKeyChecking=no "$SSHURL" 'ctr images rm hsa-app:latest'
+docker save hsa-app | ssh -i ~/.ssh/id-gcpkey -o StrictHostKeyChecking=no -C "$SSHURL" "ctr image import -"
