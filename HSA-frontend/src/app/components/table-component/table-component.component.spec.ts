@@ -244,19 +244,18 @@ describe('TableComponentComponent', () => {
         const checkboxes = await loader.getAllHarnesses(MatCheckboxHarness);
         const c0 = checkboxes[0]
         await c0.toggle()
+        fixture.detectChanges() 
+        expect(JSON.stringify(checkedIds)).toEqual(JSON.stringify([1])) // we make sure that checkedIds has the right value before assigning it
         component.checkedIds = checkedIds // you have to do this or it won't work.
-        fixture.detectChanges()
         expect(setCheckedIds).toHaveBeenCalledWith([1])
         expect(await c0.isChecked()).toBe(true)
         await fixture.whenStable()
-        console.log(checkedIds, component.checkedIds)
-        
         const c1 = checkboxes[1]
         await c1.toggle()
+        fixture.detectChanges()
+        expect(JSON.stringify(checkedIds)).toEqual(JSON.stringify([2])) // we make sure that checkedIds has the right value before assigning it
         component.checkedIds = checkedIds // you have to do this or it won't work.
         await fixture.whenStable()
-        console.log(checkedIds, component.checkedIds)
-        
         expect(setCheckedIds).toHaveBeenCalledWith([2])
         expect(await c1.isChecked()).toBe(true)
         expect(await c0.isChecked()).toBe(false)
