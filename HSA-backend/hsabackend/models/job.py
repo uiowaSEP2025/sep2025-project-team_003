@@ -1,8 +1,5 @@
 from django.db import models
-from hsabackend.models.contractor import Contractor
 from hsabackend.models.organization import Organization
-from hsabackend.models.material import Material
-from hsabackend.models.service import Service
 from hsabackend.models.model_validators import isNonEmpty, validate_state
 from hsabackend.models.customer import Customer
 
@@ -18,10 +15,7 @@ class Job(models.Model):
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
     description = models.CharField(max_length=200, blank=True)
-    contractor = models.ManyToManyField(Contractor)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    materials = models.ManyToManyField(Material, through="MaterialJob")
-    service = models.ManyToManyField(Service)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     requestor_city = models.CharField(max_length=50,validators=[isNonEmpty])
     requestor_state = models.CharField(max_length=50,validators=[isNonEmpty,validate_state])
@@ -30,10 +24,3 @@ class Job(models.Model):
 
     def __str__(self):
         return f"<Job, organization: {self.organization}, description: {self.description}>"
-    
-# this must be here or we get a circular import error
-class MaterialJob(models.Model):
-    unit_cost = models.FloatField()
-    units_used = models.IntegerField()
-    job = models.ForeignKey(Job, on_delete=models.CASCADE)
-    material = models.ForeignKey(Material, on_delete=models.CASCADE)

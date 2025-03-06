@@ -6,9 +6,10 @@ from django.conf import settings
 import hsabackend.views.index as hview
 from hsabackend.views.user_auth import login_view
 from hsabackend.views.customers import get_customer_table_data,create_customer,edit_customer, delete_customer
-from hsabackend.views.requests import get_org_request_data,delete_request
+from hsabackend.views.requests import get_org_request_data, delete_request, approve_request
 from hsabackend.views.services import get_service_table_data, create_service, edit_service, delete_service
 from hsabackend.views.materials import get_material_table_data, create_material, edit_material, delete_material
+from hsabackend.views.jobs import get_job_table_data, create_job
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,8 +25,8 @@ urlpatterns = [
 
     # request
     path("api/get/requests", get_org_request_data),
-    path("api/delete/request/<int:id>", delete_customer),
-    path("api/approve/request/<int:id>", delete_customer),
+    path("api/delete/request/<int:id>", delete_request),
+    path("api/approve/request/<int:id>", approve_request),
 
     # service 
     path("api/get/services", get_service_table_data),
@@ -39,6 +40,10 @@ urlpatterns = [
     path("api/create/material", create_material),
     path("api/edit/material/<int:id>", edit_material),
     path("api/delete/material/<int:id>", delete_material),
+
+    # jobs
+    path("api/get/jobs", get_job_table_data),
+    path("api/create/job", create_job),
 
     # TODO: catch all for API requests and return 404
 
