@@ -59,31 +59,15 @@ def create_job(request):
     job_description = request.data.get('description', '')
     job_start_date = request.data.get('start_date', '')
     job_end_date = request.data.get('end_date', '')
-    customer_name = Customer.objects.get(first_name=request.data.get('customer', '').split(" ")[0], last_name=request.data.get('customer', '').split(" ")[1])
+    customer = Customer.objects.get(id=request.data.get('customer_id'))
     requestor_city = request.data.get('city', '')
     requestor_state = request.data.get('state', '')
     requestor_zip = request.data.get('zip', '')
     requestor_address = request.data.get('address', '')
 
-    contractor_list = request.data.get('contractors', '')   # data send form: contractors: [{ "firstName": string, "lastName": string }]
-    service_list = request.data.get('services', '')         # data send form: services: [{ "name": string }]
-    material_list = request.data.get('materials', '')       # data send form: materials: [{ "name": string, "unit": int, "pricePerUnit": float }]
-
-    # Check for request data values (prevent from having two jobs with exactly the same details in the database)
-    existing_job = Job.objects.get(
-        organization=org.pk, 
-        start_date=job_start_date, 
-        end_date=job_end_date, 
-        description=job_description, 
-        customer=customer_name,
-        requestor_address = requestor_address,
-        requestor_city = requestor_city,
-        requestor_state = requestor_state,
-        requestor_zip = requestor_zip
-    )
-
-    if (existing_job):
-        return Response({"message": "There exists a job with the same details"}, status=status.HTTP_400_BAD_REQUEST)
+    contractor_list = request.data.get('contractors', '')   # data send form: contractors: [{ "contractor_id": int }]
+    service_list = request.data.get('services', '')         # data send form: services: [{ "service_id": string }]
+    material_list = request.data.get('materials', '')       # data send form: materials: [{ "material_id": string, "unit": int, "pricePerUnit": float }]
     
     # Initialize job entry first
     job = Job(
@@ -92,7 +76,7 @@ def create_job(request):
         end_date = job_end_date,
         description = job_description,
         organization = org,
-        customer = customer_name,
+        customer = customer,
         requestor_address = requestor_address,
         requestor_city = requestor_city,
         requestor_state = requestor_state,
@@ -108,7 +92,7 @@ def create_job(request):
     
     # Add service and job join entry
     for service in service_list:
-        service_object = Service.objects.get(organization=org.pk, service_name=service["name"])
+        service_object = Service.objects.get(organization=org.pk, id=service["id"])
 
         if (service_object):
             job_service = JobService(
@@ -125,7 +109,7 @@ def create_job(request):
     
     # Add material and job join entry
     for material in material_list:
-        material_object = Material.objects.get(organization=org.pk, material_name=material["name"])
+        material_object = Material.objects.get(organization=org.pk, id=material["id"])
 
         if (material_object):
             material_job = JobMaterial(
@@ -144,7 +128,7 @@ def create_job(request):
     
     # Add contractor and job join entry
     for contractor in contractor_list:
-        contractor_object = Contractor.objects.get(organization=org.pk, first_name=contractor["firstName"], last_name=contractor["lastName"])
+        contractor_object = Contractor.objects.get(organization=org.pk, id=contractor["id"])
 
         if (contractor_object):
             job_contractor = JobContractor(
