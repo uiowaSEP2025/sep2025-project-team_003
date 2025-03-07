@@ -1,6 +1,11 @@
 <div class="flex items-center  flex-col">
-    <app-table-component editRedirect="/customers/edit" deleteEndpoint="1234"></app-table-component>
-    <button mat-fab extended class="m-10" (click)="redirectCreate()">
+<app-table-component 
+    editRedirect="/customers/edit" 
+    [fetchedData]="customers"
+    [deleteRequest]="customerService.deleteCustomer.bind(customerService)"
+    [loadDataToTable]="this.loadDataToTable.bind(this)"
+    [hideValues]="['Id', 'Phone No' ]"></app-table-component>
+    <button mat-fab extended class="m-10" (click)="navigateToPage('customers/create')">
         <mat-icon>note_add</mat-icon>
         Add a Customer
     </button>

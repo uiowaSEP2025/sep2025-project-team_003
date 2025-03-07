@@ -5,7 +5,7 @@ from hsabackend.models.model_validators import isNonEmpty
 class Service(models.Model):
     """A service offered by an organization. Eg. Lawn care"""
     service_name = models.CharField(max_length=100, validators=[isNonEmpty])
-    service_description = models.CharField(max_length=200)
+    service_description = models.CharField(max_length=200, blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
 
     def __str__(self):
