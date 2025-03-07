@@ -32,7 +32,7 @@ export class LoginComponent {
         password: this.passwordFormControl.value
       }).subscribe({
         next: () => {
-          this.snackBar.open('Login Successfull', '', {
+          this.snackBar.open('Login Successful', '', {
             duration: 3000
           });
         },
