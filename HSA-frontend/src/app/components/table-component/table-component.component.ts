@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewInit, Input, input, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, Input, input, OnChanges, SimpleChanges, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
@@ -34,7 +34,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './table-component.component.html',
   styleUrl: './table-component.component.scss'
 })
-export class TableComponentComponent implements AfterViewInit, OnChanges {
+export class TableComponentComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() fetchedData: any = null
   @Input() deleteRequest!: (data: any) => Observable<StandardApiResponse>
   @Input({ required: true }) loadDataToTable!: (search: string, pageSize: number, offSet: number) => void
