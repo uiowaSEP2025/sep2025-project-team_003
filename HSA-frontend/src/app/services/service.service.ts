@@ -32,7 +32,7 @@ export class ServiceService {
   
     constructor(private http: HttpClient) {}
   
-    public getService(params?: {[key: string]: string | number}): Observable<StandardApiResponse> {
+    public getService(params?: Record<string, string | number>): Observable<StandardApiResponse> {
       let httpParams = new HttpParams();
   
       // Add query parameters

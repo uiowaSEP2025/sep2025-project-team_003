@@ -20,7 +20,7 @@ class SessionCsrfExemptAuthentication(BaseAuthentication):
         Returns a `User` if the request session currently has a logged in user.
         Otherwise returns `None`.
         """
-
+        print(request)
         # Get the session-based user from the underlying HttpRequest object
         user = getattr(request._request, 'user', None)
 
@@ -44,6 +44,7 @@ class SessionCsrfExemptAuthentication(BaseAuthentication):
         # populates request.META['CSRF_COOKIE'], which is used in process_view()
         check.process_request(request)
         reason = check.process_view(request, None, (), {})
+        print('ENV' in os.environ)
         if reason and not 'ENV' not in os.environ:
             # CSRF failed, bail with explicit error message
             raise exceptions.PermissionDenied('CSRF Failed: %s' % reason)

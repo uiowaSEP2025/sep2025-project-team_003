@@ -39,7 +39,7 @@ export class CustomerService {
   
     constructor(private http: HttpClient) {}
   
-    public getCustomer(params?: {[key: string]: string | number}): Observable<StandardApiResponse> {
+    public getCustomer(params?: Record<string, string | number>): Observable<StandardApiResponse> {
       let httpParams = new HttpParams();
   
       // Add query parameters

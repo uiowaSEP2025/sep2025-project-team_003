@@ -1,0 +1,16 @@
+.side-menu {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    top: 10px;
+    left: -250px;
+    /* Initially hidden */
+    overflow-x: hidden;
+    padding-top: 60px;
+    transition: 0.3s;
+}
+
+.side-menu.open {
+    left: 10px;
+    /* Show the menu */
+}

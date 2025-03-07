@@ -31,7 +31,7 @@ export class MaterialService {
 
   constructor(private http: HttpClient) {}
 
-  public getMaterial(params?: {[key: string]: string | number}): Observable<StandardApiResponse> {
+  public getMaterial(params?: Record<string, string | number>): Observable<StandardApiResponse> {
     let httpParams = new HttpParams();
 
     // Add query parameters
