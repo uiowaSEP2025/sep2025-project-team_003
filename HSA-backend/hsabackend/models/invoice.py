@@ -10,9 +10,8 @@ class Invoice(models.Model):
     ]
 
     issuance_date = models.DateField()
-    due_date = models.DateField()
+    due_date = models.DateField(null=True,blank=True, default=None)
     status = models.CharField(max_length=50, choices=status_choices, default="created")
-    price = models.FloatField()
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
 
     def __str__(self):

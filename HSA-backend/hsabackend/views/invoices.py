@@ -1,0 +1,66 @@
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from hsabackend.models.customer import Customer 
+from hsabackend.models.quote import Quote
+from hsabackend.models.invoice import Invoice
+from hsabackend.models.organization import Organization
+from django.core.exceptions import ValidationError
+from django.utils import timezone
+
+
+@api_view(["POST"])
+def createInvoice(request):
+    if not request.user.is_authenticated:
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    json = request.data  
+    org = Organization.objects.get(owning_User=request.user.pk)
+
+    customer_id = json.get("customerID", None)
+    quote_ids = json.get("quoteIDs",[])
+    print(json)
+
+    if not isinstance(customer_id, int):
+        return Response({"message": "CustomerID must be int"}, status=status.HTTP_400_BAD_REQUEST)  
+    
+    if not isinstance(quote_ids, list):
+        return Response({"message": "Quotes must be list"}, status=status.HTTP_400_BAD_REQUEST)  
+
+    cust_qs = Customer.objects.filter(pk=customer_id, organization=org)
+
+    if not cust_qs.exists():
+        # will be here if user does not own the customer ID
+        return Response({"message": "Must provide customer for the invoice."}, status=status.HTTP_404_NOT_FOUND)
+
+    invoice = Invoice(
+        customer = cust_qs[0],
+        issuance_date = timezone.now()
+    )
+    
+    try:
+        invoice.full_clean()
+        invoice.save()
+    except ValidationError as e:
+        return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+    
+    Quote.objects.filter(
+        pk__in=quote_ids, 
+        jobID__organization=org,  # Ensure the quote's job is linked to the user's organization
+        invoice_id = None # Ensure this quote does not belong to other invoice
+    ).update(invoice=invoice)
+
+    return Response({"message": "Invoice created"}, status=status.HTTP_201_CREATED)
+
+
+@api_view(["GET"])
+def getInvoices(request):
+    pass
+
+@api_view(["POST"])
+def updateInvoice(request):
+    pass
+
+@api_view(["POST"])
+def deleteInvoice(request):
+    pass

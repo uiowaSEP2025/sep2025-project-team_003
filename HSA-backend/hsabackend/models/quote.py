@@ -17,7 +17,7 @@ class Quote(models.Model):
     total_price = models.FloatField()
     jobID = models.OneToOneField(Job, on_delete= models.CASCADE)
     discount_type = models.ForeignKey(DiscountType, on_delete=models.CASCADE)
-    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, null=True)
+    invoice = models.ForeignKey(Invoice, on_delete=models.SET_NULL, null=True)
     
     def __str__(self):
         return f"<Quote, job: {self.jobID}>"
