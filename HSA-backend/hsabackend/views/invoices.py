@@ -98,5 +98,15 @@ def updateInvoice(request):
     pass
 
 @api_view(["POST"])
-def deleteInvoice(request):
-    pass
+def deleteInvoice(request,id):
+    if not request.user.is_authenticated:
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    org = Organization.objects.get(owning_User=request.user.pk)
+    invoice_qs = Invoice.objects.filter(
+        customer__organization=org.pk,
+        pk = id
+        )
+    if not invoice_qs.exists():
+        return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    invoice_qs[0].delete()
+    return Response({"message": "Invoice Deleted successfully"}, status=status.HTTP_200_OK)
