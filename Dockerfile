@@ -24,7 +24,7 @@ RUN npm install
 
 
 # Run tests in headless mode
-RUN ng test --watch=true --browsers=ChromeHeadless
+RUN ng test --watch=false --browsers=ChromeHeadless
 
 # Run staging commands
 RUN ng build
