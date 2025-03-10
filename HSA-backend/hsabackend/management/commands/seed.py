@@ -112,7 +112,7 @@ class Command(BaseCommand):
                 c2.save()
 
                 customers = Customer.objects.filter(organization=org.pk)
-                customers_1 = Customer.objects.filter(organization=org.pk)
+                customers_1 = Customer.objects.filter(organization=org1.pk)
 
                 material_names = [
                     "Steel Beam",

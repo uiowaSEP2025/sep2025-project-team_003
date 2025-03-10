@@ -94,8 +94,38 @@ def getInvoices(request):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
-def updateInvoice(request):
-    pass
+def updateInvoice(request, id):
+    if not request.user.is_authenticated:
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    org = Organization.objects.get(owning_User=request.user.pk)
+    json = request.data  
+
+    quote_ids = json.get("quoteIDs",[])
+
+    if not isinstance(quote_ids, list):
+        return Response({"message": "Quotes must be list"}, status=status.HTTP_400_BAD_REQUEST)  
+    
+    if len(quote_ids) == 0:
+        return Response({"message": "Must include at least "}, status=status.HTTP_400_BAD_REQUEST)  
+
+    invoice_qs = Invoice.objects.filter(
+        customer__organization=org.pk,
+        pk = id
+        )
+    
+    if not invoice_qs.exists():
+        return Response({"message": "The invoice does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    
+    Quote.objects.filter(
+        pk__in=quote_ids, 
+        jobID__organization=org,  # Ensure the quote's job is linked to the user's organization
+    ).update(invoice=id)
+
+    Quote.objects.exclude(pk__in=quote_ids).filter(
+        jobID__organization=org,  # Ensure the quote's job is linked to the user's organization
+        invoice=id # find all quotes linked to this invoice
+    ).update(invoice=None)
+    return Response({"message": "Invoice updated successfully"}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 def deleteInvoice(request,id):
