@@ -15,5 +15,11 @@ class Invoice(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"<Invoice, customer: {self.customer}, price: {self.price}>"
+        return f"<Invoice, customer: {self.customer}>"
     
+    def json(self):
+        return {
+            "status": self.status,
+            "due date": "None" if self.due_date == None else self.due_date,
+            "customer": f"{self.customer.first_name}, {self.customer.last_name}" 
+        }

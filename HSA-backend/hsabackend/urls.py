@@ -11,7 +11,7 @@ from hsabackend.views.customers import get_customer_table_data,create_customer,e
 from hsabackend.views.requests import get_org_request_data,delete_request
 from hsabackend.views.services import get_service_table_data, create_service, edit_service, delete_service
 from hsabackend.views.materials import get_material_table_data, create_material, edit_material, delete_material
-from hsabackend.views.invoices import createInvoice
+from hsabackend.views.invoices import createInvoice, getInvoices
 
 def handle_unmatched_api(request):
     return HttpResponseNotFound("404 Not Found")
@@ -48,6 +48,7 @@ urlpatterns = [
 
     # invoices
     path("api/create/invoice", createInvoice),
+    path("api/get/invoices", getInvoices),
 
     # Catch-all for unmatched API requests
     re_path(r'^api/.*', handle_unmatched_api), 

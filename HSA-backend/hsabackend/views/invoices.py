@@ -7,6 +7,7 @@ from hsabackend.models.invoice import Invoice
 from hsabackend.models.organization import Organization
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.db.models import Q
 
 
 @api_view(["POST"])
@@ -19,7 +20,6 @@ def createInvoice(request):
 
     customer_id = json.get("customerID", None)
     quote_ids = json.get("quoteIDs",[])
-    print(json)
 
     if not isinstance(customer_id, int):
         return Response({"message": "CustomerID must be int"}, status=status.HTTP_400_BAD_REQUEST)  
@@ -55,7 +55,43 @@ def createInvoice(request):
 
 @api_view(["GET"])
 def getInvoices(request):
-    pass
+    if not request.user.is_authenticated:
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    org = Organization.objects.get(owning_User=request.user.pk)
+    search = request.query_params.get('search', '')
+    pagesize = request.query_params.get('pagesize', '')
+    offset = request.query_params.get('offset',0)
+    if not pagesize or not offset:
+        return Response({"message": "missing pagesize or offset"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        pagesize = int(pagesize)
+        offset = int(offset)
+    except:
+        return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    offset = offset * pagesize
+    invoices = Invoice.objects.select_related("customer").filter(
+        customer__organization=org.pk).filter(
+        Q(customer__first_name__icontains=search) |
+        Q(customer__last_name__icontains=search)   
+    )[offset : offset + pagesize] 
+    data = []
+
+    for invoice in invoices:
+        data.append(invoice.json())
+    
+    count = Invoice.objects.select_related("customer").filter(
+        customer__organization=org.pk).filter(
+        Q(customer__first_name__icontains=search) |
+        Q(customer__last_name__icontains=search)   
+    ).count()
+
+    res = {
+        'data': data,
+        'totalCount': count
+    }    
+    return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 def updateInvoice(request):
