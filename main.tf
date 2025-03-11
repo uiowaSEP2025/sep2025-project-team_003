@@ -48,21 +48,6 @@ variable "DATABASE_PASSWORD" {
   sensitive   = true
 }
 
-
-variable "SSHURL" {
-  description = "User+URL of SSH provider (e.g, bob@10.1.1.1)"
-  type        = string
-  sensitive   = true
-}
-
-
-variable "SSHPASS" {
-  description = "Password of SSH provider"
-  type        = string
-  sensitive   = true
-}
-
-
 # Configure the Kubernetes provider. This example uses your local kubeconfig.
 provider "kubernetes" {
   config_path = "~/.kube/config"
@@ -83,25 +68,6 @@ resource "kubernetes_secret" "hsa-secrets" {
   type = "Opaque"
 }
 
-resource "null_resource" "always_run" {
-  triggers = {
-    always_run = timestamp()
-    # this is to force TF to run everytime.
-    # It is too complex to keep track of checksums of directory,
-    # and main branch expects to run very little.
-  }
-
-  provisioner "local-exec" {
-    command = "./docker-build-stage.sh pass"
-    environment = {
-      SSHURL = var.SSHURL
-      SSHPASS = var.SSHPASS
-    }
-  }
-
-
-}
-
 # Define a Kubernetes Deployment that runs a single container from a Docker image.
 resource "kubernetes_deployment" "hsa-dp" {
   metadata {
@@ -110,13 +76,6 @@ resource "kubernetes_deployment" "hsa-dp" {
       app = "hsa"
     }
   }
-
-  lifecycle {
-    replace_triggered_by = [
-      null_resource.always_run
-    ]
-  }
-
   spec {
     replicas = 1
 
@@ -138,8 +97,7 @@ resource "kubernetes_deployment" "hsa-dp" {
 
         container {
           name  = "hsa-ct"
-          image_pull_policy = "Never"
-          image = "docker.io/library/hsa-app:latest"
+          image = "mzeng1417/hsa-image-store:latest"
 
           port {
             container_port = 8000
@@ -154,8 +112,6 @@ resource "kubernetes_deployment" "hsa-dp" {
       }
     }
   }
-
-  depends_on = [null_resource.always_run]
 }
 
 
@@ -164,13 +120,6 @@ resource "kubernetes_service" "hsa-service" {
     name = "hsa-service"
   }
 
-  lifecycle {
-    replace_triggered_by = [
-      null_resource.always_run
-    ]
-  }
-
-  
   spec {
     selector = {
       app = "hsa"
@@ -184,5 +133,4 @@ resource "kubernetes_service" "hsa-service" {
 
     type = "NodePort"  # Expose it as a NodePort
   }
-  depends_on = [null_resource.always_run]
 }
