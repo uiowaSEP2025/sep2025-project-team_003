@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase
 from unittest.mock import Mock, patch, MagicMock
 from django.contrib.auth.models import User
 from rest_framework.test import APIRequestFactory
-from hsabackend.views.invoices import getInvoices, createInvoice
+from hsabackend.views.invoices import getInvoices, createInvoice, updateInvoice
 from rest_framework import status
 from django.core.exceptions import ValidationError
 
@@ -218,22 +218,123 @@ class InvoiceViewTest(APITestCase):
         assert response.status_code == status.HTTP_201_CREATED
 
     def test_update_unauth(self):
-        pass
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = False
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/edit/invoice/1')
+        request.user = mock_user  
+        response = updateInvoice(request,1)
+        
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    def test_update_quotes_not_list(self):
-        pass
+    @patch('hsabackend.views.invoices.Organization.objects.get')
+    def test_update_quotes_not_list(self, org):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        
+        mock_org = Mock()
+        org.return_value = mock_org
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/edit/invoice/1', {
+            "quoteIDs": '[1]'
+        }, format='json')
+        request.user = mock_user  
+        response = updateInvoice(request,1)
+        
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_update_quotes_empty(self):
-        pass
+    @patch('hsabackend.views.invoices.Organization.objects.get')
+    def test_update_quotes_empty(self, org):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        
+        mock_org = Mock()
+        org.return_value = mock_org
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/edit/invoice/1', {
+            "quoteIDs": []
+        }, format='json')
+        request.user = mock_user  
+        response = updateInvoice(request,1)
+        
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_update_invoice_not_exist(self):
-        pass
+    @patch('hsabackend.views.invoices.Invoice.objects.filter')
+    @patch('hsabackend.views.invoices.Organization.objects.get')
+    def test_update_invoice_not_exist(self, org, filter):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        
+        mock_org = Mock()
+        org.return_value = mock_org
 
-    def test_update_invoice_bad_status(self):
-        pass
+        invoice_qs = Mock()
+        filter.return_value = invoice_qs
+        invoice_qs.exists.return_value = False
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/edit/invoice/1', {
+            "quoteIDs": [2]
+        }, format='json')
+        request.user = mock_user  
+        response = updateInvoice(request,1)
+        
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        
+    @patch('hsabackend.views.invoices.Invoice.objects.filter')
+    @patch('hsabackend.views.invoices.Organization.objects.get')
+    def test_update_invoice_bad_status(self, org, filter):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        
+        mock_org = Mock()
+        org.return_value = mock_org
 
-    def test_update_invoice_ok(self):
-        pass
+        invoice_qs = MagicMock()
+        filter.return_value = invoice_qs
+        invoice_mock = Mock()
+        invoice_qs.__getitem__.side_effect = lambda x: invoice_mock
+        invoice_mock.status = 'paid'
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/edit/invoice/1', {
+            "quoteIDs": [2]
+        }, format='json')
+        request.user = mock_user  
+        response = updateInvoice(request,1)
+        
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
+    @patch('hsabackend.views.invoices.Quote.objects.exclude')
+    @patch('hsabackend.views.invoices.Quote.objects.filter')
+    @patch('hsabackend.views.invoices.Invoice.objects.filter')
+    @patch('hsabackend.views.invoices.Organization.objects.get')
+    def test_update_invoice_ok(self, org, filter, quote, quote_exlude):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        
+        mock_org = Mock()
+        org.return_value = mock_org
+
+        invoice_qs = MagicMock()
+        filter.return_value = invoice_qs
+        invoice_mock = Mock(name='invoicemock')
+        invoice_qs.__getitem__.side_effect = lambda x: invoice_mock
+        invoice_mock.status = 'created'
+        quote_qs = Mock()
+        quote.return_value = quote_qs
+        quote_exlude.return_value = quote_qs
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/edit/invoice/1', {
+            "quoteIDs": [2]
+        }, format='json')
+        request.user = mock_user  
+        response = updateInvoice(request,1)
+        
+        assert response.status_code == status.HTTP_200_OK
     
 
