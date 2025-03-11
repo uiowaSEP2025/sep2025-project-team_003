@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from hsabackend.models.organization import Organization
 from hsabackend.models.quote import Quote
 from hsabackend.models.invoice import Invoice
+from hsabackend.models.customer import Customer
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -21,9 +22,24 @@ def getQuotesForInvoiceByCustomer(request, id):
     except:
         return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
     
+
+    customer_qs = Customer.objects.filter(pk=id, organization=org)
+    if not customer_qs.exists():
+        return Response({"message": "The customer does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    
+
+
     offset = offset * pagesize
 
-    quotes = Quote.objects.filter(
+    print(Quote.objects.select_related("jobID").select_related("jobID__customer").filter(
+        jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
+        status = "accepted",                # invoice must be accepted to bill
+        jobID__job_status= "completed",     # job must be done to bill 
+        jobID__customer__pk=id,             # quote must for the customer on the invoice
+        invoice = None                      # must not have an existing invoice tied to it
+    ).query)
+
+    quotes = Quote.objects.select_related("jobID").select_related("jobID__customer").filter(
         jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
         status = "accepted",                # invoice must be accepted to bill
         jobID__job_status= "completed",     # job must be done to bill 
@@ -34,7 +50,7 @@ def getQuotesForInvoiceByCustomer(request, id):
     data = []
 
     for quote in quotes:
-        data.append(quote.json())
+        data.append(quote.jsonForInvoice())
     
     count = Quote.objects.filter(
         jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
@@ -78,7 +94,7 @@ def getQuotesForInvoiceByInvoice(request, id):
     
     customer = invoice_qs[0].customer
 
-    quotes = Quote.objects.filter(
+    quotes = Quote.objects.select_related("jobID").select_related("jobID__customer").filter(
         jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
         status = "accepted",                # invoice must be accepted to bill
         jobID__job_status= "completed",     # job must be done to bill 
@@ -89,7 +105,7 @@ def getQuotesForInvoiceByInvoice(request, id):
     data = []
 
     for quote in quotes:
-        data.append(quote.json())
+        data.append(quote.jsonForInvoice())
     
     count = Quote.objects.filter(
         jobID__organization=org,            # Ensure the quote's job is linked to the user's organization

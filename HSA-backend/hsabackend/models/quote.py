@@ -2,6 +2,7 @@ from django.db import models
 from hsabackend.models.discount_type import DiscountType
 from hsabackend.models.job import Job
 from hsabackend.models.invoice import Invoice
+from hsabackend.utils.description_trunctator import truncate_description_for_table
 
 class Quote(models.Model):
     """The price for a job that the organization sends to the customer for approval"""
@@ -21,4 +22,13 @@ class Quote(models.Model):
     
     def __str__(self):
         return f"<Quote, job: {self.jobID}>"
+    
+    def jsonForInvoice(self):
+        return {
+            "id": self.id,
+            "customer": f"{self.jobID.customer.first_name}, {self.jobID.customer.last_name}",
+            "material_subtotal": self.material_subtotal,
+            "total_price": self.total_price,
+            "job_description": truncate_description_for_table(self.jobID.description)
+        }
     

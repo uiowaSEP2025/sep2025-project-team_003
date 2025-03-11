@@ -1,7 +1,7 @@
 from django.db import models
 from hsabackend.models.model_validators import isValidPhone, isNonEmpty
 from hsabackend.models.organization import Organization
-from hsabackend.views.utils.phone_number_deserializer import format
+from hsabackend.utils.phone_number_deserializer import format
 
 class Customer(models.Model):
     """A person that has a pending or fulfilled job"""
