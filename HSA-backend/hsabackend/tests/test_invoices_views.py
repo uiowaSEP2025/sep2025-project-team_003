@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase
 from unittest.mock import Mock, patch, MagicMock
 from django.contrib.auth.models import User
 from rest_framework.test import APIRequestFactory
-from hsabackend.views.invoices import getInvoices, createInvoice, updateInvoice
+from hsabackend.views.invoices import getInvoices, createInvoice, updateInvoice, deleteInvoice
 from rest_framework import status
 from django.core.exceptions import ValidationError
 
@@ -337,4 +337,59 @@ class InvoiceViewTest(APITestCase):
         
         assert response.status_code == status.HTTP_200_OK
     
+    def test_delete_not_found(self):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = False
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/delete/invoice/1')
+        request.user = mock_user  
+        response = updateInvoice(request,1)
+        
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    @patch('hsabackend.views.invoices.Invoice.objects.filter')
+    @patch('hsabackend.views.invoices.Organization.objects.get')
+    def test_delete_unauth(self, org, invoice_filter):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        mock_org = Mock()
+        org.return_value = mock_org
+
+        mock_invoice_qs = Mock()
+        invoice_filter.return_value = mock_invoice_qs
+        mock_invoice_qs.exists.return_value = False
+        
+        factory = APIRequestFactory()
+        request = factory.post('api/delete/invoice/1')
+        request.user = mock_user  
+        response = deleteInvoice(request,1)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+    
+    @patch('hsabackend.views.invoices.Invoice.objects.filter')
+    @patch('hsabackend.views.invoices.Organization.objects.get')
+    def test_delete_ok(self, org, invoice_filter):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        mock_org = Mock()
+        org.return_value = mock_org
+
+        mock_invoice_qs = MagicMock()
+        invoice_filter.return_value = mock_invoice_qs
+        mock_invoice_qs.exists.return_value = True
+        
+        invoice_mock = Mock()
+        mock_invoice_qs.__getitem__.side_effect = lambda x: invoice_mock
+        
+        factory = APIRequestFactory()
+        request = factory.post('api/delete/invoice/1')
+        request.user = mock_user  
+        response = deleteInvoice(request,1)
+
+        assert response.status_code == status.HTTP_200_OK
+        invoice_mock.delete.assert_called_once()
+
 
