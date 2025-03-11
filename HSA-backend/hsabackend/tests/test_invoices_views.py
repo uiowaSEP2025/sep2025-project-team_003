@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase
 from unittest.mock import Mock, patch, MagicMock
 from django.contrib.auth.models import User
 from rest_framework.test import APIRequestFactory
-from hsabackend.views.invoices import getInvoices
+from hsabackend.views.invoices import getInvoices, createInvoice
 from rest_framework import status
 
 class InvoiceViewTest(APITestCase):
@@ -66,3 +66,80 @@ class InvoiceViewTest(APITestCase):
         response = getInvoices(request)
         
         assert response.status_code == status.HTTP_200_OK
+
+    def test_create_unauth(self):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = False
+        
+        factory = APIRequestFactory()
+        request = factory.post('api/create/invoice')
+        request.user = mock_user  
+        response = createInvoice(request)
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    @patch('hsabackend.views.invoices.Organization.objects.get')
+    def test_create_customer_isnt_int(self, org):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        mock_org = Mock()
+        org.return_value = mock_org
+        
+        factory = APIRequestFactory()
+        request = factory.post('api/create/invoice')
+        request.user = mock_user  
+        request.data = {
+            "customerID": "1",
+            "quoteIDs": []
+        }
+        response = createInvoice(request)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        
+    @patch('hsabackend.views.invoices.Organization.objects.get')
+    def test_create_quotes_isnt_list(self, org):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        mock_org = Mock()
+        org.return_value = mock_org
+        
+        factory = APIRequestFactory()
+        request = factory.post('api/create/invoice')
+        request.user = mock_user  
+        request.data = {
+            "customerID": 1,
+            "quoteIDs": ""
+        }
+        response = createInvoice(request)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @patch('hsabackend.views.invoices.Organization.objects.get')
+    def test_create_quotes_is_empty(self, org):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        mock_org = Mock()
+        org.return_value = mock_org
+        
+        factory = APIRequestFactory()
+        request = factory.post('api/create/invoice')
+        request.user = mock_user  
+        request.data = {
+            "customerID": 1,
+            "quoteIDs": ""
+        }
+        response = createInvoice(request)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_create_customer_dosent_exist(self):
+        pass
+
+    def test_create_invoice_validation_fail(self):
+        pass
+
+    def test_create_invoice_success(self):
+        pass
+
+
+
