@@ -109,7 +109,7 @@ def updateInvoice(request, id):
         return Response({"message": "Quotes must be list"}, status=status.HTTP_400_BAD_REQUEST)  
     
     if len(quote_ids) == 0:
-        return Response({"message": "Must include at least "}, status=status.HTTP_400_BAD_REQUEST)  
+        return Response({"message": "Must include at least 1 quote"}, status=status.HTTP_400_BAD_REQUEST)  
 
     invoice_qs = Invoice.objects.filter(
         customer__organization=org.pk,

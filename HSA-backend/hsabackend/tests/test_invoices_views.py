@@ -201,7 +201,7 @@ class InvoiceViewTest(APITestCase):
         mock_invoice = Mock()
         invoice.return_value = mock_invoice
         
-        mock_quote_qs = Mock(name="fuck")
+        mock_quote_qs = Mock()
         quote_filter.return_value = mock_quote_qs
 
         factory = APIRequestFactory()
@@ -217,6 +217,23 @@ class InvoiceViewTest(APITestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
 
+    def test_update_unauth(self):
+        pass
 
+    def test_update_quotes_not_list(self):
+        pass
 
+    def test_update_quotes_empty(self):
+        pass
+
+    def test_update_invoice_not_exist(self):
+        pass
+
+    def test_update_invoice_bad_status(self):
+        pass
+
+    def test_update_invoice_ok(self):
+        pass
+
+    
 
