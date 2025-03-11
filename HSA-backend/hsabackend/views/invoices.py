@@ -47,8 +47,17 @@ def createInvoice(request):
     Quote.objects.filter(
         pk__in=quote_ids, 
         jobID__organization=org,  # Ensure the quote's job is linked to the user's organization
-        invoice_id = None # Ensure this quote does not belong to other invoice
+        invoice_id = None, # Ensure this quote does not belong to other invoice
+        status = "accepted",                # invoice must be accepted to bill
+        jobID__job_status= "completed"      # job must be done to bill 
     ).update(invoice=invoice)
+
+    Quote.objects.filter(
+        pk__in=quote_ids, 
+        jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
+        status = "accepted",                # invoice must be accepted to bill
+        jobID__job_status= "completed"      # job must be done to bill 
+    ).update(invoice=id)
 
     return Response({"message": "Invoice created"}, status=status.HTTP_201_CREATED)
 
@@ -118,7 +127,9 @@ def updateInvoice(request, id):
     
     Quote.objects.filter(
         pk__in=quote_ids, 
-        jobID__organization=org,  # Ensure the quote's job is linked to the user's organization
+        jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
+        status = "accepted",                # invoice must be accepted to bill
+        jobID__job_status= "completed"      # job must be done to bill 
     ).update(invoice=id)
 
     Quote.objects.exclude(pk__in=quote_ids).filter(
