@@ -153,5 +153,38 @@ class testQuotesView(APITestCase):
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    def test_get_quotes_by_invoice_ok(self):
-        pass
+    @patch('hsabackend.views.quotes.Quote.objects.filter')
+    @patch('hsabackend.views.quotes.Quote.objects.select_related')
+    @patch('hsabackend.views.quotes.Invoice.objects.filter')
+    @patch('hsabackend.views.quotes.Organization.objects.get')
+    def test_get_quotes_by_invoice_ok(self, org, invoice, quote, quote_count):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        org.return_value = Organization()
+
+        invoice_qs = MagicMock()
+        invoice_qs.exists.return_value = True
+        invoice.return_value = invoice_qs
+
+        mock_cust = MagicMock()
+        invoice_qs.__getitem__.side_effect = lambda x: mock_cust
+
+        quoteqs1 = Mock(name='q1')
+        quote.return_value = quoteqs1
+
+        quoteqs2 = Mock(name='q2')
+        quoteqs1.select_related.return_value = quoteqs2
+
+        filtered_quotes = MagicMock(name='magic')
+        quoteqs2.filter.return_value = filtered_quotes
+
+        quote_count.return_value = Mock()
+        
+        factory = APIRequestFactory()
+        request = factory.get('api/get/quotesforinvoice/invoice/1?search&pagesize=10&offset=0')
+        request.user = mock_user  
+        response = getQuotesForInvoiceByInvoice(request,1)
+
+        assert response.status_code == status.HTTP_200_OK
+    
