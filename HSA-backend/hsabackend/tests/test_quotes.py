@@ -94,3 +94,18 @@ class testQuotesView(APITestCase):
         request.user = mock_user  
         response = getQuotesForInvoiceByCustomer(request,1)
         assert response.status_code == status.HTTP_200_OK
+
+    def test_get_quotes_by_invoice_unauth(self):
+        pass
+
+    def test_get_quotes_by_invoice_no_page_size(self):
+        pass
+
+    def test_get_quotes_by_invoice_invalid_page_size(self):
+        pass
+
+    def test_get_quotes_by_invoice_invoice_not_found(self):
+        pass
+
+    def test_get_quotes_by_invoice_ok(self):
+        pass
