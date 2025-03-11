@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from hsabackend.models.organization import Organization
 from rest_framework.test import APITestCase
 from rest_framework import status
-from hsabackend.views.quotes import getQuotesForInvoiceByCustomer
+from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForInvoiceByInvoice
 
 class testQuotesView(APITestCase):
     def test_get_quotes_by_cust_id_unauth(self):
@@ -96,16 +96,62 @@ class testQuotesView(APITestCase):
         assert response.status_code == status.HTTP_200_OK
 
     def test_get_quotes_by_invoice_unauth(self):
-        pass
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = False
+        
+        factory = APIRequestFactory()
+        request = factory.get('api/get/quotesforinvoice/invoice/1?search&pagesize=100&offset=0')
+        request.user = mock_user  
+        response = getQuotesForInvoiceByInvoice(request,1)
+        
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    def test_get_quotes_by_invoice_no_page_size(self):
-        pass
+    @patch('hsabackend.views.quotes.Organization.objects.get')
+    def test_get_quotes_by_invoice_no_page_size(self, org):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
 
-    def test_get_quotes_by_invoice_invalid_page_size(self):
-        pass
+        org.return_value = Organization()
+        
+        factory = APIRequestFactory()
+        request = factory.get('api/get/quotesforinvoice/invoice/1?search&offset=0')
+        request.user = mock_user  
+        response = getQuotesForInvoiceByInvoice(request,1)
 
-    def test_get_quotes_by_invoice_invoice_not_found(self):
-        pass
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @patch('hsabackend.views.quotes.Organization.objects.get')
+    def test_get_quotes_by_invoice_invalid_page_size(self, org):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        org.return_value = Organization()
+        
+        factory = APIRequestFactory()
+        request = factory.get('api/get/quotesforinvoice/invoice/1?search&pagesize=s&offset=0')
+        request.user = mock_user  
+        response = getQuotesForInvoiceByInvoice(request,1)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @patch('hsabackend.views.quotes.Invoice.objects.filter')
+    @patch('hsabackend.views.quotes.Organization.objects.get')
+    def test_get_quotes_by_invoice_invoice_not_found(self, org, invoice):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        org.return_value = Organization()
+
+        invoice_qs = Mock()
+        invoice_qs.exists.return_value = False
+        invoice.return_value = invoice_qs
+        
+        factory = APIRequestFactory()
+        request = factory.get('api/get/quotesforinvoice/invoice/1?search&pagesize=10&offset=0')
+        request.user = mock_user  
+        response = getQuotesForInvoiceByInvoice(request,1)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_get_quotes_by_invoice_ok(self):
         pass
