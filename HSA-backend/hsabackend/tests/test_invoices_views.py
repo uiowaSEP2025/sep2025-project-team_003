@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from rest_framework.test import APIRequestFactory
 from hsabackend.views.invoices import getInvoices, createInvoice
 from rest_framework import status
+from django.core.exceptions import ValidationError
 
 class InvoiceViewTest(APITestCase):
     def test_get_invoice_table_unauth(self):
@@ -150,11 +151,72 @@ class InvoiceViewTest(APITestCase):
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    def test_create_invoice_validation_fail(self):
-        pass
+    @patch('hsabackend.views.invoices.Invoice')
+    @patch('hsabackend.views.invoices.Customer.objects.filter')
+    @patch('hsabackend.views.invoices.Organization.objects.get')
+    def test_create_invoice_validation_fail(self, org, get_cust, invoice):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        mock_org = Mock()
+        org.return_value = mock_org
 
-    def test_create_invoice_success(self):
-        pass
+        cust_qs = MagicMock()
+        cust_qs.exists.return_value = True
+        get_cust.return_value = cust_qs
+
+        cust_mock = Mock()
+        cust_qs.__getitem__.side_effect = lambda x: cust_mock
+
+        mock_invoice = Mock()
+        invoice.return_value = mock_invoice
+        mock_invoice.full_clean.side_effect = ValidationError({'firstn': ['This field is required.']})
+
+        factory = APIRequestFactory()
+        request = factory.post('api/create/invoice', {
+            "customerID": 1,
+            "quoteIDs": [1]
+        }, format='json')
+        request.user = mock_user  
+        response = createInvoice(request)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @patch('hsabackend.views.invoices.Quote.objects.filter')
+    @patch('hsabackend.views.invoices.Invoice')
+    @patch('hsabackend.views.invoices.Customer.objects.filter')
+    @patch('hsabackend.views.invoices.Organization.objects.get')
+    def test_create_invoice_success(self, org, get_cust, invoice, quote_filter):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        mock_org = Mock()
+        org.return_value = mock_org
+
+        cust_qs = MagicMock()
+        cust_qs.exists.return_value = True
+        get_cust.return_value = cust_qs
+
+        cust_mock = Mock()
+        cust_qs.__getitem__.side_effect = lambda x: cust_mock
+
+        mock_invoice = Mock()
+        invoice.return_value = mock_invoice
+        
+        mock_quote_qs = Mock(name="fuck")
+        quote_filter.return_value = mock_quote_qs
+
+        factory = APIRequestFactory()
+        request = factory.post('api/create/invoice', {
+            "customerID": 1,
+            "quoteIDs": [1]
+        }, format='json')
+        request.user = mock_user  
+        response = createInvoice(request)
+
+        mock_quote_qs.update.assert_called_with(invoice=mock_invoice)
+        mock_invoice.save.assert_called_once()
+
+        assert response.status_code == status.HTTP_201_CREATED
+
 
 
 
