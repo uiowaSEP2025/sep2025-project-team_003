@@ -50,7 +50,8 @@ def createInvoice(request):
         jobID__organization=org,  # Ensure the quote's job is linked to the user's organization
         invoice_id = None, # Ensure this quote does not belong to other invoice
         status = "accepted",                # invoice must be accepted to bill
-        jobID__job_status= "completed"      # job must be done to bill 
+        jobID__job_status= "completed",      # job must be done to bill 
+        jobID__customer= cust_qs[0]
     ).update(invoice=invoice)
 
     return Response({"message": "Invoice created"}, status=status.HTTP_201_CREATED)
@@ -122,11 +123,14 @@ def updateInvoice(request, id):
     if invoice_qs[0].status != "created":
         return Response({"message": "You can not edit an invoice that was sent or paid already"}, status=status.HTTP_400_BAD_REQUEST)
 
+    customer = invoice_qs[0].customer
+
     Quote.objects.filter(
         pk__in=quote_ids, 
         jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
         status = "accepted",                # invoice must be accepted to bill
-        jobID__job_status= "completed"      # job must be done to bill 
+        jobID__job_status= "completed",      # job must be done to bill 
+        jobID__customer=customer            # quote must for the customer on the invoice
     ).update(invoice=id)
 
     Quote.objects.exclude(pk__in=quote_ids).filter(
