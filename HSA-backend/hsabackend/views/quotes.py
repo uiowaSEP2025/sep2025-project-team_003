@@ -26,18 +26,8 @@ def getQuotesForInvoiceByCustomer(request, id):
     customer_qs = Customer.objects.filter(pk=id, organization=org)
     if not customer_qs.exists():
         return Response({"message": "The customer does not exist"}, status=status.HTTP_404_NOT_FOUND)
-    
-
 
     offset = offset * pagesize
-
-    print(Quote.objects.select_related("jobID").select_related("jobID__customer").filter(
-        jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
-        status = "accepted",                # invoice must be accepted to bill
-        jobID__job_status= "completed",     # job must be done to bill 
-        jobID__customer__pk=id,             # quote must for the customer on the invoice
-        invoice = None                      # must not have an existing invoice tied to it
-    ).query)
 
     quotes = Quote.objects.select_related("jobID").select_related("jobID__customer").filter(
         jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
