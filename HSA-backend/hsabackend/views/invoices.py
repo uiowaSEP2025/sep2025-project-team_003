@@ -26,6 +26,9 @@ def createInvoice(request):
     
     if not isinstance(quote_ids, list):
         return Response({"message": "Quotes must be list"}, status=status.HTTP_400_BAD_REQUEST)  
+    
+    if len(quote_ids) == 0:
+        return Response({"message": "Must include at least "}, status=status.HTTP_400_BAD_REQUEST)  
 
     cust_qs = Customer.objects.filter(pk=customer_id, organization=org)
 
@@ -51,13 +54,6 @@ def createInvoice(request):
         status = "accepted",                # invoice must be accepted to bill
         jobID__job_status= "completed"      # job must be done to bill 
     ).update(invoice=invoice)
-
-    Quote.objects.filter(
-        pk__in=quote_ids, 
-        jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
-        status = "accepted",                # invoice must be accepted to bill
-        jobID__job_status= "completed"      # job must be done to bill 
-    ).update(invoice=id)
 
     return Response({"message": "Invoice created"}, status=status.HTTP_201_CREATED)
 
@@ -125,6 +121,9 @@ def updateInvoice(request, id):
     if not invoice_qs.exists():
         return Response({"message": "The invoice does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
+    if invoice_qs[0].status != "created":
+        return Response({"message": "You can not edit an invoice that was sent or paid already"}, status=status.HTTP_400_BAD_REQUEST)
+
     Quote.objects.filter(
         pk__in=quote_ids, 
         jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
