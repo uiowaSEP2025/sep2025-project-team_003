@@ -9,7 +9,6 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.db.models import Q
 
-
 @api_view(["POST"])
 def createInvoice(request):
     if not request.user.is_authenticated:
@@ -20,7 +19,6 @@ def createInvoice(request):
 
     customer_id = json.get("customerID", None)
     quote_ids = json.get("quoteIDs",[])
-
     if not isinstance(customer_id, int):
         return Response({"message": "CustomerID must be int"}, status=status.HTTP_400_BAD_REQUEST)  
     
@@ -28,9 +26,9 @@ def createInvoice(request):
         return Response({"message": "Quotes must be list"}, status=status.HTTP_400_BAD_REQUEST)  
     
     if len(quote_ids) == 0:
-        return Response({"message": "Must include at least "}, status=status.HTTP_400_BAD_REQUEST)  
+        return Response({"message": "Must include at least 1 quote to include"}, status=status.HTTP_400_BAD_REQUEST)  
 
-    cust_qs = Customer.objects.filter(pk=customer_id, organization=org)
+    cust_qs = Customer.objects.filter(pk=int(customer_id), organization=org)
 
     if not cust_qs.exists():
         # will be here if user does not own the customer ID
