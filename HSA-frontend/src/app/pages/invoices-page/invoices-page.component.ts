@@ -20,6 +20,13 @@ export class InvoicesPageComponent implements OnInit{
     this.loadDataToTable("", 5, 0);
   }
 
+  shouldRenderEdit(invoice:any):boolean {
+    if (invoice.status === 'created') {
+      return true;
+    }
+    return false;
+  }
+
   loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {
     console.log(this)
     this.invoiceService.getInvoicesForOrganization({ search: searchTerm, pagesize: pageSize, offset: offSet}).subscribe({

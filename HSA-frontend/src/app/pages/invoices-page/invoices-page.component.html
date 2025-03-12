@@ -3,4 +3,5 @@
     editRedirect="/edit/invoice" 
     searchHint="search by customer name"
     [fetchedData]="invoices"
+    [shouldRenderEdit]="this.shouldRenderEdit.bind(this)"
     ></app-table-component>
