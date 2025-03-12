@@ -101,6 +101,6 @@ def delete_customer(request, id):
     org = Organization.objects.get(owning_User=request.user.pk)
     cust = Customer.objects.filter(pk=id, organization=org)
     if not cust.exists():
-        return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "The cutomer does not exist"}, status=status.HTTP_404_NOT_FOUND)
     cust[0].delete()
     return Response({"message": "Customer Deleted successfully"}, status=status.HTTP_200_OK)

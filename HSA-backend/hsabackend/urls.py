@@ -2,13 +2,21 @@ from django.contrib import admin
 from django.urls import path, re_path
 from django.conf.urls.static import static
 from django.conf import settings
+from django.http import HttpResponseNotFound
+
 
 import hsabackend.views.index as hview
 from hsabackend.views.user_auth import login_view
 from hsabackend.views.customers import get_customer_table_data,create_customer,edit_customer, delete_customer
-from hsabackend.views.requests import get_org_request_data,delete_request
+from hsabackend.views.requests import get_org_request_data, delete_request,approve_request
 from hsabackend.views.services import get_service_table_data, create_service, edit_service, delete_service
 from hsabackend.views.materials import get_material_table_data, create_material, edit_material, delete_material
+from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice
+from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForInvoiceByInvoice
+
+def handle_unmatched_api(request):
+    return HttpResponseNotFound("404 Not Found")
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,8 +32,8 @@ urlpatterns = [
 
     # request
     path("api/get/requests", get_org_request_data),
-    path("api/delete/request/<int:id>", delete_customer),
-    path("api/approve/request/<int:id>", delete_customer),
+    path("api/delete/request/<int:id>", delete_request),
+    path("api/approve/request/<int:id>", approve_request),
 
     # service 
     path("api/get/services", get_service_table_data),
@@ -33,14 +41,24 @@ urlpatterns = [
     path("api/edit/service/<int:id>", edit_service),
     path("api/delete/service/<int:id>", delete_service),
 
-
     # materials
     path("api/get/materials", get_material_table_data),
     path("api/create/material", create_material),
     path("api/edit/material/<int:id>", edit_material),
     path("api/delete/material/<int:id>", delete_material),
 
-    # TODO: catch all for API requests and return 404
+    # invoices
+    path("api/create/invoice", createInvoice),
+    path("api/get/invoices", getInvoices),
+    path("api/delete/invoice/<int:id>", deleteInvoice),
+    path("api/edit/invoice/<int:id>", updateInvoice),
+
+    # quotes
+    path("api/get/quotesforinvoice/customer/<int:id>", getQuotesForInvoiceByCustomer),
+    path("api/get/quotesforinvoice/invoice/<int:id>", getQuotesForInvoiceByInvoice),
+
+    # Catch-all for unmatched API requests
+    re_path(r'^api/.*', handle_unmatched_api), 
 
     # all non API routes should redirect to angular
     # must be at the bottom!!!
