@@ -1,7 +1,9 @@
-<app-table-component 
-    [loadDataToTable]="this.loadDataToTable.bind(this)" 
-    editRedirect="/edit/invoice" 
-    searchHint="search by customer name"
-    [fetchedData]="invoices"
-    [shouldRenderEdit]="this.shouldRenderEdit.bind(this)"
-    ></app-table-component>
+<div class="flex items-center  flex-col">
+    <app-table-component [loadDataToTable]="this.loadDataToTable.bind(this)" editRedirect="/edit/invoice"
+        searchHint="search by customer name" [fetchedData]="invoices"
+        [shouldRenderEdit]="this.shouldRenderEdit.bind(this)"></app-table-component>
+    <button mat-fab extended class="m-10" >
+        <mat-icon>note_add</mat-icon>
+        Add a Invoice
+    </button>
+</div>
