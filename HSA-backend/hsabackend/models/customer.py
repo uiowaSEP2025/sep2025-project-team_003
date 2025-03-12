@@ -16,7 +16,7 @@ class Customer(models.Model):
         return f"<Customer: {self.pk}>"
     
     def json(self):
-                return {
+        return {
             'id': self.pk,
             'first_name': self.first_name,
             'last_name': self.last_name,

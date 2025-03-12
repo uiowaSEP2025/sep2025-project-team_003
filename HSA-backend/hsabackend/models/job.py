@@ -24,3 +24,18 @@ class Job(models.Model):
 
     def __str__(self):
         return f"<Job, organization: {self.organization}, description: {self.description}>"
+    
+    def json(self):
+        return {
+            'id': self.pk,
+            'job_status': self.job_status,
+            'start_date': self.start_date,
+            'end_date': self.end_date,
+            'description': self.description,
+            'customer_name': self.customer.first_name + " " + self.customer.last_name,
+            'customer_id': self.customer.id,
+            'requestor_city': self.requestor_city,
+            'requestor_state': self.requestor_state,
+            'requestor_zip': self.requestor_zip,
+            'requestor_address': self.requestor_address,
+        }
