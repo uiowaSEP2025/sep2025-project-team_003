@@ -5,10 +5,11 @@
 # 3. Runs the terraform to update k8s
 # Build Docker image
 
-docker build -t mzeng1417/hsa-image-store:latest .
 
-# Transfer Docker image to remote host
-docker push mzeng1417/hsa-image-store:latest
+if [ "$1" == "build" ]; then
+    docker build -t mzeng1417/hsa-image-store:latest .
+    docker push mzeng1417/hsa-image-store:latest
+fi
 
 kubectl delete service hsa-app-service
 kubectl delete pods hsa-app
@@ -20,5 +21,5 @@ sed -e "s|\${DATABASE_NAME}|${DATABASE_NAME}|g" \
     -e "s|\${DATABASE_PASSWORD}|${DATABASE_PASSWORD}|g" \
     kubernates/hsa-app-template.yaml > terraform.tf.yaml
 
-#kubectl apply -f terraform.tf.yaml
+kubectl apply -f terraform.tf.yaml
 kubectl apply -f kubernates/hsa-app-service.yaml
