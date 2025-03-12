@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { TableComponentComponent } from '../../components/table-component/table-component.component';
 import { Router } from '@angular/router';
+import { InvoiceService } from '../../services/invoice.service';
 
 
 @Component({
@@ -11,12 +12,14 @@ import { Router } from '@angular/router';
 })
 export class InvoicesPageComponent {
 
-  constructor (private router: Router) {}
+  constructor (private router: Router, private invoiceService: InvoiceService) {}
+
+  invoices: any
 
   loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {
-    this.customerService.getCustomer({ search: searchTerm, pagesize: pageSize, offset: offSet}).subscribe({
+    this.invoiceService.getInvoicesForOrganization({ search: searchTerm, pagesize: pageSize, offset: offSet}).subscribe({
       next: (response) => {
-        this.customers = response
+        this.invoices = response
       },
       error: (error) => {
           if (error.status === 401) {
