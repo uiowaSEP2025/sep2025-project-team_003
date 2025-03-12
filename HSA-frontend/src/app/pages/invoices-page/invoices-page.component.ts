@@ -29,7 +29,6 @@ export class InvoicesPageComponent implements OnInit{
   }
 
   loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {
-    console.log(this)
     this.invoiceService.getInvoicesForOrganization({ search: searchTerm, pagesize: pageSize, offset: offSet}).subscribe({
       next: (response) => {
         this.invoices = response

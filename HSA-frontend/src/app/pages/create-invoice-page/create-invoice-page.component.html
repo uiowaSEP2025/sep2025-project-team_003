@@ -11,4 +11,23 @@
         [setCheckedIds]="setSelectedCustomers.bind(this)"
         searchHint="Search by customer name"
     ></app-table-component>
+
+    <div class="m-10"></div>
+    @if (selectedCustomers.length !== 0) {
+        <app-table-component 
+            [loadDataToTable]="loadQuotesToTable.bind(this)" 
+            editRedirect="" 
+            [hideValues]="['Actions', 'Id']"
+            [fetchedData]="quotes"
+            checkbox="multiple"
+            [checkedIds]="selectedCustomers"
+            [setCheckedIds]="setSelectedCustomers.bind(this)">
+    </app-table-component>    
+    }
+    @else {
+        <div>please select a customer to create an invoice for</div>
+    }
+
+    <button mat-raised-button class="mt-10 mb-5" (click)="onSubmit()">Create</button>
+
 </div>
