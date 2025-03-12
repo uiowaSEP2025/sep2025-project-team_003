@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase
 from unittest.mock import Mock, patch, MagicMock
 from django.contrib.auth.models import User
 from rest_framework.test import APIRequestFactory
-from hsabackend.views.invoices import getInvoices, createInvoice, updateInvoice, deleteInvoice
+from hsabackend.views.invoices import getInvoices, createInvoice, updateInvoice, deleteInvoice, get_data_for_invoice
 from rest_framework import status
 from django.core.exceptions import ValidationError
 
@@ -369,3 +369,60 @@ class InvoiceViewTest(APITestCase):
         invoice_mock.delete.assert_called_once()
 
 
+    def test_get_generic_data_unauth(self):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = False
+        
+        factory = APIRequestFactory()
+        request = factory.get('/api/get/invoice/displaydata/1')
+        request.user = mock_user  
+        response = get_data_for_invoice(request,1)
+        
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    @patch('hsabackend.views.invoices.Invoice.objects.filter')
+    @patch('hsabackend.views.invoices.Organization.objects.get')
+    def test_get_generic_data_not_found(self, org, invoice_filter):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        mock_org = Mock()
+        org.return_value = mock_org
+
+        mock_invoice_qs = Mock()
+        mock_invoice_qs.exists.return_value = False
+        invoice_filter.return_value = mock_invoice_qs
+        
+        factory = APIRequestFactory()
+        request = factory.get('/api/get/invoice/displaydata/1')
+        request.user = mock_user  
+        response = get_data_for_invoice(request,1)
+        
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    @patch('hsabackend.views.invoices.Quote.objects.filter')
+    @patch('hsabackend.views.invoices.Invoice.objects.filter')
+    @patch('hsabackend.views.invoices.Organization.objects.get')
+    def test_get_generic_data_ok(self, org, invoice_filter, quote_filter):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        mock_org = Mock()
+        org.return_value = mock_org
+
+        mock_invoice_qs = MagicMock()
+        mock_invoice_qs.rexists.return_value = True
+
+        mock_invoice = MagicMock()
+        mock_invoice_qs.__getitem__.side_effect = lambda x: mock_invoice
+        invoice_filter.return_value = mock_invoice_qs
+
+        mock_quote_qs = MagicMock()
+        quote_filter.return_value = mock_quote_qs
+        
+        factory = APIRequestFactory()
+        request = factory.get('/api/get/invoice/displaydata/1')
+        request.user = mock_user  
+        response = get_data_for_invoice(request,1)
+        
+        assert response.status_code == status.HTTP_200_OK
