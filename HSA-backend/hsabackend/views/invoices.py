@@ -26,7 +26,7 @@ def createInvoice(request):
         return Response({"message": "Quotes must be list"}, status=status.HTTP_400_BAD_REQUEST)  
     
     if len(quote_ids) == 0:
-        return Response({"message": "Must include at least 1 quote to include"}, status=status.HTTP_400_BAD_REQUEST)  
+        return Response({"message": "Must include at least 1 quote"}, status=status.HTTP_400_BAD_REQUEST)  
 
     cust_qs = Customer.objects.filter(pk=int(customer_id), organization=org)
 
@@ -48,7 +48,7 @@ def createInvoice(request):
     Quote.objects.filter(
         pk__in=quote_ids, 
         jobID__organization=org,  # Ensure the quote's job is linked to the user's organization
-        invoice_id = None, # Ensure this quote does not belong to other invoice
+        invoice = None, # Ensure this quote does not belong to other invoice
         status = "accepted",                # invoice must be accepted to bill
         jobID__job_status= "completed",      # job must be done to bill 
         jobID__customer= cust_qs[0]
@@ -119,17 +119,13 @@ def updateInvoice(request, id):
     
     if not invoice_qs.exists():
         return Response({"message": "The invoice does not exist"}, status=status.HTTP_404_NOT_FOUND)
-    
-    if invoice_qs[0].status != "created":
-        return Response({"message": "You can not edit an invoice that was sent or paid already"}, status=status.HTTP_400_BAD_REQUEST)
-
     customer = invoice_qs[0].customer
 
     Quote.objects.filter(
         pk__in=quote_ids, 
         jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
-        status = "accepted",                # invoice must be accepted to bill
-        jobID__job_status= "completed",      # job must be done to bill 
+        status = "accepted",                # quote must be accepted to bill
+        jobID__job_status= "completed",     # job must be done to bill 
         jobID__customer=customer            # quote must for the customer on the invoice
     ).update(invoice=id)
 
@@ -152,3 +148,30 @@ def deleteInvoice(request,id):
         return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
     invoice_qs[0].delete()
     return Response({"message": "Invoice Deleted successfully"}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+def get_data_for_invoice(request, id):
+    """gets all the data for invoice detailed view"""
+    if not request.user.is_authenticated:
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    org = Organization.objects.get(owning_User=request.user.pk)
+    invoice_qs = Invoice.objects.filter(
+        customer__organization=org.pk,
+        pk = id
+        )
+    if not invoice_qs.exists():
+        return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    
+    res = invoice_qs[0].json()
+
+    res_quotes = []
+
+    quotes = Quote.objects.filter(
+        invoice=id # find all quotes linked to this invoice
+    )
+
+    for quote in quotes:
+        res_quotes.append(quote.jsonToDisplay())
+
+    res['quotes'] = res_quotes
+    return Response(res, status=status.HTTP_200_OK)

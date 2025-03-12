@@ -40,7 +40,7 @@ def getQuotesForInvoiceByCustomer(request, id):
     data = []
 
     for quote in quotes:
-        data.append(quote.jsonForInvoice())
+        data.append(quote.jsonForInvoiceTable())
     
     count = Quote.objects.filter(
         jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
@@ -95,7 +95,7 @@ def getQuotesForInvoiceByInvoice(request, id):
     data = []
 
     for quote in quotes:
-        data.append(quote.jsonForInvoice())
+        data.append(quote.jsonForInvoiceTable())
     
     count = Quote.objects.filter(
         jobID__organization=org,            # Ensure the quote's job is linked to the user's organization

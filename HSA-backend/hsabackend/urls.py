@@ -11,7 +11,7 @@ from hsabackend.views.customers import get_customer_table_data,create_customer,e
 from hsabackend.views.requests import get_org_request_data, delete_request,approve_request
 from hsabackend.views.services import get_service_table_data, create_service, edit_service, delete_service
 from hsabackend.views.materials import get_material_table_data, create_material, edit_material, delete_material
-from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice
+from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice, get_data_for_invoice
 from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForInvoiceByInvoice
 
 def handle_unmatched_api(request):
@@ -52,6 +52,8 @@ urlpatterns = [
     path("api/get/invoices", getInvoices),
     path("api/delete/invoice/<int:id>", deleteInvoice),
     path("api/edit/invoice/<int:id>", updateInvoice),
+    path("api/get/invoice/displaydata/<int:id>", get_data_for_invoice),
+    
 
     # quotes
     path("api/get/quotesforinvoice/customer/<int:id>", getQuotesForInvoiceByCustomer),

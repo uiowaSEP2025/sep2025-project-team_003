@@ -283,30 +283,6 @@ class InvoiceViewTest(APITestCase):
         response = updateInvoice(request,1)
         
         assert response.status_code == status.HTTP_404_NOT_FOUND
-        
-    @patch('hsabackend.views.invoices.Invoice.objects.filter')
-    @patch('hsabackend.views.invoices.Organization.objects.get')
-    def test_update_invoice_bad_status(self, org, filter):
-        mock_user = Mock(spec=User)
-        mock_user.is_authenticated = True
-        
-        mock_org = Mock()
-        org.return_value = mock_org
-
-        invoice_qs = MagicMock()
-        filter.return_value = invoice_qs
-        invoice_mock = Mock()
-        invoice_qs.__getitem__.side_effect = lambda x: invoice_mock
-        invoice_mock.status = 'paid'
-        
-        factory = APIRequestFactory()
-        request = factory.post('/api/edit/invoice/1', {
-            "quoteIDs": [2]
-        }, format='json')
-        request.user = mock_user  
-        response = updateInvoice(request,1)
-        
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @patch('hsabackend.views.invoices.Quote.objects.exclude')
     @patch('hsabackend.views.invoices.Quote.objects.filter')
