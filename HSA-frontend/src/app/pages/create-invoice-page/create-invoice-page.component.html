@@ -1,1 +1,10 @@
-<p>create-invoice-page works!</p>
+<app-table-component 
+    [loadDataToTable]="loadCustomersToTable.bind(this)" 
+    editRedirect="" 
+    [hideValues]="['Actions', 'Id']"
+    [fetchedData]="customers"
+    checkbox="single"
+    [checkedIds]="selectedCustomers"
+    [setCheckedIds]="setSelectedCustomers.bind(this)"
+    searchHint="Search by customer name"
+    ></app-table-component>
