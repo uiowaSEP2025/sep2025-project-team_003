@@ -175,10 +175,8 @@ def edit_job(request, id):
     job.requestor_zip = request.data.get('zip','')   
 
     try:
-        customer = Customer.objects.get(organization=org, id=request.data.get('customer_id'))
-
-        if (customer):
-            job.customer = customer
+        customer = Customer.objects.get(id=request.data.get('customer_id'))
+        job.customer = customer
     except Customer.DoesNotExist:
         return Response({"message": "The customer does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
