@@ -183,7 +183,7 @@ def edit_job(request, id):
     try:
         job.full_clean()
         job.save()
-        return Response({"message": "job edited successfully"}, status=status.HTTP_200_OK)
+        return Response({"message": "Job edited successfully"}, status=status.HTTP_200_OK)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
