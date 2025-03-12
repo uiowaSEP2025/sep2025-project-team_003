@@ -42,6 +42,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   @Input() checkbox: 'none' | 'single' | 'multiple' = 'none';
   @Input() checkedIds: number[] | null = null;
   @Input() setCheckedIds: ((checkedIds: number[]) => void) | null = null;
+  @Input() shouldRenderEdit: ((el: any) => boolean) | null = null;
 
   searchHint = input<string>("Use me to search the data")
 
@@ -173,6 +174,13 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       ids?.push(id)
       this.setCheckedIds!(ids!)
     }
+  }
+
+  renderEdit(element: any): boolean {
+    if (this.shouldRenderEdit === null) {
+      return true
+    }
+    return this.shouldRenderEdit(element)
   }
 
   ngOnDestroy() {
