@@ -1,10 +1,14 @@
-<app-table-component 
-    [loadDataToTable]="loadCustomersToTable.bind(this)" 
-    editRedirect="" 
-    [hideValues]="['Actions', 'Id']"
-    [fetchedData]="customers"
-    checkbox="single"
-    [checkedIds]="selectedCustomers"
-    [setCheckedIds]="setSelectedCustomers.bind(this)"
-    searchHint="Search by customer name"
+<div class="flex flex-col items-center">
+    <h1 class="pb-5">Select a customer to invoice</h1>
+
+    <app-table-component 
+        [loadDataToTable]="loadCustomersToTable.bind(this)" 
+        editRedirect="" 
+        [hideValues]="['Actions', 'Id']"
+        [fetchedData]="customers"
+        checkbox="single"
+        [checkedIds]="selectedCustomers"
+        [setCheckedIds]="setSelectedCustomers.bind(this)"
+        searchHint="Search by customer name"
     ></app-table-component>
+</div>
