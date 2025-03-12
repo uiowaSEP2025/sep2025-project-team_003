@@ -28,7 +28,7 @@ export class ContractorService {
 
   constructor(private http: HttpClient) {}
 
-  public getContractor(params?: {[key: string]: string | number}): Observable<StandardApiResponse> {
+  public getContractor(params?: Record<string, string | number>): Observable<StandardApiResponse> {
     let httpParams = new HttpParams();
 
     // Add query parameters

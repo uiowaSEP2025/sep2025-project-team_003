@@ -37,7 +37,7 @@ class Command(BaseCommand):
             usr1  = User.objects.last()
             
             org = Organization.objects.create(
-                org_name = "org",
+                org_name = "devorg",
                 org_email = "org@org.dev",
                 org_city = "Iowa City",
                 org_requestor_state = "IA",
@@ -49,7 +49,7 @@ class Command(BaseCommand):
                 )
             org.save()
             org1 = Organization.objects.create(
-                org_name = "org1",
+                org_name = "testorg",
                 org_email = "org1@org1.dev",
                 org_city = "Iowa City",
                 org_requestor_state = "IA",
@@ -352,7 +352,6 @@ class Command(BaseCommand):
                     issuance_date=timezone.now().date(),
                     due_date=timezone.now().date() + timezone.timedelta(days=30),
                     status='issued',
-                    price=100.0 * (i + 1),
                     customer=customers[i]
                 )
                 iv.save()
@@ -361,7 +360,6 @@ class Command(BaseCommand):
                     issuance_date=timezone.now().date(),
                     due_date=timezone.now().date() + timezone.timedelta(days=30),
                     status='issued',
-                    price=100.0 * (i + 1),
                     customer=customers_1[i]
                 )
                 iv.save()

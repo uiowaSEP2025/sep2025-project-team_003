@@ -20,7 +20,6 @@ class SessionCsrfExemptAuthentication(BaseAuthentication):
         Returns a `User` if the request session currently has a logged in user.
         Otherwise returns `None`.
         """
-
         # Get the session-based user from the underlying HttpRequest object
         user = getattr(request._request, 'user', None)
 

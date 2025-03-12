@@ -1,5 +1,15 @@
+<div class="side-menu" [ngClass]="{'open': sidebarExpanded}" id="sideMenu">
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/jobs">Jobs</a></li>
+    <li><a href="/materials">Materials</a></li>
+    <li><a href="/services">Services</a></li>
+    <li><a href="/customers">Customers</a></li>
+  </ul>
+</div>
+
 <mat-toolbar>
-  <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+  <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon" (click)="toggleSidebar()">
     <mat-icon>menu</mat-icon>
   </button>
   <span>HSA</span>
