@@ -23,8 +23,6 @@ export class QuoteService {
                 httpParams = httpParams.append(key, params[key])
             })
         }
-        console.log(`endpoint is ${this.apiGetByCustomerUrl}/${id}`)
-        console.log(`got params: ${JSON.stringify(params)}`)
         return this.http.get<TableApiResponse<Invoice>>(`${this.apiGetByCustomerUrl}/${id}`, { params: httpParams });
     }
 

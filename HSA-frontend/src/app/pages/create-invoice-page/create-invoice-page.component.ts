@@ -18,8 +18,9 @@ export class CreateInvoicePageComponent implements OnInit {
   quotes: any
   customers: any
   selectedCustomers: any = []
-  selectedCustomersIsError = false
+  selectedCustomersIsError: boolean = false
   selectedQuotes: any = []
+  selectedQuotesIsError: boolean = false
 
   constructor(private customerService: CustomerService, private router: Router, private quoteService: QuoteService) { }
 
@@ -47,7 +48,6 @@ export class CreateInvoicePageComponent implements OnInit {
     this.quoteService.getQuotesByCustomer(this.selectedCustomers[0], { search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
       next: (response) => {
         this.quotes = response
-        console.log(this.quotes)
       },
       error: (error) => {
         if (error.status === 401) {
@@ -57,10 +57,16 @@ export class CreateInvoicePageComponent implements OnInit {
     })
   }
 
+  setSelectedQuotes(quotes: number[]) {
+    this.selectedQuotes = [...quotes]
+    this.selectedQuotesIsError = this.selectedQuotes.length === 0 ? true : false
+  }
+
   setSelectedCustomers(cust: number[]) {
     this.selectedCustomers = [...cust]
     if (this.selectedCustomers.length !== 0) {
       this.selectedCustomersIsError = false
+      this.selectedQuotes = []
       this.loadQuotesToTable('', 5, 0)
     }
     else {
