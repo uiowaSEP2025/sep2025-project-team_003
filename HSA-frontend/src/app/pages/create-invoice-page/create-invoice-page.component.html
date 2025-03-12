@@ -1,5 +1,5 @@
 <div class="flex flex-col items-center">
-    <h1 class="pb-5">Select a customer to invoice</h1>
+    <h1 class="pb-5 pt-5">Select a customer to invoice</h1>
 
     <app-table-component 
         [loadDataToTable]="loadCustomersToTable.bind(this)" 
@@ -11,6 +11,11 @@
         [setCheckedIds]="setSelectedCustomers.bind(this)"
         searchHint="Search by customer name"
     ></app-table-component>
+    @if (selectedCustomersIsError) {
+        <mat-error class="mt-3">You must select a customer to invoice</mat-error>    
+    }
+    
+
 
     <div class="m-10"></div>
     @if (selectedCustomers.length !== 0) {
@@ -21,11 +26,10 @@
             [fetchedData]="quotes"
             checkbox="multiple"
             [checkedIds]="selectedCustomers"
-            [setCheckedIds]="setSelectedCustomers.bind(this)">
+            [setCheckedIds]="setSelectedCustomers.bind(this)"
+            [hideSearch]="true"
+            >
     </app-table-component>    
-    }
-    @else {
-        <div>please select a customer to create an invoice for</div>
     }
 
     <button mat-raised-button class="mt-10 mb-5" (click)="onSubmit()">Create</button>

@@ -42,6 +42,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   @Input() checkbox: 'none' | 'single' | 'multiple' = 'none';
   @Input() checkedIds: number[] | null = null;
   @Input() setCheckedIds: ((checkedIds: number[]) => void) | null = null;
+  @Input() hideSearch: boolean = false
 
   searchHint = input<string>("Use me to search the data")
 

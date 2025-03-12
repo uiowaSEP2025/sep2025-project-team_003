@@ -1,11 +1,13 @@
 <div class="mat-elevation-z8 table min-w-lg">
-  <form class="flex justify-between form pb-1">
-    <mat-form-field class="w-full">
-      <mat-label>Search Here</mat-label>
-      <input matInput [formControl]="searchControl">
-      <mat-hint>{{searchHint()}}</mat-hint>
-    </mat-form-field>
-  </form>
+  @if (!hideSearch) {
+    <form class="flex justify-between form pb-1">
+      <mat-form-field class="w-full">
+        <mat-label>Search Here</mat-label>
+        <input matInput [formControl]="searchControl">
+        <mat-hint>{{searchHint()}}</mat-hint>
+      </mat-form-field>
+    </form>
+  }
   <table mat-table [dataSource]="data">
 
     @for (header of headersWithActions; track header) {
