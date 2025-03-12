@@ -131,6 +131,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('aersikjopmgf')
     if (changes["fetchedData"]?.currentValue || changes["dataSource"] || changes["formControl"]) {
       this.fetchedData = changes["fetchedData"].currentValue;
       this.data = new MatTableDataSource(this.fetchedData.data ?? []);
@@ -156,7 +157,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   handleCheckBoxClick(id: number) {
     if (this.checkbox === "single") {
       if (this.checkedIds?.includes(id)) {
-        
+
         this.setCheckedIds!([])
         return
       }

@@ -10,7 +10,7 @@ import { HttpParams } from "@angular/common/http";
     providedIn: 'root'
 })
 export class InvoiceService {
-    private apiGetUrl = `${environment.apiUrl}/ `;
+    private apiGetUrl = `${environment.apiUrl}/api/get/invoices`;
 
     constructor(private http: HttpClient) { }
 
@@ -23,7 +23,7 @@ export class InvoiceService {
                 httpParams = httpParams.append(key, params[key])
             })
         }
-
+        
         return this.http.get<TableApiResponse<Invoice>>(this.apiGetUrl, { params: httpParams });
     }
 

@@ -237,7 +237,6 @@ describe('TableComponentComponent', () => {
           checkedIds = [...arg]
           fixture.detectChanges(); // Trigger update in the component
 
-          console.log('setter', checkedIds, arg)
         });
         component.setCheckedIds = setCheckedIds
         const compiled = fixture.debugElement.nativeElement;

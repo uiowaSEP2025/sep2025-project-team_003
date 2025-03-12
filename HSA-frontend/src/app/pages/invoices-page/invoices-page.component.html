@@ -1,4 +1,6 @@
 <app-table-component 
-    [loadDataToTable]="loadDataToTable" 
+    [loadDataToTable]="this.loadDataToTable.bind(this)" 
     editRedirect="/edit/invoice" 
-    searchHint="search by customer name"></app-table-component>
+    searchHint="search by customer name"
+    [fetchedData]="invoices"
+    ></app-table-component>
