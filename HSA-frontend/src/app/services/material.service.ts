@@ -3,6 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { StandardApiResponse } from '../interfaces/standard-api-response.interface';
+import { TableApiResponse } from '../interfaces/table.api.interface';
+import { Material } from '../interfaces/material.interface';
 
 interface MaterialCreatePostData {
   material_name: string | null
@@ -18,7 +20,6 @@ interface MaterialDeletePostData {
   material_name: string | null
 }
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -27,11 +28,10 @@ export class MaterialService {
   private apiCreateUrl = `${environment.apiUrl}/api/create/material`;
   private apiEditUrl = `${environment.apiUrl}/api/edit/material`;
   private apiDeleteUrl = `${environment.apiUrl}/api/delete/material`;
-  responses: any[]  = []
 
   constructor(private http: HttpClient) {}
 
-  public getMaterial(params?: Record<string, string | number>): Observable<StandardApiResponse> {
+  public getMaterial(params?: Record<string, string | number>): Observable<TableApiResponse<Material>> {
     let httpParams = new HttpParams();
 
     // Add query parameters
@@ -41,7 +41,7 @@ export class MaterialService {
       })
     }
 
-    return this.http.get<StandardApiResponse>(this.apiGetUrl, { params: httpParams });
+    return this.http.get<TableApiResponse<Material>>(this.apiGetUrl, { params: httpParams });
   }
   
 

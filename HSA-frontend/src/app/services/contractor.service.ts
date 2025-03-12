@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { StandardApiResponse } from '../interfaces/standard-api-response.interface';
+import { TableApiResponse } from '../interfaces/table.api.interface';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Contractor } from '../interfaces/contractor.interface';
 import { environment } from '../../environments/environment';
 
 interface ContractorCreatePostData {
@@ -24,11 +26,10 @@ export class ContractorService {
   private apiCreateUrl = `${environment.apiUrl}/api/create/contractor`;
   private apiEditUrl = `${environment.apiUrl}/api/edit/contractor`;
   private apiDeleteUrl = `${environment.apiUrl}/api/delete/contractor`;
-  responses: any[]  = []
 
   constructor(private http: HttpClient) {}
 
-  public getContractor(params?: Record<string, string | number>): Observable<StandardApiResponse> {
+  public getContractor(params?: Record<string, string | number>): Observable<TableApiResponse<Contractor>> {
     let httpParams = new HttpParams();
 
     // Add query parameters
@@ -38,7 +39,7 @@ export class ContractorService {
       })
     }
 
-    return this.http.get<StandardApiResponse>(this.apiGetUrl, { params: httpParams });
+    return this.http.get<TableApiResponse<Contractor>>(this.apiGetUrl, { params: httpParams });
   }
   
 
