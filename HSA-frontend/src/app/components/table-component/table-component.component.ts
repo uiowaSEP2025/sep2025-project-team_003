@@ -43,10 +43,11 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   @Input() checkedIds: number[] | null = null;
   @Input() setCheckedIds: ((checkedIds: number[]) => void) | null = null;
   @Input() hideSearch: boolean = false
-
+  @Input() headers = ['header1', 'header2', 'header3', 'header4'] // headers to render before fetching the data
+  // note: headers are decided based on backend json keys
   searchHint = input<string>("Use me to search the data")
 
-  constructor(private router: Router, public dialog: MatDialog, private snackBar: MatSnackBar, private cdr: ChangeDetectorRef) {
+  constructor(private router: Router, public dialog: MatDialog, private snackBar: MatSnackBar) {
   }
 
   searchControl = new FormControl('')
@@ -56,9 +57,8 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   page: number | null = null
   pageSize: number | null = null
   dataSize: number | null = null
-  headers = ['header1', 'header2', 'header3', 'header4']
+  
   headersWithActions = [...this.headers, 'Actions']
-
 
   editRedirect = input.required<string>()
 
@@ -66,6 +66,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngAfterViewInit() {
+    this.headersWithActions = [...this.headers, 'Actions'] // this has toi be here to allow default headers change
     if (this.dataSubscription) {
       this.dataSubscription.unsubscribe();
     }
@@ -132,6 +133,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    // this has to be here to change the headers, and does not affect how the headers are set based on the data
     if (changes["fetchedData"]?.currentValue || changes["dataSource"] || changes["formControl"]) {
       this.fetchedData = changes["fetchedData"].currentValue;
       this.data = new MatTableDataSource(this.fetchedData.data ?? []);

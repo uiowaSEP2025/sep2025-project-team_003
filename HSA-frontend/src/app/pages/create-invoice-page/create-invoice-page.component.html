@@ -21,14 +21,14 @@
         <app-table-component 
             [loadDataToTable]="loadQuotesToTable.bind(this)" 
             editRedirect="" 
-
+            [hideValues]="['Actions', 'Id']"
             [fetchedData]="quotes"
             checkbox="multiple"
             [checkedIds]="selectedQuotes"
             [setCheckedIds]="setSelectedQuotes.bind(this)"
             [hideSearch]="true"
-
-            >
+            [headers]="['Checkbox','Material Subtotal', 'Total Price', 'Job Description']"
+        >
     </app-table-component> 
     @if (selectedQuotesIsError) {
         <mat-error class="mt-3">You must select a quote to include</mat-error>    

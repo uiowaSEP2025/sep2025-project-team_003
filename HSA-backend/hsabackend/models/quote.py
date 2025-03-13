@@ -26,7 +26,6 @@ class Quote(models.Model):
     def jsonForInvoiceTable(self):
         return {
             "id": self.id,
-            "customer": f"{self.jobID.customer.first_name}, {self.jobID.customer.last_name}",
             "material_subtotal": self.material_subtotal,
             "total_price": self.total_price,
             "job_description": truncate_description_for_table(self.jobID.description)
