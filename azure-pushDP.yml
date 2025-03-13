@@ -9,27 +9,22 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: |
-    sudo apt-get update
-    sudo apt-get install -y sshpass
-    mkdir -p ~/.kube
-  displayName: 'Install SSHPass, Terraform, and configure kubectl'
-
-
 - task: DownloadSecureFile@1
   name: k8config
   inputs:
     secureFile: 'config'
 
 - script: |
+    sudo apt-get update
+    curl -LO https://dl.k8s.io/release/v1.32.0/bin/linux/amd64/kubectl
+    sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
     mkdir -p ~/.kube
     mv $(k8config.secureFilePath) ~/.kube/config
-    mv $sshkey.secureFilePath) ~/.ssh/id-gcp
 
   displayName: 'Setup K3s auth'
 
 - script: |
-    ./k8-push.sh build
+    ./k8-push.sh
   displayName: 'Apply k3s'
   env: 
     TF_VAR_DATABASE_PASSWORD: $(DATABASE_PASSWORD)
