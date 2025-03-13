@@ -20,6 +20,7 @@ steps:
       sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
       mkdir -p ~/.kube
       mv $(k8config.secureFilePath) ~/.kube/config
+      ls ~/.kube
 
     displayName: 'Setup K3s auth'
 
