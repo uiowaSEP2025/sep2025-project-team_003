@@ -18,6 +18,8 @@ import {EditMaterialPageComponent} from './pages/edit-material-page/edit-materia
 import { CreateJobsPageComponent } from './pages/create-jobs-page/create-jobs-page.component';
 import { InvoicesPageComponent } from './pages/invoices-page/invoices-page.component';
 import { CreateInvoicePageComponent } from './pages/create-invoice-page/create-invoice-page.component';
+import { ViewInvoicePageComponent } from './pages/view-invoice-page/view-invoice-page.component';
+import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.component';
 
 export const routes: Routes = [
   {
@@ -83,4 +85,8 @@ export const routes: Routes = [
   {
     path: 'invoices/create', component: CreateInvoicePageComponent
   }, 
+  { 
+    path: '**', 
+    component: NotFoundPageComponent // or redirectTo: 'some-default-route'
+  }
 ];

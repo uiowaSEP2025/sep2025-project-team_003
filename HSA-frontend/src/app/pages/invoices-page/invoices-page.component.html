@@ -5,6 +5,7 @@
         searchHint="search by customer name" 
         [fetchedData]="invoices"
         [headers]="['Status', 'Due Date', 'Customer']"
+        [clickableRows]="true"
         ></app-table-component>
     <button mat-fab extended class="m-10" (click)="navigateToPage('')">
         <mat-icon>note_add</mat-icon>

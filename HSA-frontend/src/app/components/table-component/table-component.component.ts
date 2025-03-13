@@ -42,6 +42,8 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   @Input() checkedIds: number[] | null = null;
   @Input() setCheckedIds: ((checkedIds: number[]) => void) | null = null;
   @Input() hideSearch: boolean = false
+  @Input() clickableRows: boolean = false
+  @Input() onRowClick: any = null // if clickable rows is enabled this the function that handles the click
   @Input() headers = ['header1', 'header2', 'header3', 'header4'] // headers to render before fetching the data
   // note: headers are decided based on backend json keys
   searchHint = input<string>("Use me to search the data")
@@ -150,6 +152,14 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
         }
       }
     }
+  }
+
+  rowClick(element: any) {
+    console.log(element)
+    if (!this.clickableRows) {
+      return;
+    }
+    this.onRowClick()
   }
 
   handleCheckBoxClick(id: number) {
