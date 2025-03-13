@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { HomePageComponent } from './pages/home-page/home-page.component';
-import { TestPageComponent } from './pages/test-page/test-page.component';
 import { LoginComponent } from './pages/login/login.component';
 import { ServicePageComponent } from './pages/service-page/service-page.component';
 import { CustomersPageComponent } from './pages/customers-page/customers-page.component';
@@ -27,9 +26,6 @@ export const routes: Routes = [
   },
   {
     path: 'home', component: HomePageComponent,
-  },
-  {
-    path: 'test', component: TestPageComponent,
   },
   {
     path: 'signup', component: SignupPageComponent,
