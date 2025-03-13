@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-    - HSA-18-sec
+      - HSA-18-sec
 
 pr: none
 
@@ -9,34 +9,33 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- task: DownloadSecureFile@1
-  name: k8config
-  inputs:
-    secureFile: 'mzenk8-config'
+  - task: DownloadSecureFile@1
+    name: k8config
+    inputs:
+      secureFile: 'mzenk8-config'
 
-- script: |
-    sudo apt-get update
-    curl -LO https://dl.k8s.io/release/v1.32.0/bin/linux/amd64/kubectl
-    sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-    mkdir -p ~/.kube
-    mv $(k8config.secureFilePath) ~/.kube/config
+  - script: |
+      sudo apt-get update
+      curl -LO https://dl.k8s.io/v1.32.0/bin/linux/amd64/kubectl
+      sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+      mkdir -p ~/.kube
+      mv $(k8config.secureFilePath) ~/.kube/config
 
-  displayName: 'Setup K3s auth'
+    displayName: 'Setup K3s auth'
 
-steps:
-- task: Docker@2
-  displayName: 'Build and Push Docker image'
-  inputs:
-    containerRegistry: 'Dockerhub Connector'  # This matches the service connection name
-    repository: 'mzeng1417/hsa-image-store'
-    command: 'buildAndPush'
-    Dockerfile: '**/Dockerfile'  # Path to your Dockerfile
-    tags: |
-      latest
-      $(Build.BuildId)  # Tag the image with the build ID
+  - task: Docker@2
+    displayName: 'Build and Push Docker image'
+    inputs:
+      containerRegistry: 'Dockerhub Connector'  # Matches the service connection name
+      repository: 'mzeng1417/hsa-image-store'
+      command: 'buildAndPush'
+      Dockerfile: '**/Dockerfile'  # Path to your Dockerfile
+      tags: |
+        latest
+        $(Build.BuildId)  # Tag the image with the build ID
 
-- script: |
-    ./k8-push.sh
-  displayName: 'Build + Push k3s'
-  env: 
-    TF_VAR_DATABASE_PASSWORD: $(DATABASE_PASSWORD)
+  - script: |
+      ./k8-push.sh
+    displayName: 'Build + Push k3s'
+    env: 
+      DATABASE_PASSWORD: $(DATABASE_PASSWORD)
