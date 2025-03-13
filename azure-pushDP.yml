@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-    - main
+    - HSA-18-sec
 
 pr: none
 
@@ -12,7 +12,6 @@ steps:
 - script: |
     sudo apt-get update
     sudo apt-get install -y sshpass
-    curl -fsSL https://get.opentofu.org/install-opentofu.sh | bash -s -- --install-method deb
     mkdir -p ~/.kube
   displayName: 'Install SSHPass, Terraform, and configure kubectl'
 
@@ -22,30 +21,15 @@ steps:
   inputs:
     secureFile: 'config'
 
-- task: DownloadSecureFile@1
-  name: sshkey
-  inputs:
-    secureFile: 'ssh_keys'
-
 - script: |
-    tofu init -reconfigure
     mkdir -p ~/.kube
     mv $(k8config.secureFilePath) ~/.kube/config
     mv $sshkey.secureFilePath) ~/.ssh/id-gcp
-    chmod 600 ~/.ssh/id-gcp
 
-  displayName: 'Initialize Terraform + SSH via keys'
-  env: 
-    AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
-    AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
-    TF_VAR_DATABASE_PASSWORD: $(TF_VAR_DATABASE_PASSWORD)
-    TF_VAR_SSHPASS: $(TF_VAR_SSHPASS)
+  displayName: 'Setup K3s auth'
 
 - script: |
-    tofu apply -auto-approve
-  displayName: 'Apply Terraform'
+    ./k8-push.sh build
+  displayName: 'Apply k3s'
   env: 
-    AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
-    AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
-    TF_VAR_DATABASE_PASSWORD: $(TF_VAR_DATABASE_PASSWORD)
-    TF_VAR_SSHPASS: $(TF_VAR_SSHPASS)
+    TF_VAR_DATABASE_PASSWORD: $(DATABASE_PASSWORD)
