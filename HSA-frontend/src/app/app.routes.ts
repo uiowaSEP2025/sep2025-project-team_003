@@ -8,12 +8,12 @@ import { EditCustomerPageComponent } from './pages/edit-customer-page/edit-custo
 import { ContractorsPageComponent } from './pages/contractors-page/contractors-page.component';
 import { EditContractorsPageComponent } from './pages/edit-contractors-page/edit-contractors-page.component';
 import { CreateContractorsPageComponent } from './pages/create-contractors-page/create-contractors-page.component';
-import {SignupPageComponent} from './pages/signup-page/signup-page.component';
+import { SignupPageComponent } from './pages/signup-page/signup-page.component';
 import { CreateServicePageComponent } from './pages/create-service-page/create-service-page.component';
 import { EditServicePageComponent } from './pages/edit-service-page/edit-service-page.component';
-import {MaterialsPageComponent} from './pages/materials-page/materials-page.component';
-import {CreateMaterialPageComponent} from './pages/create-material-page/create-material-page.component';
-import {EditMaterialPageComponent} from './pages/edit-material-page/edit-material-page.component';
+import { MaterialsPageComponent } from './pages/materials-page/materials-page.component';
+import { CreateMaterialPageComponent } from './pages/create-material-page/create-material-page.component';
+import { EditMaterialPageComponent } from './pages/edit-material-page/edit-material-page.component';
 import { CreateJobsPageComponent } from './pages/create-jobs-page/create-jobs-page.component';
 import { InvoicesPageComponent } from './pages/invoices-page/invoices-page.component';
 import { CreateInvoicePageComponent } from './pages/create-invoice-page/create-invoice-page.component';
@@ -71,22 +71,25 @@ export const routes: Routes = [
   },
   {
     path: 'services', component: ServicePageComponent
-  }, 
+  },
   {
     path: 'jobs/create', component: CreateJobsPageComponent
-  }, 
+  },
   {
     path: 'invoices', component: InvoicesPageComponent
-  }, 
+  },
   {
     path: 'invoices/create', component: CreateInvoicePageComponent
   },
-  { 
-    path: '404', 
-    component: NotFoundPageComponent 
+  {
+    path: 'invoice/:id', component: CreateInvoicePageComponent
   },
-  { 
-    path: '**', 
+  {
+    path: '404',
+    component: NotFoundPageComponent
+  },
+  {
+    path: '**',
     component: NotFoundPageComponent
   }
 ];

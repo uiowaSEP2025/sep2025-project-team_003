@@ -6,7 +6,7 @@ import { Invoice } from "../interfaces/invoice.interface";
 import { Observable } from "rxjs";
 import { HttpParams } from "@angular/common/http";
 import { StandardApiResponse } from "../interfaces/api-responses/standard-api-response.interface";
-import { InvoiceDataInterface } from "../interfaces/invoice.api.data.interface";
+import { InvoiceDataInterface } from "../interfaces/api-responses/invoice.api.data.interface";
 
 interface CreateInvoiceInterface {
     customerID: number,
