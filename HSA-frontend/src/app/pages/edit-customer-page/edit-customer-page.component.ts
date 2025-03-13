@@ -83,6 +83,9 @@ export class EditCustomerPageComponent implements OnInit {
         if (error.status === 401) {
           this.router.navigate(['/login']);
         }
+        if (error.status === 404) {
+          this.router.navigate(['/404']);
+        }
       }}
     )
   }

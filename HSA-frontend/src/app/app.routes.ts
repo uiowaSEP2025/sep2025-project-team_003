@@ -84,9 +84,13 @@ export const routes: Routes = [
   }, 
   {
     path: 'invoices/create', component: CreateInvoicePageComponent
-  }, 
+  },
+  { 
+    path: '404', 
+    component: NotFoundPageComponent 
+  },
   { 
     path: '**', 
-    component: NotFoundPageComponent // or redirectTo: 'some-default-route'
+    component: NotFoundPageComponent
   }
 ];

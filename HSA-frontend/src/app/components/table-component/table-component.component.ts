@@ -116,7 +116,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       if (result) {
         this.deleteRequest(args).subscribe({
           next: () => {
-            this.snackBar.open(`Delete successfully`, '', {
+            this.snackBar.open(`Deleted successfully`, '', {
               duration: 3000
             });
             window.location.reload(); //reload for now, may have a better solution
@@ -124,6 +124,9 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
           error: (error) => {
             if (error.status === 401) {
               this.router.navigate(['/login']);
+            }
+            if (error.status === 404) {
+              this.router.navigate(['/404']);
             }
           }
         });
