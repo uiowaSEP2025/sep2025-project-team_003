@@ -1,3 +1,3 @@
 export interface StandardApiResponse {
-    message: string
+    message: Object
 }
