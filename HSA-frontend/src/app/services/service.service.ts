@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { StandardApiResponse } from '../interfaces/standard-api-response.interface';
+import { StandardApiResponse } from '../interfaces/api-responses/standard-api-response.interface';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Service } from '../interfaces/service.interface';
-import { TableApiResponse } from '../interfaces/table.api.interface';
+import { TableApiResponse } from '../interfaces/api-responses/table.api.interface';
 
 interface ServiceCreatePostData {
   service_name: string | null

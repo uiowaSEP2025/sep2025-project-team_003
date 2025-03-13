@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
-import { TableApiResponse } from "../interfaces/table.api.interface";
+import { TableApiResponse } from "../interfaces/api-responses/table.api.interface";
 import { Invoice } from "../interfaces/invoice.interface";
 import { Observable } from "rxjs";
 import { HttpParams } from "@angular/common/http";

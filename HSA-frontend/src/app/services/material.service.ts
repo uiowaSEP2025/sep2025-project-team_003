@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { StandardApiResponse } from '../interfaces/standard-api-response.interface';
-import { TableApiResponse } from '../interfaces/table.api.interface';
+import { StandardApiResponse } from '../interfaces/api-responses/standard-api-response.interface';
+import { TableApiResponse } from '../interfaces/api-responses/table.api.interface';
 import { Material } from '../interfaces/material.interface';
 
 interface MaterialCreatePostData {

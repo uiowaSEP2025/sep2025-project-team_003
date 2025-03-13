@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteDialogComponentComponent } from '../delete-dialog-component/delete-dialog-component.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { StandardApiResponse } from '../../interfaces/standard-api-response.interface';
+import { StandardApiResponse } from '../../interfaces/api-responses/standard-api-response.interface';
 import { Observable, Subscription } from 'rxjs';
 import { StringFormatter } from '../../utils/string-formatter';
 import { MatCheckboxModule } from '@angular/material/checkbox';
