@@ -6,6 +6,7 @@
     [loadDataToTable]="this.loadDataToTable.bind(this)"
     [hideValues]="['Id', 'Phone No']"
     searchHint="Search by customer name"
+    [headers]="['First Name', 'Last Name', 'Email']"
     ></app-table-component>
     <button mat-fab extended class="m-10" (click)="navigateToPage('customers/create')">
         <mat-icon>note_add</mat-icon>

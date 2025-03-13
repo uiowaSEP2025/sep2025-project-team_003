@@ -70,6 +70,8 @@ export class CreateInvoicePageComponent implements OnInit {
       this.loadQuotesToTable('', 5, 0)
     }
     else {
+      this.selectedQuotes = []
+      this.quotes = {data: [], totalCount: 0}
       this.selectedCustomersIsError = true
     }
   }
