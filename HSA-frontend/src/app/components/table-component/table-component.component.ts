@@ -17,7 +17,6 @@ import { StringFormatter } from '../../utils/string-formatter';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 
-
 @Component({
   selector: 'app-table-component',
   imports: [
@@ -122,9 +121,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
           },
           error: (error) => {
             if (error.status === 401) {
-              this.snackBar.open(`There is something wrong when deleting`, '', {
-                duration: 3000
-              });
+              this.router.navigate(['/login']);
             }
           }
         });

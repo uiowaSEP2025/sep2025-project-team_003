@@ -6,6 +6,7 @@ import { QuoteService } from '../../services/quote.service';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatError } from '@angular/material/form-field';
+import { InvoiceService } from '../../services/invoice.service';
 
 @Component({
   selector: 'app-create-invoice-page',
@@ -22,13 +23,11 @@ export class CreateInvoicePageComponent implements OnInit {
   selectedQuotes: any = []
   selectedQuotesIsError: boolean = false
 
-  constructor(private customerService: CustomerService, private router: Router, private quoteService: QuoteService) { }
+  constructor(private customerService: CustomerService, private router: Router, private quoteService: QuoteService, private invoiceService: InvoiceService) { }
 
   ngOnInit(): void {
     this.loadCustomersToTable("", 5, 0);
   }
-
-
 
   loadCustomersToTable(searchTerm: string, pageSize: number, offSet: number) {
     this.customerService.getCustomer({ search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
@@ -42,7 +41,6 @@ export class CreateInvoicePageComponent implements OnInit {
       }
     })
   }
-
 
   loadQuotesToTable(searchTerm: string, pageSize: number, offSet: number) {
     this.quoteService.getQuotesByCustomer(this.selectedCustomers[0], { search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
@@ -90,6 +88,20 @@ export class CreateInvoicePageComponent implements OnInit {
       return;
     }
 
+    const json = {
+      customerID: this.selectedCustomers[0],
+      quoteIDs: this.selectedQuotes
+    }
+    this.invoiceService.createInvoice(json).subscribe(
+      {next: (response) => {
+        this.router.navigate(['/invoices']);
+      },
+      error: (error) => {
+        if (error.status === 401) {
+          this.router.navigate(['/login']);
+        }
+      }}
+    )
 
   }
 
