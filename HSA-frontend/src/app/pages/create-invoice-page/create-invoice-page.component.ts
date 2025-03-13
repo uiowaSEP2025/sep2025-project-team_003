@@ -67,6 +67,7 @@ export class CreateInvoicePageComponent implements OnInit {
     if (this.selectedCustomers.length !== 0) {
       this.selectedCustomersIsError = false
       this.selectedQuotes = []
+      this.selectedQuotesIsError = false
       this.loadQuotesToTable('', 5, 0)
     }
     else {
@@ -76,7 +77,21 @@ export class CreateInvoicePageComponent implements OnInit {
     }
   }
 
-  onSubmit() {}
+  onSubmit() {
+    if (this.selectedCustomers.length === 0) {
+      this.selectedCustomersIsError = true
+      return;
+    }
+    if (this.selectedQuotes.length === 0) {
+      const quotesTableVisible = this.selectedCustomers.length !== 0
+      if (quotesTableVisible) {
+        this.selectedQuotesIsError = true
+      }
+      return;
+    }
+
+
+  }
 
 
 }
