@@ -82,7 +82,7 @@ export const routes: Routes = [
     path: 'invoices/create', component: CreateInvoicePageComponent
   },
   {
-    path: 'invoice/:id', component: CreateInvoicePageComponent
+    path: 'invoice/:id', component: ViewInvoicePageComponent
   },
   {
     path: '404',

@@ -158,11 +158,10 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   rowClick(element: any) {
-    console.log(element)
     if (!this.clickableRows) {
       return;
     }
-    this.onRowClick()
+    this.onRowClick(element)
   }
 
   handleCheckBoxClick(id: number) {

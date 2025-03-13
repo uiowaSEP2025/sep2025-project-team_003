@@ -7,6 +7,7 @@
         [headers]="['Status', 'Due Date', 'Customer']"
         [hideValues]="['Id']"
         [clickableRows]="true"
+        [onRowClick]="redirectInvoiceDetails.bind(this)"
         ></app-table-component>
     <button mat-fab extended class="m-10" (click)="navigateToPage('')">
         <mat-icon>note_add</mat-icon>

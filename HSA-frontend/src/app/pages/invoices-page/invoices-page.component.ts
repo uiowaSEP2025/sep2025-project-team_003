@@ -41,6 +41,10 @@ export class InvoicesPageComponent implements OnInit{
     })
   }
 
+  redirectInvoiceDetails(element: any) {
+    this.router.navigate([`/invoice/${element.id}`])
+  }
+
   navigateToPage(pagePath: string) {
     this.router.navigate([`/${pagePath}`]);
   }
