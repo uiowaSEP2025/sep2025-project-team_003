@@ -171,7 +171,7 @@ def get_data_for_invoice(request, id):
     )
 
     for quote in quotes:
-        res_quotes.append(quote.jsonToDisplay())
+        res_quotes.append(quote.jsonToDisplayForInvoice())
 
     res['quotes'] = res_quotes
     return Response(res, status=status.HTTP_200_OK)

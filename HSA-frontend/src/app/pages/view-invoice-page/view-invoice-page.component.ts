@@ -5,10 +5,13 @@ import { InvoiceService } from '../../services/invoice.service';
 import { OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { InvoiceQuotesDisplayTableComponent } from '../../components/invoice-quotes-display-table/invoice-quotes-display-table.component';
 
 @Component({
   selector: 'app-view-invoice-page',
-  imports: [LoadingFallbackComponent,CommonModule],
+  imports: [LoadingFallbackComponent,CommonModule, MatButtonModule, MatIconModule, InvoiceQuotesDisplayTableComponent],
   templateUrl: './view-invoice-page.component.html',
   styleUrl: './view-invoice-page.component.scss'
 })
@@ -25,6 +28,7 @@ export class ViewInvoicePageComponent implements OnInit{
   ngOnInit(): void {
     this.invoiceService.getSpecificInvoiceData(this.invoiceID).subscribe(
       {next: (response) => {
+        console.log(response)
         this.invoiceData = response
       },
       error: (error) => {

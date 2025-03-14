@@ -33,7 +33,7 @@ class Job(models.Model):
     
 # this must be here or we get a circular import error
 class MaterialJob(models.Model):
-    unit_cost = models.FloatField()
+    unit_cost = models.DecimalField(max_digits=9, decimal_places=2)
     units_used = models.IntegerField()
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     material = models.ForeignKey(Material, on_delete=models.CASCADE)

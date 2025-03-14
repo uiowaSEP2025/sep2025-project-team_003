@@ -14,8 +14,8 @@ class Quote(models.Model):
     issuance_date = models.DateField()
     due_date = models.DateField()
     status = models.CharField(max_length=50, choices=status_choices, default="created")
-    material_subtotal = models.FloatField()
-    total_price = models.FloatField()
+    material_subtotal = models.DecimalField(max_digits=9, decimal_places=2)
+    total_price = models.DecimalField(max_digits=9, decimal_places=2)
     jobID = models.OneToOneField(Job, on_delete= models.CASCADE)
     discount_type = models.ForeignKey(DiscountType, on_delete=models.CASCADE)
     invoice = models.ForeignKey(Invoice, on_delete=models.SET_NULL, null=True)
@@ -31,10 +31,9 @@ class Quote(models.Model):
             "job_description": truncate_description_for_table(self.jobID.description)
         }
     
-
-    def jsonToDisplay(self):
+    def jsonToDisplayForInvoice(self):
         return {
-            "material_subtotal": self.material_subtotal,
-            "total_price": self.total_price,
-            "job_description": truncate_description_for_table(self.jobID.description)
+            "materialSubtotal": self.material_subtotal,
+            "totalPrice": self.total_price,
+            "jobDescription": truncate_description_for_table(self.jobID.description)
         }
