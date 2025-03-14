@@ -21,7 +21,7 @@ steps:
       mkdir -p ~/.kube
       mv $(k8config.secureFilePath) ~/.kube/config
       echo "RENDER KUBE"
-      ls -a ~/.kube/config
+      cat ~/.kube/config
 
     displayName: 'Setup K3s auth'
 
