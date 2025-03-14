@@ -8,6 +8,7 @@ from hsabackend.models.organization import Organization
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.db.models import Q
+from django.db.models import Sum
 
 @api_view(["POST"])
 def createInvoice(request):
@@ -166,12 +167,19 @@ def get_data_for_invoice(request, id):
 
     res_quotes = []
 
-    quotes = Quote.objects.filter(
-        invoice=id # find all quotes linked to this invoice
+    quotes = Quote.objects.filter(invoice=id).annotate(
+        total_material_subtotal=Sum('material_subtotal'),
+        total_total_price=Sum('total_price')
     )
+
+    total_material_subtotal = quotes['total_material_subtotal']
+    total_total_price = quotes['total_total_price']
 
     for quote in quotes:
         res_quotes.append(quote.jsonToDisplayForInvoice())
 
     res['quotes'] = res_quotes
+    res['totalMaterialSubtotal']
+    res['total_price']
+    
     return Response(res, status=status.HTTP_200_OK)
