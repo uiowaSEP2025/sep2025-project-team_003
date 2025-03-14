@@ -180,6 +180,6 @@ def get_data_for_invoice(request, id):
 
     res['quotes'] = res_quotes
     res['totalMaterialSubtotal']
-    res['total_price']
+    res['totalPrice']
     
     return Response(res, status=status.HTTP_200_OK)
