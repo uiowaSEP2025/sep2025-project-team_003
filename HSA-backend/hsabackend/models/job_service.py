@@ -15,4 +15,5 @@ class JobService(models.Model):
             'id': self.pk,
             'job_id': self.job.id,
             'service_id': self.service.id,
+            'service_name': self.service.service_name
         }
