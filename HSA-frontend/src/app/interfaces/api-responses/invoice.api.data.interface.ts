@@ -7,6 +7,7 @@ interface Quote {
 export interface InvoiceDataInterface {
     id: number, 
     status: 'created' | 'issued' | 'paid',
+    issuanceDate: string
     dueDate: string ,
     customer: string,
     quotes: Quote[]

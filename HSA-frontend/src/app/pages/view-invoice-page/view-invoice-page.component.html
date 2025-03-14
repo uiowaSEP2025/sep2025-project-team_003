@@ -1,1 +1,9 @@
-<p>view-invoice-page works!</p>
+@if (invoiceData === null) {
+    <app-loading-fallback stringToDisplay="Loading your inovice"></app-loading-fallback>
+}
+@else {
+    <div>Invoice for customer {{invoiceData.customer}}</div>
+    <div>Invoice was issued: {{invoiceData.issuanceDate}}</div>
+    <div>Invoice is due: {{invoiceData.dueDate}}</div>
+    <div>Invoice status: {{invoiceData.status}}</div>
+}

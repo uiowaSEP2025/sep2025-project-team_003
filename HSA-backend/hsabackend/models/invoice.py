@@ -17,10 +17,20 @@ class Invoice(models.Model):
     def __str__(self):
         return f"<Invoice, customer: {self.customer}>"
     
+    def json_for_view_invoice(self):
+        return {
+            "id": self.pk,
+            "status": self.status,
+            "dueDate": "N/A" if self.due_date == None else self.due_date,
+            "issuanceDate": "N/A" if self.issuance_date == None else self.issuance_date,
+            "customer": f"{self.customer.first_name}, {self.customer.last_name}" 
+        }
+    
     def json(self):
         return {
             "id": self.pk,
             "status": self.status,
             "due_date": "N/A" if self.due_date == None else self.due_date,
+            "issuance_date": self.issuance_date,
             "customer": f"{self.customer.first_name}, {self.customer.last_name}" 
         }

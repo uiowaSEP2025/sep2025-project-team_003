@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Input } from '@angular/core';
 
 @Component({
   selector: 'app-loading-fallback',
@@ -7,5 +8,7 @@ import { Component } from '@angular/core';
   styleUrl: './loading-fallback.component.scss'
 })
 export class LoadingFallbackComponent {
+  @Input() stringToDisplay: string = 'FIX ME!'
+
 
 }

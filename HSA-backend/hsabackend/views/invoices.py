@@ -162,7 +162,7 @@ def get_data_for_invoice(request, id):
     if not invoice_qs.exists():
         return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
-    res = invoice_qs[0].json()
+    res = invoice_qs[0].json_for_view_invoice()
 
     res_quotes = []
 
