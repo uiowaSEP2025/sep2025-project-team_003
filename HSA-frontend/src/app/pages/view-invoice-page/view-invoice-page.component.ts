@@ -8,10 +8,11 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { InvoiceQuotesDisplayTableComponent } from '../../components/invoice-quotes-display-table/invoice-quotes-display-table.component';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-view-invoice-page',
-  imports: [LoadingFallbackComponent,CommonModule, MatButtonModule, MatIconModule, InvoiceQuotesDisplayTableComponent],
+  imports: [LoadingFallbackComponent,CommonModule, MatButtonModule, MatIconModule, InvoiceQuotesDisplayTableComponent, MatCardModule],
   templateUrl: './view-invoice-page.component.html',
   styleUrl: './view-invoice-page.component.scss'
 })
