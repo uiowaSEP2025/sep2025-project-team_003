@@ -17,7 +17,7 @@ import { InvoiceQuotesDisplayTableComponent } from '../../components/invoice-quo
 })
 export class ViewInvoicePageComponent implements OnInit{
   invoiceID!: number
-  invoiceData: null | InvoiceDataInterface = null;
+  invoiceData!: InvoiceDataInterface;
 
   constructor (private invoiceService: InvoiceService, private activatedRoute:ActivatedRoute, private router: Router) {
     this.activatedRoute.paramMap.subscribe(params => {

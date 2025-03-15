@@ -172,14 +172,16 @@ def get_data_for_invoice(request, id):
         total_total_price=Sum('total_price')
     )
 
-    total_material_subtotal = quotes['total_material_subtotal']
-    total_total_price = quotes['total_total_price']
 
     for quote in quotes:
         res_quotes.append(quote.jsonToDisplayForInvoice())
 
-    res['quotes'] = res_quotes
-    res['totalMaterialSubtotal']
-    res['totalPrice']
+    
+    res["quotes"] = {
+        'quotes': res_quotes,
+        'totalMaterialSubtotal': quotes[0].total_material_subtotal,
+        'totalPrice': quotes[0].total_material_subtotal
+        }
+
     
     return Response(res, status=status.HTTP_200_OK)

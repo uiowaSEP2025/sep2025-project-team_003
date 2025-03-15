@@ -35,5 +35,5 @@ class Quote(models.Model):
         return {
             "materialSubtotal": self.material_subtotal,
             "totalPrice": self.total_price,
-            "jobDescription": truncate_description_for_table(self.jobID.description)
+            "jobDescription": truncate_description_for_table(self.jobID.description),
         }
