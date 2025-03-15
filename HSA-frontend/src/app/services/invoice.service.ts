@@ -19,7 +19,7 @@ interface CreateInvoiceInterface {
 export class InvoiceService {
     private apiGetUrl = `${environment.apiUrl}/api/get/invoices`;
     private createUrl = `${environment.apiUrl}/api/create/invoice`;
-    private deleteUrl = `${environment.apiUrl}/api/edit/invoice/<int:id>`;
+    private deleteUrl = `${environment.apiUrl}/api/delete/invoice`;
     private getSpecificUrl = `${environment.apiUrl}/api/get/invoice/displaydata`;
 
     constructor(private http: HttpClient) { }
@@ -41,8 +41,9 @@ export class InvoiceService {
         return this.http.post<StandardApiResponse>(this.createUrl, json);
     }
 
-    public deleteInvoice(id: number) {
-        return this.http.post<StandardApiResponse>(this.createUrl, null);
+    public deleteInvoice(row: any) {
+        const id = row.id
+        return this.http.post<StandardApiResponse>(`${this.deleteUrl}/${id}`, null);
     }
 
     public getSpecificInvoiceData(id: number): Observable<InvoiceDataInterface> {
