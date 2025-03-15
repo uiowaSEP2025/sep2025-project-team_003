@@ -12,8 +12,12 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './invoices-page.component.scss'
 })
 export class InvoicesPageComponent implements OnInit{
+  invoiceService: InvoiceService
 
-  constructor (private router: Router, private invoiceService: InvoiceService) {}
+
+  constructor (private router: Router, invoiceService: InvoiceService) {
+    this.invoiceService = invoiceService
+  }
 
   invoices: any
 

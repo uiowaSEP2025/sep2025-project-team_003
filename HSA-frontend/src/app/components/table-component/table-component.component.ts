@@ -16,6 +16,7 @@ import { Observable, Subscription } from 'rxjs';
 import { StringFormatter } from '../../utils/string-formatter';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
+import { ClickStopPropagationDirective } from '../../utils/click-event-propogation-stopper';
 
 @Component({
   selector: 'app-table-component',
@@ -28,7 +29,8 @@ import { FormsModule } from '@angular/forms';
     MatIconModule,
     MatButtonModule,
     MatCheckboxModule,
-    FormsModule
+    FormsModule,
+    ClickStopPropagationDirective
   ],
   templateUrl: './table-component.component.html',
   styleUrl: './table-component.component.scss'

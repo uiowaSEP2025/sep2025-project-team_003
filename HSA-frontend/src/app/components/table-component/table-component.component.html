@@ -20,10 +20,10 @@
       <td mat-cell *matCellDef="let element; let i = $index;">
         @if (header === "Actions") {
         <div class="flex justify-between">
-            <button mat-mini-fab (click)="redirectEdit(element.id, element)">
+            <button mat-mini-fab click-stop-propagation (click)="redirectEdit(element.id, element)">
               <mat-icon>edit</mat-icon>
             </button>
-          <button mat-mini-fab (click)="openDeleteDialog(element)">
+          <button mat-mini-fab click-stop-propagation (click)="openDeleteDialog(element)">
             <mat-icon>delete</mat-icon>
           </button>
         </div>
