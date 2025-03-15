@@ -180,7 +180,7 @@ def get_data_for_invoice(request, id):
     res["quotes"] = {
         'quotes': res_quotes,
         'totalMaterialSubtotal': quotes[0].total_material_subtotal,
-        'totalPrice': quotes[0].total_material_subtotal
+        'totalPrice': quotes[0].total_total_price
         }
 
     

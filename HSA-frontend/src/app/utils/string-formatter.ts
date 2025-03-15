@@ -20,4 +20,8 @@ export class StringFormatter {
     
       return `${this.formatSnakeToCamel(dataKey).replace(/_/g, ' ')}: ${dataValue} (${this.formatSnakeToCamel(idKey)}: ${idValue})`;
     }
+
+    formatCurrency(amount: string): string {
+      return `$${parseFloat(amount).toFixed(2)}`
+    }
 }

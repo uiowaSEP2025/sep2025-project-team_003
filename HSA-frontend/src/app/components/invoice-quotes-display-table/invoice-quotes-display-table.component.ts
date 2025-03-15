@@ -3,6 +3,7 @@ import { MatTableModule } from '@angular/material/table';
 import { Input } from '@angular/core';
 import { InvoiceQuoteDisplayInterface } from '../../interfaces/api-responses/invoice.quote.display.interface';
 import { QuoteJSON } from '../../interfaces/api-responses/invoice.quote.display.interface';
+import { StringFormatter } from '../../utils/string-formatter';
 
 interface RowItem {
   "Material Subtotal": string,
@@ -21,17 +22,19 @@ export class InvoiceQuotesDisplayTableComponent implements OnInit {
   quotes!: QuoteJSON[]
   displayQuotes!: RowItem[]
 
+  constructor (private stringFormatter: StringFormatter) {}
+
   ngOnInit(): void {
     this.displayQuotes = this.dataSource.quotes.map(
       (quote) => ({
-        "Material Subtotal": quote.materialSubtotal,
-        "Total Price": quote.materialSubtotal,
+        "Material Subtotal": this.stringFormatter.formatCurrency(quote.materialSubtotal),
+        "Total Price": this.stringFormatter.formatCurrency(quote.totalPrice),
         "Job Description": quote.jobDescription
       })
     )
 
-    const totalMaterialSubtotal = this.dataSource.totalMaterialSubtotal
-    const totalPrice = this.dataSource.totalPrice
+    const totalMaterialSubtotal = this.stringFormatter.formatCurrency(this.dataSource.totalMaterialSubtotal)
+    const totalPrice = this.stringFormatter.formatCurrency(this.dataSource.totalPrice)
 
     this.displayQuotes.push({
       "Material Subtotal": `${totalMaterialSubtotal}`,
