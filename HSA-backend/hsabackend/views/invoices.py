@@ -115,22 +115,17 @@ def updateInvoice(request, id):
         return Response({"message": "Must include at least 1 quote"}, status=status.HTTP_400_BAD_REQUEST)  
 
     invoice_status = json.get("status",None)
-    issued = json.get("issuedDate",None)
-    due = json.get("dueDate",None)
+    issued = parseAndReturnDate(json.get("issuedDate",""))
+    due = parseAndReturnDate(json.get("dueDate",""))
 
     if not invoice_status or invoice_status not in ('created', 'issued', 'paid'):
         return Response({"message": "Must include a valid status 'created' | 'issued' | 'paid'"}, status=status.HTTP_400_BAD_REQUEST)  
 
-    if invoice_status != 'created' and (not issued or not not due):
-        return Response({"message": "Must include issuance and due dates"}, status=status.HTTP_400_BAD_REQUEST)  
-
-    if invoice_status != 'created':
-        issuance = parseAndReturnDate(issued)
-        due = parseAndReturnDate(due)
-        if not issuance or not due:
-            return Response({"message": f"Must provide a valid {'issuance' if issuance == None else 'due'} date"}, status=status.HTTP_400_BAD_REQUEST)  
-        if due < issuance:
-            return Response({"message": "Due date can not be before the issuance date"}, status=status.HTTP_400_BAD_REQUEST)  
+    if invoice_status != 'created' and (not issued or not due):
+        return Response({"message": "Must include valid issuance and due dates"}, status=status.HTTP_400_BAD_REQUEST)  
+    
+    if invoice_status != 'created' and due < issued:
+        return Response({"message": "Due date can not be before the issuance date"}, status=status.HTTP_400_BAD_REQUEST)  
         
 
     invoice_qs = Invoice.objects.filter(
