@@ -5,6 +5,7 @@ from hsabackend.models.invoice import Invoice
 from hsabackend.models.customer import Customer
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Q
 
 @api_view(["GET"])
 def getQuotesForInvoiceByCustomer(request, id):
@@ -88,9 +89,10 @@ def getQuotesForInvoiceByInvoice(request, id):
         jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
         status = "accepted",                # invoice must be accepted to bill
         jobID__job_status= "completed",     # job must be done to bill 
-        jobID__customer=customer,             # quote must for the customer on the invoice
-        invoice = None                      # must not have an existing invoice tied to it
-    )[offset : offset + pagesize] 
+        jobID__customer=customer).filter(
+        Q(invoice=None) | Q(invoice=id)  # invoice is either None or a specific number
+        )[offset : offset + pagesize]
+
     
     data = []
 
@@ -101,9 +103,9 @@ def getQuotesForInvoiceByInvoice(request, id):
         jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
         status = "accepted",                # invoice must be accepted to bill
         jobID__job_status= "completed",     # job must be done to bill 
-        jobID__customer=customer,             # quote must for the customer on the invoice
-        invoice = None                      # must not have an existing invoice tied to it
-    ).count()
+        jobID__customer=customer).filter(
+        Q(invoice=None) | Q(invoice=id)  # invoice is either None or a specific number
+        ).count()
 
     res = {
         'data': data,
