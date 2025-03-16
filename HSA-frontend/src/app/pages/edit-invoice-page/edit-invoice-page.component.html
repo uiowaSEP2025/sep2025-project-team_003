@@ -6,17 +6,17 @@
         <div>and status: {{status}}</div>
     </mat-card>
 
-    <h1 class="pb-5 pt-5">Select new quotes for this invoice</h1>
-
-    <mat-form-field>
+    <mat-form-field class="pt-5">
         <mat-label>Status</mat-label>
-        <select matNativeControl required>
+        <select matNativeControl required [(ngModel)]="status">
             <option value="created">created</option>
             <option value="issued">issued</option>
             <option value="paid">paid</option>
         </select>
     </mat-form-field>
     <app-invoice-date-picker [formControll]="range"></app-invoice-date-picker>
+
+    <h1 class="pb-5">Select new quotes for this invoice</h1>
 
     <app-table-component [loadDataToTable]="loadQuotesToTable.bind(this)" editRedirect=""
         [hideValues]="['Actions', 'Id']" [fetchedData]="quotes" checkbox="multiple" [checkedIds]="selectedQuotes"
