@@ -9,6 +9,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.db.models import Q
 from django.db.models import Sum
+from hsabackend.utils.api_validators import parseAndReturnDate
 
 @api_view(["POST"])
 def createInvoice(request):
@@ -113,11 +114,24 @@ def updateInvoice(request, id):
     if len(quote_ids) == 0:
         return Response({"message": "Must include at least 1 quote"}, status=status.HTTP_400_BAD_REQUEST)  
 
-    status = json.get("status",None)
+    invoice_status = json.get("status",None)
+    issued = json.get("issuedDate",None)
+    due = json.get("dueDate",None)
 
-    if not status or status not in ('created', 'issued', 'paid'):
+    if not invoice_status or invoice_status not in ('created', 'issued', 'paid'):
         return Response({"message": "Must include a valid status 'created' | 'issued' | 'paid'"}, status=status.HTTP_400_BAD_REQUEST)  
 
+    if invoice_status != 'created' and (not issued or not not due):
+        return Response({"message": "Must include issuance and due dates"}, status=status.HTTP_400_BAD_REQUEST)  
+
+    if invoice_status != 'created':
+        issuance = parseAndReturnDate(issued)
+        due = parseAndReturnDate(due)
+        if not issuance or not due:
+            return Response({"message": f"Must provide a valid {'issuance' if issuance == None else 'due'} date"}, status=status.HTTP_400_BAD_REQUEST)  
+        if due < issuance:
+            return Response({"message": "Due date can not be before the issuance date"}, status=status.HTTP_400_BAD_REQUEST)  
+        
 
     invoice_qs = Invoice.objects.filter(
         customer__organization=org.pk,
