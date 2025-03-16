@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { TableComponentComponent } from '../../components/table-component/table-component.component';
 import { QuoteService } from '../../services/quote.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { OnInit } from '@angular/core';
 import { MatError } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +14,8 @@ import { FormGroup, FormControl, FormsModule } from '@angular/forms';
 import { InvoiceDatePickerComponent } from '../../components/invoice-date-picker/invoice-date-picker.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ViewChild } from '@angular/core';
+import { InvoiceStateRegressionConfirmerComponent } from '../../components/invoice-state-regression-confirmer/invoice-state-regression-confirmer.component';
+import { MatDialog } from '@angular/material/dialog';
 
 export interface DateRange {
   issued: FormControl<Date | null>;
@@ -23,7 +25,7 @@ export interface DateRange {
 @Component({
   selector: 'app-edit-invoice-page',
   imports: [TableComponentComponent, MatError, MatButtonModule, MatSelectModule,
-    FormsModule, MatInputModule, MatFormFieldModule, MatCardModule, 
+    FormsModule, MatInputModule, MatFormFieldModule, MatCardModule,
     InvoiceDatePickerComponent, ReactiveFormsModule],
   templateUrl: './edit-invoice-page.component.html',
   providers: [],
@@ -39,14 +41,16 @@ export class EditInvoicePageComponent implements OnInit {
   dueDate!: string
   status!: string // also serves as a form control
   initialStatus!: string
-  readonly range:FormGroup<DateRange> = new FormGroup({
+  readonly range: FormGroup<DateRange> = new FormGroup({
     issued: new FormControl<Date | null>(null),
     due: new FormControl<Date | null>(null),
   });
 
   isDateSelectVisible = () => (!(this.status === 'created'))
   @ViewChild(InvoiceDatePickerComponent) datePicker!: InvoiceDatePickerComponent;
+  readonly dialog = inject(MatDialog);
 
+  
   constructor(private quoteService: QuoteService, private activatedRoute: ActivatedRoute, private errorHandler: ErrorHandlerService) { }
 
   ngOnInit(): void {
@@ -76,6 +80,18 @@ export class EditInvoicePageComponent implements OnInit {
 
   }
 
+  openDialog(): void {
+    const dialogRef = this.dialog.open(InvoiceStateRegressionConfirmerComponent,
+      {data: this.initialStatus}
+    );
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        //TODO: call edit here
+      }
+    });
+  }
+
+
   loadQuotesToTable(searchTerm: string, pageSize: number, offSet: number) {
     this.quoteService.getQuotesByInvoice(this.invoiceID, { search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
       next: (response) => {
@@ -88,7 +104,7 @@ export class EditInvoicePageComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.selectedQuotes.length === 0 ) {
+    if (this.selectedQuotes.length === 0) {
       this.selectedQuotesIsError = true;
       return;
     }
@@ -97,7 +113,9 @@ export class EditInvoicePageComponent implements OnInit {
       return false;
     }
     this.selectedQuotesIsError = false;
-    alert('submit')
+    if (this.initialStatus === 'issued' || this.initialStatus === 'paid') {
+      this.openDialog()
+    }
     return;
   }
 }

@@ -39,7 +39,6 @@ export class InvoiceDatePickerComponent implements OnInit{
     this.isNullError = false
     const issued = this.formControll.controls.issued.value;
     const due = this.formControll.controls.due.value;
-    console.log('validiating', issued, due)
 
     if (!issued || !due) {
       this.isNullError = true

@@ -16,7 +16,6 @@ import { StringFormatter } from '../../utils/string-formatter';
 export class DeleteDialogComponentComponent {
   itemDescription: any
   
-
   constructor(
     public dialogRef: MatDialogRef<DeleteDialogComponentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,

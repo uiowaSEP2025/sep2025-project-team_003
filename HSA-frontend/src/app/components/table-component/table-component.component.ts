@@ -108,7 +108,6 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   openDeleteDialog(args: any) {
-    console.log(args)
     const dialogRef = this.dialog.open(DeleteDialogComponentComponent, {
       width: '300px',
       data: args
