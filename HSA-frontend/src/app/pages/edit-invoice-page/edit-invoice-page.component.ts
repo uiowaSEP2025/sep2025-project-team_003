@@ -15,6 +15,11 @@ import { InvoiceDatePickerComponent } from '../../components/invoice-date-picker
 import { ReactiveFormsModule } from '@angular/forms';
 import { ViewChild } from '@angular/core';
 
+export interface DateRange {
+  start: FormControl<Date | null>;
+  end: FormControl<Date | null>;
+}
+
 @Component({
   selector: 'app-edit-invoice-page',
   imports: [TableComponentComponent, MatError, MatButtonModule, MatSelectModule,
@@ -33,7 +38,7 @@ export class EditInvoicePageComponent implements OnInit {
   issuanceDate!: string
   dueDate!: string
   status!: string
-  readonly range = new FormGroup({
+  readonly range:FormGroup<DateRange> = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
   });

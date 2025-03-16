@@ -2,7 +2,7 @@
     <h1 class="mb-4">Choose Dates</h1>
     <mat-form-field>
         <mat-label>Issuance date</mat-label>
-        <input matInput [matDatepicker]="picker">
+        <input matInput [matDatepicker]="picker" [formControl]="formControll.controls.start">
         <mat-hint>MM/DD/YYYY</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
@@ -10,9 +10,9 @@
 
     <mat-form-field class="mt-4">
         <mat-label>Due date</mat-label>
-        <input matInput [matDatepicker]="picker1">
+        <input matInput [matDatepicker]="picker1" [formControl]="formControll.controls.end">
         <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
         <mat-datepicker #picker1></mat-datepicker>
     </mat-form-field>
 
