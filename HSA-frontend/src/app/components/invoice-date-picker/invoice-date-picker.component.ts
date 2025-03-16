@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
@@ -16,15 +16,33 @@ import { ReactiveFormsModule } from '@angular/forms';
   templateUrl: './invoice-date-picker.component.html',
   providers: [provideNativeDateAdapter()],
   styleUrl: './invoice-date-picker.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvoiceDatePickerComponent {
   @Input({ required: true }) formControll!: FormGroup<DateRange> // extra l to avoid name conflict
   isInvalidRange = false
+  isNullError = false
 
-  validate():boolean {
-    console.log(this.formControll.controls.start.value)
-    return true
+  validate(): boolean {
+    // only call this when visable
+    this.isInvalidRange = false
+    this.isNullError = false
+    const issued = this.formControll.controls.issued.value;
+    const due = this.formControll.controls.due.value;
+    console.log('validiating', issued, due)
+
+    if (!issued || !due) {
+      this.isNullError = true
+      return false
+    }
+
+    if (issued > due) {
+      console.log('invalid')
+      this.isInvalidRange = true;
+      return false;
+    }
+
+    this.isInvalidRange = false;
+    return true;
   }
 
 }

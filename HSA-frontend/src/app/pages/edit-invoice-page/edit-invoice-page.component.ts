@@ -16,8 +16,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ViewChild } from '@angular/core';
 
 export interface DateRange {
-  start: FormControl<Date | null>;
-  end: FormControl<Date | null>;
+  issued: FormControl<Date | null>;
+  due: FormControl<Date | null>;
 }
 
 @Component({
@@ -39,12 +39,12 @@ export class EditInvoicePageComponent implements OnInit {
   dueDate!: string
   status!: string
   readonly range:FormGroup<DateRange> = new FormGroup({
-    start: new FormControl<Date | null>(null),
-    end: new FormControl<Date | null>(null),
+    issued: new FormControl<Date | null>(null),
+    due: new FormControl<Date | null>(null),
   });
   @ViewChild(InvoiceDatePickerComponent) datePicker!: InvoiceDatePickerComponent;
 
-  constructor(private router: Router, private quoteService: QuoteService, private activatedRoute: ActivatedRoute, private errorHandler: ErrorHandlerService) { }
+  constructor(private quoteService: QuoteService, private activatedRoute: ActivatedRoute, private errorHandler: ErrorHandlerService) { }
 
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe(params => {
@@ -84,7 +84,7 @@ export class EditInvoicePageComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.selectedQuotes.length === 0 || !this.datePicker.validate()) {
+    if (!this.datePicker.validate() || this.selectedQuotes.length === 0 ) {
       return;
     }
   }
