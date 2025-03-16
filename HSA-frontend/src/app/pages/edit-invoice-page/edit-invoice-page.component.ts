@@ -37,11 +37,14 @@ export class EditInvoicePageComponent implements OnInit {
   customerName!: string
   issuanceDate!: string
   dueDate!: string
-  status!: string
+  status!: string // also serves as a form control
+  initialStatus!: string
   readonly range:FormGroup<DateRange> = new FormGroup({
     issued: new FormControl<Date | null>(null),
     due: new FormControl<Date | null>(null),
   });
+
+  isDateSelectVisible = () => (!(this.status === 'created'))
   @ViewChild(InvoiceDatePickerComponent) datePicker!: InvoiceDatePickerComponent;
 
   constructor(private quoteService: QuoteService, private activatedRoute: ActivatedRoute, private errorHandler: ErrorHandlerService) { }
@@ -52,6 +55,7 @@ export class EditInvoicePageComponent implements OnInit {
     })
 
     this.activatedRoute.queryParams.subscribe(params => {
+      this.initialStatus = params['status'];
       this.status = params['status'];
       this.dueDate = params['due_date'];
       this.issuanceDate = params['issuance_date'];
@@ -84,8 +88,16 @@ export class EditInvoicePageComponent implements OnInit {
   }
 
   onSubmit() {
-    if (!this.datePicker.validate() || this.selectedQuotes.length === 0 ) {
+    if (this.selectedQuotes.length === 0 ) {
+      this.selectedQuotesIsError = true;
       return;
     }
+    if (this.isDateSelectVisible() && !this.datePicker.validate()) {
+      this.selectedQuotesIsError = false;
+      return false;
+    }
+    this.selectedQuotesIsError = false;
+    alert('submit')
+    return;
   }
 }

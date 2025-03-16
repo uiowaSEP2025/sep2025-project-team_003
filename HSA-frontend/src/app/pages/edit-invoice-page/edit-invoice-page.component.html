@@ -3,7 +3,7 @@
         <div>Editing invoice for customer: {{customerName}}</div>
         <div>with issuance date: {{issuanceDate}}</div>
         <div>and due date: {{dueDate}}</div>
-        <div>and status: {{status}}</div>
+        <div>and status: {{initialStatus}}</div>
     </mat-card>
 
     <mat-form-field class="pt-5">
@@ -14,7 +14,9 @@
             <option value="paid">paid</option>
         </select>
     </mat-form-field>
-    <app-invoice-date-picker [formControll]="range"></app-invoice-date-picker>
+    @if (isDateSelectVisible()) {
+        <app-invoice-date-picker [formControll]="range"></app-invoice-date-picker>
+    }
 
     <h1 class="pb-5">Select new quotes for this invoice</h1>
 

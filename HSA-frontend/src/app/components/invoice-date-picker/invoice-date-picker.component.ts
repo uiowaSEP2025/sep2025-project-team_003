@@ -9,6 +9,8 @@ import { CommonModule } from '@angular/common';
 import { DateRange } from '../../pages/edit-invoice-page/edit-invoice-page.component';
 import { FormGroup } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
+import { OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 @Component({
   imports: [MatCardModule, MatFormFieldModule, MatDatepickerModule, MatInputModule, MatError, CommonModule, ReactiveFormsModule],
@@ -17,10 +19,19 @@ import { ReactiveFormsModule } from '@angular/forms';
   providers: [provideNativeDateAdapter()],
   styleUrl: './invoice-date-picker.component.scss',
 })
-export class InvoiceDatePickerComponent {
+export class InvoiceDatePickerComponent implements OnInit{
   @Input({ required: true }) formControll!: FormGroup<DateRange> // extra l to avoid name conflict
   isInvalidRange = false
   isNullError = false
+  private valueChangesSub!: Subscription;
+
+
+  ngOnInit(): void {
+    this.valueChangesSub = this.formControll.valueChanges.subscribe(value => {
+      if (value.issued !== null && value.due !== null) {
+        this.validate()
+      }
+    });}
 
   validate(): boolean {
     // only call this when visable
@@ -43,6 +54,10 @@ export class InvoiceDatePickerComponent {
 
     this.isInvalidRange = false;
     return true;
+  }
+
+  gOnDestroy(): void {
+    this.valueChangesSub.unsubscribe();
   }
 
 }
