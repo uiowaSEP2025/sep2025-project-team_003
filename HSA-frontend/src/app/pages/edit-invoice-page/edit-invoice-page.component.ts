@@ -28,7 +28,7 @@ export class EditInvoicePageComponent implements OnInit{
   }
 
   setSelectedQuotes(newQuotes: number[]) {
-    this.quotes = [...newQuotes ]
+    this.selectedQuotes = [...newQuotes ]
   }
 
   loadQuotesToTable(searchTerm: string, pageSize: number, offSet: number) {
