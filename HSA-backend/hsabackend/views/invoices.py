@@ -167,9 +167,10 @@ def get_data_for_invoice(request, id):
 
     res_quotes = []
 
-    quotes = Quote.objects.filter(invoice=id).annotate(
-        total_material_subtotal=Sum('material_subtotal'),
-        total_total_price=Sum('total_price')
+    quotes = Quote.objects.filter(invoice=id)
+    aggregated_values = quotes.aggregate(
+        total_material_subtotal=Sum("material_subtotal"),
+        total_total_price=Sum("total_price"),
     )
 
 
@@ -178,10 +179,10 @@ def get_data_for_invoice(request, id):
 
     
     res["quotes"] = {
-        'quotes': res_quotes,
-        'totalMaterialSubtotal': quotes[0].total_material_subtotal,
-        'totalPrice': quotes[0].total_total_price
-        }
+        "quotes": res_quotes,
+        "totalMaterialSubtotal": aggregated_values["total_material_subtotal"] or 0,
+        "totalPrice": aggregated_values["total_total_price"] or 0,
+    }
 
     
     return Response(res, status=status.HTTP_200_OK)

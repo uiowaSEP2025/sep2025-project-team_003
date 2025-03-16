@@ -19,6 +19,7 @@ import { InvoicesPageComponent } from './pages/invoices-page/invoices-page.compo
 import { CreateInvoicePageComponent } from './pages/create-invoice-page/create-invoice-page.component';
 import { ViewInvoicePageComponent } from './pages/view-invoice-page/view-invoice-page.component';
 import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.component';
+import { EditInvoicePageComponent } from './pages/edit-invoice-page/edit-invoice-page.component';
 
 export const routes: Routes = [
   {
@@ -83,6 +84,9 @@ export const routes: Routes = [
   },
   {
     path: 'invoice/:id', component: ViewInvoicePageComponent
+  },
+  {
+    path: 'edit/invoice/:id', component: EditInvoicePageComponent
   },
   {
     path: '404',

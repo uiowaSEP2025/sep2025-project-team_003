@@ -11,6 +11,7 @@ import { HttpParams } from "@angular/common/http";
 })
 export class QuoteService {
     private apiGetByCustomerUrl = `${environment.apiUrl}/api/get/quotesforinvoice/customer`;
+    private apiGetQuotesByInvoiceUrl = `${environment.apiUrl}/api/get/quotesforinvoice/invoice` 
 
     constructor(private http: HttpClient) { }
 
@@ -24,6 +25,18 @@ export class QuoteService {
             })
         }
         return this.http.get<TableApiResponse<Invoice>>(`${this.apiGetByCustomerUrl}/${id}`, { params: httpParams });
+    }
+
+    public getQuotesByInvoice(id: number, params?: Record<string, string | number>) {
+        let httpParams = new HttpParams();
+
+        // Add query parameters
+        if (params) {
+            Object.keys(params).forEach(key => {
+                httpParams = httpParams.append(key, params[key])
+            })
+        }
+        return this.http.get<TableApiResponse<Invoice>>(`${this.apiGetQuotesByInvoiceUrl}/${id}`, { params: httpParams });
     }
 
 }

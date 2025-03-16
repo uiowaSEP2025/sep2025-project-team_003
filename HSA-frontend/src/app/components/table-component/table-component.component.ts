@@ -69,7 +69,9 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngAfterViewInit() {
-    this.headersWithActions = [...this.headers, 'Actions'] // this has toi be here to allow default headers change
+    this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
+      return !this.hideValues.includes(header)
+    }) // this has toi be here to allow default headers change
     if (this.dataSubscription) {
       this.dataSubscription.unsubscribe();
     }
@@ -143,7 +145,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       this.fetchedData = changes["fetchedData"].currentValue;
       this.data = new MatTableDataSource(this.fetchedData.data ?? []);
       this.dataSize = this.fetchedData.totalCount
-      if (this.fetchedData.data[0] !== undefined) {
+      if (this.fetchedData.data && this.fetchedData.data[0] !== undefined) {
         this.headers = Object.keys(this.fetchedData.data[0]);
         this.headers = this.headers.map(header => this.stringFormatter.formatSnakeToCamel(header))
         if (this.checkbox === "none") {
