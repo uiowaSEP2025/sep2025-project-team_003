@@ -364,6 +364,39 @@ class InvoiceViewTest(APITestCase):
     @patch('hsabackend.views.invoices.Quote.objects.filter')
     @patch('hsabackend.views.invoices.Invoice.objects.filter')
     @patch('hsabackend.views.invoices.Organization.objects.get')
+    def test_update_invoice_fails_validation(self, org, filter, quote, quote_exlude):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        
+        mock_org = Mock()
+        org.return_value = mock_org
+
+        invoice_qs = MagicMock()
+        filter.return_value = invoice_qs
+        invoice_mock = Mock(name='invoicemock')
+        invoice_qs.__getitem__.side_effect = lambda x: invoice_mock
+        invoice_mock.status = 'created'
+        invoice_mock.full_clean.side_effect = ValidationError({'firstn': ['This field is required.']})
+        quote_qs = Mock()
+        quote.return_value = quote_qs
+        quote_exlude.return_value = quote_qs
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/edit/invoice/1', {
+            "quoteIDs": [1],
+            "status": "paid",
+            "issuedDate": "2001-03-20",
+            "dueDate": "2003-03-20"
+        }, format='json')
+        request.user = mock_user  
+        response = updateInvoice(request,1)
+        
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @patch('hsabackend.views.invoices.Quote.objects.exclude')
+    @patch('hsabackend.views.invoices.Quote.objects.filter')
+    @patch('hsabackend.views.invoices.Invoice.objects.filter')
+    @patch('hsabackend.views.invoices.Organization.objects.get')
     def test_update_invoice_ok_not_created(self, org, filter, quote, quote_exlude):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True

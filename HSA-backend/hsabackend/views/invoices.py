@@ -137,6 +137,17 @@ def updateInvoice(request, id):
         return Response({"message": "The invoice does not exist"}, status=status.HTTP_404_NOT_FOUND)
     customer = invoice_qs[0].customer
 
+    invoice = invoice_qs[0]
+    invoice.status = invoice_status
+    invoice.issuance_date = issued
+    invoice.due_date = due
+
+    try:
+        invoice.full_clean()
+        invoice.save()
+    except ValidationError as e:
+        return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+
     Quote.objects.filter(
         pk__in=quote_ids, 
         jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
