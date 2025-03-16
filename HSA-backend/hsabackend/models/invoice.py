@@ -9,7 +9,7 @@ class Invoice(models.Model):
         ('paid','paid')
     ]
 
-    issuance_date = models.DateField()
+    issuance_date = models.DateField(null=True,blank=True, default=None)
     due_date = models.DateField(null=True,blank=True, default=None)
     status = models.CharField(max_length=50, choices=status_choices, default="created")
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)

@@ -113,6 +113,12 @@ def updateInvoice(request, id):
     if len(quote_ids) == 0:
         return Response({"message": "Must include at least 1 quote"}, status=status.HTTP_400_BAD_REQUEST)  
 
+    status = json.get("status",None)
+
+    if not status or status not in ('created', 'issued', 'paid'):
+        return Response({"message": "Must include a valid status 'created' | 'issued' | 'paid'"}, status=status.HTTP_400_BAD_REQUEST)  
+
+
     invoice_qs = Invoice.objects.filter(
         customer__organization=org.pk,
         pk = id
