@@ -5,6 +5,7 @@ import {MatIcon} from '@angular/material/icon';
 import {TableComponentComponent} from '../../components/table-component/table-component.component';
 import { MaterialService } from '../../services/material.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-materials-page',
@@ -21,7 +22,7 @@ export class MaterialsPageComponent implements OnInit {
   materialService: MaterialService
   @ViewChild(TableComponentComponent) tableComponent!: TableComponentComponent 
 
-  constructor(private router: Router, materialService: MaterialService, private snackBar: MatSnackBar) {
+  constructor(private router: Router, materialService: MaterialService, private errorHandler: ErrorHandlerService) {
     this.materialService = materialService
   }
 
@@ -35,9 +36,7 @@ export class MaterialsPageComponent implements OnInit {
         this.materials = response
       },
       error: (error) => {
-        if (error.status === 401) {
-          this.router.navigate(['/login']);
-        }
+        this.errorHandler.handleError(error)
       }
     })
   }

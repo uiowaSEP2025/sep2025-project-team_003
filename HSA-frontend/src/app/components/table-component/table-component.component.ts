@@ -17,6 +17,7 @@ import { StringFormatter } from '../../utils/string-formatter';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 import { ClickStopPropagationDirective } from '../../utils/click-event-propogation-stopper';
+import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-table-component',
@@ -50,7 +51,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   // note: headers are decided based on backend json keys
   searchHint = input<string>("Use me to search the data")
 
-  constructor(private router: Router, public dialog: MatDialog, private snackBar: MatSnackBar) {
+  constructor(private router: Router, public dialog: MatDialog, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {
   }
 
   searchControl = new FormControl('')
@@ -127,12 +128,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
             window.location.reload(); //reload for now, may have a better solution
           },
           error: (error) => {
-            if (error.status === 401) {
-              this.router.navigate(['/login']);
-            }
-            if (error.status === 404) {
-              this.router.navigate(['/404']);
-            }
+            this.errorHandler.handleError(error)
           }
         });
       }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TableComponentComponent } from '../../components/table-component/table-component.component';
 import { ServiceService } from '../../services/service.service';
 import { Router } from '@angular/router';
+import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-create-jobs-page',
@@ -14,7 +15,7 @@ export class CreateJobsPageComponent implements OnInit {
   services: any
   checkedServices: number[]
 
-  constructor(private router: Router, serviceService: ServiceService) {
+  constructor(private router: Router, serviceService: ServiceService, private errorHandler: ErrorHandlerService) {
     this.checkedServices = []
     this.serviceService = serviceService
   }
@@ -30,9 +31,7 @@ export class CreateJobsPageComponent implements OnInit {
         this.services = response
       },
       error: (error) => {
-        if (error.status === 401) {
-          this.router.navigate(['/login']);
-        }
+        this.errorHandler.handleError(error)
       }
     })
   }

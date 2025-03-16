@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { OnInit } from '@angular/core';
 import { MatError } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
+import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-edit-invoice-page',
@@ -18,7 +19,7 @@ export class EditInvoicePageComponent implements OnInit{
   selectedQuotesIsError = false
   invoiceID!: number
 
-  constructor (private router: Router, private quoteService:QuoteService, private activatedRoute: ActivatedRoute ) {}
+  constructor (private router: Router, private quoteService:QuoteService, private activatedRoute: ActivatedRoute, private errorHandler: ErrorHandlerService ) {}
 
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe(params => {
@@ -37,9 +38,7 @@ export class EditInvoicePageComponent implements OnInit{
         this.quotes = response
       },
       error: (error) => {
-        if (error.status === 401) {
-          this.router.navigate(['/login']);
-        }
+        this.errorHandler.handleError(error)
       }
     })}
 

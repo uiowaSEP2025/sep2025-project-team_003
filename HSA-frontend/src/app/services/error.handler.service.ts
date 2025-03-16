@@ -8,6 +8,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class ErrorHandlerService {
   constructor(private router: Router) {}
 
+  // handles api errors
   handleError(error: HttpErrorResponse): void {
     if (error.status === 401) {
       this.router.navigate(['/login']);

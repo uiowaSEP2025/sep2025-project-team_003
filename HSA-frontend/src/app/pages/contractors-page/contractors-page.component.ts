@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { ContractorService } from '../../services/contractor.service';
+import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-contractors-page',
@@ -15,7 +16,7 @@ export class ContractorsPageComponent {
   contractors: any
   contractorService: ContractorService
 
-  constructor(private router: Router, contractorService: ContractorService) {
+  constructor(private router: Router, contractorService: ContractorService, private errorHandler: ErrorHandlerService) {
     this.contractorService = contractorService
   }
 
@@ -25,9 +26,7 @@ export class ContractorsPageComponent {
         this.contractors = response
       },
       error: (error) => {
-        if (error.status === 401) {
-          this.router.navigate(['/login']);
-        }
+        this.errorHandler.handleError(error)
       }
     })
   }

@@ -6,7 +6,8 @@ import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-sta
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CustomerService } from '../../services/customer.service';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
+import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-edit-customer-page',
@@ -20,9 +21,9 @@ export class EditCustomerPageComponent implements OnInit {
   lastName!: string
   phoneNo!: string
   custId: number | null = null
-  
 
-  constructor(private activatedRoute: ActivatedRoute, private customerService: CustomerService, private router:Router) { }
+
+  constructor(private activatedRoute: ActivatedRoute, private customerService: CustomerService, private router: Router, private errorHandler: ErrorHandlerService) { }
 
   firstNameControl = new FormControl('', Validators.required)
   lastNameControl = new FormControl('', Validators.required)
@@ -54,14 +55,13 @@ export class EditCustomerPageComponent implements OnInit {
       this.lastNameControl.valid &&
       this.emailControl.valid &&
       this.phoneControl.valid &&
-      this.notesControl) 
-      {
-        return true
-      }
-      return false
+      this.notesControl) {
+      return true
     }
-    
-  
+    return false
+  }
+
+
 
   handleSave() {
     if (!this.isFormValid()) {
@@ -76,17 +76,14 @@ export class EditCustomerPageComponent implements OnInit {
       notes: this.phoneControl.value
     }
     this.customerService.editCustomer(args).subscribe(
-      {next: (response) => {
-        this.router.navigate(['/customers']);
-      },
-      error: (error) => {
-        if (error.status === 401) {
-          this.router.navigate(['/login']);
+      {
+        next: (response) => {
+          this.router.navigate(['/customers']);
+        },
+        error: (error) => {
+          this.errorHandler.handleError(error)
         }
-        if (error.status === 404) {
-          this.router.navigate(['/404']);
-        }
-      }}
+      }
     )
   }
 

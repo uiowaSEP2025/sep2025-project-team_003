@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatError } from '@angular/material/form-field';
 import { InvoiceService } from '../../services/invoice.service';
+import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-create-invoice-page',
@@ -23,7 +24,7 @@ export class CreateInvoicePageComponent implements OnInit {
   selectedQuotes: any = []
   selectedQuotesIsError: boolean = false
 
-  constructor(private customerService: CustomerService, private router: Router, private quoteService: QuoteService, private invoiceService: InvoiceService) { }
+  constructor(private customerService: CustomerService, private router: Router, private quoteService: QuoteService, private invoiceService: InvoiceService, private errorHandler: ErrorHandlerService) { }
 
   ngOnInit(): void {
     this.loadCustomersToTable("", 5, 0);
@@ -35,9 +36,7 @@ export class CreateInvoicePageComponent implements OnInit {
         this.customers = response
       },
       error: (error) => {
-        if (error.status === 401) {
-          this.router.navigate(['/login']);
-        }
+        this.errorHandler.handleError(error)
       }
     })
   }
@@ -48,9 +47,7 @@ export class CreateInvoicePageComponent implements OnInit {
         this.quotes = response
       },
       error: (error) => {
-        if (error.status === 401) {
-          this.router.navigate(['/login']);
-        }
+        this.errorHandler.handleError(error)
       }
     })
   }
@@ -97,9 +94,7 @@ export class CreateInvoicePageComponent implements OnInit {
         this.router.navigate(['/invoices']);
       },
       error: (error) => {
-        if (error.status === 401) {
-          this.router.navigate(['/login']);
-        }
+        this.errorHandler.handleError(error)
       }}
     )
 
