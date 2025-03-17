@@ -16,6 +16,8 @@ import { DateRange } from '../edit-invoice-page/edit-invoice-page.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { ViewChild } from '@angular/core';
+import { StringFormatter } from '../../utils/string-formatter';
 
 @Component({
   selector: 'app-create-invoice-page',
@@ -34,12 +36,16 @@ export class CreateInvoicePageComponent implements OnInit {
   selectedQuotes: any = []
   selectedQuotesIsError: boolean = false
   status: 'created' | 'issued' | 'paid' = 'created'
+  @ViewChild(InvoiceDatePickerComponent) datePicker!: InvoiceDatePickerComponent;
+
   readonly range: FormGroup<DateRange> = new FormGroup({
       issued: new FormControl<Date | null>(null),
       due: new FormControl<Date | null>(null),
     });
 
-  constructor(private customerService: CustomerService, private router: Router, private quoteService: QuoteService, private invoiceService: InvoiceService, private errorHandler: ErrorHandlerService) { }
+  constructor(private customerService: CustomerService, private router: Router, private quoteService: QuoteService, 
+    private invoiceService: InvoiceService, private errorHandler: ErrorHandlerService,
+    private stringFormatter: StringFormatter) { }
 
   ngOnInit(): void {
     this.loadCustomersToTable("", 5, 0);
@@ -90,6 +96,10 @@ export class CreateInvoicePageComponent implements OnInit {
   }
 
   onSubmit() {
+    let validDates:any
+    if (this.isDateSelectVisible()) {
+      validDates = this.datePicker.validate()
+    }
     if (this.selectedCustomers.length === 0) {
       this.selectedCustomersIsError = true
       return;
@@ -101,10 +111,16 @@ export class CreateInvoicePageComponent implements OnInit {
       }
       return;
     }
+    if (this.isDateSelectVisible() && !validDates) {
+      return;
+    }
 
     const json = {
       customerID: this.selectedCustomers[0],
-      quoteIDs: this.selectedQuotes
+      quoteIDs: this.selectedQuotes,
+      status: this.status,
+      issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value) ,
+      dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value)
     }
     this.invoiceService.createInvoice(json).subscribe(
       {next: (response) => {
@@ -114,7 +130,7 @@ export class CreateInvoicePageComponent implements OnInit {
         this.errorHandler.handleError(error)
       }}
     )
-
+    return;
   }
 
 

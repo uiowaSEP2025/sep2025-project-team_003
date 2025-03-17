@@ -10,7 +10,10 @@ import { InvoiceDataInterface } from "../interfaces/api-responses/invoice.api.da
 
 interface CreateInvoiceInterface {
     customerID: number,
-    quoteIDs: number[]
+    quoteIDs: number[],
+    status: "created" | "issued" | "paid"
+    issuedDate: string,
+    dueDate: string
 }
 
 interface UpdateInvoiceInterface {
