@@ -17,6 +17,8 @@ import { ViewChild } from '@angular/core';
 import { InvoiceStateRegressionConfirmerComponent } from '../../components/invoice-state-regression-confirmer/invoice-state-regression-confirmer.component';
 import { MatDialog } from '@angular/material/dialog';
 import { InvoiceService } from '../../services/invoice.service';
+import { StringFormatter } from '../../utils/string-formatter';
+import { Router } from '@angular/router';
 
 export interface DateRange {
   issued: FormControl<Date | null>;
@@ -40,7 +42,7 @@ export class EditInvoicePageComponent implements OnInit {
   customerName!: string
   issuanceDate!: string
   dueDate!: string
-  status!: string // also serves as a form control
+  status!: 'issued' | 'created' | 'paid'// also serves as a form control
   initialStatus!: string
   readonly range: FormGroup<DateRange> = new FormGroup({
     issued: new FormControl<Date | null>(null),
@@ -52,7 +54,9 @@ export class EditInvoicePageComponent implements OnInit {
   readonly dialog = inject(MatDialog);
 
   
-  constructor(private quoteService: QuoteService, private activatedRoute: ActivatedRoute, private errorHandler: ErrorHandlerService) { }
+  constructor(private quoteService: QuoteService, private activatedRoute: ActivatedRoute, 
+    private errorHandler: ErrorHandlerService, private invoiceService: InvoiceService,
+    private stringFormatter: StringFormatter, private router: Router) { }
 
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe(params => {
@@ -66,6 +70,22 @@ export class EditInvoicePageComponent implements OnInit {
       this.issuanceDate = params['issuance_date'];
       this.customerName = params['customer'];
     })
+
+    if (this.issuanceDate !== "N/A") {
+      const split =  this.issuanceDate.split('-')
+      const year = split[0]
+      const month = split[1]
+      const day = split[2]
+      this.range.controls.issued.setValue(new Date(parseInt(year), parseInt(month) - 1, parseInt(day)))
+    }
+
+    if (this.dueDate !== "N/A") {
+      const split =  this.dueDate.split('-')
+      const year = split[0]
+      const month = split[1]
+      const day = split[2]
+      this.range.controls.due.setValue(new Date(parseInt(year), parseInt(month) - 1, parseInt(day)))
+    }
     this.loadQuotesToTable("", 5, 0);
   }
 
@@ -87,7 +107,19 @@ export class EditInvoicePageComponent implements OnInit {
     );
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
-        
+        const data = {
+          quoteIDs: this.selectedQuotes,
+          status: this.status,
+          issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
+          dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value)
+        }
+        this.invoiceService.updateInvoice(this.invoiceID, data).subscribe(
+          {next: (response) => {
+            this.router.navigate(['/invoices']);
+          },
+          error: (error) => {
+            this.errorHandler.handleError(error)
+          }})
       }
     });
   }
@@ -105,7 +137,6 @@ export class EditInvoicePageComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.isDateSelectVisible)
     if (this.selectedQuotes.length === 0) {
       this.datePicker.validate()
       this.selectedQuotesIsError = true;
@@ -118,7 +149,21 @@ export class EditInvoicePageComponent implements OnInit {
     this.selectedQuotesIsError = false;
     if (this.initialStatus === 'issued' || this.initialStatus === 'paid') {
       this.openDialog()
+      return;
     }
-    return;
+    const data = {
+      quoteIDs: this.selectedQuotes,
+      status: this.status,
+      issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
+      dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value)
+    }
+    this.invoiceService.updateInvoice(this.invoiceID, data).subscribe(
+      {next: (response) => {
+        this.router.navigate(['/invoices']);
+      },
+      error: (error) => {
+        this.errorHandler.handleError(error)
+      }})
+      return;
   }
 }
