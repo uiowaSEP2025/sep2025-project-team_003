@@ -16,6 +16,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ViewChild } from '@angular/core';
 import { InvoiceStateRegressionConfirmerComponent } from '../../components/invoice-state-regression-confirmer/invoice-state-regression-confirmer.component';
 import { MatDialog } from '@angular/material/dialog';
+import { InvoiceService } from '../../services/invoice.service';
 
 export interface DateRange {
   issued: FormControl<Date | null>;
@@ -86,7 +87,7 @@ export class EditInvoicePageComponent implements OnInit {
     );
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
-        //TODO: call edit here
+        
       }
     });
   }
@@ -104,7 +105,9 @@ export class EditInvoicePageComponent implements OnInit {
   }
 
   onSubmit() {
+    console.log(this.isDateSelectVisible)
     if (this.selectedQuotes.length === 0) {
+      this.datePicker.validate()
       this.selectedQuotesIsError = true;
       return;
     }

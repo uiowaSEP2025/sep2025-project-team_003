@@ -24,4 +24,15 @@ export class StringFormatter {
     formatCurrency(amount: string): string {
       return `$${parseFloat(amount).toFixed(2)}`
     }
+
+    dateFormatter(date: Date | null): string {
+      if (date === null) {
+        return "";
+      }
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+      const day = String(date.getDate()).padStart(2, "0");
+      
+      return `${year}-${month}-${day}`;
+    }
 }
