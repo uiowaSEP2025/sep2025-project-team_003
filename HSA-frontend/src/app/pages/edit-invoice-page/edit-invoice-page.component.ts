@@ -138,7 +138,7 @@ export class EditInvoicePageComponent implements OnInit {
 
   onSubmit() {
     if (this.selectedQuotes.length === 0) {
-      this.datePicker.validate()
+      this.datePicker?.validate()
       this.selectedQuotesIsError = true;
       return;
     }
@@ -151,10 +151,11 @@ export class EditInvoicePageComponent implements OnInit {
       this.openDialog()
       return;
     }
+    if (!this.isDateSelectVisible()) {}
     const data = {
       quoteIDs: this.selectedQuotes,
       status: this.status,
-      issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
+      issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value) ,
       dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value)
     }
     this.invoiceService.updateInvoice(this.invoiceID, data).subscribe(
