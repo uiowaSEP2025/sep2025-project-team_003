@@ -96,6 +96,7 @@ export class CreateInvoicePageComponent implements OnInit {
   }
 
   onSubmit() {
+    console.log('called')
     let validDates:any
     if (this.isDateSelectVisible()) {
       validDates = this.datePicker.validate()
