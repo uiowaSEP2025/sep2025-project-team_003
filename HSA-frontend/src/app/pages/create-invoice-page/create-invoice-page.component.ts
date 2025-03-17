@@ -6,29 +6,46 @@ import { QuoteService } from '../../services/quote.service';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatError } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { InvoiceService } from '../../services/invoice.service';
 import { ErrorHandlerService } from '../../services/error.handler.service';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { InvoiceDatePickerComponent } from '../../components/invoice-date-picker/invoice-date-picker.component';
+import { DateRange } from '../edit-invoice-page/edit-invoice-page.component';
+import { FormGroup, FormControl } from '@angular/forms';
+import { MatLabel } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-create-invoice-page',
-  imports: [TableComponentComponent, CommonModule, MatButtonModule, MatError],
+  imports: [TableComponentComponent, CommonModule, MatButtonModule, MatError, 
+    FormsModule, MatFormFieldModule, InvoiceDatePickerComponent, MatSelectModule,
+    MatLabel,MatInputModule
+  ],
   templateUrl: './create-invoice-page.component.html',
   styleUrl: './create-invoice-page.component.scss'
 })
 export class CreateInvoicePageComponent implements OnInit {
-
   quotes: any
   customers: any
   selectedCustomers: any = []
   selectedCustomersIsError: boolean = false
   selectedQuotes: any = []
   selectedQuotesIsError: boolean = false
+  status: 'created' | 'issued' | 'paid' = 'created'
+  readonly range: FormGroup<DateRange> = new FormGroup({
+      issued: new FormControl<Date | null>(null),
+      due: new FormControl<Date | null>(null),
+    });
 
   constructor(private customerService: CustomerService, private router: Router, private quoteService: QuoteService, private invoiceService: InvoiceService, private errorHandler: ErrorHandlerService) { }
 
   ngOnInit(): void {
     this.loadCustomersToTable("", 5, 0);
   }
+
+  isDateSelectVisible = () => (!(this.status === 'created'))
 
   loadCustomersToTable(searchTerm: string, pageSize: number, offSet: number) {
     this.customerService.getCustomer({ search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({

@@ -151,7 +151,6 @@ export class EditInvoicePageComponent implements OnInit {
       this.openDialog()
       return;
     }
-    if (!this.isDateSelectVisible()) {}
     const data = {
       quoteIDs: this.selectedQuotes,
       status: this.status,
