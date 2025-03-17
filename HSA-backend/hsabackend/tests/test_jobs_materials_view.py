@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 from unittest.mock import Mock
 from unittest.mock import patch
 from django.contrib.auth.models import User
-from hsabackend.views.jobs_materials import get_job_material_table_data, create_job_material, delete_job_material
+from hsabackend.views.jobs_materials import delete_cached_job_material, get_job_material_table_data, create_job_material, delete_job_material
 from rest_framework.test import APITestCase
 from hsabackend.models.organization import Organization
 from django.db.models import QuerySet
@@ -214,3 +214,53 @@ class materialViewTest(APITestCase):
         
         assert response.status_code == status.HTTP_200_OK
         material_mock.delete.assert_called_once
+
+    def test_delete_cached_invalid(self):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        mockdata = {
+            "job_materials": [
+                {
+                    "id": 2
+                },
+                {
+                    "id": 4
+                }
+            ],
+        }
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/delete/job/1/materials', data=mockdata, format='json')
+        request.user = mock_user  
+        response = delete_cached_job_material(request, 1)
+        
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    @patch('hsabackend.views.jobs_materials.JobMaterial.objects.get')
+    def test_delete_cached_valid(self, job_material):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        
+        job_material_obj = MagicMock(spec=JobMaterial)
+        job_material.return_value = job_material_obj
+
+        mockdata = {
+            "job_materials": [
+                {
+                    "id": 2
+                },
+                {
+                    "id": 4
+                }
+            ],
+        }
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/delete/job/1/materials', data=mockdata, format='json')
+        request.user = mock_user  
+        response = delete_cached_job_material(request, 1)
+        
+        assert response.status_code == status.HTTP_200_OK
+        assert job_material_obj.delete.call_count == len(mockdata["job_materials"])
+    

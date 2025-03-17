@@ -92,3 +92,21 @@ def delete_job_contractor(request, job_id, job_contractor_id):
     
     job_contractor[0].delete()
     return Response({"message": "The contractor in this Job deleted sucessfully"}, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+def delete_cached_job_contractor(request, job_id):
+    if not request.user.is_authenticated:
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    job_contractors_list = request.data.get('job_contractors', '')      # dataform: job_contractors: [{"id": int}, {"id": int}, ...]
+
+    if (len(job_contractors_list) != 0):
+        for job_contractor in job_contractors_list:
+            try:
+                job_contractor_object = JobContractor.objects.get(id=job_contractor["id"])
+            except:
+                return Response({"message": "The Contractor in this Job does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+            job_contractor_object.delete()
+
+    return Response({"message": "The Contractors in this Job deleted sucessfully"}, status=status.HTTP_200_OK)

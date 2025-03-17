@@ -92,3 +92,21 @@ def delete_job_service(request, job_id, job_service_id):
     
     job_service[0].delete()
     return Response({"message": "The Service in this Job deleted sucessfully"}, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+def delete_cached_job_service(request, job_id):
+    if not request.user.is_authenticated:
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    job_services_list = request.data.get('job_services', '')      # dataform: job_services: [{"id": int}, {"id": int}, ...]
+
+    if (len(job_services_list) != 0):
+        for job_service in job_services_list:
+            try:
+                job_service_object = JobService.objects.get(id=job_service["id"])
+            except:
+                return Response({"message": "The Service in this Job does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+            job_service_object.delete()
+
+    return Response({"message": "The Services in this Job deleted sucessfully"}, status=status.HTTP_200_OK)

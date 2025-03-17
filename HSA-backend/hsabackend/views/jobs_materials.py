@@ -94,3 +94,21 @@ def delete_job_material(request, job_id, job_material_id):
     
     job_material[0].delete()
     return Response({"message": "The material in this Job deleted sucessfully"}, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+def delete_cached_job_material(request, job_id):
+    if not request.user.is_authenticated:
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    job_materials_list = request.data.get('job_materials', '')      # dataform: job_materials: [{"id": int}, {"id": int}, ...]
+
+    if (len(job_materials_list) != 0):
+        for job_material in job_materials_list:
+            try:
+                job_material_object = JobMaterial.objects.get(id=job_material["id"])
+            except:
+                return Response({"message": "The Material in this Job does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+            job_material_object.delete()
+
+    return Response({"message": "The Materials in this Job deleted sucessfully"}, status=status.HTTP_200_OK)

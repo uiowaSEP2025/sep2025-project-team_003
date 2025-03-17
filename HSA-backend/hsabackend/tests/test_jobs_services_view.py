@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 from unittest.mock import Mock
 from unittest.mock import patch
 from django.contrib.auth.models import User
-from hsabackend.views.jobs_services import get_job_service_table_data, create_job_service, delete_job_service
+from hsabackend.views.jobs_services import delete_cached_job_service, get_job_service_table_data, create_job_service, delete_job_service
 from rest_framework.test import APITestCase
 from hsabackend.models.organization import Organization
 from django.db.models import QuerySet
@@ -89,9 +89,9 @@ class ServiceViewTest(APITestCase):
     def test_job_create_service_auth_invalid(self, org, job, service, job_service_filter):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        job_serivce_qs = MagicMock(spec=QuerySet)
-        job_service_filter.return_value = job_serivce_qs
-        job_serivce_qs.exists.return_value = True
+        job_service_qs = MagicMock(spec=QuerySet)
+        job_service_filter.return_value = job_service_qs
+        job_service_qs.exists.return_value = True
 
         service.return_value = Service()
         job.return_value = Job()
@@ -114,9 +114,9 @@ class ServiceViewTest(APITestCase):
     def test_job_create_service_entry_already_exist(self, job_service, service, org, job, job_service_filter):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        job_serivce_qs = MagicMock(spec=QuerySet)
-        job_service_filter.return_value = job_serivce_qs
-        job_serivce_qs.exists.return_value = True
+        job_service_qs = MagicMock(spec=QuerySet)
+        job_service_filter.return_value = job_service_qs
+        job_service_qs.exists.return_value = True
 
         job.return_value = Job()
         org.return_value = Organization()
@@ -142,9 +142,9 @@ class ServiceViewTest(APITestCase):
     def test_calls_save_if_valid(self, job_service, service, org, job, job_service_filter):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        job_serivce_qs = MagicMock(spec=QuerySet)
-        job_service_filter.return_value = job_serivce_qs
-        job_serivce_qs.exists.return_value = False
+        job_service_qs = MagicMock(spec=QuerySet)
+        job_service_filter.return_value = job_service_qs
+        job_service_qs.exists.return_value = False
 
         job.return_value = Job()
         org.return_value = Organization()
@@ -180,9 +180,9 @@ class ServiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         org.return_value = Organization()
-        job_serivce_qs = MagicMock(spec=QuerySet)
-        job_service_filter.return_value = job_serivce_qs
-        job_serivce_qs.exists.return_value = False 
+        job_service_qs = MagicMock(spec=QuerySet)
+        job_service_filter.return_value = job_service_qs
+        job_service_qs.exists.return_value = False 
         
         factory = APIRequestFactory()
         request = factory.post('/api/delete/job/1/service/1')
@@ -197,11 +197,11 @@ class ServiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         org.return_value = Organization()
-        job_serivce_qs = MagicMock(spec=QuerySet)
-        job_service_filter.return_value = job_serivce_qs
-        job_serivce_qs.exists.return_value = True 
+        job_service_qs = MagicMock(spec=QuerySet)
+        job_service_filter.return_value = job_service_qs
+        job_service_qs.exists.return_value = True 
         service_mock = MagicMock()
-        job_serivce_qs.__getitem__.side_effect = lambda x: service_mock
+        job_service_qs.__getitem__.side_effect = lambda x: service_mock
         
         factory = APIRequestFactory()
         request = factory.post('/api/delete/job/1/service/1')
@@ -210,3 +210,52 @@ class ServiceViewTest(APITestCase):
         
         assert response.status_code == status.HTTP_200_OK
         service_mock.delete.assert_called_once
+
+    def test_delete_cached_invalid(self):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        mockdata = {
+            "job_services": [
+                {
+                    "id": 2
+                },
+                {
+                    "id": 4
+                }
+            ],
+        }
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/delete/job/1/services', data=mockdata, format='json')
+        request.user = mock_user  
+        response = delete_cached_job_service(request, 1)
+        
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    @patch('hsabackend.views.jobs_services.JobService.objects.get')
+    def test_delete_cached_valid(self, job_service):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        
+        job_service_obj = MagicMock(spec=JobService)
+        job_service.return_value = job_service_obj
+
+        mockdata = {
+            "job_services": [
+                {
+                    "id": 2
+                },
+                {
+                    "id": 4
+                }
+            ],
+        }
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/delete/job/1/services', data=mockdata, format='json')
+        request.user = mock_user  
+        response = delete_cached_job_service(request, 1)
+        
+        assert response.status_code == status.HTTP_200_OK
+        assert job_service_obj.delete.call_count == len(mockdata["job_services"])
