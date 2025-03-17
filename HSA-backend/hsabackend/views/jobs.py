@@ -66,8 +66,8 @@ def create_job(request):
     requestor_address = request.data.get('address', '')
 
     contractor_list = request.data.get('contractors', '')   # data send form: contractors: [{ "id": int }]
-    service_list = request.data.get('services', '')         # data send form: services: [{ "id": string }]
-    material_list = request.data.get('materials', '')       # data send form: materials: [{ "id": string, "unit": int, "pricePerUnit": float }]
+    service_list = request.data.get('services', '')         # data send form: services: [{ "id": int }]
+    material_list = request.data.get('materials', '')       # data send form: materials: [{ "id": int, "unit": int, "pricePerUnit": float }]
     
     # Initialize job entry first
     job = Job(
