@@ -20,4 +20,11 @@ describe('CreateInvoicePageComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should contain the correct elements', () => {
+    const compiled = fixture.debugElement.nativeElement;
+    const table = compiled.querySelector('table');
+    expect(table).toBeTruthy()
+    
+  }) 
 });

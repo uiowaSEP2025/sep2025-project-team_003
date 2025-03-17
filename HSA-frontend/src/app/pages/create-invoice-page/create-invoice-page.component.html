@@ -9,7 +9,7 @@
         [checkedIds]="selectedCustomers"
         [setCheckedIds]="setSelectedCustomers.bind(this)"
         searchHint="Search by customer name"
-        [headers]="['First Name','Last Name', 'Email', 'Phone No']"
+        [headers]="['Checkbox','First Name','Last Name', 'Email', 'Phone No']"
     ></app-table-component>
     @if (selectedCustomersIsError) {
         <mat-error class="mt-3">You must select a customer to invoice</mat-error>    

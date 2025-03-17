@@ -52,13 +52,11 @@ def createInvoice(request):
         # will be here if user does not own the customer ID
         return Response({"message": "Must provide customer for the invoice."}, status=status.HTTP_404_NOT_FOUND)
 
-    print(issued, due)
     invoice = Invoice(
         customer = cust_qs[0],
         issuance_date = issued,
         due_date = due
     )
-    print(invoice.issuance_date, invoice.due_date)
     
     try:
         invoice.full_clean()

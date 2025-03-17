@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { InvoicesPageComponent } from './invoices-page.component';
 
 describe('InvoicesPageComponent', () => {
@@ -8,7 +8,8 @@ describe('InvoicesPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [InvoicesPageComponent]
+      imports: [InvoicesPageComponent],
+      providers: [provideHttpClientTesting()]
     })
     .compileComponents();
 

@@ -18,6 +18,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 import { ClickStopPropagationDirective } from '../../utils/click-event-propogation-stopper';
 import { ErrorHandlerService } from '../../services/error.handler.service';
+import { OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-table-component',
@@ -36,7 +37,7 @@ import { ErrorHandlerService } from '../../services/error.handler.service';
   templateUrl: './table-component.component.html',
   styleUrl: './table-component.component.scss'
 })
-export class TableComponentComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class TableComponentComponent implements AfterViewInit, OnChanges, OnDestroy, OnInit {
   @Input() fetchedData: any = null
   @Input() deleteRequest!: (data: any) => Observable<StandardApiResponse>
   @Input({ required: true }) loadDataToTable!: (search: string, pageSize: number, offSet: number) => void
@@ -70,9 +71,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngAfterViewInit() {
-    this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
-      return !this.hideValues.includes(header)
-    }) // this has toi be here to allow default headers change
+    
     if (this.dataSubscription) {
       this.dataSubscription.unsubscribe();
     }
@@ -98,6 +97,13 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       this.pageSize = page.pageSize;
       this.refetch(this.searchControl.value ?? "");
     });
+  }
+
+  ngOnInit(): void {
+    this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
+      return !this.hideValues.includes(header)
+    }) // this has to be here to allow default headers change. On init is ran
+    // when inputs are recieved
   }
 
   redirectEdit(id: number, args: any) {
@@ -152,6 +158,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
           this.headersWithActions = ['Checkbox', ...this.headers].filter((header) => {
             return !this.hideValues.includes(header)
           })
+          console.log(this.headersWithActions)
         }
       }
     }
