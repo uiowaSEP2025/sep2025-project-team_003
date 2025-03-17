@@ -58,28 +58,35 @@ def create_job_contractor(request, id):
     except:
         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
-    try:
-        contractor_object = Contractor.objects.get(organization=org.pk, id=request.data.get('contractor_id'))
-    except:
-        return Response({"message": "The contractor does not exist"}, status=status.HTTP_404_NOT_FOUND)
-    
-    job_contractor_object = JobContractor.objects.filter(job=job_object.pk, contractor=contractor_object.pk)
+    contractors_list = request.data.get('contractors', '')
 
-    if job_contractor_object.exists():
-        return Response({"message": "The contractor for this Job already in the list"}, status=status.HTTP_400_BAD_REQUEST)
+    if (len(contractors_list) != 0):
+        for contractor in contractors_list:
+            try:
+                contractor_object = Contractor.objects.get(organization=org.pk, id=contractor["id"])
+            except:
+                return Response({"message": "The contractor does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            
+            job_contractor_object = JobContractor.objects.filter(job=job_object.pk, contractor=contractor_object.pk)
 
-    job_contractor = JobContractor(
-        job = job_object,
-        contractor = contractor_object,
-    )
+            if job_contractor_object.exists():
+                return Response({"message": "The contractor for this job already in the list"}, status=status.HTTP_400_BAD_REQUEST)
 
-    try:
-        job_contractor.full_clean()  # Validate the model instance
-        job_contractor.save()
-        return Response({"message": "Contractor added to Job successfully"}, status=status.HTTP_201_CREATED)
-    except ValidationError as e:
-        return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
-    
+            job_contractor = JobContractor(
+                job = job_object,
+                contractor = contractor_object,
+            )
+
+            try:
+                job_contractor.full_clean()  # Validate the model instance
+                job_contractor.save()
+            except ValidationError as e:
+                return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+            
+        return Response({"message": "Contractors added to job successfully"}, status=status.HTTP_201_CREATED)
+    else:
+        return Response({"message": "There is no contractor to add"}, status=status.HTTP_400_BAD_REQUEST)
+            
 @api_view(["POST"])
 def delete_job_contractor(request, job_id, job_contractor_id):
     if not request.user.is_authenticated:
@@ -88,10 +95,10 @@ def delete_job_contractor(request, job_id, job_contractor_id):
     job_contractor = JobContractor.objects.filter(pk=job_contractor_id, job=job_id)
 
     if not job_contractor.exists():
-        return Response({"message": "The contractor in this Job does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "The contractor in this job does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
     job_contractor[0].delete()
-    return Response({"message": "The contractor in this Job deleted sucessfully"}, status=status.HTTP_200_OK)
+    return Response({"message": "The contractor in this job deleted sucessfully"}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 def delete_cached_job_contractor(request, job_id):
@@ -105,8 +112,10 @@ def delete_cached_job_contractor(request, job_id):
             try:
                 job_contractor_object = JobContractor.objects.get(id=job_contractor["id"])
             except:
-                return Response({"message": "The Contractor in this Job does not exist"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"message": "The contractor in this job does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
             job_contractor_object.delete()
+    else:
+        return Response({"message": "There is no contractor to delete"}, status=status.HTTP_400_BAD_REQUEST)
 
-    return Response({"message": "The Contractors in this Job deleted sucessfully"}, status=status.HTTP_200_OK)
+    return Response({"message": "The contractors in this job deleted sucessfully"}, status=status.HTTP_200_OK)

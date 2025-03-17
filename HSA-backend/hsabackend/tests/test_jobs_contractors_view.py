@@ -96,12 +96,45 @@ class contractorViewTest(APITestCase):
         contractor.return_value = Contractor()
         job.return_value = Job()
         org.return_value = Organization()
+
+        mockdata = {
+            "contractors": [
+                {
+                    "id": 2
+                },
+                {
+                    "id": 4
+                }
+            ]
+        }
         
         factory = APIRequestFactory()
-        request = factory.post('api/create/job/1/contractor',
-                data={
-                    'contractor_id': 3
-                })
+        request = factory.post('api/create/job/1/contractor', data=mockdata, format='json')
+        request.user = mock_user  
+        response = create_job_contractor(request, 1)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+    
+    @patch('hsabackend.views.jobs_contractors.JobContractor.objects.filter')
+    @patch('hsabackend.views.jobs_contractors.Contractor.objects.get')
+    @patch('hsabackend.views.jobs_contractors.Job.objects.get')
+    @patch('hsabackend.views.jobs_contractors.Organization.objects.get')
+    def test_job_create_contractor_request_empty(self, org, job, contractor, job_contractor_filter):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        job_serivce_qs = MagicMock(spec=QuerySet)
+        job_contractor_filter.return_value = job_serivce_qs
+        job_serivce_qs.exists.return_value = True
+
+        contractor.return_value = Contractor()
+        job.return_value = Job()
+        org.return_value = Organization()
+
+        mockdata = {
+            "contractors": []
+        }
+        
+        factory = APIRequestFactory()
+        request = factory.post('api/create/job/1/contractor', data=mockdata, format='json')
         request.user = mock_user  
         response = create_job_contractor(request, 1)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -123,12 +156,20 @@ class contractorViewTest(APITestCase):
         contractor.return_value = Contractor()
         job_contractor_obj = MagicMock(spec=JobContractor)
         job_contractor.return_value = job_contractor_obj
+
+        mockdata = {
+            "contractors": [
+                {
+                    "id": 2
+                },
+                {
+                    "id": 4
+                }
+            ]
+        }
         
         factory = APIRequestFactory()
-        request = factory.post('api/create/job/1/contractor',
-                data={
-                    'contractor_id': 3,
-                })
+        request = factory.post('api/create/job/1/contractor', data=mockdata, format='json')
         request.user = mock_user
 
         response = create_job_contractor(request, 1)
@@ -151,16 +192,24 @@ class contractorViewTest(APITestCase):
         contractor.return_value = Contractor()
         job_contractor_obj = MagicMock(spec=JobContractor)
         job_contractor.return_value = job_contractor_obj
+
+        mockdata = {
+            "contractors": [
+                {
+                    "id": 2
+                },
+                {
+                    "id": 4
+                }
+            ]
+        }
         
         factory = APIRequestFactory()
-        request = factory.post('api/create/job/1/contractor',
-                data={
-                    'contractor_id': 3,
-                })
+        request = factory.post('api/create/job/1/contractor', data=mockdata, format='json')
         request.user = mock_user
 
         response = create_job_contractor(request, 1)
-        job_contractor_obj.save.assert_called_once()
+        job_contractor_obj.save.call_count == len(mockdata["contractors"])
         assert response.status_code == status.HTTP_201_CREATED
 
     def test_job_delete_unauth(self):

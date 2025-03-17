@@ -96,12 +96,49 @@ class materialViewTest(APITestCase):
         material.return_value = Material()
         job.return_value = Job()
         org.return_value = Organization()
+
+        mockdata = {
+            "materials": [
+                {
+                    'id': 2,
+                    'units_used': 1,
+                    'price_per_unit': 0.00
+                },
+                {
+                    'id': 4,
+                    'units_used': 1,
+                    'price_per_unit': 0.00
+                }
+            ]
+        }
         
         factory = APIRequestFactory()
-        request = factory.post('api/create/job/1/material',
-                data={
-                    'material_id': 3
-                })
+        request = factory.post('api/create/job/1/material', data=mockdata, format='json')
+        request.user = mock_user  
+        response = create_job_material(request, 1)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @patch('hsabackend.views.jobs_materials.JobMaterial.objects.filter')
+    @patch('hsabackend.views.jobs_materials.Material.objects.get')
+    @patch('hsabackend.views.jobs_materials.Job.objects.get')
+    @patch('hsabackend.views.jobs_materials.Organization.objects.get')
+    def test_job_create_material_request_empty(self, org, job, material, job_material_filter):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        job_serivce_qs = MagicMock(spec=QuerySet)
+        job_material_filter.return_value = job_serivce_qs
+        job_serivce_qs.exists.return_value = True
+
+        material.return_value = Material()
+        job.return_value = Job()
+        org.return_value = Organization()
+
+        mockdata = {
+            "materials": []
+        }
+        
+        factory = APIRequestFactory()
+        request = factory.post('api/create/job/1/material', data=mockdata, format='json')
         request.user = mock_user  
         response = create_job_material(request, 1)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -123,14 +160,24 @@ class materialViewTest(APITestCase):
         material.return_value = Material()
         job_material_obj = MagicMock(spec=JobMaterial)
         job_material.return_value = job_material_obj
-        
-        factory = APIRequestFactory()
-        request = factory.post('api/create/job/1/material',
-                data={
-                    'material_id': 1,
+
+        mockdata = {
+            "materials": [
+                {
+                    'id': 2,
                     'units_used': 1,
                     'price_per_unit': 0.00
-                })
+                },
+                {
+                    'id': 4,
+                    'units_used': 1,
+                    'price_per_unit': 0.00
+                }
+            ]
+        }
+        
+        factory = APIRequestFactory()
+        request = factory.post('api/create/job/1/material', data=mockdata, format='json')
         request.user = mock_user
 
         response = create_job_material(request, 1)
@@ -153,18 +200,28 @@ class materialViewTest(APITestCase):
         material.return_value = Material()
         job_material_obj = MagicMock(spec=JobMaterial)
         job_material.return_value = job_material_obj
-        
-        factory = APIRequestFactory()
-        request = factory.post('api/create/job/1/material',
-                data={
-                    'material_id': 1,
+
+        mockdata = {
+            "materials": [
+                {
+                    'id': 2,
                     'units_used': 1,
                     'price_per_unit': 0.00
-                })
+                },
+                {
+                    'id': 4,
+                    'units_used': 1,
+                    'price_per_unit': 0.00
+                }
+            ]
+        }
+        
+        factory = APIRequestFactory()
+        request = factory.post('api/create/job/1/material', data=mockdata, format='json')
         request.user = mock_user
 
         response = create_job_material(request, 1)
-        job_material_obj.save.assert_called_once()
+        job_material_obj.save.call_count == len(mockdata["materials"])
         assert response.status_code == status.HTTP_201_CREATED
 
     def test_job_delete_unauth(self):

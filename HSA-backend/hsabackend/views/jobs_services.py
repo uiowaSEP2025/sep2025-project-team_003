@@ -58,27 +58,36 @@ def create_job_service(request, id):
     except:
         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
-    try:
-        service_object = Service.objects.get(organization=org.pk, id=request.data.get('service_id'))
-    except:
-        return Response({"message": "The service does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    services_list = request.data.get('services', '')
     
-    job_service_object = JobService.objects.filter(job=job_object.pk, service=service_object.pk)
+    if (len(services_list) != 0):
+        for service in services_list:
+            try:
+                service_object = Service.objects.get(organization=org.pk, id=service["id"])
+            except:
+                return Response({"message": "The service does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            
+            job_service_object = JobService.objects.filter(job=job_object.pk, service=service_object.pk)
 
-    if job_service_object.exists():
-        return Response({"message": "The Service for this Job already in the list"}, status=status.HTTP_400_BAD_REQUEST)
+            if job_service_object.exists():
+                return Response({"message": "The service for this job already in the list"}, status=status.HTTP_400_BAD_REQUEST)
 
-    job_service = JobService(
-        job = job_object,
-        service = service_object,
-    )
+            job_service = JobService(
+                job = job_object,
+                service = service_object,
+            )
 
-    try:
-        job_service.full_clean()  # Validate the model instance
-        job_service.save()
-        return Response({"message": "Service added to Job successfully"}, status=status.HTTP_201_CREATED)
-    except ValidationError as e:
-        return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                job_service.full_clean()  # Validate the model instance
+                job_service.save()
+            except ValidationError as e:
+                return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+            
+        return Response({"message": "Services added to job successfully"}, status=status.HTTP_201_CREATED)
+    else:
+        return Response({"message": "There is no service to add"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    
     
 @api_view(["POST"])
 def delete_job_service(request, job_id, job_service_id):
@@ -88,10 +97,10 @@ def delete_job_service(request, job_id, job_service_id):
     job_service = JobService.objects.filter(pk=job_service_id, job=job_id)
 
     if not job_service.exists():
-        return Response({"message": "The Service in this Job does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "The service in this Job does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
     job_service[0].delete()
-    return Response({"message": "The Service in this Job deleted sucessfully"}, status=status.HTTP_200_OK)
+    return Response({"message": "The service in this job deleted sucessfully"}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 def delete_cached_job_service(request, job_id):
@@ -105,8 +114,10 @@ def delete_cached_job_service(request, job_id):
             try:
                 job_service_object = JobService.objects.get(id=job_service["id"])
             except:
-                return Response({"message": "The Service in this Job does not exist"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"message": "The service in this job does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
             job_service_object.delete()
+    else:
+        return Response({"message": "There is no service to delete"}, status=status.HTTP_400_BAD_REQUEST)
 
-    return Response({"message": "The Services in this Job deleted sucessfully"}, status=status.HTTP_200_OK)
+    return Response({"message": "The services in this job deleted sucessfully"}, status=status.HTTP_200_OK)

@@ -58,29 +58,40 @@ def create_job_material(request, id):
     except:
         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
-    try:
-        material_object = Material.objects.get(organization=org.pk, id=request.data.get('material_id'))
-    except:
-        return Response({"message": "The material does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    materials_list = request.data.get('materials')
+
+    if (len(materials_list) != 0):
+        for material in materials_list:
+            try:
+                material_object = Material.objects.get(organization=org.pk, id=material["id"])
+            except:
+                return Response({"message": "The material does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            
+            job_material_object = JobMaterial.objects.filter(job=job_object.pk, material=material_object.pk)
+
+            if job_material_object.exists():
+                return Response({"message": "The material for this job already in the list"}, status=status.HTTP_400_BAD_REQUEST)
+
+            job_material = JobMaterial(
+                job = job_object,
+                material = material_object,
+                units_used = material['units_used'],
+                price_per_unit = material['price_per_unit']
+            )
+
+            try:
+                job_material.full_clean()  # Validate the model instance
+                job_material.save()
+                
+            except ValidationError as e:
+                return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({"message": "Materials added to job successfully"}, status=status.HTTP_201_CREATED)
+    else:
+        return Response({"message": "There is no material to add"}, status=status.HTTP_400_BAD_REQUEST)
+
+
     
-    job_material_object = JobMaterial.objects.filter(job=job_object.pk, material=material_object.pk)
-
-    if job_material_object.exists():
-        return Response({"message": "The material for this Job already in the list"}, status=status.HTTP_400_BAD_REQUEST)
-
-    job_material = JobMaterial(
-        job = job_object,
-        material = material_object,
-        units_used = request.data.get('units_used'),
-        price_per_unit = request.data.get('price_per_unit')
-    )
-
-    try:
-        job_material.full_clean()  # Validate the model instance
-        job_material.save()
-        return Response({"message": "Material added to Job successfully"}, status=status.HTTP_201_CREATED)
-    except ValidationError as e:
-        return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(["POST"])
 def delete_job_material(request, job_id, job_material_id):
@@ -90,10 +101,10 @@ def delete_job_material(request, job_id, job_material_id):
     job_material = JobMaterial.objects.filter(pk=job_material_id, job=job_id)
 
     if not job_material.exists():
-        return Response({"message": "The material in this Job does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "The material in this job does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
     job_material[0].delete()
-    return Response({"message": "The material in this Job deleted sucessfully"}, status=status.HTTP_200_OK)
+    return Response({"message": "The material in this job deleted sucessfully"}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 def delete_cached_job_material(request, job_id):
@@ -107,8 +118,10 @@ def delete_cached_job_material(request, job_id):
             try:
                 job_material_object = JobMaterial.objects.get(id=job_material["id"])
             except:
-                return Response({"message": "The Material in this Job does not exist"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"message": "The material in this job does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
             job_material_object.delete()
+    else:
+        return Response({"message": "There is no material to delete"}, status=status.HTTP_400_BAD_REQUEST)
 
-    return Response({"message": "The Materials in this Job deleted sucessfully"}, status=status.HTTP_200_OK)
+    return Response({"message": "The materials in this job deleted sucessfully"}, status=status.HTTP_200_OK)

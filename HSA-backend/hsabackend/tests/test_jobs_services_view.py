@@ -96,15 +96,50 @@ class ServiceViewTest(APITestCase):
         service.return_value = Service()
         job.return_value = Job()
         org.return_value = Organization()
+
+        mockdata = {
+            "services": [
+                {
+                    "id": 2
+                },
+                {
+                    "id": 4
+                }
+            ]
+        }
         
         factory = APIRequestFactory()
-        request = factory.post('api/create/job/1/service',
-                data={
-                    'service_id': 3
-                })
+        request = factory.post('api/create/job/1/service', data=mockdata, format='json')
         request.user = mock_user  
         response = create_job_service(request, 1)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+    @patch('hsabackend.views.jobs_services.JobService.objects.filter')
+    @patch('hsabackend.views.jobs_services.Service.objects.get')
+    @patch('hsabackend.views.jobs_services.Job.objects.get')
+    @patch('hsabackend.views.jobs_services.Organization.objects.get')
+    def test_job_create_service_request_empty(self, org, job, service, job_service_filter):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        job_service_qs = MagicMock(spec=QuerySet)
+        job_service_filter.return_value = job_service_qs
+        job_service_qs.exists.return_value = True
+
+        service.return_value = Service()
+        job.return_value = Job()
+        org.return_value = Organization()
+
+        mockdata = {
+            "services": []
+        }
+        
+        factory = APIRequestFactory()
+        request = factory.post('api/create/job/1/service', data=mockdata, format='json')
+        request.user = mock_user  
+        response = create_job_service(request, 1)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
 
     @patch('hsabackend.views.jobs_services.JobService.objects.filter')
     @patch('hsabackend.views.jobs_services.Job.objects.get')
@@ -123,12 +158,20 @@ class ServiceViewTest(APITestCase):
         service.return_value = Service()
         job_service_obj = MagicMock(spec=JobService)
         job_service.return_value = job_service_obj
+
+        mockdata = {
+            "services": [
+                {
+                    "id": 2
+                },
+                {
+                    "id": 4
+                }
+            ]
+        }
         
         factory = APIRequestFactory()
-        request = factory.post('api/create/job/1/service',
-                data={
-                    'service_id': 3,
-                })
+        request = factory.post('api/create/job/1/service', data=mockdata, format='json')
         request.user = mock_user
 
         response = create_job_service(request, 1)
@@ -151,16 +194,24 @@ class ServiceViewTest(APITestCase):
         service.return_value = Service()
         job_service_obj = MagicMock(spec=JobService)
         job_service.return_value = job_service_obj
+
+        mockdata = {
+            "services": [
+                {
+                    "id": 2
+                },
+                {
+                    "id": 4
+                }
+            ]
+        }
         
         factory = APIRequestFactory()
-        request = factory.post('api/create/job/1/service',
-                data={
-                    'service_id': 3,
-                })
+        request = factory.post('api/create/job/1/service', data=mockdata, format='json')
         request.user = mock_user
 
         response = create_job_service(request, 1)
-        job_service_obj.save.assert_called_once()
+        assert job_service_obj.save.call_count == len(mockdata["services"])
         assert response.status_code == status.HTTP_201_CREATED
 
     def test_job_delete_unauth(self):
