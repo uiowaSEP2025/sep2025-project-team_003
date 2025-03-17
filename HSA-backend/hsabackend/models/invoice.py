@@ -10,11 +10,16 @@ class Invoice(models.Model):
     ]
 
     issuance_date = models.DateField()
-    due_date = models.DateField()
+    due_date = models.DateField(null=True,blank=True, default=None)
     status = models.CharField(max_length=50, choices=status_choices, default="created")
-    price = models.FloatField()
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"<Invoice, customer: {self.customer}, price: {self.price}>"
+        return f"<Invoice, customer: {self.customer}>"
     
+    def json(self):
+        return {
+            "status": self.status,
+            "due date": "None" if self.due_date == None else self.due_date,
+            "customer": f"{self.customer.first_name}, {self.customer.last_name}" 
+        }
