@@ -174,7 +174,6 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   handleCheckBoxClick(id: number) {
     if (this.checkbox === "single") {
       if (this.checkedIds?.includes(id)) {
-
         this.setCheckedIds!([])
         return
       }
