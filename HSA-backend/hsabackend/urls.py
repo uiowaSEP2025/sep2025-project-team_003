@@ -11,6 +11,7 @@ from hsabackend.views.customers import get_customer_table_data,create_customer,e
 from hsabackend.views.requests import get_org_request_data, delete_request,approve_request
 from hsabackend.views.services import get_service_table_data, create_service, edit_service, delete_service
 from hsabackend.views.materials import get_material_table_data, create_material, edit_material, delete_material
+from hsabackend.views.jobs import get_job_table_data, create_job, edit_job, delete_job
 from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice
 from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForInvoiceByInvoice
 
@@ -46,6 +47,12 @@ urlpatterns = [
     path("api/create/material", create_material),
     path("api/edit/material/<int:id>", edit_material),
     path("api/delete/material/<int:id>", delete_material),
+
+    # jobs
+    path("api/get/jobs", get_job_table_data),
+    path("api/create/job", create_job),
+    path("api/edit/job/<int:id>", edit_job),
+    path("api/delete/job/<int:id>", delete_job),
 
     # invoices
     path("api/create/invoice", createInvoice),
