@@ -49,6 +49,7 @@ export class InvoiceService {
     }
 
     public createInvoice(json: CreateInvoiceInterface): Observable<StandardApiResponse> {
+        console.log('create')
         return this.http.post<StandardApiResponse>(this.createUrl, json);
     }
 

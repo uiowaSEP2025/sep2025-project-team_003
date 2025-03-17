@@ -21,9 +21,9 @@ import { StringFormatter } from '../../utils/string-formatter';
 
 @Component({
   selector: 'app-create-invoice-page',
-  imports: [TableComponentComponent, CommonModule, MatButtonModule, MatError, 
+  imports: [TableComponentComponent, CommonModule, MatButtonModule, MatError,
     FormsModule, MatFormFieldModule, InvoiceDatePickerComponent, MatSelectModule,
-    MatLabel,MatInputModule
+    MatLabel, MatInputModule
   ],
   templateUrl: './create-invoice-page.component.html',
   styleUrl: './create-invoice-page.component.scss'
@@ -39,11 +39,11 @@ export class CreateInvoicePageComponent implements OnInit {
   @ViewChild(InvoiceDatePickerComponent) datePicker!: InvoiceDatePickerComponent;
 
   readonly range: FormGroup<DateRange> = new FormGroup({
-      issued: new FormControl<Date | null>(null),
-      due: new FormControl<Date | null>(null),
-    });
+    issued: new FormControl<Date | null>(null),
+    due: new FormControl<Date | null>(null),
+  });
 
-  constructor(private customerService: CustomerService, private router: Router, private quoteService: QuoteService, 
+  constructor(private customerService: CustomerService, private router: Router, private quoteService: QuoteService,
     private invoiceService: InvoiceService, private errorHandler: ErrorHandlerService,
     private stringFormatter: StringFormatter) { }
 
@@ -90,14 +90,13 @@ export class CreateInvoicePageComponent implements OnInit {
     }
     else {
       this.selectedQuotes = []
-      this.quotes = {data: [], totalCount: 0}
+      this.quotes = { data: [], totalCount: 0 }
       this.selectedCustomersIsError = true
     }
   }
 
   onSubmit() {
-    console.log('called')
-    let validDates:any
+    let validDates: any
     if (this.isDateSelectVisible()) {
       validDates = this.datePicker.validate()
     }
@@ -112,24 +111,26 @@ export class CreateInvoicePageComponent implements OnInit {
       }
       return;
     }
+    
     if (this.isDateSelectVisible() && !validDates) {
       return;
     }
-
     const json = {
       customerID: this.selectedCustomers[0],
       quoteIDs: this.selectedQuotes,
       status: this.status,
-      issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value) ,
+      issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
       dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value)
     }
     this.invoiceService.createInvoice(json).subscribe(
-      {next: (response) => {
-        this.router.navigate(['/invoices']);
-      },
-      error: (error) => {
-        this.errorHandler.handleError(error)
-      }}
+      {
+        next: (response) => {
+          this.router.navigate(['/invoices']);
+        },
+        error: (error) => {
+          this.errorHandler.handleError(error)
+        }
+      }
     )
     return;
   }
