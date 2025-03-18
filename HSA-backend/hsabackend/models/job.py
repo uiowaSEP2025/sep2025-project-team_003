@@ -39,3 +39,12 @@ class Job(models.Model):
             'requestor_zip': self.requestor_zip,
             'requestor_address': self.requestor_address,
         }
+    
+    def json_simplify(self):
+        return {
+            'id': self.pk,
+            'job_status': self.job_status,
+            'end_date': self.end_date,
+            'description': self.description,
+            'customer_name': self.customer.first_name + " " + self.customer.last_name,
+        }

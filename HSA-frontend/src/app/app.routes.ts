@@ -16,6 +16,7 @@ import {MaterialsPageComponent} from './pages/materials-page/materials-page.comp
 import {CreateMaterialPageComponent} from './pages/create-material-page/create-material-page.component';
 import {EditMaterialPageComponent} from './pages/edit-material-page/edit-material-page.component';
 import { CreateJobsPageComponent } from './pages/create-jobs-page/create-jobs-page.component';
+import { JobPageComponent } from './pages/job-page/job-page.component';
 
 export const routes: Routes = [
   {
@@ -70,7 +71,7 @@ export const routes: Routes = [
     path: 'contractors/create', component: CreateContractorsPageComponent
   },
   {
-    path: 'services', component: ServicePageComponent
+    path: 'jobs', component: JobPageComponent
   }, 
   {
     path: 'jobs/create', component: CreateJobsPageComponent

@@ -1,23 +1,22 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { TableComponentComponent } from '../../components/table-component/table-component.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
-import { CustomerService } from '../../services/customer.service';
+import { JobService } from '../../services/job.service';
 
 @Component({
-  selector: 'app-customers-page',
+  selector: 'app-job-page',
   imports: [TableComponentComponent, MatButtonModule, MatIconModule],
-  templateUrl: './customers-page.component.html',
-  styleUrl: './customers-page.component.scss'
+  templateUrl: './job-page.component.html',
+  styleUrl: './job-page.component.scss'
 })
+export class JobPageComponent implements OnInit  {
+  jobs: any
+  jobService: JobService
 
-export class CustomersPageComponent implements OnInit {
-  customers: any
-  customerService: CustomerService
-
-  constructor(private router: Router, customerService: CustomerService) {
-    this.customerService = customerService
+  constructor(private router: Router, jobService: JobService) {
+    this.jobService = jobService
   }
 
   ngOnInit(): void {
@@ -25,9 +24,9 @@ export class CustomersPageComponent implements OnInit {
   }
 
   loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {
-    this.customerService.getCustomer({ search: searchTerm, pagesize: pageSize, offset: offSet}).subscribe({
+    this.jobService.getJob({ search: searchTerm, pagesize: pageSize, offset: offSet}).subscribe({
       next: (response) => {
-        this.customers = response
+        this.jobs = response
       },
       error: (error) => {
           if (error.status === 401) {

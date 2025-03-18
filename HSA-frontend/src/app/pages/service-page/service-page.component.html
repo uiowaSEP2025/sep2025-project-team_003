@@ -7,7 +7,9 @@
     editRedirect="/services/edit" 
     [fetchedData]="services"
     [deleteRequest]="serviceService.deleteService.bind(serviceService)"
-    [loadDataToTable]="this.loadDataToTable.bind(this)"></app-table-component>
+    [loadDataToTable]="this.loadDataToTable.bind(this)"
+    [width]="'40vw'"
+    ></app-table-component>
   </div>
   <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
     <button mat-fab extended class="m-10" id="add-service-button" (click)="navigateToPage('services/create')">

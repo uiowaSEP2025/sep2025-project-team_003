@@ -6,7 +6,7 @@
       <mat-hint>{{searchHint()}}</mat-hint>
     </mat-form-field>
   </form>
-  <table mat-table [dataSource]="data">
+  <table mat-table [dataSource]="data" class="width: {{ width() }}">
 
     @for (header of headersWithActions; track header) {
     <ng-container [matColumnDef]="header">

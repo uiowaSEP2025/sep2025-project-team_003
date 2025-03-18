@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 from unittest.mock import Mock
 from unittest.mock import patch
 from django.contrib.auth.models import User
-from hsabackend.views.jobs import get_job_table_data, create_job, edit_job
+from hsabackend.views.jobs import get_job_individual_data, get_job_table_data, create_job, edit_job
 from rest_framework.test import APITestCase
 from hsabackend.models.organization import Organization
 from hsabackend.models.customer import Customer
@@ -66,7 +66,7 @@ class jobViewTest(APITestCase):
 
     @patch('hsabackend.views.jobs.Job.objects.filter')
     @patch('hsabackend.views.jobs.Organization.objects.get')
-    def test_get_job_table_data_valid_empty_query(self,get, filter):
+    def test_get_job_table_data_valid_empty_query(self, get, filter):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
@@ -81,7 +81,71 @@ class jobViewTest(APITestCase):
         response = get_job_table_data(request)
         
         assert response.status_code == status.HTTP_200_OK
-        filter.assert_called_with(organization=1) 
+        filter.assert_called_with(organization=1)
+    
+    def test_get_job_individual_data_unauth(self):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = False
+
+        factory = APIRequestFactory()
+        request = factory.get('/api/get/job/1')
+
+        response = get_job_individual_data(request, 1)
+        
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    @patch('hsabackend.views.jobs.Job.objects.get')
+    @patch('hsabackend.views.jobs.Organization.objects.get')
+    def test_get_job_individual_data_job_not_found(self, org, job):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        job.return_value = None
+        org.return_value = Organization()
+
+        factory = APIRequestFactory()
+        request = factory.get('/api/get/job/1')
+        request.user = mock_user  
+
+        response = get_job_individual_data(request, 1)
+        
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+    
+    @patch('hsabackend.views.jobs.Job.objects.get')
+    @patch('hsabackend.views.jobs.Organization.objects.get')
+    def test_get_job_individual_data_valid(self, get_org, get_job):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        org = Mock(spec=Organization)
+        org.pk = 1
+        get_org.return_value = org
+
+        mock_response = {
+            'id': 0,
+            'job_status': '',
+            'start_date': '',
+            'end_date': '',
+            'description': '',
+            'customer_name': '',
+            'customer_id': '',
+            'requestor_city': '',
+            'requestor_state': '',
+            'requestor_zip': '',
+            'requestor_address': '',
+        }
+
+        job = Mock(spec=Job)
+        job.json.return_value = mock_response
+        get_job.return_value = job
+
+        factory = APIRequestFactory()
+        request = factory.get('/api/get/job/1')
+        request.user = mock_user  
+
+        response = get_job_individual_data(request, 1)
+        
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["data"] == mock_response
 
     def test_create_job_unauth(self):
         mock_user = Mock(spec=User)

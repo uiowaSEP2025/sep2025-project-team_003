@@ -38,7 +38,7 @@ def get_job_table_data(request):
 
     data = []
     for job in jobs:
-        data.append(job.json())
+        data.append(job.json_simplify())
     
     count = Job.objects.filter(organization=org.pk).filter(
         Q(description__icontains=search)
@@ -48,6 +48,27 @@ def get_job_table_data(request):
         'data': data,
         'totalCount': count
     }    
+    return Response(res, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+def get_job_individual_data(request, id):
+    if not request.user.is_authenticated:
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    org = Organization.objects.get(owning_User=request.user.pk)
+    
+    try:
+        job = Job.objects.get(pk=id, organization=org)
+    except Job.DoesNotExist:
+        return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
+ 
+    if not job:
+        return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+    res = {
+        'data': job.json()
+    }    
+
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])

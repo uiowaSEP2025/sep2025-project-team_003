@@ -58,7 +58,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   headers = ['header1', 'header2', 'header3', 'header4']
   headersWithActions = [...this.headers, 'Actions']
 
-
+  width = input.required<string>()
   editRedirect = input.required<string>()
 
   data = new MatTableDataSource(this.fetchedData ?? []);
