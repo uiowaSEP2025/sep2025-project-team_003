@@ -208,6 +208,7 @@ describe('TableComponentComponent', () => {
           totalCount: 100
         };
         component.checkbox = "single"
+        checkedIds = []
         component.checkedIds = checkedIds
         const changes: SimpleChanges = {
           fetchedData: new SimpleChange(null, mockData, true) // true indicates it's the first change
@@ -237,7 +238,6 @@ describe('TableComponentComponent', () => {
           checkedIds = [...arg]
           fixture.detectChanges(); // Trigger update in the component
 
-          console.log('setter', checkedIds, arg)
         });
         component.setCheckedIds = setCheckedIds
         const compiled = fixture.debugElement.nativeElement;
@@ -261,7 +261,7 @@ describe('TableComponentComponent', () => {
         expect(await c0.isChecked()).toBe(false)
       })
 
-      it('should successfully unselect', async () => {
+    it('should successfully unselect', async () => {
         setCheckedIds = jasmine.createSpy().and.callFake((arg) => {
           checkedIds = [...arg]
         });
@@ -285,6 +285,8 @@ describe('TableComponentComponent', () => {
         expect(await c0.isChecked()).toBe(false)
       })
 
+      
+      })
       describe('multiple select', () => {
 
         beforeEach(() => {
@@ -297,6 +299,7 @@ describe('TableComponentComponent', () => {
             totalCount: 100
           };
           component.checkbox = "multiple"
+          checkedIds = []
           component.checkedIds = checkedIds
           const changes: SimpleChanges = {
             fetchedData: new SimpleChange(null, mockData, true) // true indicates it's the first change
@@ -335,7 +338,7 @@ describe('TableComponentComponent', () => {
         })
 
 
-        fit('should successfully unselect', async() => {
+        it('should successfully unselect', async() => {
           setCheckedIds = jasmine.createSpy().and.callFake((arg) => {
             checkedIds = [...arg]
           });
@@ -378,7 +381,7 @@ describe('TableComponentComponent', () => {
           expect(JSON.stringify(checkedIds)).toEqual(JSON.stringify([]))
           expect(await c0.isChecked()).toBe(false)
           expect(await c1.isChecked()).toBe(false)
-        })})})
+        })})
 
     afterEach(() => {
       setCheckedIds.calls.reset()

@@ -1,0 +1,9 @@
+<h2 mat-dialog-title>Warning: </h2>
+<mat-dialog-content>
+  <p>{{this.status === 'issued' ? 'The invoice was already issued to the customer.' : 'The customer has already paid for this invoice'}}</p>
+  <p>Are you sure you want to edit this invoice?</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">No Thanks</button>
+  <button mat-button cdkFocusInitial (click)="onConfirm()">Ok</button>
+</mat-dialog-actions>

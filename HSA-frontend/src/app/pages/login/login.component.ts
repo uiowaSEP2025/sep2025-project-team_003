@@ -11,6 +11,7 @@ import {
 import {MatSnackBar} from '@angular/material/snack-bar';
 import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
 import { UserAuthService } from '../../services/user-auth.service';
+import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +24,7 @@ export class LoginComponent {
   usernameFormControl = new FormControl('', [Validators.required]);
   passwordFormControl = new FormControl('', [Validators.required]);
 
-  constructor(private authService: UserAuthService, private snackBar: MatSnackBar) {}
+  constructor(private authService: UserAuthService, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {}
 
   onSubmit() {
     if (this.usernameFormControl.valid && this.passwordFormControl.valid) {
@@ -37,11 +38,7 @@ export class LoginComponent {
           });
         },
         error: (error) => {
-          if (error.status === 401) {
-            this.snackBar.open('Invalid login', '', {
-              duration: 3000
-            });
-          }
+          this.errorHandler.handleError(error)
         }
       });
     }

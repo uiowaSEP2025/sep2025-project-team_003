@@ -1,0 +1,18 @@
+@if (invoiceData === null) {
+    <app-loading-fallback stringToDisplay="Loading your inovice"></app-loading-fallback>
+}
+@else {
+    <mat-card class="flex p-5 items-center">
+        <div>Invoice for customer {{invoiceData.customer}}</div>
+        <div>Invoice was issued: {{invoiceData.issuanceDate}}</div>
+        <div>Invoice is due: {{invoiceData.dueDate}}</div>
+        <div>Invoice status: {{invoiceData.status}}</div>
+        <app-invoice-quotes-display-table
+            [dataSource]="invoiceData.quotes"
+        ></app-invoice-quotes-display-table>
+        <button mat-fab extended class="m-10" >
+            <mat-icon>auto_awesome</mat-icon>
+            Generate Invoice
+        </button>
+    </mat-card>
+}

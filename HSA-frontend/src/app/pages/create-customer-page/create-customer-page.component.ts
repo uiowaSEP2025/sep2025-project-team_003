@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { CustomerService } from '../../services/customer.service';
 import { Router } from '@angular/router';
+import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-create-customer-page',
@@ -15,7 +16,7 @@ import { Router } from '@angular/router';
   styleUrl: './create-customer-page.component.scss'
 })
 export class CreateCustomerPageComponent {
-  constructor(private customerService: CustomerService, private router: Router) { }
+  constructor(private customerService: CustomerService, private router: Router, private errorHandler: ErrorHandlerService) { }
 
   firstNameControl = new FormControl('', Validators.required)
   lastNameControl = new FormControl('', Validators.required)
@@ -52,9 +53,7 @@ export class CreateCustomerPageComponent {
         this.router.navigate(['/customers']);
       },
       error: (error) => {
-        if (error.status === 401) {
-          this.router.navigate(['/login']);
-        }
+        this.errorHandler.handleError(error)
       }}
     )
   }
