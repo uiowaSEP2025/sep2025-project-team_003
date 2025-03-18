@@ -42,6 +42,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   @Input() deleteRequest!: (data: any) => Observable<StandardApiResponse>
   @Input({ required: true }) loadDataToTable!: (search: string, pageSize: number, offSet: number) => void
   @Input() hideValues: string[] = [];
+  @Input() width: string = '40vw'
   @Input() checkbox: 'none' | 'single' | 'multiple' = 'none';
   @Input() checkedIds: number[] | null = null;
   @Input() setCheckedIds: ((checkedIds: number[]) => void) | null = null;
@@ -64,8 +65,6 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   dataSize: number | null = null
   
   headersWithActions = [...this.headers, 'Actions']
-
-  width = input.required<string>()
   editRedirect = input.required<string>()
 
   data = new MatTableDataSource(this.fetchedData ?? []);

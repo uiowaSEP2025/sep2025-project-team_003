@@ -8,7 +8,7 @@
       </mat-form-field>
     </form>
   }
-  <table mat-table [dataSource]="data" class="width: {{ width() }}">
+  <table mat-table [dataSource]="data" class="width: {{ width }}">
 
     @for (header of headersWithActions; track header) {
     <ng-container [matColumnDef]="header">

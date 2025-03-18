@@ -4,10 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { CustomerService } from '../../services/customer.service';
-<<<<<<< HEAD
-=======
 import { ErrorHandlerService } from '../../services/error.handler.service';
->>>>>>> 4a1ec86876bccea3be7a144da379d86a255e706a
 
 @Component({
   selector: 'app-customers-page',
