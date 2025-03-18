@@ -14,7 +14,6 @@ import { EditServicePageComponent } from './pages/edit-service-page/edit-service
 import { MaterialsPageComponent } from './pages/materials-page/materials-page.component';
 import { CreateMaterialPageComponent } from './pages/create-material-page/create-material-page.component';
 import { EditMaterialPageComponent } from './pages/edit-material-page/edit-material-page.component';
-import { CreateJobsPageComponent } from './pages/create-jobs-page/create-jobs-page.component';
 import { InvoicesPageComponent } from './pages/invoices-page/invoices-page.component';
 import { CreateInvoicePageComponent } from './pages/create-invoice-page/create-invoice-page.component';
 import { ViewInvoicePageComponent } from './pages/view-invoice-page/view-invoice-page.component';
@@ -72,9 +71,6 @@ export const routes: Routes = [
   },
   {
     path: 'services', component: ServicePageComponent
-  },
-  {
-    path: 'jobs/create', component: CreateJobsPageComponent
   },
   {
     path: 'invoices', component: InvoicesPageComponent

@@ -30,7 +30,6 @@ export class ViewInvoicePageComponent implements OnInit{
   ngOnInit(): void {
     this.invoiceService.getSpecificInvoiceData(this.invoiceID).subscribe(
       {next: (response) => {
-        console.log(response)
         this.invoiceData = response
       },
       error: (error) => {
