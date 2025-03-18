@@ -8,11 +8,11 @@
 
     <mat-form-field class="pt-5">
         <mat-label>Status</mat-label>
-        <select matNativeControl required [(ngModel)]="status">
-            <option value="created">created</option>
-            <option value="issued">issued</option>
-            <option value="paid">paid</option>
-        </select>
+        <mat-select matNativeControl required [(ngModel)]="status">
+            <mat-option value="created">created</mat-option>
+            <mat-option value="issued">issued</mat-option>
+            <mat-option value="paid">paid</mat-option>
+        </mat-select>
     </mat-form-field>
     @if (isDateSelectVisible()) {
         <app-invoice-date-picker [formControll]="range"></app-invoice-date-picker>

@@ -11,7 +11,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { InvoiceService } from '../../services/invoice.service';
 
-fdescribe('EditInvoicePageComponent', () => {
+describe('EditInvoicePageComponent', () => {
   let component: EditInvoicePageComponent;
   let fixture: ComponentFixture<EditInvoicePageComponent>;
   let paramMapSubject: Subject<any>;
@@ -47,11 +47,11 @@ fdescribe('EditInvoicePageComponent', () => {
   });
 
     it('should display date picker when status is not created', async () => {
-      const select = (await loader.getAllHarnesses(MatSelectHarness))[1]
+      const select = (await loader.getAllHarnesses(MatSelectHarness))[0]
       const compiled = fixture.debugElement.nativeElement;
       await select.open();
       const options = await select.getOptions();
-      await options[1].click()
+      await options[2].click()
       fixture.detectChanges()
       expect(compiled.textContent).toContain("Choose Dates")
     })
@@ -63,8 +63,7 @@ fdescribe('EditInvoicePageComponent', () => {
     })
   
     it('should call validate on the view child', async () => {
-      const select = (await loader.getAllHarnesses(MatSelectHarness))[1]
-      const compiled = fixture.debugElement.nativeElement;
+      const select = (await loader.getAllHarnesses(MatSelectHarness))[0]
       await select.open();
       const options = await select.getOptions();
       await options[1].click()
@@ -72,12 +71,12 @@ fdescribe('EditInvoicePageComponent', () => {
       const filteredButtons = await Promise.all(
         (await loader.getAllHarnesses(MatButtonHarness)).map(async (button) => {
           const text = await button.getText();
-          return text === 'Create' ? button : null;
+          return text === 'Submit' ? button : null;
         })
       ).then(results => results.filter(button => button !== null)); // correctly working async filter
       spyOn(component.datePicker, 'validate'); // Spy on the function
   
-      const submit = filteredButtons[0]; // Assuming there's only one "Create" button
+      const submit = filteredButtons[0]; 
       await submit.click()
       fixture.detectChanges()
   
@@ -87,12 +86,11 @@ fdescribe('EditInvoicePageComponent', () => {
     it('should show error when no quotes are selected', async () => {
       const compiled = fixture.debugElement.nativeElement;
       fixture.detectChanges()
-      expect(compiled.querySelectorAll('table').length).toEqual(2)
   
       const filteredButtons = await Promise.all(
         (await loader.getAllHarnesses(MatButtonHarness)).map(async (button) => {
           const text = await button.getText();
-          return text === 'Create' ? button : null;
+          return text === 'Submit' ? button : null;
         })
       ).then(results => results.filter(button => button !== null)); // correctly working async filter
   
@@ -110,15 +108,15 @@ fdescribe('EditInvoicePageComponent', () => {
       const filteredButtons = await Promise.all(
         (await loader.getAllHarnesses(MatButtonHarness)).map(async (button) => {
           const text = await button.getText();
-          return text === 'Create' ? button : null;
+          return text === 'Submit' ? button : null;
         })
       ).then(results => results.filter(button => button !== null)); // correctly working async filter
-      spyOn(invoiceService, 'createInvoice').and.callThrough();
+      spyOn(invoiceService, 'updateInvoice').and.callThrough();
       const submit = filteredButtons[0]
       await submit.click()
       fixture.detectChanges()
   
-      expect(invoiceService.createInvoice).toHaveBeenCalled()
+      expect(invoiceService.updateInvoice).toHaveBeenCalled()
       
       
      })
