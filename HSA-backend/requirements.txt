@@ -4,3 +4,4 @@ djangorestframework==3.15.2
 psycopg==3.2.4
 sqlparse==0.5.3
 coverage
+fpdf2==2.7.6
