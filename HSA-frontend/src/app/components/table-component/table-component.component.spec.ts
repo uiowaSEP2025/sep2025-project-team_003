@@ -335,7 +335,7 @@ describe('TableComponentComponent', () => {
         })
 
 
-        fit('should successfully unselect', async() => {
+        it('should successfully unselect', async() => {
           setCheckedIds = jasmine.createSpy().and.callFake((arg) => {
             checkedIds = [...arg]
           });
