@@ -17,7 +17,7 @@ class Quote(models.Model):
     material_subtotal = models.FloatField()
     total_price = models.FloatField()
     jobID = models.OneToOneField(Job, on_delete= models.CASCADE)
-    discount_type = models.ForeignKey(DiscountType, on_delete=models.CASCADE)
+    discount_type = models.ForeignKey(DiscountType, on_delete=models.SET_NULL)
     invoice = models.ForeignKey(Invoice, on_delete=models.SET_NULL, null=True)
     
     def __str__(self):

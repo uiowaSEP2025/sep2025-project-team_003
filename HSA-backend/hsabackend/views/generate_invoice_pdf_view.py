@@ -1,10 +1,25 @@
 from django.http import HttpResponse
+from rest_framework.response import Response
 from fpdf import FPDF
 import io
 from rest_framework.decorators import api_view
+from hsabackend.models.organization import Organization
+from rest_framework import status   
+from hsabackend.models.invoice import Invoice
+
 
 @api_view(["GET"])
 def generate_pdf(request, id):
+    if not request.user.is_authenticated:
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    org = Organization.objects.get(owning_User=request.user.pk)
+
+    invoice_qs = Invoice.objects.filter(
+        customer__organization=org.pk,
+        pk = id
+        )
+
     # Create a PDF object
     pdf = FPDF()
     pdf.add_page()
