@@ -348,23 +348,6 @@ class Command(BaseCommand):
 
 
             for i in range(5):
-                iv = Invoice.objects.create(
-                    issuance_date=timezone.now().date(),
-                    due_date=timezone.now().date() + timezone.timedelta(days=30),
-                    status='issued',
-                    customer=customers[i]
-                )
-                iv.save()
-
-                iv = Invoice.objects.create(
-                    issuance_date=timezone.now().date(),
-                    due_date=timezone.now().date() + timezone.timedelta(days=30),
-                    status='issued',
-                    customer=customers_1[i]
-                )
-                iv.save()
-
-            for i in range(5):
                 j = JobTemplate.objects.create(
                     description=f"Job Template Description {i+1}",
                     organization=org)
