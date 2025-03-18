@@ -4,6 +4,7 @@ import {MatIcon} from '@angular/material/icon';
 import {TableComponentComponent} from '../../components/table-component/table-component.component';
 import {Router} from '@angular/router';
 import { ServiceService } from '../../services/service.service';
+import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-service-page',
@@ -19,7 +20,7 @@ export class ServicePageComponent implements OnInit {
   services: any
   serviceService: ServiceService
   
-  constructor(private router: Router, serviceService: ServiceService) {
+  constructor(private router: Router, serviceService: ServiceService, private errorHandler: ErrorHandlerService) {
     this.serviceService = serviceService
   }
 
@@ -33,9 +34,7 @@ export class ServicePageComponent implements OnInit {
         this.services = response
       },
       error: (error) => {
-        if (error.status === 401) {
-          this.router.navigate(['/login']);
-        }
+        this.errorHandler.handleError(error)
       }
     })
   }
