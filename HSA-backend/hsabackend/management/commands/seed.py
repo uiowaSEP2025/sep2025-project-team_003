@@ -3,6 +3,7 @@ from django.core.management import call_command
 from hsabackend.models.organization import Organization
 from hsabackend.models.service import Service
 from hsabackend.models.customer import Customer
+from hsabackend.models.contractor import Contractor
 from hsabackend.models.material import Material
 from django.contrib.auth.models import User
 from hsabackend.models.request import Request
@@ -102,8 +103,8 @@ class Command(BaseCommand):
                 c1.save()
 
                 c2 = Customer.objects.create(
-                    first_name=f"First{i} testuser",
-                    last_name=f"Last{i} testuser",
+                    first_name=f"First{i}Test",
+                    last_name=f"Last{i}Test",
                     email=f"testuser{i}@example.com",
                     phone_no=f"{random.randint(1000000000, 9999999999)}",
                     notes=f"Sample notes for test user {i}",
@@ -112,15 +113,37 @@ class Command(BaseCommand):
                 c2.save()
 
                 customers = Customer.objects.filter(organization=org.pk)
-                customers_1 = Customer.objects.filter(organization=org1.pk)
+                customers_1 = Customer.objects.filter(organization=org.pk)
+            
+            for i in range(5):
+                con1 = Contractor.objects.create(
+                    first_name=f"First{i}Con",
+                    last_name=f"Last{i}Con",
+                    email=f"con{i}@example.com",
+                    phone=f"{random.randint(1000000000, 9999999999)}",
+                    organization=org
+                )
+                con1.save()
 
-                material_names = [
-                    "Steel Beam",
-                    "Concrete Mix",
-                    "Aluminum Sheet",
-                    "Copper Wire",
-                    "PVC Pipe",
-                ]
+                con2 = Contractor.objects.create(
+                    first_name=f"First{i}ConTest",
+                    last_name=f"Last{i}ConTest",
+                    email=f"testcon{i}@example.com",
+                    phone=f"{random.randint(1000000000, 9999999999)}",
+                    organization=org1
+                )
+                con2.save()
+
+                contractors = Contractor.objects.filter(organization=org.pk)
+                contractors_1 = Contractor.objects.filter(organization=org.pk)
+
+            material_names = [
+                "Steel Beam",
+                "Concrete Mix",
+                "Aluminum Sheet",
+                "Copper Wire",
+                "PVC Pipe",
+            ]
 
             for i in range(5):
                 m = Material.objects.create(
