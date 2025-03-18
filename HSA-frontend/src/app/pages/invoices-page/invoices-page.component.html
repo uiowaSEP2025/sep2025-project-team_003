@@ -1,0 +1,17 @@
+<div class="flex items-center  flex-col">
+    <app-table-component 
+        [loadDataToTable]="this.loadDataToTable.bind(this)" 
+        editRedirect="/edit/invoice"
+        [deleteRequest]="invoiceService.deleteInvoice.bind(invoiceService)"
+        searchHint="search by customer name" 
+        [fetchedData]="invoices"
+        [headers]="['Status', 'Due Date', 'Customer']"
+        [hideValues]="['Id']"
+        [clickableRows]="true"
+        [onRowClick]="redirectInvoiceDetails.bind(this)"
+        ></app-table-component>
+    <button mat-fab extended class="m-10" (click)="navigateToPage('invoices/create')">
+        <mat-icon>note_add</mat-icon>
+        Add a Invoice
+    </button>
+</div>

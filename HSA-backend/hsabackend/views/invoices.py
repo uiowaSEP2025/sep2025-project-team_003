@@ -8,6 +8,8 @@ from hsabackend.models.organization import Organization
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.db.models import Q
+from django.db.models import Sum
+from hsabackend.utils.api_validators import parseAndReturnDate
 
 @api_view(["POST"])
 def createInvoice(request):
@@ -26,7 +28,23 @@ def createInvoice(request):
         return Response({"message": "Quotes must be list"}, status=status.HTTP_400_BAD_REQUEST)  
     
     if len(quote_ids) == 0:
-        return Response({"message": "Must include at least 1 quote to include"}, status=status.HTTP_400_BAD_REQUEST)  
+        return Response({"message": "Must include at least 1 quote"}, status=status.HTTP_400_BAD_REQUEST)  
+
+    invoice_status = json.get("status",None)
+    issued = parseAndReturnDate(json.get("issuedDate",""))
+    due = parseAndReturnDate(json.get("dueDate",""))
+
+    if not invoice_status or invoice_status not in ('created', 'issued', 'paid'):
+        return Response({"message": "Must include a valid status 'created' | 'issued' | 'paid'"}, status=status.HTTP_400_BAD_REQUEST)  
+
+    if invoice_status == 'created':
+        issued = due = None
+
+    if invoice_status != 'created' and (not issued or not due):
+        return Response({"message": "Must include valid issuance and due dates"}, status=status.HTTP_400_BAD_REQUEST)  
+    
+    if invoice_status != 'created' and due < issued:
+        return Response({"message": "Due date can not be before the issuance date"}, status=status.HTTP_400_BAD_REQUEST)  
 
     cust_qs = Customer.objects.filter(pk=int(customer_id), organization=org)
 
@@ -36,7 +54,8 @@ def createInvoice(request):
 
     invoice = Invoice(
         customer = cust_qs[0],
-        issuance_date = timezone.now()
+        issuance_date = issued,
+        due_date = due
     )
     
     try:
@@ -48,7 +67,7 @@ def createInvoice(request):
     Quote.objects.filter(
         pk__in=quote_ids, 
         jobID__organization=org,  # Ensure the quote's job is linked to the user's organization
-        invoice_id = None, # Ensure this quote does not belong to other invoice
+        invoice = None, # Ensure this quote does not belong to other invoice
         status = "accepted",                # invoice must be accepted to bill
         jobID__job_status= "completed",      # job must be done to bill 
         jobID__customer= cust_qs[0]
@@ -112,6 +131,24 @@ def updateInvoice(request, id):
     if len(quote_ids) == 0:
         return Response({"message": "Must include at least 1 quote"}, status=status.HTTP_400_BAD_REQUEST)  
 
+    invoice_status = json.get("status",None)
+
+    if not invoice_status or invoice_status not in ('created', 'issued', 'paid'):
+        return Response({"message": "Must include a valid status 'created' | 'issued' | 'paid'"}, status=status.HTTP_400_BAD_REQUEST)  
+
+    issued = parseAndReturnDate(json.get("issuedDate",""))
+    due = parseAndReturnDate(json.get("dueDate",""))
+
+    if invoice_status == 'created':
+        issued = due = None
+
+    if invoice_status != 'created' and (not issued or not due):
+        return Response({"message": "Must include valid issuance and due dates"}, status=status.HTTP_400_BAD_REQUEST)  
+    
+    if invoice_status != 'created' and due < issued:
+        return Response({"message": "Due date can not be before the issuance date"}, status=status.HTTP_400_BAD_REQUEST)  
+        
+
     invoice_qs = Invoice.objects.filter(
         customer__organization=org.pk,
         pk = id
@@ -119,17 +156,24 @@ def updateInvoice(request, id):
     
     if not invoice_qs.exists():
         return Response({"message": "The invoice does not exist"}, status=status.HTTP_404_NOT_FOUND)
-    
-    if invoice_qs[0].status != "created":
-        return Response({"message": "You can not edit an invoice that was sent or paid already"}, status=status.HTTP_400_BAD_REQUEST)
-
     customer = invoice_qs[0].customer
+
+    invoice = invoice_qs[0]
+    invoice.status = invoice_status
+    invoice.issuance_date = issued
+    invoice.due_date = due
+
+    try:
+        invoice.full_clean()
+        invoice.save()
+    except ValidationError as e:
+        return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
     Quote.objects.filter(
         pk__in=quote_ids, 
         jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
-        status = "accepted",                # invoice must be accepted to bill
-        jobID__job_status= "completed",      # job must be done to bill 
+        status = "accepted",                # quote must be accepted to bill
+        jobID__job_status= "completed",     # job must be done to bill 
         jobID__customer=customer            # quote must for the customer on the invoice
     ).update(invoice=id)
 
@@ -152,3 +196,40 @@ def deleteInvoice(request,id):
         return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
     invoice_qs[0].delete()
     return Response({"message": "Invoice Deleted successfully"}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+def get_data_for_invoice(request, id):
+    """gets all the data for invoice detailed view"""
+    if not request.user.is_authenticated:
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    org = Organization.objects.get(owning_User=request.user.pk)
+    invoice_qs = Invoice.objects.filter(
+        customer__organization=org.pk,
+        pk = id
+        )
+    if not invoice_qs.exists():
+        return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    
+    res = invoice_qs[0].json_for_view_invoice()
+
+    res_quotes = []
+
+    quotes = Quote.objects.filter(invoice=id)
+    aggregated_values = quotes.aggregate(
+        total_material_subtotal=Sum("material_subtotal"),
+        total_total_price=Sum("total_price"),
+    )
+
+
+    for quote in quotes:
+        res_quotes.append(quote.jsonToDisplayForInvoice())
+
+    
+    res["quotes"] = {
+        "quotes": res_quotes,
+        "totalMaterialSubtotal": aggregated_values["total_material_subtotal"] or 0,
+        "totalPrice": aggregated_values["total_total_price"] or 0,
+    }
+
+    
+    return Response(res, status=status.HTTP_200_OK)

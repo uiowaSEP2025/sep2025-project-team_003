@@ -8,7 +8,13 @@
     [fetchedData]="services"
     [deleteRequest]="serviceService.deleteService.bind(serviceService)"
     [loadDataToTable]="this.loadDataToTable.bind(this)"
+<<<<<<< HEAD
     [width]="'40vw'"
+=======
+    [hideValues]="['Id']"
+    searchHint="Search by service name or description"
+    [headers]="['Service Name', 'Service Description']"
+>>>>>>> 4a1ec86876bccea3be7a144da379d86a255e706a
     ></app-table-component>
   </div>
   <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">

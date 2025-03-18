@@ -1,11 +1,13 @@
 <div class="mat-elevation-z8 table min-w-lg">
-  <form class="flex justify-between form pb-1">
-    <mat-form-field class="w-full">
-      <mat-label>Search Here</mat-label>
-      <input matInput [formControl]="searchControl">
-      <mat-hint>{{searchHint()}}</mat-hint>
-    </mat-form-field>
-  </form>
+  @if (!hideSearch) {
+    <form class="flex justify-between form pb-1">
+      <mat-form-field class="w-full">
+        <mat-label>Search Here</mat-label>
+        <input matInput [formControl]="searchControl">
+        <mat-hint>{{searchHint()}}</mat-hint>
+      </mat-form-field>
+    </form>
+  }
   <table mat-table [dataSource]="data" class="width: {{ width() }}">
 
     @for (header of headersWithActions; track header) {
@@ -18,10 +20,10 @@
       <td mat-cell *matCellDef="let element; let i = $index;">
         @if (header === "Actions") {
         <div class="flex justify-between">
-          <button mat-mini-fab (click)="redirectEdit(element.id, element)">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-mini-fab (click)="openDeleteDialog(element)">
+            <button mat-mini-fab click-stop-propagation (click)="redirectEdit(element.id, element)">
+              <mat-icon>edit</mat-icon>
+            </button>
+          <button mat-mini-fab click-stop-propagation (click)="openDeleteDialog(element)">
             <mat-icon>delete</mat-icon>
           </button>
         </div>
@@ -37,7 +39,7 @@
     }
 
     <tr mat-header-row *matHeaderRowDef="headersWithActions"></tr>
-    <tr mat-row *matRowDef="let row; columns: headersWithActions;"></tr>
+    <tr mat-row class="{{clickableRows ? 'cursor-pointer' : ''}}" (click)="rowClick(row)" *matRowDef="let row; columns: headersWithActions;"></tr>
   </table>
   <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons [length]="dataSize"></mat-paginator>
 </div>

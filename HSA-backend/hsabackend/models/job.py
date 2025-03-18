@@ -25,6 +25,7 @@ class Job(models.Model):
     def __str__(self):
         return f"<Job, organization: {self.organization}, description: {self.description}>"
     
+
     def json(self):
         return {
             'id': self.pk,

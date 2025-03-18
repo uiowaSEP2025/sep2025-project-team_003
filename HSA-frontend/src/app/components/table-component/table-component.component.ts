@@ -11,12 +11,14 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteDialogComponentComponent } from '../delete-dialog-component/delete-dialog-component.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { StandardApiResponse } from '../../interfaces/standard-api-response.interface';
+import { StandardApiResponse } from '../../interfaces/api-responses/standard-api-response.interface';
 import { Observable, Subscription } from 'rxjs';
 import { StringFormatter } from '../../utils/string-formatter';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
-
+import { ClickStopPropagationDirective } from '../../utils/click-event-propogation-stopper';
+import { ErrorHandlerService } from '../../services/error.handler.service';
+import { OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-table-component',
@@ -29,12 +31,13 @@ import { FormsModule } from '@angular/forms';
     MatIconModule,
     MatButtonModule,
     MatCheckboxModule,
-    FormsModule
+    FormsModule,
+    ClickStopPropagationDirective
   ],
   templateUrl: './table-component.component.html',
   styleUrl: './table-component.component.scss'
 })
-export class TableComponentComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class TableComponentComponent implements AfterViewInit, OnChanges, OnDestroy, OnInit {
   @Input() fetchedData: any = null
   @Input() deleteRequest!: (data: any) => Observable<StandardApiResponse>
   @Input({ required: true }) loadDataToTable!: (search: string, pageSize: number, offSet: number) => void
@@ -42,10 +45,14 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   @Input() checkbox: 'none' | 'single' | 'multiple' = 'none';
   @Input() checkedIds: number[] | null = null;
   @Input() setCheckedIds: ((checkedIds: number[]) => void) | null = null;
-
+  @Input() hideSearch: boolean = false
+  @Input() clickableRows: boolean = false
+  @Input() onRowClick: any = null // if clickable rows is enabled this the function that handles the click
+  @Input() headers = ['header1', 'header2', 'header3', 'header4'] // headers to render before fetching the data
+  // note: headers are decided based on backend json keys
   searchHint = input<string>("Use me to search the data")
 
-  constructor(private router: Router, public dialog: MatDialog, private snackBar: MatSnackBar, private cdr: ChangeDetectorRef) {
+  constructor(private router: Router, public dialog: MatDialog, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {
   }
 
   searchControl = new FormControl('')
@@ -55,7 +62,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   page: number | null = null
   pageSize: number | null = null
   dataSize: number | null = null
-  headers = ['header1', 'header2', 'header3', 'header4']
+  
   headersWithActions = [...this.headers, 'Actions']
 
   width = input.required<string>()
@@ -65,6 +72,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngAfterViewInit() {
+    
     if (this.dataSubscription) {
       this.dataSubscription.unsubscribe();
     }
@@ -92,6 +100,13 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
     });
   }
 
+  ngOnInit(): void {
+    this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
+      return !this.hideValues.includes(header)
+    }) // this has to be here to allow default headers change. On init is ran
+    // when inputs are recieved
+  }
+
   redirectEdit(id: number, args: any) {
     const queryParams = args
     this.router.navigate([`${this.editRedirect()}/${id}`], {
@@ -113,17 +128,13 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       if (result) {
         this.deleteRequest(args).subscribe({
           next: () => {
-            this.snackBar.open(`Delete successfully`, '', {
+            this.snackBar.open(`Deleted successfully`, '', {
               duration: 3000
             });
             window.location.reload(); //reload for now, may have a better solution
           },
           error: (error) => {
-            if (error.status === 401) {
-              this.snackBar.open(`There is something wrong when deleting`, '', {
-                duration: 3000
-              });
-            }
+            this.errorHandler.handleError(error)
           }
         });
       }
@@ -131,12 +142,12 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    // this has to be here to change the headers, and does not affect how the headers are set based on the data
     if (changes["fetchedData"]?.currentValue || changes["dataSource"] || changes["formControl"]) {
       this.fetchedData = changes["fetchedData"].currentValue;
       this.data = new MatTableDataSource(this.fetchedData.data ?? []);
       this.dataSize = this.fetchedData.totalCount
-
-      if (this.fetchedData.data[0] !== undefined) {
+      if (this.fetchedData.data && this.fetchedData.data[0] !== undefined) {
         this.headers = Object.keys(this.fetchedData.data[0]);
         this.headers = this.headers.map(header => this.stringFormatter.formatSnakeToCamel(header))
         if (this.checkbox === "none") {
@@ -148,15 +159,22 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
           this.headersWithActions = ['Checkbox', ...this.headers].filter((header) => {
             return !this.hideValues.includes(header)
           })
+          console.log(this.headersWithActions)
         }
       }
     }
   }
 
+  rowClick(element: any) {
+    if (!this.clickableRows) {
+      return;
+    }
+    this.onRowClick(element)
+  }
+
   handleCheckBoxClick(id: number) {
     if (this.checkbox === "single") {
       if (this.checkedIds?.includes(id)) {
-        
         this.setCheckedIds!([])
         return
       }

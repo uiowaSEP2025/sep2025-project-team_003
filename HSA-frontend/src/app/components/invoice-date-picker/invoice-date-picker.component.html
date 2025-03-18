@@ -1,0 +1,25 @@
+<mat-card class="p-5 mb-5">
+    <h1 class="mb-4">Choose Dates</h1>
+    <mat-form-field>
+        <mat-label>Issuance date</mat-label>
+        <input matInput [matDatepicker]="picker" [formControl]="formControll.controls.issued">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="mt-4">
+        <mat-label>Due date</mat-label>
+        <input matInput [matDatepicker]="picker1" [formControl]="formControll.controls.due">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+    </mat-form-field>
+
+    @if(isInvalidRange) {
+        <mat-error>Please select a valid range</mat-error>
+    }
+    @if(isNullError) {
+        <mat-error>Please enter all values</mat-error>
+    }
+</mat-card>
