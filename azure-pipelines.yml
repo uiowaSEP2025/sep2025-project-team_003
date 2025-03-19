@@ -41,6 +41,7 @@ stages:
       displayName: Build an image
       inputs:
         command: build
+        context: .
         dockerfile: '**/staging/Dockerfile'
         tags: |
           $(tag)
