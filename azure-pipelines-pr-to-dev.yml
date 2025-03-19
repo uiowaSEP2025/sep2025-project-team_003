@@ -24,7 +24,7 @@ stages:
     steps:
     - script: |
         echo $(Docker Token) | docker login -u $(Docker Username) --password-stdin
-        docker build -f '$(Build.SourcesDirectory)'/Dockerfile -t $(Docker Username)/hsa:$(Build.BuildId)  .
+        docker build -f '$(Build.SourcesDirectory)'/staging/Dockerfile -t $(Docker Username)/hsa:$(Build.BuildId)  .
         docker push $(Docker Username)/hsa:$(Build.BuildId)
       displayName: Run Docker build and push Scripts
 
