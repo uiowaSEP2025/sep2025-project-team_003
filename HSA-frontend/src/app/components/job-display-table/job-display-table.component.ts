@@ -65,7 +65,7 @@ export class JobDisplayTableComponent  implements OnInit {
           "Material ID": material.materialID,
           "Material Name": material.materialName,
           "Units Used": material.unitsUsed,
-          "Price Per Unit": material.pricePerUnit
+          "Price Per Unit": "$" + material.pricePerUnit
         })
       )
 

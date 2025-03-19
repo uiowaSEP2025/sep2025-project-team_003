@@ -4,10 +4,11 @@ import { TableComponentComponent } from '../../components/table-component/table-
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { JobService } from '../../services/job.service';
+import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 
 @Component({
   selector: 'app-job-page',
-  imports: [TableComponentComponent, MatButtonModule, MatIconModule],
+  imports: [TableComponentComponent, MatButtonModule, MatIconModule, LoadingFallbackComponent],
   templateUrl: './job-page.component.html',
   styleUrl: './job-page.component.scss'
 })

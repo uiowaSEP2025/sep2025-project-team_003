@@ -1,5 +1,9 @@
 <div class="parent">
     <div class="main-heading">
+      @if (jobs === null) {
+        <app-loading-fallback stringToDisplay="Loading the job table"></app-loading-fallback>
+      }
+      @else {
       <h1>
         <span>Jobs</span>
       </h1>
@@ -14,12 +18,12 @@
         [clickableRows]="true"
         [onRowClick]="redirectJobDetails.bind(this)"
         ></app-table-component>
-        
-    </div>
-    <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
-      <button mat-fab extended class="m-10" id="add-job-button" (click)="navigateToPage('jobs/create')">
-        <mat-icon>note_add</mat-icon>
-        Add a job
-      </button>
-    </div>
+      <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
+        <button mat-fab extended class="m-10" id="add-job-button" (click)="navigateToPage('jobs/create')">
+          <mat-icon>note_add</mat-icon>
+          Add a job
+        </button>
+      </div>
+  }
   </div>
+</div>

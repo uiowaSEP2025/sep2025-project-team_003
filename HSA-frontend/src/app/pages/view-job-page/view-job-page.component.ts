@@ -9,6 +9,9 @@ import { JobService } from '../../services/job.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ErrorHandlerService } from '../../services/error.handler.service';
 import { JobDataInterface } from '../../interfaces/api-responses/job.api.data.interface';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-view-job-page',
@@ -17,8 +20,12 @@ import { JobDataInterface } from '../../interfaces/api-responses/job.api.data.in
     CommonModule, 
     MatButtonModule, 
     MatIconModule, 
-    JobDisplayTableComponent , 
-    MatCardModule],
+    JobDisplayTableComponent, 
+    MatCardModule,
+    MatListModule,
+    MatDividerModule,
+    MatExpansionModule,
+  ],
   templateUrl: './view-job-page.component.html',
   styleUrl: './view-job-page.component.scss'
 })
@@ -41,5 +48,9 @@ export class ViewJobPageComponent  implements OnInit {
         this.errorHandler.handleError(error)
       }}
     )
+  }
+
+  navigateToPage(pagePath: string) {
+    this.router.navigate([`/${pagePath}`]);
   }
 }
