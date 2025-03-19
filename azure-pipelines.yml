@@ -15,10 +15,10 @@ variables:
 
 stages:
 - stage: Test
-  displayName: Test Frontend
+  displayName: Run Unit Tests
   jobs:
     - job: Test
-      displayName: Test
+      displayName: Test Frontend
       pool:
         vmImage: ubuntu-latest
       steps:
@@ -27,22 +27,19 @@ stages:
           inputs:
             command: build
             buildContext: '$(Build.SourcesDirectory)'
-            dockerfile: '**/testing/Dockerfile'
+            dockerfile: '**/testing/frontend/Dockerfile'
             tags: |
               $(tag)
-- stage: Build
-  displayName: Build
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-    - task: Docker@2
-      displayName: Build an image
-      inputs:
-        command: build
-        buildContext: '$(Build.SourcesDirectory)'
-        dockerfile: '**/staging/Dockerfile'
-        tags: |
-          $(tag)
+    - job: Test
+      displayName: Test Backend
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+        - task: Docker@2
+          displayName: Test an image
+          inputs:
+            command: build
+            buildContext: '$(Build.SourcesDirectory)'
+            dockerfile: '**/testing/backend/Dockerfile'
+            tags: |
+              $(tag)
