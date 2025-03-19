@@ -24,6 +24,6 @@ stages:
     steps:
     - script: |
         echo $(Docker Token) | docker login -u $(Docker Username) --password-stdin
-        docker build -t $(Docker Username)/hsa:$(Build.BuildId) '$(Build.SourcesDirectory)'/Dockerfile .
-        docker push $(Docker Username)/hsa:$(Build.BuildId)
+        echo docker build -t $(Docker Username)/hsa:$(Build.BuildId) '$(Build.SourcesDirectory)'/Dockerfile .
+        echo docker push $(Docker Username)/hsa:$(Build.BuildId)
 
