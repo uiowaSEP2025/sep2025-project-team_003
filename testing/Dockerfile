@@ -18,7 +18,7 @@ ENV CHROME_PATH=/usr/lib/chromium/
 WORKDIR /HSA-frontend
 
 # Copy package files first for better caching
-COPY package*.json ../
+COPY package*.json ./
 RUN npm install -g @angular/cli
 RUN npm install
 
