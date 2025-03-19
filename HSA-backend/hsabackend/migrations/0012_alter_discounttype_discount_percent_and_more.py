@@ -17,8 +17,8 @@ class Migration(migrations.Migration):
             field=models.DecimalField(decimal_places=2, max_digits=5),
         ),
         migrations.AlterField(
-            model_name='materialjob',
-            name='unit_cost',
+            model_name='jobmaterial',
+            name='price_per_unit',
             field=models.DecimalField(decimal_places=2, max_digits=9),
         ),
         migrations.AlterField(
