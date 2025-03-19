@@ -26,4 +26,4 @@ sleep 5
 # Run Django migrations
 python manage.py migrate
 
-python manage.py test
+python manage.py test -v 2
