@@ -23,15 +23,9 @@ stages:
       vmImage: ubuntu-latest
     steps:
     - task: Docker@2
-      displayName: Test an image
-      inputs:
-        command: build
-        buildContext: '$(Build.SourcesDirectory)'
-        dockerfile: '**/Dockerfile'
-        tags: |
-          $(tag)
+      displayName: Build the push the Image
     - script: |
-        docker login -u $(Docker Username) -p $(Docker Token)
-        docker tag $(Build.BuildId) $(Docker Username)/hsa:$(Build.BuildId)
+        echo $(Docker Token) | docker login -u $(Docker Username) --password-stdin
+        docker build -t $(Docker Username)/hsa:$(Build.BuildId) '$(Build.SourcesDirectory)'/Dockerfile .
         docker push $(Docker Username)/hsa:$(Build.BuildId)
 
