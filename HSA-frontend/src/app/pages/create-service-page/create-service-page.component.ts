@@ -6,6 +6,7 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {Router} from '@angular/router';
 import { ServiceService } from '../../services/service.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-create-service-page',
@@ -23,7 +24,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class CreateServicePageComponent {
   serviceForm: FormGroup;
 
-  constructor(private router: Router, private serviceFormBuilder: FormBuilder, private serviceService: ServiceService, private snackBar: MatSnackBar) {
+  constructor(private router: Router, private serviceFormBuilder: FormBuilder, private serviceService: ServiceService, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {
     this.serviceForm = this.serviceFormBuilder.group({
       serviceName: ['', Validators.required],
       serviceDescription: [''],
@@ -47,11 +48,7 @@ export class CreateServicePageComponent {
           this.navigateToPage('services');
         },
         error: (error) => {
-          if (error.status === 401) {
-            if (error.status === 401) {
-              this.router.navigate(['/login']);
-            }
-          }
+          this.errorHandler.handleError(error)
         }
       });
     }

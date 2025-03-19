@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { StandardApiResponse } from '../interfaces/standard-api-response.interface';
+import { StandardApiResponse } from '../interfaces/api-responses/standard-api-response.interface';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';

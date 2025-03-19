@@ -3,7 +3,9 @@
     editRedirect="/contractors/edit" 
     [fetchedData]="contractors" 
     [deleteRequest]="contractorService.deleteContractor.bind(contractorService)"
-    [loadDataToTable]="this.loadDataToTable.bind(this)"></app-table-component>
+    [loadDataToTable]="this.loadDataToTable.bind(this)"
+    searchHint="TODO: Change it to something reasonable"
+    ></app-table-component>
     <button mat-fab extended class="m-10" (click)="navigateToPage('contractors/create')">
         <mat-icon>note_add</mat-icon>
         Add a Contractor

@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import { StandardApiResponse } from '../interfaces/standard-api-response.interface';
+import { StandardApiResponse } from '../interfaces/api-responses/standard-api-response.interface';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { Service } from '../interfaces/service.interface';
+import { TableApiResponse } from '../interfaces/api-responses/table.api.interface';
 
 interface ServiceCreatePostData {
   service_name: string | null
@@ -28,11 +30,10 @@ export class ServiceService {
     private apiCreateUrl = `${environment.apiUrl}/api/create/service`;
     private apiEditUrl = `${environment.apiUrl}/api/edit/service`;
     private apiDeleteUrl = `${environment.apiUrl}/api/delete/service`;
-    responses: any[]  = []
   
     constructor(private http: HttpClient) {}
   
-    public getService(params?: Record<string, string | number>): Observable<StandardApiResponse> {
+    public getService(params?: Record<string, string | number>): Observable<TableApiResponse<Service>> {
       let httpParams = new HttpParams();
   
       // Add query parameters
@@ -42,7 +43,7 @@ export class ServiceService {
         })
       }
   
-      return this.http.get<StandardApiResponse>(this.apiGetUrl, { params: httpParams });
+      return this.http.get<TableApiResponse<Service>>(this.apiGetUrl, { params: httpParams });
     }
     
   

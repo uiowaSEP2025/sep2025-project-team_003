@@ -23,6 +23,5 @@ describe('HeaderComponent', () => {
 
   it('should toggle the visible state when the ', () => {
     const compiled = fixture.debugElement.nativeElement;
-    console.log(compiled)
   })
 });
