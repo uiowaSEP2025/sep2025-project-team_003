@@ -32,6 +32,7 @@ def get_job_table_data(request):
     except:
         return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
     
+    offset = offset * pagesize
     jobs = Job.objects.filter(organization=org.pk).filter(
         Q(customer__first_name__icontains=search) | 
         Q(customer__last_name__icontains=search) | 

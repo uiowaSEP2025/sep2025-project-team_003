@@ -33,54 +33,54 @@ interface JobDeletePostData {
 })
 export class JobService {
   private apiGetUrl = `${environment.apiUrl}/api/get/jobs`;
-    private apiCreateUrl = `${environment.apiUrl}/api/create/job`;
-    private apiEditUrl = `${environment.apiUrl}/api/edit/job`;
-    private apiDeleteUrl = `${environment.apiUrl}/api/delete/job`;
-    private apiSpecificUrl = `${environment.apiUrl}/api/get/job`;
-    private apiGetJobService = `${environment.apiUrl}/api/get/job`;
-    responses: any[]  = []
-  
-    constructor(private http: HttpClient) {}
-  
-    public getJob(params?: Record<string, string | number>): Observable<StandardApiResponse> {
-      let httpParams = new HttpParams();
-  
-      // Add query parameters
-      if (params) {
-        Object.keys(params).forEach(key => {
-          httpParams = httpParams.append(key, params[key])
-        })
-      }
-  
-      return this.http.get<StandardApiResponse>(this.apiGetUrl, { params: httpParams });
-    }
-    
-  
-    public createJob(data:JobCreatePostData): Observable<StandardApiResponse> {
-      return this.http.post<StandardApiResponse>(this.apiCreateUrl, data);
-    }
-  
-    public editJob(data:JobEditPostData): Observable<StandardApiResponse> {
-      return this.http.post<StandardApiResponse>(this.apiEditUrl + `/${data.id}`, data);
-    }
-  
-    public deleteJob(data:JobDeletePostData): Observable<StandardApiResponse> {
-      return this.http.post<StandardApiResponse>(this.apiDeleteUrl + `/${data.id}`, data);
+  private apiCreateUrl = `${environment.apiUrl}/api/create/job`;
+  private apiEditUrl = `${environment.apiUrl}/api/edit/job`;
+  private apiDeleteUrl = `${environment.apiUrl}/api/delete/job`;
+  private apiSpecificUrl = `${environment.apiUrl}/api/get/job`;
+  private apiGetJobService = `${environment.apiUrl}/api/get/job`;
+  responses: any[]  = []
+
+  constructor(private http: HttpClient) {}
+
+  public getJob(params?: Record<string, string | number>): Observable<StandardApiResponse> {
+    let httpParams = new HttpParams();
+
+    // Add query parameters
+    if (params) {
+      Object.keys(params).forEach(key => {
+        httpParams = httpParams.append(key, params[key])
+      })
     }
 
-    public getSpecificJobData(id: number): Observable<JobDataInterface> {
-      return this.http.get<JobDataInterface>(this.apiSpecificUrl + `/${id}`);
+    return this.http.get<StandardApiResponse>(this.apiGetUrl, { params: httpParams });
+  }
+  
+
+  public createJob(data:JobCreatePostData): Observable<StandardApiResponse> {
+    return this.http.post<StandardApiResponse>(this.apiCreateUrl, data);
+  }
+
+  public editJob(data:JobEditPostData): Observable<StandardApiResponse> {
+    return this.http.post<StandardApiResponse>(this.apiEditUrl + `/${data.id}`, data);
+  }
+
+  public deleteJob(data:JobDeletePostData): Observable<StandardApiResponse> {
+    return this.http.post<StandardApiResponse>(this.apiDeleteUrl + `/${data.id}`, data);
+  }
+
+  public getSpecificJobData(id: number): Observable<JobDataInterface> {
+    return this.http.get<JobDataInterface>(this.apiSpecificUrl + `/${id}`);
+  }
+
+  public getJobService(id: number, params?: Record<string, string | number>): Observable<StandardApiResponse> {
+    let httpParams = new HttpParams();
+
+    if (params) {
+      Object.keys(params).forEach(key => {
+        httpParams = httpParams.append(key, params[key])
+      })
     }
 
-    public getJobService(id: number, params?: Record<string, string | number>): Observable<StandardApiResponse> {
-      let httpParams = new HttpParams();
-  
-      if (params) {
-        Object.keys(params).forEach(key => {
-          httpParams = httpParams.append(key, params[key])
-        })
-      }
-  
-      return this.http.get<StandardApiResponse>(this.apiGetJobService + `/${id}/services`, { params: httpParams });
-    }
+    return this.http.get<StandardApiResponse>(this.apiGetJobService + `/${id}/services`, { params: httpParams });
+  }
 }

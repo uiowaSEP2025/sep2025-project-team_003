@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { JobService } from '../../services/job.service';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
+import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-job-page',
@@ -16,7 +17,7 @@ export class JobPageComponent implements OnInit  {
   jobs: any
   jobService: JobService
 
-  constructor(private router: Router, jobService: JobService) {
+  constructor(private router: Router, jobService: JobService, private errorHandler: ErrorHandlerService) {
     this.jobService = jobService
   }
 
@@ -30,9 +31,7 @@ export class JobPageComponent implements OnInit  {
         this.jobs = response
       },
       error: (error) => {
-          if (error.status === 401) {
-            this.router.navigate(['/login']);
-          }
+        this.errorHandler.handleError(error)
       }
     })
   }
