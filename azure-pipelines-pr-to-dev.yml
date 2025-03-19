@@ -18,7 +18,7 @@ stages:
   displayName: Build image
   jobs:
   - job: Build
-    displayName: Build
+    displayName: Environment Setup
     pool:
       vmImage: ubuntu-latest
     steps:
@@ -26,4 +26,5 @@ stages:
         echo $(Docker Token) | docker login -u $(Docker Username) --password-stdin
         docker build -f '$(Build.SourcesDirectory)'/Dockerfile -t $(Docker Username)/hsa:$(Build.BuildId)  .
         docker push $(Docker Username)/hsa:$(Build.BuildId)
+      displayName: Build and Push to Docker Hub
 
