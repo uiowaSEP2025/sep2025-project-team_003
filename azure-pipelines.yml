@@ -26,6 +26,7 @@ stages:
           displayName: Test an image
           inputs:
             command: build
+            buildContext: '$(Build.SourcesDirectory)'
             dockerfile: '**/testing/Dockerfile'
             tags: |
               $(tag)
@@ -41,7 +42,7 @@ stages:
       displayName: Build an image
       inputs:
         command: build
-        context: .
+        buildContext: '$(Build.SourcesDirectory)'
         dockerfile: '**/staging/Dockerfile'
         tags: |
           $(tag)
