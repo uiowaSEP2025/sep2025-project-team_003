@@ -32,6 +32,6 @@ stages:
           $(tag)
     - script: |
         docker login -u $(Docker Username) -p $(Docker Token)
-        docker tag $(Build.BuildId) $(Docker Username)/hsa:$(Build.BuildId):$(tag)
-        docker push $(Docker Username)/hsa:$(Build.BuildId):$(tag)
+        docker tag $(Build.BuildId) $(Docker Username)/hsa:$(Build.BuildId)
+        docker push $(Docker Username)/hsa:$(Build.BuildId)
 
