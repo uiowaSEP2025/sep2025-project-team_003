@@ -33,7 +33,11 @@ def get_job_table_data(request):
         return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
     
     jobs = Job.objects.filter(organization=org.pk).filter(
-        Q(description__icontains=search) 
+        Q(customer__first_name__icontains=search) | 
+        Q(customer__last_name__icontains=search) | 
+        Q(start_date__icontains=search) | 
+        Q(end_date__icontains=search) |
+        Q(job_status__icontains=search)
     )[offset:offset + pagesize] if search else Job.objects.filter(organization=org.pk)[offset:offset + pagesize]
 
     data = []
@@ -41,7 +45,11 @@ def get_job_table_data(request):
         data.append(job.json_simplify())
     
     count = Job.objects.filter(organization=org.pk).filter(
-        Q(description__icontains=search)
+        Q(customer__first_name__icontains=search) | 
+        Q(customer__last_name__icontains=search) | 
+        Q(start_date__icontains=search) | 
+        Q(end_date__icontains=search) |
+        Q(job_status__icontains=search)
     ).count()
 
     res = {
@@ -64,9 +72,28 @@ def get_job_individual_data(request, id):
  
     if not job:
         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    
+    job_services = JobService.objects.filter(job=job.pk)
+    job_materials = JobMaterial.objects.filter(job=job.pk)
+    job_contractors = JobContractor.objects.filter(job=job.pk)
+
+    job_services_data = []
+    for service in job_services:
+        job_services_data.append(service.json())
+    
+    job_materials_data = []
+    for material in job_materials:
+        job_materials_data.append(material.json())
+    
+    job_contractors_data = []
+    for contractor in job_contractors:
+        job_contractors_data.append(contractor.json())
 
     res = {
-        'data': job.json()
+        'data': job.json(),
+        'services': {'services': job_services_data},
+        'materials': {'materials': job_materials_data},
+        'contractors': {'contractors': job_contractors_data}
     }    
 
     return Response(res, status=status.HTTP_200_OK)
@@ -139,7 +166,7 @@ def create_job(request):
                     material = material_object,
                     job = job,
                     units_used = material["unit"],
-                    unit_cost = material["pricePerUnit"]
+                    price_per_unit = material["pricePerUnit"]
                 )
         except Material.DoesNotExist:
             return Response({"message": "The material does not exist"}, status=status.HTTP_404_NOT_FOUND)

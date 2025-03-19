@@ -36,6 +36,10 @@ export class JobPageComponent implements OnInit  {
     })
   }
 
+  redirectJobDetails(element: any) {
+    this.router.navigate([`/job/${element.id}`])
+  }
+
   navigateToPage(pagePath: string) {
     this.router.navigate([`/${pagePath}`]);
   }

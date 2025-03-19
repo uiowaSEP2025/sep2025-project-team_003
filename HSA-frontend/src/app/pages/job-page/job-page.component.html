@@ -8,8 +8,11 @@
         [fetchedData]="jobs" 
         [deleteRequest]="jobService.deleteJob.bind(jobService)" 
         [loadDataToTable]="this.loadDataToTable.bind(this)"
+        searchHint="Search by any keywords" 
         [hideValues]="['Id']"
         [width]="'100vw'"
+        [clickableRows]="true"
+        [onRowClick]="redirectJobDetails.bind(this)"
         ></app-table-component>
         
     </div>

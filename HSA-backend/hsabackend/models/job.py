@@ -29,23 +29,20 @@ class Job(models.Model):
     def json(self):
         return {
             'id': self.pk,
-            'job_status': self.job_status,
-            'start_date': self.start_date,
-            'end_date': self.end_date,
+            'jobStatus': self.job_status,
+            'startDate': self.start_date,
+            'endDate': self.end_date,
             'description': self.description,
-            'customer_name': self.customer.first_name + " " + self.customer.last_name,
-            'customer_id': self.customer.id,
-            'requestor_city': self.requestor_city,
-            'requestor_state': self.requestor_state,
-            'requestor_zip': self.requestor_zip,
-            'requestor_address': self.requestor_address,
+            'customerName': self.customer.first_name + " " + self.customer.last_name,
+            'customerID': self.customer.id,
+            'requestorFullAddress': self.requestor_address + ", " + self.requestor_city + ", " + self.requestor_state + " " + self.requestor_zip
         }
     
     def json_simplify(self):
         return {
             'id': self.pk,
             'job_status': self.job_status,
+            'start_date': self.start_date,
             'end_date': self.end_date,
-            'description': self.description,
             'customer_name': self.customer.first_name + " " + self.customer.last_name,
         }

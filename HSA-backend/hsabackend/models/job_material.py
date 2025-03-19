@@ -14,9 +14,8 @@ class JobMaterial(models.Model):
     def json(self):
         return {
             'id': self.pk,
-            'job_id': self.job.pk,
-            'material_id': self.material.pk,
-            'material_name': self.material.material_name,
-            'units_used': self.units_used,
-            'price_per_unit': self.price_per_unit 
+            'materialID': self.material.pk,
+            'materialName': self.material.material_name,
+            'unitsUsed': self.units_used,
+            'pricePerUnit': self.price_per_unit 
         }

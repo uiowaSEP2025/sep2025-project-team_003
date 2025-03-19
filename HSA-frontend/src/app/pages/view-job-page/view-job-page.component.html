@@ -1,0 +1,29 @@
+@if (jobData === null) {
+    <app-loading-fallback stringToDisplay="Loading the job"></app-loading-fallback>
+}
+@else {
+  <mat-card class="flex p-5 items-center">
+    <div>Job for customer {{jobData.data.customerName}}</div>
+    <div>Job start date: {{jobData.data.startDate}}</div>
+    <div>Job end date: {{jobData.data.endDate}}</div>
+    <div>Job status: {{jobData.data.jobStatus}}</div>'
+    <div>
+      <app-job-display-table
+        [dataSource]="jobData.services"
+        [typeToDisplay]="'service'"
+      ></app-job-display-table>
+    </div>
+    <div>
+      <app-job-display-table
+        [dataSource]="jobData.materials"
+        [typeToDisplay]="'material'"
+      ></app-job-display-table>
+    </div>
+    <div>
+      <app-job-display-table
+        [dataSource]="jobData.contractors"
+        [typeToDisplay]="'contractor'"
+      ></app-job-display-table>
+    </div>
+  </mat-card>
+}
