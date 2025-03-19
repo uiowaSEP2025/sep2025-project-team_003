@@ -13,9 +13,6 @@ from hsabackend.models.customer import Customer
 from django.core.exceptions import ValidationError
 
 class CustomerViewTest(APITestCase):
-    def test_that_should_fail(self):
-        assert True == False
-
     def test_get_customer_table_data_unauth(self):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = False
