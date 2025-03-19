@@ -14,8 +14,23 @@ variables:
   tag: '$(Build.BuildId)'
 
 stages:
+- stage: Test
+  displayName: Test Frontend
+  jobs:
+    - job: Test
+      displayName: Test
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+        - task: Docker@2
+          displayName: Test an image
+          inputs:
+            command: build
+            dockerfile: '**/testing/Dockerfile'
+            tags: |
+              $(tag)
 - stage: Build
-  displayName: Build and test image
+  displayName: Build
   jobs:
   - job: Build
     displayName: Build
@@ -26,6 +41,6 @@ stages:
       displayName: Build an image
       inputs:
         command: build
-        dockerfile: '**/Dockerfile'
+        dockerfile: '**/staging/Dockerfile'
         tags: |
           $(tag)
