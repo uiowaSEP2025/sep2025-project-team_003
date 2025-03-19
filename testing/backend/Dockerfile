@@ -25,4 +25,4 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 # Set up entrypoint script
 RUN chmod +x ../testing/backend/entrypoint.sh
 RUN ../testing/backend/entrypoint.sh
-RUN python3 manage.py test
+

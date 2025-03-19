@@ -11,7 +11,7 @@ service postgresql start
 sleep 5
 
 # Create database user and database
-su - postgres -c "psql -c \"CREATE USER ${DATABASE_USERNAME} WITH PASSWORD '${DATABASE_PASSWORD}';\""
+su - postgres -c "psql -c \"CREATE USER ${DATABASE_USERNAME} WITH PASSWORD '${DATABASE_PASSWORD}' CREATEDB CREATEROLE SUPERUSER;\""
 su - postgres -c "createdb -O ${DATABASE_USERNAME} ${DATABASE_NAME}"
 
 # Modify pg_hba.conf to allow local connections
@@ -25,3 +25,5 @@ sleep 5
 
 # Run Django migrations
 python manage.py migrate
+
+python manage.py test
