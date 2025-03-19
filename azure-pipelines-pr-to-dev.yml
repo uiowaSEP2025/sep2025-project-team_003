@@ -22,8 +22,6 @@ stages:
     pool:
       vmImage: ubuntu-latest
     steps:
-    - task: Bash@3
-      displayName: Build and push the Image
     - script: |
         echo $(Docker Token) | docker login -u $(Docker Username) --password-stdin
         docker build -t $(Docker Username)/hsa:$(Build.BuildId) '$(Build.SourcesDirectory)'/Dockerfile .
