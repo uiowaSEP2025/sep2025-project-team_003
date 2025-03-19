@@ -17,7 +17,7 @@ stages:
 - stage: Test
   displayName: Run Unit Tests
   jobs:
-    - job: Test
+    - job: Frontend
       displayName: Test Frontend
       pool:
         vmImage: ubuntu-latest
@@ -30,7 +30,7 @@ stages:
             dockerfile: '**/testing/frontend/Dockerfile'
             tags: |
               $(tag)
-    - job: Test
+    - job: Backend
       displayName: Test Backend
       pool:
         vmImage: ubuntu-latest
