@@ -1,5 +1,6 @@
 from django.db import models
 from hsabackend.models.customer import Customer
+from hsabackend.utils.string_formatters import format_maybe_null_date
 
 class Invoice(models.Model):
     """A bill sent to a customer from an organization on a monthly basis"""
@@ -30,7 +31,7 @@ class Invoice(models.Model):
         return {
             "id": self.pk,
             "status": self.status,
-            "due_date": "N/A" if self.due_date == None else self.due_date,
-            "issuance_date": "N/A" if self.issuance_date == None else self.issuance_date,
+            "due_date": format_maybe_null_date(self.due_date),
+            "issuance_date": format_maybe_null_date(self.issuance_date),
             "customer": f"{self.customer.first_name}, {self.customer.last_name}" 
         }

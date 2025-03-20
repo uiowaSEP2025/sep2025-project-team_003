@@ -2,7 +2,7 @@ from django.db import models
 from hsabackend.models.discount_type import DiscountType
 from hsabackend.models.job import Job
 from hsabackend.models.invoice import Invoice
-from hsabackend.utils.description_trunctator import truncate_description_for_table
+from hsabackend.utils.string_formatters import truncate_description_for_table, format_address, format_date_to_iso_string
 
 class Quote(models.Model):
     """The price for a job that the organization sends to the customer for approval"""
@@ -36,4 +36,12 @@ class Quote(models.Model):
             "materialSubtotal": self.material_subtotal,
             "totalPrice": self.total_price,
             "jobDescription": truncate_description_for_table(self.jobID.description),
+        }
+    
+    def geerate_invoice_global_table_json(self):
+        return {
+            "Date": format_date_to_iso_string(self.jobID.end_date),
+            "Job Description": truncate_description_for_table(self.jobID.description),
+            "Address": format_address(self.jobID.requestor_address, self.jobID.requestor_city, self.jobID.requestor_state, self.jobID.requestor_zip),
+            "Amount": self.total_price if self.discount_type != None else (1 - self.discount_type.discount_percent) * self.total_price
         }

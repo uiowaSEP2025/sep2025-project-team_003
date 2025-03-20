@@ -40,4 +40,3 @@ class Job(models.Model):
             'requestor_zip': self.requestor_zip,
             'requestor_address': self.requestor_address,
         }
-

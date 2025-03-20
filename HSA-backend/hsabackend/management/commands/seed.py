@@ -45,7 +45,8 @@ class Command(BaseCommand):
                 org_requestor_address = "123 main st",
                 org_owner_first_name = "Dev",
                 org_owner_last_name = "User",
-                owning_User = usr
+                owning_User = usr,
+                org_phone = "1234567890"
                 )
             org.save()
             org1 = Organization.objects.create(
@@ -57,7 +58,8 @@ class Command(BaseCommand):
                 org_requestor_address = "123 main st",
                 org_owner_first_name = "Test",
                 org_owner_last_name = "User",
-                owning_User = usr1
+                owning_User = usr1,
+                org_phone = "1234567890"
                 )
             org1.save()
             
