@@ -12,6 +12,7 @@ resources:
 
 variables:
   tag: '$(Build.BuildId)'
+  group: dev-db-secrets
 
 stages:
 - stage: Build
@@ -24,7 +25,7 @@ stages:
     steps:
     - script: |
         echo $(Docker Token) | docker login -u $(Docker Username) --password-stdin
-        docker build -f '$(Build.SourcesDirectory)'/staging/Dockerfile -t $(Docker Username)/hsa:$(Build.BuildId)  .
+        docker build --build-arg DATABASE_HOST="$(database-host)" --build-arg DATABASE_NAME="$(database-name)" --build-arg DATABASE_USERNAME="$(database-username)" --build-arg DATABASE_PASSWORD="$(database-password)" -f '$(Build.SourcesDirectory)'/staging/Dockerfile -t $(Docker Username)/hsa:$(Build.BuildId)  .
         docker push $(Docker Username)/hsa:$(Build.BuildId)
       displayName: Run Docker build and push Scripts
 
