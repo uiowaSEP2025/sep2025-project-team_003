@@ -28,4 +28,38 @@ stages:
         docker build --build-arg DATABASE_IP="$(DATABASE_IP)" --build-arg DATABASE_NAME="$(DATABASE_NAME)" --build-arg DATABASE_USERNAME="$(DATABASE_USERNAME)" --build-arg DATABASE_PASSWORD="$(DATABASE_PASSWORD)" -f '$(Build.SourcesDirectory)'/staging/Dockerfile -t $(Docker Username)/hsa:$(Build.BuildId)  .
         docker push $(Docker Username)/hsa:$(Build.BuildId)
       displayName: Run Docker build and push Scripts
-
+- stage: Deploy
+  displayName: Deploy to K3s Dev Server
+  jobs:
+  - job: Deploy
+    steps:
+    - task: InstallSSHKey@0
+      inputs:
+       knownHostsEntry: '$(SERVER_IP) $(SSH Public Key)'
+       sshPublicKey: $(SSH Public Key)
+       sshKeySecureFile: 'id_rsa_dev'
+    - script: |
+        # SSH into remote server and deploy
+        ssh -i $(Agent.TempDirectory)/id_rsa_dev \
+            -o StrictHostKeyChecking=no \
+            root@$(SERVER_IP) \
+            -p 22 \
+            '
+            # Login to Docker Hub (if needed)
+            echo $(Docker Token) | docker login -u $(Docker Username) --password-stdin
+            
+            # Pull the Docker image
+            docker pull $(Docker Username)/hsa:latest
+            
+            # Apply deployment manifest
+            kubectl apply -f /root/k8s-manifests/handyman-services-deployment.yaml
+            
+            # Restart deployment
+            kubectl rollout restart deployment handyman-services-deployment
+            
+            # Check deployment status
+            kubectl rollout status deployment handyman-services-deployment
+            
+            
+            '
+      
