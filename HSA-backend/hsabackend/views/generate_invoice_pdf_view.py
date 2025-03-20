@@ -41,7 +41,7 @@ def generate_pdf_customer_org_header(pdf: FPDF, org: Organization, invoice: Invo
 
 
 
-def generate_global_jobs_table(pdf, invoice: Invoice):
+def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
     """
     generates the table showing all jobs, and returns a list of job ids representing the order of 
     the jobs that are included in the table in order
