@@ -21,6 +21,7 @@ import { Subscription } from 'rxjs';
 })
 export class InvoiceDatePickerComponent implements OnInit{
   @Input({ required: true }) formControll!: FormGroup<DateRange> // extra l to avoid name conflict
+  @Input() dateLabels: string[] = ["Start Date", "End Date"]
   isInvalidRange = false
   isNullError = false
   private valueChangesSub!: Subscription;

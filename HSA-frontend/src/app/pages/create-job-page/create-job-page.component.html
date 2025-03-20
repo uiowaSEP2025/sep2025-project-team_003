@@ -8,6 +8,10 @@
         <span>Create Jobs</span>
       </h1>
       <div class="flex flex-col items-center">
+        <app-invoice-date-picker 
+            [formControll]="range"
+            [dateLabels]="['Start date', 'End date']"
+        ></app-invoice-date-picker>
         <h2 class="pb-5 pt-5">Select a customer</h2>
         <app-table-component 
             [loadDataToTable]="loadCustomersToTable.bind(this)" 
@@ -39,7 +43,6 @@
           @if (selectedServicesIsError) {
               <mat-error class="mt-3">You must include at least a service to a job</mat-error>    
           }
-          
         }
 
         @if (selectedServices.length !== 0) {
@@ -55,12 +58,74 @@
               [materialInputFields]="materialInputFields"
               [setCheckedIds]="setSelectedMaterials.bind(this)"
               [setMaterialInputFields]="setMaterialInput.bind(this)"
-              searchHint="Search by Material name"
+              searchHint="Search by material name"
               [headers]="['Checkbox', 'Material Name', 'Material Description']"
           ></app-table-component> 
         }
+
+        @if (selectedServices.length !== 0) {
+          <app-table-component 
+              [loadDataToTable]="loadContractorsToTable.bind(this)" 
+              editRedirect="" 
+              [hideValues]="['Actions', 'Id']"
+              [fetchedData]="contractors"
+              checkbox="multiple"
+              [checkedIds]="selectedContractors"
+              [setCheckedIds]="setSelectedContractors.bind(this)"
+              searchHint="Search by contractor name"
+              [headers]="['Checkbox', 'Contractor Name', 'Phone Number', 'Email']"
+          ></app-table-component> 
+        }
+        <form class="parent" [formGroup]="jobForm" (ngSubmit)="onSubmit()">
+          <div class="grid-container">
+            <mat-form-field >
+              <mat-label>Assigned Address</mat-label>
+              <input
+                formControlName = "requestorAddress"
+                matInput
+              >
+            </mat-form-field>
+        
+            <mat-form-field>
+              <mat-label>Assigned City</mat-label>
+              <input
+                formControlName = "requestorCity"
+                matInput
+              >
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Assigned State</mat-label>
+              <mat-select formControlName="requestorStateSelect">
+                @for (state of states; track state) {
+                  <mat-option [value]="state.name">{{state.name}} - {{state.code}}</mat-option>
+                }
+              </mat-select>
+              @if (jobForm.get('requestorStateSelect')?.touched && jobForm.get('requestorStateSelect')?.hasError('required')) {
+                <mat-error>State is required</mat-error>
+              }
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Assigned Zip Code</mat-label>
+              <input
+                formControlName = "requestorZip"
+                matInput
+              >
+            </mat-form-field>
+          </div>
+          <mat-form-field>
+            <mat-label>Job Description</mat-label>
+            <input
+              formControlName = "jobDescription"
+              matInput
+            >
+          </mat-form-field>
+          @if (jobForm.get('jobDescription')?.touched && jobForm.get('jobDescription')?.hasError('required')) {
+            <mat-error>Job Description is required</mat-error>
+          }
+        </form>
       </div>
     }
+    <button mat-raised-button class="mt-10 mb-5" (click)="onSubmit()">Create</button>
   </div>
 </div>
 

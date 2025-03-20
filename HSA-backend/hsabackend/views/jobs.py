@@ -106,9 +106,9 @@ def create_job(request):
     
     org = Organization.objects.get(owning_User=request.user)
     job_description = request.data.get('description', '')
-    job_start_date = request.data.get('start_date', '')
-    job_end_date = request.data.get('end_date', '')
-    customer = Customer.objects.get(id=request.data.get('customer_id'))
+    job_start_date = request.data.get('startDate', '')
+    job_end_date = request.data.get('endDate', '')
+    customer = Customer.objects.get(id=request.data.get('customerID'))
     requestor_city = request.data.get('city', '')
     requestor_state = request.data.get('state', '')
     requestor_zip = request.data.get('zip', '')
@@ -166,7 +166,7 @@ def create_job(request):
                 material_job = JobMaterial(
                     material = material_object,
                     job = job,
-                    units_used = material["unit"],
+                    units_used = material["unitsUsed"],
                     price_per_unit = material["pricePerUnit"]
                 )
         except Material.DoesNotExist:

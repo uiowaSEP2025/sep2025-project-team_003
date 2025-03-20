@@ -13,3 +13,11 @@ class Contractor(models.Model):
     def __str__(self):
         return f"<Contractor: {self.pk}>"
     
+    def json(self):
+        return {
+            'id': self.pk,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'email': self.email,
+            'phone': format(self.phone),
+        }

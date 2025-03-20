@@ -75,8 +75,8 @@ def create_job_material(request, id):
             job_material = JobMaterial(
                 job = job_object,
                 material = material_object,
-                units_used = material['units_used'],
-                price_per_unit = material['price_per_unit']
+                units_used = material['unitsUsed'],
+                price_per_unit = material['pricePerUnit']
             )
 
             try:

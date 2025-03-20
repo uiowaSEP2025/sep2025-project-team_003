@@ -6,26 +6,27 @@ import { environment } from '../../environments/environment';
 import { JobDataInterface } from '../interfaces/api-responses/job.api.data.interface';
 
 interface JobCreatePostData {
-  firstn: string | null
-  lastn: string | null
-  email: string | null
-  phoneno: string | null
-  notes: string | null
+  jobStatus: string | null,
+  startDate: string | null,
+  endDate: string | null,
+  description: string | null,
+  customerID: number | null,
+  city: string | null,
+  state: string | null,
+  zip: string | null,
+  address: string | null,
+  contractors: [] | null,
+  services: [] | null,
+  materials: [] | null
 }
 
 interface JobEditPostData {
   id: number | null,
-  firstn: string | null
-  lastn: string | null
-  email: string | null
-  phoneno: string | null
-  notes: string | null
+
 }
 
 interface JobDeletePostData {
   id: number | null,
-  firstn: string | null
-  lastn: string | null
 }
 
 @Injectable({

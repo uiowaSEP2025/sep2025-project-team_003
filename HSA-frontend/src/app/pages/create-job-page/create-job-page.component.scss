@@ -28,3 +28,13 @@ header {
     background-color:rgb(250, 249, 253);
     width: 100vw;
 }
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  
+  mat-form-field {
+    width: 100%;
+  }

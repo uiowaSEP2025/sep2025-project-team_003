@@ -43,7 +43,10 @@
         </mat-select>
     </mat-form-field>
     @if (isDateSelectVisible()) {
-        <app-invoice-date-picker [formControll]="range"></app-invoice-date-picker>
+        <app-invoice-date-picker 
+            [formControll]="range"
+            [dateLabels]="['Issuance date', 'Due date']"
+        ></app-invoice-date-picker>
     }
 
     <button mat-raised-button class="mt-10 mb-5" (click)="onSubmit()">Create</button>
