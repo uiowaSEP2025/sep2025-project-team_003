@@ -51,16 +51,17 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
         invoice=invoice
     ).order_by("-jobID__end_date")
     res = []
-    with pdf.table(line_height=4, padding=2, text_align=("LEFT", "LEFT", "LEFT", "LEFT", "LEFT")) as table:
+    greyscale = 215 # higher no --> lighter grey
+    with pdf.table(line_height=4, padding=2, text_align=("LEFT", "LEFT", "LEFT", "LEFT", "LEFT"), borders_layout="SINGLE_TOP_LINE", cell_fill_color=greyscale, cell_fill_mode="ROWS") as table:
         # headers
         cell_border = "TOP"
 
         row = table.row()
-        row.cell("Job Number", border=cell_border)
-        row.cell("Date",border=cell_border)
-        row.cell("Job Description", border=cell_border)
-        row.cell("Address", border=cell_border)
-        row.cell("Amount", border=cell_border)
+        row.cell("Job Number")
+        row.cell("Date")
+        row.cell("Job Description")
+        row.cell("Address")
+        row.cell("Amount")
         
         # amount is a decimal type
         total = 0
@@ -70,20 +71,22 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
             res.append(quote.jobID.pk)
             row = table.row()
             json = quote.geerate_invoice_global_table_json()
-            row.cell(str(cnt), border=cell_border)
-            row.cell(json["Date"], border=cell_border)
-            row.cell(json["Job Description"], border=cell_border)
-            row.cell(json["Address"], border=cell_border)
+            row.cell(str(cnt))
+            row.cell(json["Date"])
+            row.cell(json["Job Description"])
+            row.cell(json["Address"])
             total += json["Amount"]
-            row.cell(str(format_currency(json["Amount"])), border=cell_border)
+            row.cell(str(format_currency(json["Amount"])))
             cnt += 1
 
         totals_row = table.row()
-        totals_row.cell("Total:", border=cell_border)
-        totals_row.cell("", border=cell_border)
-        totals_row.cell("", border=cell_border)
-        totals_row.cell("", border=cell_border)
-        totals_row.cell(str(format_currency(total)), border=cell_border)
+        totals_row.cell("Total: ")
+        totals_row.cell("")
+        totals_row.cell("")
+        totals_row.cell("")
+        totals_row.cell(str(format_currency(total)))
+
+    return (res, total)
 
 
 
@@ -113,7 +116,7 @@ def generate_pdf(request, id):
     inv = invoice_qs[0] 
 
     generate_pdf_customer_org_header(pdf,org,inv)
-    generate_global_jobs_table(pdf, inv)
+    job_ids, total = generate_global_jobs_table(pdf, inv)
 
     # Save PDF to a BytesIO buffer
     pdf_buffer = io.BytesIO()
