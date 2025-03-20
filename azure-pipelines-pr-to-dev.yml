@@ -35,12 +35,12 @@ stages:
     steps:
     - task: InstallSSHKey@0
       inputs:
-       knownHostsEntry: '$(SERVER_IP) $(SSH Public Key)'
-       sshPublicKey: $(SSH Public Key)
-       sshKeySecureFile: 'id_rsa_dev'
+        knownHostsEntry: '$(SERVER_IP) $(SSH Public Key)'
+        sshPublicKey: $(SSH Public Key)
+        sshKeySecureFile: 'id_rsa'
     - script: |
         # SSH into remote server and deploy
-        ssh -i $(Agent.TempDirectory)/id_rsa_dev \
+        ssh -i id_rsa \
             -o StrictHostKeyChecking=no \
             root@$(SERVER_IP) \
             -p 22 \
