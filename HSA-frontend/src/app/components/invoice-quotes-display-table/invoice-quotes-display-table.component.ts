@@ -34,16 +34,33 @@ export class InvoiceQuotesDisplayTableComponent implements OnInit {
     )
 
     const totalMaterialSubtotal = this.stringFormatter.formatCurrency(this.dataSource.totalMaterialSubtotal)
-    const totalPrice = this.stringFormatter.formatCurrency(this.dataSource.totalPrice)
-
+    const totalPrice = this.stringFormatter.formatCurrency(this.dataSource.subtotal)
     this.displayQuotes.push({
       "Material Subtotal": `${totalMaterialSubtotal}`,
       "Total Price": `${totalPrice}`,
-      "Job Description": "Total:" 
+      "Job Description": "Subtotal:" 
     })
 
+    const discountPercent = this.stringFormatter.formatPercent(this.dataSource.totalDiscount)
+    this.displayQuotes.push({
+      "Material Subtotal": "",
+      "Total Price": `${discountPercent}`,
+      "Job Description": "Discount"
+    })
 
-    console.log(this.quotes)
+    const taxPercent = this.stringFormatter.formatTaxPercent(this.dataSource.taxPercent)
+    this.displayQuotes.push({
+      "Material Subtotal": "",
+      "Total Price": `${taxPercent}`,
+      "Job Description": "Tax"
+    })
+
+    const grandTotal = this.stringFormatter.formatCurrency(this.dataSource.grandtotal)
+    this.displayQuotes.push({
+      "Material Subtotal": "",
+      "Total Price": `${grandTotal}`,
+      "Job Description": "Tax"
+    })
   }
 
   displayedColumns = ["Job Description", "Material Subtotal", "Total Price"]

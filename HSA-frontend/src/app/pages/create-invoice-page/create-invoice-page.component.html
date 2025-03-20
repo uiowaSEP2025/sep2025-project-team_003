@@ -46,6 +46,26 @@
         <app-invoice-date-picker [formControll]="range"></app-invoice-date-picker>
     }
 
+    <mat-form-field>
+        <mat-label>Tax %</mat-label>
+        <input matInput
+            [formControl]="taxAmount" 
+            [errorStateMatcher]="matcher"
+            type="number"
+        >
+        @if (taxAmount.hasError('required')) {
+            <mat-error>Tax amount is <strong>required</strong></mat-error>
+        }
+        @else if (taxAmount.hasError('min') || taxAmount.hasError('max') || taxAmount.hasError('pattern')) {
+            <mat-error>Tax amount must be <strong>0.XX</strong></mat-error>
+        }
+    </mat-form-field>
+    <div class="max-w-md pt-5">
+        <p class="text-center text-sm text-gray-600">
+            <strong>Disclaimer:</strong> You are responsible for understanding and complying with the tax laws of your jurisdiction.
+            We, the software developers, are not liable for any errors, omissions, or legal consequences resulting from your use of this software.
+            Always consult a tax professional for guidance.
+          </p>
+    </div>
     <button mat-raised-button class="mt-10 mb-5" (click)="onSubmit()">Create</button>
-
 </div>

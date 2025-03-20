@@ -13,14 +13,16 @@ interface CreateInvoiceInterface {
     quoteIDs: number[],
     status: "created" | "issued" | "paid"
     issuedDate: string,
-    dueDate: string
+    dueDate: string,
+    tax: string
 }
 
 interface UpdateInvoiceInterface {
         quoteIDs: number[],
         status: "created" | "issued" | "paid",
         issuedDate: string,
-        dueDate: string
+        dueDate: string, 
+        tax: string
 }
 
 @Injectable({

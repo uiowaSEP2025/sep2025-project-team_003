@@ -15,7 +15,7 @@ class Quote(models.Model):
     due_date = models.DateField()
     status = models.CharField(max_length=50, choices=status_choices, default="created")
     material_subtotal = models.DecimalField(max_digits=9, decimal_places=2)
-    total_price = models.DecimalField(max_digits=9, decimal_places=2)
+    total_price = models.DecimalField(max_digits=9, decimal_places=2) # undiscounted price
     jobID = models.OneToOneField(Job, on_delete= models.CASCADE)
     discount_type = models.ForeignKey(DiscountType, null=True, on_delete=models.SET_NULL)
     invoice = models.ForeignKey(Invoice, on_delete=models.SET_NULL, null=True)
@@ -23,7 +23,8 @@ class Quote(models.Model):
     def __str__(self):
         return f"<Quote, job: {self.jobID}>"
     
-    def jsonForInvoiceTable(self):
+    
+    def jsonForInvoiceTable(self):  # the mini table on invoice/id
         return {
             "id": self.id,
             "material_subtotal": self.material_subtotal,
@@ -31,17 +32,18 @@ class Quote(models.Model):
             "job_description": truncate_description_for_table(self.jobID.description)
         }
     
-    def jsonToDisplayForInvoice(self):
+    def jsonToDisplayForInvoice(self): # for update/create invoice
         return {
             "materialSubtotal": self.material_subtotal,
             "totalPrice": self.total_price,
             "jobDescription": truncate_description_for_table(self.jobID.description),
         }
     
-    def geerate_invoice_global_table_json(self):
+    def geerate_invoice_global_table_json(self): # for pdf invoice
         return {
             "Date": format_date_to_iso_string(self.jobID.end_date),
-            "Job Description": truncate_description_for_table(self.jobID.description),
+            "Job Description": self.jobID.description,
             "Address": format_address(self.jobID.requestor_address, self.jobID.requestor_city, self.jobID.requestor_state, self.jobID.requestor_zip),
-            "Amount": self.total_price if self.discount_type != None else (1 - self.discount_type.discount_percent) * self.total_price
+            "Total Undiscounted": self.total_price,
+            "Discount Percent": self.discount_type.discount_percent
         }

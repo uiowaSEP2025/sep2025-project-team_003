@@ -1,3 +1,4 @@
+import { formatCurrency } from "@angular/common";
 import { Injectable } from "@angular/core";
 
 @Injectable({
@@ -35,4 +36,13 @@ export class StringFormatter {
       
       return `${year}-${month}-${day}`;
     }
+
+    formatPercent(percent: string) {
+      return `${percent} %`
+    }
+
+    formatTaxPercent(percent: string) {
+      return `${percent.split('.')[1]} %`
+    }
+    
 }

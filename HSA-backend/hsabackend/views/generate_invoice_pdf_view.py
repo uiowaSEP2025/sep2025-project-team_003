@@ -15,7 +15,7 @@ def generate_pdf_customer_org_header(pdf: FPDF, org: Organization, invoice: Invo
     pdf.set_font("Times", size=12)
     col_width = pdf.w / 2 - 10  
 
-    pdf.cell(col_width, 10, f"INVOICE ID: #{invoice.pk}", align="L")
+    pdf.cell(col_width, 10, f"INVOICE ID: {invoice.pk}", align="L")
     pdf.cell(col_width, 10, f"{format_title_case(org.org_name)}", align="R")
 
     pdf.ln(5) # 5 is the space between lines
@@ -88,7 +88,8 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
 
     return (res, total)
 
-
+def add_total_and_disclaimer(self):
+    pass
 
 
 
