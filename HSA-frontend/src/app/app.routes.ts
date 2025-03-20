@@ -21,6 +21,7 @@ import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.com
 import { EditInvoicePageComponent } from './pages/edit-invoice-page/edit-invoice-page.component';
 import { JobPageComponent } from './pages/job-page/job-page.component';
 import { ViewJobPageComponent } from './pages/view-job-page/view-job-page.component';
+import { CreateJobPageComponent } from './pages/create-job-page/create-job-page.component';
 
 export const routes: Routes = [
   {
@@ -76,6 +77,9 @@ export const routes: Routes = [
   }, 
   {
     path: 'job/:id', component: ViewJobPageComponent
+  },
+  {
+    path: 'jobs/create', component: CreateJobPageComponent
   },
   {
     path: 'invoices', component: InvoicesPageComponent

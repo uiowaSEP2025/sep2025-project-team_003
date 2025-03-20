@@ -1,0 +1,66 @@
+<div class="parent">
+  <div class="main-heading">
+    @if (customers === null) {
+      <app-loading-fallback stringToDisplay="Loading the job table"></app-loading-fallback>
+    }
+    @else {
+      <h1>
+        <span>Create Jobs</span>
+      </h1>
+      <div class="flex flex-col items-center">
+        <h2 class="pb-5 pt-5">Select a customer</h2>
+        <app-table-component 
+            [loadDataToTable]="loadCustomersToTable.bind(this)" 
+            editRedirect="" 
+            [hideValues]="['Actions', 'Id']"
+            [fetchedData]="customers"
+            checkbox="single"
+            [checkedIds]="selectedCustomers"
+            [setCheckedIds]="setSelectedCustomers.bind(this)"
+            searchHint="Search by customer name"
+            [headers]="['Checkbox','First Name','Last Name', 'Email', 'Phone No']"
+        ></app-table-component>
+        @if (selectedCustomersIsError) {
+            <mat-error class="mt-3">You must select a customer to continue</mat-error>    
+        }
+
+        @if (selectedCustomers.length !== 0) {
+          <app-table-component 
+              [loadDataToTable]="loadServicesToTable.bind(this)" 
+              editRedirect="" 
+              [hideValues]="['Actions', 'Id']"
+              [fetchedData]="services"
+              checkbox="multiple"
+              [checkedIds]="selectedServices"
+              [setCheckedIds]="setSelectedServices.bind(this)"
+              searchHint="Search by service name"
+              [headers]="['Checkbox', 'Service Name', 'Service Description']"
+          ></app-table-component> 
+          @if (selectedServicesIsError) {
+              <mat-error class="mt-3">You must include at least a service to a job</mat-error>    
+          }
+          
+        }
+
+        @if (selectedServices.length !== 0) {
+          <app-table-component 
+              [loadDataToTable]="loadMaterialsToTable.bind(this)" 
+              editRedirect="" 
+              [hideValues]="['Actions', 'Id']"
+              [fetchedData]="materials"
+              checkbox="multiple"
+              [unitUsedField]="true"
+              [pricePerUnitField]="true"
+              [checkedIds]="selectedMaterials"
+              [materialInputFields]="materialInputFields"
+              [setCheckedIds]="setSelectedMaterials.bind(this)"
+              [setMaterialInputFields]="setMaterialInput.bind(this)"
+              searchHint="Search by Material name"
+              [headers]="['Checkbox', 'Material Name', 'Material Description']"
+          ></app-table-component> 
+        }
+      </div>
+    }
+  </div>
+</div>
+

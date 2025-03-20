@@ -29,7 +29,39 @@
         </div>
         } 
         @else if (header === "Checkbox") {
-          <mat-checkbox [checked]="shouldCheckCheckbox(element.id)" (change)="handleCheckBoxClick(element.id)"></mat-checkbox>
+          <mat-checkbox 
+            [checked]="shouldCheckCheckbox(element.id)" 
+            (change)="handleCheckBoxClick(element.id)" 
+            (change)="handleCheckedRowIndex(element.id)"
+          ></mat-checkbox>
+        }
+        @else if (header === "Unit Used") {
+          <mat-form-field>
+            <input
+              [disabled]="!checkedRowIndexes.has(element.id)"
+              matInput
+              type="number"
+              required
+              placeholder="0"
+              [value]="getUnitsUsedValue(element.id)"
+              (input)="handleUnitsUsedField(element.id, $event)"
+            >
+          </mat-form-field>
+        }
+        @else if (header === "Price Per Unit") {
+          <mat-form-field floatLabel="always">
+            <input 
+              [disabled]="!checkedRowIndexes.has(element.id)"
+              matInput
+              type="text" 
+              class="right-align" 
+              placeholder="0.00"
+              [value]="getPricePerUnitValue(element.id)"
+              (input)="handlePricePerUnitField(element.id, $event)"
+            />
+            <span matTextPrefix>$&nbsp;</span>
+          </mat-form-field>
+          
         }
         @else  {
         {{ element[stringFormatter.formatCamelToSnake(header)] }}
@@ -39,7 +71,7 @@
     }
 
     <tr mat-header-row *matHeaderRowDef="headersWithActions"></tr>
-    <tr mat-row class="{{clickableRows ? 'cursor-pointer' : ''}}" (click)="rowClick(row)" *matRowDef="let row; columns: headersWithActions;"></tr>
+    <tr mat-row class="{{clickableRows ? 'cursor-pointer' : ''}}" (click)="rowClick(row)" *matRowDef="let row; columns: headersWithActions; let rowIndex = index"></tr>
   </table>
   <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons [length]="dataSize"></mat-paginator>
 </div>
