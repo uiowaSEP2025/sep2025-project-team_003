@@ -23,3 +23,6 @@ def format_address(street_address, city, state, zipcode):
 
 def format_date_to_iso_string(date: date):
     return date.strftime('%Y-%m-%d')
+
+def format_currency(amount):
+    return f"${amount}"

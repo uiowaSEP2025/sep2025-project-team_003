@@ -8,7 +8,7 @@ from rest_framework import status
 from hsabackend.models.invoice import Invoice
 from hsabackend.models.organization import Organization
 from hsabackend.models.quote import Quote
-from hsabackend.utils.string_formatters import format_title_case, format_phone_number_with_parens, format_maybe_null_date
+from hsabackend.utils.string_formatters import format_title_case, format_phone_number_with_parens, format_maybe_null_date, format_currency
 
 def generate_pdf_customer_org_header(pdf: FPDF, org: Organization, invoice: Invoice):
     pdf.set_auto_page_break(auto=True, margin=15)
@@ -44,33 +44,49 @@ def generate_pdf_customer_org_header(pdf: FPDF, org: Organization, invoice: Invo
 def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
     """
     generates the table showing all jobs, and returns a list of job ids representing the order of 
-    the jobs that are included in the table in order
+    the jobs that are included in the table in order, as well as the total amount
     """
     # no validation checks on if the org owns the quotes, thats done on creation
     quotes = Quote.objects.select_related("jobID").select_related("discount_type").filter(
         invoice=invoice
     ).order_by("-jobID__end_date")
     res = []
-    with pdf.table(line_height=4, padding=2) as table:
+    with pdf.table(line_height=4, padding=2, text_align=("LEFT", "LEFT", "LEFT", "LEFT", "LEFT")) as table:
         # headers
+        cell_border = "TOP"
+
         row = table.row()
-        row.cell("Job Number")
-        row.cell("Date")
-        row.cell("Job Description")
-        row.cell("Address")
-        row.cell("Amount")
+        row.cell("Job Number", border=cell_border)
+        row.cell("Date",border=cell_border)
+        row.cell("Job Description", border=cell_border)
+        row.cell("Address", border=cell_border)
+        row.cell("Amount", border=cell_border)
         
+        # amount is a decimal type
+        total = 0
+
         cnt = 1
         for quote in quotes:
             res.append(quote.jobID.pk)
             row = table.row()
             json = quote.geerate_invoice_global_table_json()
-            row.cell(str(cnt))
-            row.cell(json["Date"])
-            row.cell(json["Job Description"])
-            row.cell(json["Address"])
-            row.cell(str(json["Amount"]))
+            row.cell(str(cnt), border=cell_border)
+            row.cell(json["Date"], border=cell_border)
+            row.cell(json["Job Description"], border=cell_border)
+            row.cell(json["Address"], border=cell_border)
+            total += json["Amount"]
+            row.cell(str(format_currency(json["Amount"])), border=cell_border)
             cnt += 1
+
+        totals_row = table.row()
+        totals_row.cell("Total:", border=cell_border)
+        totals_row.cell("", border=cell_border)
+        totals_row.cell("", border=cell_border)
+        totals_row.cell("", border=cell_border)
+        totals_row.cell(str(format_currency(total)), border=cell_border)
+
+
+
 
 
 
@@ -98,7 +114,6 @@ def generate_pdf(request, id):
 
     generate_pdf_customer_org_header(pdf,org,inv)
     generate_global_jobs_table(pdf, inv)
-
 
     # Save PDF to a BytesIO buffer
     pdf_buffer = io.BytesIO()

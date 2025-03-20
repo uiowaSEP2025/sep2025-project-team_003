@@ -267,12 +267,16 @@ class Command(BaseCommand):
             # Generate 5 mock Job instances
             for i in range(5):
                 j = Job.objects.create(
-                    job_status=random.choice(['created', 'completed']),
+                    job_status=random.choice(['completed']),
                     start_date=timezone.now().date(),
                     end_date=timezone.now().date() + timezone.timedelta(days=random.randint(1, 30)),
                     description=random.choice(job_descriptions),
                     organization=org,
-                    customer=customers[i]
+                    customer=customers[i],
+                    requestor_city = "Iowa City",
+                    requestor_state = "2 W Washington St",
+                    requestor_zip = "52240",
+                    requestor_address = "IA"
                 )
                 j.save()
 
@@ -282,7 +286,11 @@ class Command(BaseCommand):
                     end_date=timezone.now().date() + timezone.timedelta(days=random.randint(1, 30)),
                     description=random.choice(job_descriptions) + " test",
                     organization=org1,
-                    customer=customers_1[i]
+                    customer=customers_1[i],
+                    requestor_city = "Iowa City",
+                    requestor_state = "2 W Washington St",
+                    requestor_zip = "52240",
+                    requestor_address = "IA"
                 )
                 j.save()
 
@@ -314,14 +322,14 @@ class Command(BaseCommand):
                 due_date = issuance_date + timezone.timedelta(days=30)
                 status = 'created' if i % 2 == 0 else 'accepted'
                 material_subtotal = 1000.0 * (i + 1)
-                total_price = material_subtotal * 0.9  # 10% discount
+                total_price = material_subtotal 
                 jobID = jobs_org_1[i]
                 
 
                 q = Quote.objects.create(
                     issuance_date=issuance_date,
                     due_date=due_date,
-                    status=status,
+                    status='accepted',
                     material_subtotal=material_subtotal,
                     total_price=total_price,
                     jobID=jobID,
@@ -333,7 +341,7 @@ class Command(BaseCommand):
                 due_date = issuance_date + timezone.timedelta(days=30)
                 status = 'created' if i % 2 == 0 else 'accepted'
                 material_subtotal = 1000.0 * (i + 1)
-                total_price = material_subtotal * 0.9  # 10% discount
+                total_price = material_subtotal 
                 jobID = jobs_org[i]
                 
 
@@ -347,6 +355,33 @@ class Command(BaseCommand):
                     discount_type = random.choice(discounts)
                     )
                 q.save()
+
+            # create another job and tie a quote to it
+            j = Job.objects.create(
+                    job_status=random.choice(['completed']),
+                    start_date=timezone.now().date(),
+                    end_date=timezone.now().date() + timezone.timedelta(days=random.randint(1, 30)),
+                    description=random.choice(job_descriptions),
+                    organization=org,
+                    customer=customers[1],
+                    requestor_city = "Iowa City",
+                    requestor_state = "2 W Washington St",
+                    requestor_zip = "52240",
+                    requestor_address = "IA"
+                )
+            j.save()
+
+            q = Quote.objects.create(
+                    issuance_date=issuance_date,
+                    due_date=due_date,
+                    status='accepted',
+                    material_subtotal=material_subtotal,
+                    total_price=total_price,
+                    jobID=j,
+                    discount_type = random.choice(discounts_1)
+                    )
+            q.save()
+
 
 
             for i in range(5):
