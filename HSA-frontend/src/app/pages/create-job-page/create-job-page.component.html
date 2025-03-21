@@ -118,10 +118,11 @@
               formControlName = "jobDescription"
               matInput
             >
+            @if (jobForm.get('jobDescription')?.touched && jobForm.get('jobDescription')?.hasError('required')) {
+              <mat-error>Job Description is required</mat-error>
+            }
           </mat-form-field>
-          @if (jobForm.get('jobDescription')?.touched && jobForm.get('jobDescription')?.hasError('required')) {
-            <mat-error>Job Description is required</mat-error>
-          }
+          
         </form>
       </div>
     }

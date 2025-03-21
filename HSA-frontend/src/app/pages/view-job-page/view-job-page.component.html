@@ -1,7 +1,5 @@
 <div class="parent">
   <div class="main-heading">
-    
-
     @if (jobData === null) {
       <app-loading-fallback stringToDisplay="Loading the job"></app-loading-fallback>
     }
@@ -35,6 +33,10 @@
               <tr>
                 <td>Description</td>
                 <td>{{jobData.data.description}}</td>
+              </tr>
+              <tr>
+                <td>Address</td>
+                <td>{{jobData.data.requestorAddress + ", " + jobData.data.requestorCity + ", " + jobData.data.requestorState + " " + jobData.data.requestorZip}}</td>
               </tr>
               <tr>
                 <td>Job ID</td>

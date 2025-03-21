@@ -15,6 +15,17 @@
         <th mat-header-cell *matHeaderCellDef> Service Description </th>
         <td mat-cell *matCellDef="let element"> {{ element["Service Description"] }} </td>
       </ng-container>
+
+      @if (isEditRow === true) {
+        <ng-container matColumnDef="Actions">
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-mini-fab click-stop-propagation (click)="openDeleteDialog(element, 'service')">     
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+      }
   
       <tr mat-header-row *matHeaderRowDef="displayedServiceColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedServiceColumns;" ></tr>
@@ -48,6 +59,17 @@
         <td mat-cell *matCellDef="let element"> {{ element["Price Per Unit"] }} </td>
       </ng-container>
 
+      @if (isEditRow === true) {
+        <ng-container matColumnDef="Actions">
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-mini-fab click-stop-propagation (click)="openDeleteDialog(element, 'material')">     
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+      }
+
       <tr mat-header-row *matHeaderRowDef="displayedMaterialColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedMaterialColumns;" ></tr>
     </table>
@@ -74,6 +96,17 @@
         <th mat-header-cell *matHeaderCellDef> Contractor Email </th>
         <td mat-cell *matCellDef="let element"> {{ element["Contractor Email"] }} </td>
       </ng-container>
+
+      @if (isEditRow === true) {
+        <ng-container matColumnDef="Actions">
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-mini-fab click-stop-propagation (click)="openDeleteDialog(element, 'contractor')">     
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+      }
 
       <tr mat-header-row *matHeaderRowDef="displayedContractorColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedContractorColumns;" ></tr>

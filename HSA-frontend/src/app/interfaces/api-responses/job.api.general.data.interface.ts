@@ -7,5 +7,8 @@ export interface JobGeneralDataInterface {
     description: string,
     customerName: string,
     customerID: number,
-    requestorFullAddress: string,
+    requestorAddress: string,
+    requestorCity: string,
+    requestorState: string,
+    requestorZip: string,
 }

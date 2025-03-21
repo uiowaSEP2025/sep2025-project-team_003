@@ -22,7 +22,15 @@ interface JobCreatePostData {
 
 interface JobEditPostData {
   id: number | null,
-
+  jobStatus: string | null,
+  startDate: string | null,
+  endDate: string | null,
+  description: string | null,
+  customerID: number | null,
+  city: string | null,
+  state: string | null,
+  zip: string | null,
+  address: string | null,
 }
 
 interface JobDeletePostData {

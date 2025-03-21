@@ -35,7 +35,10 @@ class Job(models.Model):
             'description': self.description,
             'customerName': self.customer.first_name + " " + self.customer.last_name,
             'customerID': self.customer.id,
-            'requestorFullAddress': self.requestor_address + ", " + self.requestor_city + ", " + self.requestor_state + " " + self.requestor_zip
+            'requestorAddress': self.requestor_address,
+            "requestorCity": self.requestor_city,
+            "requestorState": self.requestor_state,
+            "requestorZip": self.requestor_zip
         }
     
     def json_simplify(self):

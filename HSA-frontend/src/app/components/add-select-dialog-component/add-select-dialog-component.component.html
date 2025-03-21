@@ -1,0 +1,29 @@
+<div class="dialog-content">
+	<h2 mat-dialog-title>Select new {{ this.typeOfDialog }}</h2>
+	<mat-dialog-content>
+		@if (dialogData === null) {
+			<app-loading-fallback stringToDisplay="Loading the job"></app-loading-fallback>
+		}
+		@else {
+			<app-table-component 
+				[loadDataToTable]="typeOfDialog === 'service' ? this.loadServicesToTable.bind(this) : typeOfDialog === 'material' ? this.loadMaterialsToTable.bind(this): this.loadContractorsToTable.bind(this)" 
+				editRedirect="" 
+				[hideValues]="['Actions', 'Id']"
+				[fetchedData]="this.dialogData"
+				checkbox="multiple"
+				[unitUsedField]="this.isMaterial"
+				[pricePerUnitField]="this.isMaterial"
+				[checkedIds]="this.selectedItems"
+				[materialInputFields]="this.materialInputFields"
+				[setCheckedIds]="this.setSelectedItems"
+				[setMaterialInputFields]="this.setMaterialInput"
+				[searchHint]="this.searchHint"
+			></app-table-component> 
+		}
+	</mat-dialog-content>
+	<mat-dialog-actions>
+		<button mat-stroked-button (click)="onCancel()">Cancel</button>
+		<button mat-flat-button type="submit" (click)="onConfirm()">Add</button>
+	</mat-dialog-actions>
+</div>
+

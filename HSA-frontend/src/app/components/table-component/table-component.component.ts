@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewInit, Input, input, OnChanges, SimpleChanges, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, Input, input, OnChanges, SimpleChanges, ChangeDetectorRef, OnDestroy, ElementRef } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
@@ -75,9 +75,13 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
 
   data = new MatTableDataSource(this.fetchedData ?? []);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild('tableContainer') tableContainer!: ElementRef<HTMLElement>;
+
+  focusTable() {
+    this.tableContainer.nativeElement.focus();
+  }
 
   ngAfterViewInit() {
-    
     if (this.dataSubscription) {
       this.dataSubscription.unsubscribe();
     }
@@ -172,6 +176,15 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
         }
       }
     }
+
+    // console.log(this.checkbox)
+    // console.log(this.fetchedData)
+    // console.log(this.loadDataToTable)
+    // console.log(this.setCheckedIds)
+    // console.log(this.searchHint)
+    // console.log(this.headersWithActions)
+    // console.log(this.materialInputFields)
+    // console.log(this.setMaterialInputFields)
   }
 
   rowClick(element: any) {

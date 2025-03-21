@@ -36,7 +36,6 @@ interface State {
     MatFormFieldModule,
     InvoiceDatePickerComponent,
     MatSelectModule,
-    MatInputModule,
     LoadingFallbackComponent,
     MatFormFieldModule,
     MatInputModule,
@@ -148,7 +147,6 @@ export class CreateJobPageComponent implements OnInit {
     this.contractorService.getContractor({ search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
       next: (response) => {
         this.contractors = response
-        console.log(this.contractors)
       },
       error: (error) => {
         this.errorHandler.handleError(error)
@@ -219,7 +217,6 @@ export class CreateJobPageComponent implements OnInit {
 
   setMaterialInput(inputField: InputFieldDictionary[]) {
     this.materialInputFields = inputField
-    console.log(this.materialInputFields)
   }
 
   setPricePerUnit(inputField: number) {
@@ -276,11 +273,9 @@ export class CreateJobPageComponent implements OnInit {
       services: servicesField as [],
       materials: this.materialInputFields as []
     }
-    console.log(requestJson)
     this.jobService.createJob(requestJson).subscribe(
       {
         next: (response) => {
-          console.log(response)
           this.router.navigate(['/jobs']);
         },
         error: (error) => {
