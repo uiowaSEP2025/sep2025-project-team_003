@@ -54,15 +54,12 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
     res = []
     greyscale = 215 # higher no --> lighter grey
     with pdf.table(line_height=4, padding=2, text_align=("LEFT", "LEFT", "LEFT", "LEFT", "LEFT"), borders_layout="SINGLE_TOP_LINE", cell_fill_color=greyscale, cell_fill_mode="ROWS") as table:
-        # headers
-        cell_border = "TOP"
-
-        row = table.row()
-        row.cell("Job Number")
-        row.cell("Date")
-        row.cell("Job Description")
-        row.cell("Address")
-        row.cell("Amount")
+        header = table.row()
+        header.cell("Job Number")
+        header.cell("Date")
+        header.cell("Job Description")
+        header.cell("Address")
+        header.cell("Amount")
         
         # amount is a decimal type
         total = Decimal(0)
@@ -71,23 +68,23 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
         cnt = 1
         for quote in quotes:
             res.append(quote.jobID.pk)
-            row = table.row()
+            quote_row = table.row()
             json = quote.geerate_invoice_global_table_json()
-            row.cell(str(cnt))
-            row.cell(json["Date"])
-            row.cell(json["Job Description"])
-            row.cell(json["Address"])
+            quote_row.cell(str(cnt))
+            quote_row.cell(json["Date"])
+            quote_row.cell(json["Job Description"])
+            quote_row.cell(json["Address"])
             total += json["Total Undiscounted"]
-            row.cell(str(json["Total Undiscounted"]))
+            quote_row.cell(str(json["Total Undiscounted"]))
             total_discnt_aggregate += json["Discount Percent"]
             cnt += 1
 
-        totals_row = table.row()
-        totals_row.cell("Original Total: ")
-        totals_row.cell("")
-        totals_row.cell("")
-        totals_row.cell("")
-        totals_row.cell(str(format_currency(total)))
+        undiscounted_total_row = table.row()
+        undiscounted_total_row.cell("Original Total: ")
+        undiscounted_total_row.cell("")
+        undiscounted_total_row.cell("")
+        undiscounted_total_row.cell("")
+        undiscounted_total_row.cell(str(format_currency(total)))
 
         total_discnt_aggregate = total_discnt_aggregate/len(quotes) # ex 30.01%
         math_discount_percent = Decimal(f"0.{str(100 - total_discnt_aggregate).replace('.', "")}")
