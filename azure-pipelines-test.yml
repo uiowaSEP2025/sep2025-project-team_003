@@ -34,7 +34,7 @@ stages:
         # SSH into remote server and deploy
         ssh -i ~/.ssh/id_rsa \
             -o StrictHostKeyChecking=no \
-            root@$(SERVER_IP) \
+            bananabread@$(SERVER_IP) \
             -p 22 \
             '
             wall hey
