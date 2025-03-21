@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal, ROUND_HALF_UP
 
 def format_title_case(s: str):
     words = s.split()
@@ -24,5 +25,9 @@ def format_address(street_address, city, state, zipcode):
 def format_date_to_iso_string(date: date):
     return date.strftime('%Y-%m-%d')
 
-def format_currency(amount):
-    return f"${amount}"
+def format_currency(amount:Decimal):
+    formatted_amount = amount.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)  # Ensure two decimal places
+    return f"${formatted_amount}"
+
+def format_percent(s:str):
+    return f"{s} %"

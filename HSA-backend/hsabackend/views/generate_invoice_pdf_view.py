@@ -8,7 +8,8 @@ from rest_framework import status
 from hsabackend.models.invoice import Invoice
 from hsabackend.models.organization import Organization
 from hsabackend.models.quote import Quote
-from hsabackend.utils.string_formatters import format_title_case, format_phone_number_with_parens, format_maybe_null_date, format_currency
+from hsabackend.utils.string_formatters import format_title_case, format_phone_number_with_parens, format_maybe_null_date, format_currency, format_percent
+from decimal import Decimal
 
 def generate_pdf_customer_org_header(pdf: FPDF, org: Organization, invoice: Invoice):
     pdf.set_auto_page_break(auto=True, margin=15)
@@ -64,7 +65,8 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
         row.cell("Amount")
         
         # amount is a decimal type
-        total = 0
+        total = Decimal(0)
+        total_discnt_aggregate = Decimal(0)
 
         cnt = 1
         for quote in quotes:
@@ -75,21 +77,70 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
             row.cell(json["Date"])
             row.cell(json["Job Description"])
             row.cell(json["Address"])
-            total += json["Amount"]
-            row.cell(str(format_currency(json["Amount"])))
+            total += json["Total Undiscounted"]
+            row.cell(str(json["Total Undiscounted"]))
+            total_discnt_aggregate += json["Discount Percent"]
             cnt += 1
 
         totals_row = table.row()
-        totals_row.cell("Total: ")
+        totals_row.cell("Original Total: ")
         totals_row.cell("")
         totals_row.cell("")
         totals_row.cell("")
         totals_row.cell(str(format_currency(total)))
 
-    return (res, total)
+        total_discnt_aggregate = total_discnt_aggregate/len(quotes) # ex 30.01%
+        math_discount_percent = Decimal(f"0.{str(100 - total_discnt_aggregate).replace('.', "")}")
+        discounted_total = total * math_discount_percent
 
-def add_total_and_disclaimer(self):
-    pass
+        is_discounted = discounted_total != total
+
+        if is_discounted:
+            discounted_total = table.row()
+            discounted_total.cell("Discount Percent: ")
+            discounted_total.cell("")
+            discounted_total.cell("")
+            discounted_total.cell("")
+            discounted_total.cell(str(format_percent(total_discnt_aggregate)))
+
+            discounted_amout = total * math_discount_percent
+            discounted_total = table.row()
+            discounted_total.cell("Discounted Price: ")
+            discounted_total.cell("")
+            discounted_total.cell("")
+            discounted_total.cell("")
+            discounted_total.cell(str(format_currency(discounted_amout)))
+
+        total_with_tax = (1 + invoice.tax) * discounted_amout
+        tax_amount_row = table.row()
+        tax_amount_row.cell("Tax Amount: ")
+        tax_amount_row.cell("")
+        tax_amount_row.cell("")
+        tax_amount_row.cell("")
+        tax_amount_row.cell(str(format_currency(total_with_tax - discounted_amout)))
+
+        grand_total_row = table.row()
+        grand_total_row.cell("Total:")
+        grand_total_row.cell("")
+        grand_total_row.cell("")
+        grand_total_row.cell("")
+        grand_total_row.cell(str(format_currency(total_with_tax)))
+
+    return (res, total_with_tax)
+
+def add_total_and_disclaimer(pdf: FPDF):
+    disclaimer_text = """
+        Disclaimer: The information on this invoice has been consolidated from reliable sources; however, 
+        it may not always be entirely accurate. If you notice any discrepancies, please address them directly 
+        with the handyman listed on the invoice. You remain responsible for paying the original agreed-upon 
+        amount, regardless of any errors or inconsistencies in this document.
+        """
+    pdf.ln(5) 
+
+    
+
+    pdf.multi_cell(0, text=disclaimer_text, align="R")
+
 
 
 
@@ -118,6 +169,7 @@ def generate_pdf(request, id):
 
     generate_pdf_customer_org_header(pdf,org,inv)
     job_ids, total = generate_global_jobs_table(pdf, inv)
+    add_total_and_disclaimer(pdf)
 
     # Save PDF to a BytesIO buffer
     pdf_buffer = io.BytesIO()

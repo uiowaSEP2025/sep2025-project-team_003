@@ -3,6 +3,7 @@ from hsabackend.models.discount_type import DiscountType
 from hsabackend.models.job import Job
 from hsabackend.models.invoice import Invoice
 from hsabackend.utils.string_formatters import truncate_description_for_table, format_address, format_date_to_iso_string
+from decimal import Decimal
 
 class Quote(models.Model):
     """The price for a job that the organization sends to the customer for approval"""
@@ -45,5 +46,5 @@ class Quote(models.Model):
             "Job Description": self.jobID.description,
             "Address": format_address(self.jobID.requestor_address, self.jobID.requestor_city, self.jobID.requestor_state, self.jobID.requestor_zip),
             "Total Undiscounted": self.total_price,
-            "Discount Percent": self.discount_type.discount_percent
+            "Discount Percent": self.discount_type.discount_percent if self.discount_type.discount_percent else Decimal(0)
         }

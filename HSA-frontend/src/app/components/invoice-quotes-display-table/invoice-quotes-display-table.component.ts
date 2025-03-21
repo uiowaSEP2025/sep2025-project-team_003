@@ -59,7 +59,7 @@ export class InvoiceQuotesDisplayTableComponent implements OnInit {
     this.displayQuotes.push({
       "Material Subtotal": "",
       "Total Price": `${grandTotal}`,
-      "Job Description": "Tax"
+      "Job Description": "Total"
     })
   }
 
