@@ -30,4 +30,10 @@ def format_currency(amount:Decimal):
     return f"${formatted_amount}"
 
 def format_percent(s:str):
+    """Only things like 30.00 -> 30.00%"""
     return f"{s} %"
+
+def format_tax_percent(s:str):
+    percent = s.split('.')[1]
+    return f"{percent} %"
+

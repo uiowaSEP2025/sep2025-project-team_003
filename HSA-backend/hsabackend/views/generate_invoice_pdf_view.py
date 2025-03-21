@@ -8,7 +8,7 @@ from rest_framework import status
 from hsabackend.models.invoice import Invoice
 from hsabackend.models.organization import Organization
 from hsabackend.models.quote import Quote
-from hsabackend.utils.string_formatters import format_title_case, format_phone_number_with_parens, format_maybe_null_date, format_currency, format_percent
+from hsabackend.utils.string_formatters import format_title_case, format_phone_number_with_parens, format_maybe_null_date, format_currency, format_percent, format_tax_percent
 from decimal import Decimal
 
 def generate_pdf_customer_org_header(pdf: FPDF, org: Organization, invoice: Invoice):
@@ -108,6 +108,13 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
             discounted_price_row.cell("")
             discounted_price_row.cell(str(format_currency(discounted_amout)))
 
+        tax_percent_row = table.row()
+        tax_percent_row.cell("Tax Amount: ")
+        tax_percent_row.cell("")
+        tax_percent_row.cell("")
+        tax_percent_row.cell("")
+        tax_percent_row.cell(format_tax_percent(str(invoice.tax)))
+
         total_with_tax = (1 + invoice.tax) * discounted_amout
         tax_amount_row = table.row()
         tax_amount_row.cell("Tax Amount: ")
@@ -125,22 +132,23 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
 
     return (res, total_with_tax)
 
-def add_total_and_disclaimer(pdf: FPDF):
+def add_total_and_disclaimer(pdf: FPDF, total, org_name):
     disclaimer_text = """
-        Disclaimer: The information on this invoice has been consolidated from reliable sources; however, 
+        *Disclaimer: The information on this invoice has been consolidated from reliable sources; however, 
         it may not always be entirely accurate. If you notice any discrepancies, please address them directly 
         with the handyman listed on the invoice. You remain responsible for paying the original agreed-upon 
         amount, regardless of any errors or inconsistencies in this document.
         """
     pdf.ln(5) 
+    pdf.set_left_margin(10) # don't remove or it will mess up alignment
+    pdf.multi_cell(0, text=f"Please make payment to {format_title_case(org_name)} for amount $ {format_currency(total)}*", align="L")
+    pdf.ln(5) 
+    pdf.set_left_margin(0) # don't remove or it will mess up alignmentpdf.set_y(-20)  # Move to 20 units above the bottom
+    pdf.set_y(-40)  # Move to 20 units above the bottom
+    pdf.multi_cell(0, text=disclaimer_text, align="C")
 
-    
-
-    pdf.multi_cell(0, text=disclaimer_text, align="R")
-
-
-
-
+def generate_table_for_specific_job(jobid):
+    pass
 
 @api_view(["GET"])
 def generate_pdf(request, id):
@@ -166,8 +174,8 @@ def generate_pdf(request, id):
 
     generate_pdf_customer_org_header(pdf,org,inv)
     job_ids, total = generate_global_jobs_table(pdf, inv)
-    add_total_and_disclaimer(pdf)
-
+    add_total_and_disclaimer(pdf, total, org.org_name)
+    print(pdf.page_no())
     # Save PDF to a BytesIO buffer
     pdf_buffer = io.BytesIO()
     pdf.output(pdf_buffer)
