@@ -93,20 +93,20 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
         is_discounted = discounted_total != total
 
         if is_discounted:
-            discounted_total = table.row()
-            discounted_total.cell("Discount Percent: ")
-            discounted_total.cell("")
-            discounted_total.cell("")
-            discounted_total.cell("")
-            discounted_total.cell(str(format_percent(total_discnt_aggregate)))
+            discount_percent_row = table.row()
+            discount_percent_row.cell("Discount Percent: ")
+            discount_percent_row.cell("")
+            discount_percent_row.cell("")
+            discount_percent_row.cell("")
+            discount_percent_row.cell(str(format_percent(total_discnt_aggregate)))
 
             discounted_amout = total * math_discount_percent
-            discounted_total = table.row()
-            discounted_total.cell("Discounted Price: ")
-            discounted_total.cell("")
-            discounted_total.cell("")
-            discounted_total.cell("")
-            discounted_total.cell(str(format_currency(discounted_amout)))
+            discounted_price_row = table.row()
+            discounted_price_row.cell("Discounted Price: ")
+            discounted_price_row.cell("")
+            discounted_price_row.cell("")
+            discounted_price_row.cell("")
+            discounted_price_row.cell(str(format_currency(discounted_amout)))
 
         total_with_tax = (1 + invoice.tax) * discounted_amout
         tax_amount_row = table.row()
