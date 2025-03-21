@@ -31,16 +31,25 @@ stages:
 - stage: Deploy
   displayName: Deploy to K3s Dev Server
   jobs:
-  - job: Deploy
+  - job: DeployToK3s
     steps:
-    - task: InstallSSHKey@0
-      inputs:
-        knownHostsEntry: '$(SERVER_IP) $(SSH Public Key)'
-        sshPublicKey: $(SSH Public Key)
-        sshKeySecureFile: 'id_rsa'
+    - script: |
+        # Create SSH directory
+        mkdir -p ~/.ssh
+        
+        # Write private key to file
+        echo "$(PRIVATE_KEY)" | tr -d '\r' > ~/.ssh/id_rsa
+        
+        # Set correct permissions
+        chmod 600 ~/.ssh/id_rsa
+        
+        # Add known hosts
+        ssh-keyscan -H $(DATABASE_IP) >> ~/.ssh/known_hosts
+      displayName: 'Prepare SSH Key'
+
     - script: |
         # SSH into remote server and deploy
-        ssh -i id_rsa \
+        ssh -i ~/.ssh/id_rsa \
             -o StrictHostKeyChecking=no \
             root@$(SERVER_IP) \
             -p 22 \
