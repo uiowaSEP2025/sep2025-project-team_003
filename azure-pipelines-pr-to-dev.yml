@@ -11,7 +11,8 @@ resources:
 - repo: self
 
 variables:
-  tag: '$(Build.BuildId)'
+  tag: 'latest'
+  group: dev-db-secrets
 
 stages:
 - stage: Build
@@ -24,7 +25,23 @@ stages:
     steps:
     - script: |
         echo $(Docker Token) | docker login -u $(Docker Username) --password-stdin
-        docker build -f '$(Build.SourcesDirectory)'/staging/Dockerfile -t $(Docker Username)/hsa:$(Build.BuildId)  .
-        docker push $(Docker Username)/hsa:$(Build.BuildId)
+        docker build --build-arg DATABASE_IP="$(DATABASE_IP)" --build-arg DATABASE_NAME="$(DATABASE_NAME)" --build-arg DATABASE_USERNAME="$(DATABASE_USERNAME)" --build-arg DATABASE_PASSWORD="$(DATABASE_PASSWORD)" -f '$(Build.SourcesDirectory)'/staging/Dockerfile -t $(Docker Username)/hsa:latest  .
+        docker push $(Docker Username)/hsa:latest
       displayName: Run Docker build and push Scripts
-
+- stage: Deploy
+  displayName: Deploy image from Docker Hub to K3s
+  jobs:
+  - job: Deployment
+    steps:
+    - task: InstallSSHKey@0
+      inputs:
+        knownHostsEntry: '192.169.178.198'
+        sshPublicKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCuyBwp3syM5kIuDHGTPeTQleW5UxpeJe1m7fT44Z74mOpA29kn+XBaGorEyB4OTOWrWg+KXjmMcfUKt0VTHtpqGRhc1ScFFENhh+4VrSvJjKV+uploILC6+Y09vln6MKOiofqKnqbjPBPVMv3AQCoXDf/cqMjNF42Zfg2ovJ96Ge4HUj+sBjdrP9yhQW4L8EI5QctxHKKkZEbZ4FtA2MeL1MsCwcJnEcThLYvTPD68BaIMHPBr87DgTzrX+l5OTX1swz6Wl2fSlqXGXtYDbFfFQEYiyOkizKqW0DwlvV5rm0zLBjPTYjHFN/M6H77u9+jWcpDyxnhBU0Kqv9mhMrd'
+        sshPassphrase: '$(SSH Passphrase)'
+        sshKeySecureFile: 'id_rsa'
+        configHostAlias: 'sshKey'
+        configHostname: '192.169.178.198'
+        addEntryToConfig: true
+      displayName: 'Install SSH Key'
+    - bash: ssh root@192.169.178.198 -o StrictHostKeyChecking=no "echo $(Docker Token) | docker login -u $(Docker Username) --password-stdin && docker pull ssankey3590/hsa:latest && kubectl apply -f ~/k8s-manifests/handyman-services-deployment.yaml && kubectl rollout restart deployment handyman-services-deployment && kubectl rollout status deployment handyman-services-deployment && exit"
+      displayName: Connect to dev server and run deployment script
