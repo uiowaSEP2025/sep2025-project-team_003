@@ -10,6 +10,7 @@ import { MaterialService } from '../../services/material.service';
 import { ContractorService } from '../../services/contractor.service';
 import { ErrorHandlerService } from '../../services/error.handler.service';
 import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.component';
+import { CustomerService } from '../../services/customer.service';
 
 @Component({
   selector: 'app-add-select-dialog-component',
@@ -31,11 +32,14 @@ export class AddSelectDialogComponentComponent {
   allDataEntries: any[] = []
   searchHint: string = '';
   headers: string[] = []
+  customers: any
   services: any
   materials: any
   contractors: any
   tableItems: any
   selectedItems: any = []
+  selectedCustomer: any = []
+  selectedCustomerIsError: boolean = false
   selectedServices: any = []
   selectedServicesIsError: boolean = false
   selectedMaterials: any = []
@@ -49,6 +53,7 @@ export class AddSelectDialogComponentComponent {
   constructor(
     public dialogRef: MatDialogRef<AddSelectDialogComponentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AddSelectDialogData,
+    private customerService: CustomerService,
     private serviceService: ServiceService,
     private materialService: MaterialService,
     private contractorService: ContractorService,
@@ -64,14 +69,17 @@ export class AddSelectDialogComponentComponent {
 
   ngOnInit() {
     switch(this.typeOfDialog) {
+      case 'customer':
+        this.loadCustomersToTable('', 5, 0);
+        break;
       case 'service':
-        this.loadServicesToTable('', 5, 0)
+        this.loadServicesToTable('', 5, 0);
         break;
       case 'material':
-        this.loadMaterialsToTable('', 5, 0)
+        this.loadMaterialsToTable('', 5, 0);
         break;
       case 'contractor':
-        this.loadContractorsToTable('', 5, 0)
+        this.loadContractorsToTable('', 5, 0);
         break;
     }
   }
@@ -84,6 +92,19 @@ export class AddSelectDialogComponentComponent {
     });
     return IDs;
   }
+
+  loadContractorsToTable(searchTerm: string, pageSize: number, offSet: number) {
+    this.contractorService.getExcludedContractor({ excludeIDs: this.getIDsFromData(this.data.dialogData.contractors, 'contractorID'), search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
+      next: (response) => {
+        this.dialogData = response;
+        this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
+      },
+      error: (error) => {
+        this.errorHandler.handleError(error);
+      }
+    });
+  }
+
 
   loadServicesToTable(searchTerm: string, pageSize: number, offSet: number) {
     this.serviceService.getExcludedService({ excludeIDs: this.getIDsFromData(this.data.dialogData.services, 'serviceID'), search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
@@ -109,8 +130,8 @@ export class AddSelectDialogComponentComponent {
     });
   }
 
-  loadContractorsToTable(searchTerm: string, pageSize: number, offSet: number) {
-    this.contractorService.getExcludedContractor({ excludeIDs: this.getIDsFromData(this.data.dialogData.contractors, 'contractorID'), search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
+  loadCustomersToTable(searchTerm: string, pageSize: number, offSet: number) {
+    this.customerService.getExcludedCustomer({ excludeIDs: [this.data.dialogData], search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
       next: (response) => {
         this.dialogData = response;
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
@@ -121,11 +142,19 @@ export class AddSelectDialogComponentComponent {
     });
   }
 
+  setSelectedCustomer(customers: number[]) {
+    this.selectedCustomer = [...customers];
+    this.selectedItems = this.selectedCustomer;
+    this.selectedCustomerIsError = this.selectedCustomer === null ? true : false
+    this.isNotSelectedItems = this.selectedCustomer === null ? true : false
+  }
+
   setSelectedServices(services: number[]) {
     this.selectedServices = [...services];
     this.selectedItems = this.selectedServices;
     this.selectedServicesIsError = this.selectedServices.length === 0 ? true : false;
     this.isNotSelectedItems = this.selectedServices.length === 0 ? true : false;
+    
   }
 
   setSelectedMaterials(materials: number[]) {
@@ -187,7 +216,13 @@ export class AddSelectDialogComponentComponent {
 
     this.dialogRef.close(
       {
-        selectedItems: this.typeOfDialog === 'service' ? this.selectedServices : this.typeOfDialog === 'contractor' ? this.selectedContractors : this.materialInputFields,
+        selectedItems: this.typeOfDialog === 'customer' 
+        ? this.selectedCustomer[0]
+        : this.typeOfDialog === 'service' 
+          ? this.selectedServices 
+          : this.typeOfDialog === 'contractor' 
+            ? this.selectedContractors 
+            : this.materialInputFields,
         itemsInfo: itemsInfo
       }
     );

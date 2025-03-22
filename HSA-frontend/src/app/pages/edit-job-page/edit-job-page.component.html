@@ -17,19 +17,16 @@
                 <table class="info-table">
                     <tr>
                       <td>Customer</td>
-                      <td>{{jobData.data.customerName}}</td>
-                      <!-- <td>
-                        <mat-form-field appearance="fill" class="full-width">
-                            <input
-                              formControlName = "customerName"
-                              matInput
-                              required
-                            >
-                            @if (jobForm.get('customerName')?.touched && jobForm.get('customerName')?.hasError('required')) {
-                              <mat-error>Customer name is required</mat-error>
-                            }
-                          </mat-form-field>
-                      </td> -->
+                      <td>
+                        <div class="customer-box-container">
+                          <span 
+                            class="customer-name-span"
+                          >
+                            {{this.jobForm.get('customerName')?.value}} 
+                          </span>
+                          <button type="button" mat-flat-button (click)="this.openChangeCustomerDialog()">Change customer</button>
+                        </div>
+                      </td>
                     </tr>
                     <tr>
                       <td>Status</td>

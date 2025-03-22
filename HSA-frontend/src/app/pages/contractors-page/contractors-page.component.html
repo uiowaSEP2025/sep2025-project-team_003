@@ -1,13 +1,23 @@
-<div class="flex flex-col items-center">
-    <app-table-component 
-    editRedirect="/contractors/edit" 
-    [fetchedData]="contractors" 
-    [deleteRequest]="contractorService.deleteContractor.bind(contractorService)"
-    [loadDataToTable]="this.loadDataToTable.bind(this)"
-    searchHint="TODO: Change it to something reasonable"
-    ></app-table-component>
-    <button mat-fab extended class="m-10" (click)="navigateToPage('contractors/create')">
+<div class="parent">
+    <div class="main-heading">
+      <h1>
+        <span>Contractors</span>
+      </h1>
+      <app-table-component 
+        editRedirect="/contractors/edit" 
+        [fetchedData]="contractors"
+        [deleteRequest]="contractorService.deleteContractor.bind(contractorService)"
+        [loadDataToTable]="this.loadDataToTable.bind(this)"
+        [hideValues]="['Id']"
+        searchHint="Search by contractor name"
+        [headers]="['First Name', 'Last Name', 'Phone Number', 'Email']"
+      ></app-table-component>
+        
+    </div>
+    <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">  
+      <button mat-fab extended class="m-10" id="add-contractor-button" (click)="navigateToPage('contractors/create')">
         <mat-icon>note_add</mat-icon>
-        Add a Contractor
-    </button>
-</div>
+        Add a contractor
+      </button>
+    </div>
+  </div>

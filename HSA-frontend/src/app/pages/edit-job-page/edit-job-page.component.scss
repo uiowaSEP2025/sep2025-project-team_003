@@ -67,3 +67,15 @@ header {
 .full-width {
   width: 100%
 }
+
+.customer-box-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  min-height: fit-content;
+}
+
+.customer-name-span {
+  flex-grow: 1;
+}

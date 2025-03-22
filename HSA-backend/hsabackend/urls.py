@@ -32,7 +32,7 @@ urlpatterns = [
 
     # customer
     path("api/get/customers", get_customer_table_data),
-    path("api/get/customer/exclude", get_customer_excluded_table_data),
+    path("api/get/customers/exclude", get_customer_excluded_table_data),
     path("api/create/customer", create_customer),
     path("api/edit/customer/<int:id>", edit_customer),
     path("api/delete/customer/<int:id>", delete_customer),

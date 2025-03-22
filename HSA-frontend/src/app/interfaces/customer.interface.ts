@@ -5,3 +5,10 @@ export interface Customer extends PersonalInformationHelper {
   organizationID: number;
   notes: string;
 }
+
+export interface CustomerParams {
+  excludeIDs?: number[];
+  search: string,
+  pagesize: number,
+  offset: number,
+}

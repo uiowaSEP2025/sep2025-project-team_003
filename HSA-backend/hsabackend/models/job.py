@@ -7,6 +7,7 @@ class Job(models.Model):
     """A request for service from a customer to an organization"""
     status_choices = [
         ('created', 'created'),
+        ('in-progress', 'in-progress'),
         ('completed', 'completed'),
     ]
 

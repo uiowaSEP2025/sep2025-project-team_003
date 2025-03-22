@@ -69,6 +69,7 @@ export class EditJobPageComponent {
   allServices: any = []
   allMaterials: any = []
   allContractors: any = []
+  selectedCustomer: number = 0
   selectedServices: any = []
   selectedMaterials: any = []
   selectedContractors: any = []
@@ -137,6 +138,7 @@ export class EditJobPageComponent {
         });
         
         this.customerID = this.jobData?.data.customerID;
+        this.customers = this.jobData?.data.customerName;
         this.services = this.jobData.services;
         this.materials = this.jobData.materials;
         this.contractors = this.jobData.contractors;
@@ -174,6 +176,34 @@ export class EditJobPageComponent {
 
   navigateToPage(pagePath: string) {
     this.router.navigate([`/${pagePath}`]);
+  }
+
+  openChangeCustomerDialog() {
+    const dialogData: AddSelectDialogData = {
+      typeOfDialog: 'customer',
+      dialogData: this.customerID,
+      searchHint: 'Search by customer name',
+      headers: ['First Name','Last Name', 'Email', 'Phone No'],
+      materialInputFields: this.materialInputFields,
+    };
+
+    const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
+      width: 'auto', 
+      maxWidth: '90vw', 
+      height: 'auto', 
+      maxHeight: '90vh', 
+      data: dialogData
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result.length !== 0) {
+        let customerEntry = result.itemsInfo[0]
+        this.jobForm.controls['customerName'].setValue(customerEntry.first_name + " " + customerEntry.last_name)
+        this.selectedCustomer = customerEntry.id
+
+        this.onChangeUpdateButton()
+      }
+    })
   }
 
   openAddServiceDialog() {
@@ -283,6 +313,7 @@ export class EditJobPageComponent {
       || this.jobData?.data.requestorCity !== this.jobForm.get('requestorCity')?.value
       || this.jobData?.data.requestorState !== this.jobForm.get('requestorStateSelect')?.value
       || this.jobData?.data.requestorZip !== this.jobForm.get('requestorZip')?.value
+      || this.jobData?.data.customerName !== this.jobForm.get('customerName')?.value
       || this.selectedServices.length !== 0
       || this.deletedJobServices !== 0
       || this.selectedMaterials.length !== 0
@@ -366,7 +397,7 @@ export class EditJobPageComponent {
         startDate: this.stringFormatter.dateFormatter(this.jobForm.get('startDate')?.value),
         endDate: this.stringFormatter.dateFormatter(this.jobForm.get('endDate')?.value),
         description: this.jobForm.get('jobDescription')?.value,
-        customerID: this.customerID,
+        customerID: this.selectedCustomer === 0 ? this.customerID : this.selectedCustomer,
         city: this.jobForm.get('requestorCity')?.value,
         state: this.jobForm.get('requestorStateSelect')?.value,
         zip: this.jobForm.get('requestorZip')?.value,

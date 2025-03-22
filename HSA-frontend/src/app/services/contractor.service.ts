@@ -7,7 +7,10 @@ import { Contractor, ContractorParams } from '../interfaces/contractor.interface
 import { environment } from '../../environments/environment';
 
 interface ContractorCreatePostData {
-  firstn: string | null
+  firstName: string | null
+  lastName: string | null
+  email: string | null
+  phone: string | null
 }
 
 interface ContractorEditPostData {
