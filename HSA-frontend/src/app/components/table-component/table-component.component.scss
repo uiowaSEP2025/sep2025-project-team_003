@@ -11,3 +11,20 @@
 .right-align {
     text-align: right;
 }
+
+td , th {
+    white-space: normal;
+    word-wrap: break-word;
+    max-width: 500px;
+}
+
+.table-container {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.empty-message {
+    padding: 50px 0;
+    font-size: 1.2rem;
+}

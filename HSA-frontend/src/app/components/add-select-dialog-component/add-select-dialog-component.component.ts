@@ -24,14 +24,24 @@ import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.c
 })
 export class AddSelectDialogComponentComponent {
   checkedIds: number[] | null = null
-  selectedItems: any = []
+  isNotSelectedItems: boolean = true
   isMaterial: boolean = false
   typeOfDialog: string = ''
   dialogData: any = null
-  loadData: any
-  setSelectedItems: any
+  allDataEntries: any[] = []
   searchHint: string = '';
   headers: string[] = []
+  services: any
+  materials: any
+  contractors: any
+  tableItems: any
+  selectedItems: any = []
+  selectedServices: any = []
+  selectedServicesIsError: boolean = false
+  selectedMaterials: any = []
+  selectedMaterialsIsError: boolean = false
+  selectedContractors: any = []
+  selectedContractorsIsError: boolean = false
   materialInputFields: InputFieldDictionary[]
   setMaterialInputFields: any
   @ViewChild(TableComponentComponent) tableComponent!: TableComponentComponent;
@@ -39,21 +49,17 @@ export class AddSelectDialogComponentComponent {
   constructor(
     public dialogRef: MatDialogRef<AddSelectDialogComponentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AddSelectDialogData,
-    stringFormatter: StringFormatter,
     private serviceService: ServiceService,
     private materialService: MaterialService,
     private contractorService: ContractorService,
     private errorHandler: ErrorHandlerService,
   ) {
-    this.isMaterial = this.data.typeOfDialog === 'material' ? true : false
-    this.typeOfDialog = this.data.typeOfDialog
-    this.dialogData = this.data.dialogData,
-    this.loadData = this.data.loadData
-    this.setSelectedItems = this.data.setSelectedItems,
-    this.searchHint = this.data.searchHint,
-    this.headers = this.data.headers,
-    this.materialInputFields = this.data.materialInputFields
-    this.setMaterialInputFields = this.data.setMaterialInputFields
+    this.isMaterial = this.data.typeOfDialog === 'material' ? true : false;
+    this.typeOfDialog = this.data.typeOfDialog;
+    this.dialogData = this.data.dialogData;
+    this.searchHint = this.data.searchHint;
+    this.headers = this.data.headers;
+    this.materialInputFields = this.data.materialInputFields;
   }
 
   ngOnInit() {
@@ -70,45 +76,121 @@ export class AddSelectDialogComponentComponent {
     }
   }
 
+  getIDsFromData(items: any, key: string): number[] {
+    let IDs: number[] = [];
+
+    items.forEach((element: { [x: string]: number; }) => {
+      IDs.push(element[key]);
+    });
+    return IDs;
+  }
+
   loadServicesToTable(searchTerm: string, pageSize: number, offSet: number) {
-    this.serviceService.getService({ search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
+    this.serviceService.getExcludedService({ excludeIDs: this.getIDsFromData(this.data.dialogData.services, 'serviceID'), search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
       next: (response) => {
-        this.dialogData = response
+        this.dialogData = response;
+        this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
+        this.errorHandler.handleError(error);
       }
-    })
+    });
   }
 
   loadMaterialsToTable(searchTerm: string, pageSize: number, offSet: number) {
-    this.materialService.getMaterial({ search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
+    this.materialService.getExcludedMaterial({ excludeIDs: this.getIDsFromData(this.data.dialogData.materials, 'materialID'), search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
       next: (response) => {
         this.dialogData = response
+        this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
+        this.errorHandler.handleError(error);
       }
-    })
+    });
   }
 
   loadContractorsToTable(searchTerm: string, pageSize: number, offSet: number) {
-    this.contractorService.getContractor({ search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
+    this.contractorService.getExcludedContractor({ excludeIDs: this.getIDsFromData(this.data.dialogData.contractors, 'contractorID'), search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
       next: (response) => {
-        this.dialogData = response
+        this.dialogData = response;
+        this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
+        this.errorHandler.handleError(error);
       }
-    })
+    });
+  }
+
+  setSelectedServices(services: number[]) {
+    this.selectedServices = [...services];
+    this.selectedItems = this.selectedServices;
+    this.selectedServicesIsError = this.selectedServices.length === 0 ? true : false;
+    this.isNotSelectedItems = this.selectedServices.length === 0 ? true : false;
+  }
+
+  setSelectedMaterials(materials: number[]) {
+    this.selectedMaterials = [...materials];
+    this.selectedItems = this.selectedMaterials;
+    this.selectedMaterialsIsError = this.selectedMaterials.length === 0 ? true : false;
+    this.isNotSelectedItems = this.selectedMaterials.length === 0 ? true : false;
+
+    if (this.selectedMaterialsIsError === false) {
+      let previousMaterialInputFields = this.materialInputFields;
+      this.materialInputFields = [];
+      this.selectedMaterials.forEach((element: any) => {
+        if (previousMaterialInputFields.some((item) => item.id === element)) {
+          let specificEntry = previousMaterialInputFields.find((item) => item.id === element);
+          this.materialInputFields.push({"id": element, "unitsUsed": specificEntry!["unitsUsed"], "pricePerUnit": specificEntry!["pricePerUnit"]});
+        } else {
+          this.materialInputFields.push({"id": element, "unitsUsed": 0, "pricePerUnit": 0.00});
+        }
+        
+      });
+    } else {
+      this.materialInputFields = [];
+    }
+  }
+
+  setSelectedContractors(contractors: number[]) {
+    this.selectedContractors = [...contractors];
+    this.selectedItems = this.selectedContractors;
+    this.selectedContractorsIsError = this.selectedContractors.length === 0 ? true : false;
+    this.isNotSelectedItems = this.selectedContractors.length === 0 ? true : false;
+  }
+
+  setMaterialInput(inputField: InputFieldDictionary[]) {
+    this.materialInputFields = inputField;
   }
 
   onCancel(): void {
-    this.dialogRef.close(false);
+    this.dialogRef.close([]);
   }
 
   onConfirm(): void {
-    this.dialogRef.close(true);
+    let itemsInfo: any[] = [];
+    this.selectedItems.forEach((element : number) => {
+      if (this.typeOfDialog === 'material') {
+        let materialEntry = this.allDataEntries.filter((item: { [x: string]: number; }) => item['id'] === element)[0];
+        let materialInputEntry = this.materialInputFields.filter((item) => item['id'] === element)[0];
+        itemsInfo.push(
+          { id: 0,
+            materialID: materialEntry['id'],
+            materialName: materialEntry['material_name'],
+            unitsUsed: materialInputEntry['unitsUsed'],
+            pricePerUnit: materialInputEntry['pricePerUnit']
+          }
+        );
+      } else {
+        itemsInfo.push(this.allDataEntries.filter((item: { [x: string]: number; }) => item['id'] === element)[0]);
+      }
+    });
+
+    this.dialogRef.close(
+      {
+        selectedItems: this.typeOfDialog === 'service' ? this.selectedServices : this.typeOfDialog === 'contractor' ? this.selectedContractors : this.materialInputFields,
+        itemsInfo: itemsInfo
+      }
+    );
   }
 
   getUnitsUsedValue(id: number): number | string {
@@ -119,9 +201,5 @@ export class AddSelectDialogComponentComponent {
   getPricePerUnitValue(id: number): number | string {
     const entry = this.materialInputFields.find(item => item.id === id);
     return entry?.['pricePerUnit'] ?? ''; 
-  }
-
-  setMaterialInput(inputField: InputFieldDictionary[]) {
-    this.materialInputFields = inputField
   }
 }

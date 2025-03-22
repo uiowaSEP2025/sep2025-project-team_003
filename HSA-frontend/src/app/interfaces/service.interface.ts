@@ -4,3 +4,10 @@ export interface Service {
   serviceName: string;
   serviceDescription: string;
 }
+
+export interface ServiceParams {
+  excludeIDs?: number[];
+  search: string,
+  pagesize: number,
+  offset: number,
+}

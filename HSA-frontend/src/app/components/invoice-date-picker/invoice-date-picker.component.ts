@@ -55,7 +55,7 @@ export class InvoiceDatePickerComponent implements OnInit{
     return true;
   }
 
-  gOnDestroy(): void {
+  ngOnDestroy(): void {
     this.valueChangesSub.unsubscribe();
   }
 

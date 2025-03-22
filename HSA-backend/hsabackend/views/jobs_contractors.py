@@ -105,7 +105,7 @@ def delete_cached_job_contractor(request, job_id):
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
     
-    job_contractors_list = request.data.get('job_contractors', '')      # dataform: job_contractors: [{"id": int}, {"id": int}, ...]
+    job_contractors_list = request.data.get('jobContractors', '')      # dataform: job_contractors: [{"id": int}, {"id": int}, ...]
 
     if (len(job_contractors_list) != 0):
         for job_contractor in job_contractors_list:

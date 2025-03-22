@@ -13,17 +13,18 @@
 				checkbox="multiple"
 				[unitUsedField]="this.isMaterial"
 				[pricePerUnitField]="this.isMaterial"
-				[checkedIds]="this.selectedItems"
+				[checkedIds]="typeOfDialog === 'service' ? this.selectedServices : typeOfDialog === 'material' ? this.selectedMaterials: this.selectedContractors"
 				[materialInputFields]="this.materialInputFields"
-				[setCheckedIds]="this.setSelectedItems"
-				[setMaterialInputFields]="this.setMaterialInput"
+				[setCheckedIds]="typeOfDialog === 'service' ? this.setSelectedServices.bind(this) : typeOfDialog === 'material' ? this.setSelectedMaterials.bind(this): this.setSelectedContractors.bind(this)"
+				[setMaterialInputFields]="this.setMaterialInput.bind(this)"
 				[searchHint]="this.searchHint"
+				[width]="'700vw'"
 			></app-table-component> 
 		}
 	</mat-dialog-content>
 	<mat-dialog-actions>
 		<button mat-stroked-button (click)="onCancel()">Cancel</button>
-		<button mat-flat-button type="submit" (click)="onConfirm()">Add</button>
+		<button mat-flat-button type="submit" [disabled]="this.isNotSelectedItems" (click)="onConfirm()">Add</button>
 	</mat-dialog-actions>
 </div>
 

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChange, SimpleChanges } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { ContractorJSON, JobDisplayInterface, MaterialJSON, ServiceJSON } from '../../interfaces/api-responses/job.api.display.interface';
 import { MatIcon } from '@angular/material/icon';
@@ -34,11 +34,11 @@ interface ContractorRowItem {
   styleUrl: './job-display-table.component.scss'
 })
 
-export class JobDisplayTableComponent  implements OnInit {
+export class JobDisplayTableComponent  implements OnInit, OnChanges {
   @Input({ required: true }) dataSource!: JobDisplayInterface
-  @Input({ required: true}) typeToDisplay: string = 'service'
+  @Input({ required: true }) typeToDisplay: string = 'service'
   @Input() isEditRow: boolean = false
-  @Input() popOutEntry!: (typeOfTable: string, data: any, joinRelationID: any) => any
+  @Input() popOutEntry!: (typeOfTable: string, data: any, joinRelationID: any, itemID: any) => any
   @Input() listOfTable: [] = []
 
   displayedServiceColumns: string[] = []
@@ -56,44 +56,70 @@ export class JobDisplayTableComponent  implements OnInit {
 
   ngOnInit(): void {
     if (this.typeToDisplay === "service") {
-      this.displayServices = this.dataSource.services.map(
-        (service) => ({
-          "Service ID": service.serviceID,
-          "Service Name": service.serviceName,
-          "Service Description": service.serviceDescription
-        })
-      )
-      
-      this.displayedServiceColumns = ["Service ID", "Service Name", "Service Description"]
-      this.displayedServiceColumns = this.isEditRow === true ? [...this.displayedServiceColumns, "Actions"] : this.displayedServiceColumns
+      this.updateServiceTable()
       
     }
     else if (this.typeToDisplay === "material") {
-      this.displayMaterials = this.dataSource.materials.map(
-        (material) => ({
-          "Material ID": material.materialID,
-          "Material Name": material.materialName,
-          "Units Used": material.unitsUsed,
-          "Price Per Unit": "$" + material.pricePerUnit
-        })
-      )
-
-      this.displayedMaterialColumns = ["Material ID", "Material Name", "Units Used", "Price Per Unit"]
-      this.displayedMaterialColumns = this.isEditRow === true ? [...this.displayedMaterialColumns, "Actions"] : this.displayedMaterialColumns
+      this.updateMaterialTable()
     }
     else if (this.typeToDisplay === "contractor") {
-      this.displayContractors = this.dataSource.contractors.map(
-        (contractor) => ({
-          "Contractor ID": contractor.contractorID,
-          "Contractor Name": contractor.contractorName,
-          "Contractor Phone No": contractor.contractorPhoneNo,
-          "Contractor Email": contractor.contractorEmail
-        })
-      )
-      
-      this.displayedContractorColumns = ["Contractor ID", "Contractor Name", "Contractor Phone No", "Contractor Email"]
-      this.displayedContractorColumns = this.isEditRow === true ? [...this.displayedContractorColumns, "Actions"] : this.displayedContractorColumns
+      this.updateContractorTable()
     }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['dataSource']) {
+      if ('services' in changes['dataSource'].currentValue) {
+        this.updateServiceTable()
+      }
+      else if ('materials' in changes['dataSource'].currentValue) {
+        this.updateMaterialTable()
+      }
+      else if ('contractors' in changes['dataSource'].currentValue) {
+        this.updateContractorTable()
+      }
+    }
+  }
+
+  updateServiceTable() {
+    this.displayServices = this.dataSource.services.map(
+      (service) => ({
+        "Service ID": service.serviceID,
+        "Service Name": service.serviceName,
+        "Service Description": service.serviceDescription
+      })
+    )
+    
+    this.displayedServiceColumns = ["Service ID", "Service Name", "Service Description"]
+    this.displayedServiceColumns = this.isEditRow === true ? [...this.displayedServiceColumns, "Actions"] : this.displayedServiceColumns
+  }
+
+  updateMaterialTable() {
+    this.displayMaterials = this.dataSource.materials.map(
+      (material) => ({
+        "Material ID": material.materialID,
+        "Material Name": material.materialName,
+        "Units Used": material.unitsUsed,
+        "Price Per Unit": "$" + material.pricePerUnit
+      })
+    )
+
+    this.displayedMaterialColumns = ["Material ID", "Material Name", "Units Used", "Price Per Unit"]
+    this.displayedMaterialColumns = this.isEditRow === true ? [...this.displayedMaterialColumns, "Actions"] : this.displayedMaterialColumns
+  }
+
+  updateContractorTable() {
+    this.displayContractors = this.dataSource.contractors.map(
+      (contractor) => ({
+        "Contractor ID": contractor.contractorID,
+        "Contractor Name": contractor.contractorName,
+        "Contractor Phone No": contractor.contractorPhoneNo,
+        "Contractor Email": contractor.contractorEmail
+      })
+    )
+    
+    this.displayedContractorColumns = ["Contractor ID", "Contractor Name", "Contractor Phone No", "Contractor Email"]
+    this.displayedContractorColumns = this.isEditRow === true ? [...this.displayedContractorColumns, "Actions"] : this.displayedContractorColumns
   }
 
   openDeleteDialog(args: any, typeOfTable: string) {
@@ -110,8 +136,8 @@ export class JobDisplayTableComponent  implements OnInit {
       case 'service': {
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            let jobServiceID = this.dataSource.services.filter((item: { serviceID: any; }) => item.serviceID === args["Service ID"])[0] as any
-            this.popOutEntry(typeOfTable, args, jobServiceID.id)
+            let jobServiceEntry = this.dataSource.services.filter((item: { serviceID: any; }) => item.serviceID === args["Service ID"])[0] as any
+            this.popOutEntry(typeOfTable, args, jobServiceEntry.id, jobServiceEntry.serviceID)
             this.displayServices = this.dataSource.services?.map(
               (service) => ({
                 "Service ID": service.serviceID,
@@ -127,8 +153,8 @@ export class JobDisplayTableComponent  implements OnInit {
       case 'material': {
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            let jobMaterialID = this.dataSource.materials.filter((item: { materialID: any; }) => item.materialID === args["Material ID"])[0] as any
-            this.popOutEntry(typeOfTable, args, jobMaterialID.id)
+            let jobMaterialEntry = this.dataSource.materials.filter((item: { materialID: any; }) => item.materialID === args["Material ID"])[0] as any
+            this.popOutEntry(typeOfTable, args, jobMaterialEntry.id, jobMaterialEntry.materialID)
             this.displayMaterials = this.dataSource.materials.map(
               (material) => ({
                 "Material ID": material.materialID,
@@ -145,8 +171,8 @@ export class JobDisplayTableComponent  implements OnInit {
       case 'contractor': {
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            let jobContractorID = this.dataSource.contractors.filter((item: { contractorID: any; }) => item.contractorID === args["Contractor ID"])[0] as any
-            this.popOutEntry(typeOfTable, args, jobContractorID.id)
+            let jobContractorEntry = this.dataSource.contractors.filter((item: { contractorID: any; }) => item.contractorID === args["Contractor ID"])[0] as any
+            this.popOutEntry(typeOfTable, args, jobContractorEntry.id, jobContractorEntry.contractorID)
             this.displayContractors = this.dataSource.contractors.map(
               (contractor) => ({
                 "Contractor ID": contractor.contractorID,

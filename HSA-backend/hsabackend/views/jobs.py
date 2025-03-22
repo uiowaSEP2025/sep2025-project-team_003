@@ -214,9 +214,9 @@ def edit_job(request, id):
     if not job:
         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
-    job.job_status = request.data.get('job_status','')
-    job.start_date = request.data.get('start_date','')
-    job.end_date = request.data.get('end_date','')
+    job.job_status = request.data.get('jobStatus','')
+    job.start_date = request.data.get('startDate','')
+    job.end_date = request.data.get('endDate','')
     job.description = request.data.get('description','')
     job.requestor_address = request.data.get('address','')
     job.requestor_city = request.data.get('city','')
@@ -224,7 +224,7 @@ def edit_job(request, id):
     job.requestor_zip = request.data.get('zip','')   
 
     try:
-        customer = Customer.objects.get(id=request.data.get('customer_id'))
+        customer = Customer.objects.get(id=request.data.get('customerID'))
         job.customer = customer
     except Customer.DoesNotExist:
         return Response({"message": "The customer does not exist"}, status=status.HTTP_404_NOT_FOUND)

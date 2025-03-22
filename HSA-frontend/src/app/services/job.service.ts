@@ -37,16 +37,42 @@ interface JobDeletePostData {
   id: number | null,
 }
 
+interface JobServiceCreatePostData {
+  jobID: number | null,
+  services: [] | null
+}
+
+interface JobMaterialCreatePostData {
+  jobID: number | null,
+  materials: [] | null
+}
+
+interface JobContractorCreatePostData {
+  jobID: number | null,
+  contractors: [] | null
+}
+
+interface JobJoinCreatePostData {
+  type: string,
+  id: number | null,
+  addedItems: any | null
+}
+
+interface JobJoinDeletePostData {
+  type: string,
+  id: number | null,
+  deletedItems: any | null
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class JobService {
   private apiGetUrl = `${environment.apiUrl}/api/get/jobs`;
+  private apiGetSpecificUrl = `${environment.apiUrl}/api/get/job`;
   private apiCreateUrl = `${environment.apiUrl}/api/create/job`;
   private apiEditUrl = `${environment.apiUrl}/api/edit/job`;
   private apiDeleteUrl = `${environment.apiUrl}/api/delete/job`;
-  private apiSpecificUrl = `${environment.apiUrl}/api/get/job`;
-  private apiGetJobService = `${environment.apiUrl}/api/get/job`;
   responses: any[]  = []
 
   constructor(private http: HttpClient) {}
@@ -77,8 +103,8 @@ export class JobService {
     return this.http.post<StandardApiResponse>(this.apiDeleteUrl + `/${data.id}`, data);
   }
 
-  public getSpecificJobData(id: number): Observable<JobDataInterface> {
-    return this.http.get<JobDataInterface>(this.apiSpecificUrl + `/${id}`);
+  public getSpecificJobData(id: number | null): Observable<JobDataInterface> {
+    return this.http.get<JobDataInterface>(this.apiGetSpecificUrl + `/${id}`);
   }
 
   public getJobService(id: number, params?: Record<string, string | number>): Observable<StandardApiResponse> {
@@ -90,6 +116,14 @@ export class JobService {
       })
     }
 
-    return this.http.get<StandardApiResponse>(this.apiGetJobService + `/${id}/services`, { params: httpParams });
+    return this.http.get<StandardApiResponse>(this.apiGetUrl + `/${id}/services`, { params: httpParams });
+  }
+
+  public createJobJoin(data: JobJoinCreatePostData): Observable<StandardApiResponse> {
+    return this.http.post<StandardApiResponse>(this.apiCreateUrl + `/${data.id}/${data.type}`, data.addedItems);
+  }
+
+  public deleteJobJoin(data:JobJoinDeletePostData): Observable<StandardApiResponse> {
+    return this.http.post<StandardApiResponse>(this.apiDeleteUrl + `/${data.id}/${data.type}s`, data.deletedItems);
   }
 }

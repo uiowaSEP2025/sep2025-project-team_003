@@ -20,6 +20,7 @@ import { ClickStopPropagationDirective } from '../../utils/click-event-propogati
 import { ErrorHandlerService } from '../../services/error.handler.service';
 import { OnInit } from '@angular/core';
 import { InputFieldDictionary } from '../../interfaces/interface-helpers/inputField-row-helper.interface';
+import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.component';
 
 @Component({
   selector: 'app-table-component',
@@ -33,7 +34,8 @@ import { InputFieldDictionary } from '../../interfaces/interface-helpers/inputFi
     MatButtonModule,
     MatCheckboxModule,
     FormsModule,
-    ClickStopPropagationDirective
+    ClickStopPropagationDirective,
+    LoadingFallbackComponent
   ],
   templateUrl: './table-component.component.html',
   styleUrl: './table-component.component.scss'
@@ -43,7 +45,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   @Input() deleteRequest!: (data: any) => Observable<StandardApiResponse>
   @Input({ required: true }) loadDataToTable!: (search: string, pageSize: number, offSet: number) => void
   @Input() hideValues: string[] = [];
-  @Input() width: string = '40vw'
+  @Input() width: string = 'auto'
   @Input() checkbox: 'none' | 'single' | 'multiple' = 'none';
   @Input() unitUsedField: boolean = false;
   @Input() pricePerUnitField: boolean = false;
@@ -72,14 +74,10 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   
   headersWithActions = [...this.headers, 'Actions']
   editRedirect = input.required<string>()
+  isDataNotAvailable: boolean = false
 
   data = new MatTableDataSource(this.fetchedData ?? []);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild('tableContainer') tableContainer!: ElementRef<HTMLElement>;
-
-  focusTable() {
-    this.tableContainer.nativeElement.focus();
-  }
 
   ngAfterViewInit() {
     if (this.dataSubscription) {
@@ -156,6 +154,8 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       this.fetchedData = changes["fetchedData"].currentValue;
       this.data = new MatTableDataSource(this.fetchedData.data ?? []);
       this.dataSize = this.fetchedData.totalCount
+      this.isDataNotAvailable = this.dataSize === 0 ? true : false
+
       if (this.fetchedData.data && this.fetchedData.data[0] !== undefined) {
         this.headers = Object.keys(this.fetchedData.data[0]);
         this.headers = this.headers.map(header => this.stringFormatter.formatSnakeToCamel(header))
@@ -176,15 +176,6 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
         }
       }
     }
-
-    // console.log(this.checkbox)
-    // console.log(this.fetchedData)
-    // console.log(this.loadDataToTable)
-    // console.log(this.setCheckedIds)
-    // console.log(this.searchHint)
-    // console.log(this.headersWithActions)
-    // console.log(this.materialInputFields)
-    // console.log(this.setMaterialInputFields)
   }
 
   rowClick(element: any) {
