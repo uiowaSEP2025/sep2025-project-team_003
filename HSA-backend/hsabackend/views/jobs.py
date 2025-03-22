@@ -248,12 +248,5 @@ def delete_job(request, id):
     if not job.exists():
         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
-    customer = Customer.objects.filter(organization=org, first_name=request.data.get('customer_first_name'), last_name=request.data.get('customer_last_name'))
-    job_customer = Customer.objects.filter(organization=org, id=job[0].customer.id)
-
-    if customer.exists() and job_customer[0].first_name == customer[0].first_name and job_customer[0].last_name == customer[0].last_name:
-        job[0].delete()
-    else:
-        return Response({"message": "The customer name does not match"}, status=status.HTTP_404_NOT_FOUND)
-
+    job[0].delete()
     return Response({"message": "Job deleted sucessfully"}, status=status.HTTP_200_OK)
