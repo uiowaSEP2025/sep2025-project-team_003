@@ -206,7 +206,6 @@ def generate_pdf(request, id):
         customer__organization=org.pk,
         pk = id
         )
-    
     if not invoice_qs.exists():
         return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
 
