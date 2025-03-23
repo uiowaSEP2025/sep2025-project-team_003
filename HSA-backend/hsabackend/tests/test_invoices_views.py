@@ -606,7 +606,9 @@ class InvoiceViewTest(APITestCase):
         mock_invoice_qs.__getitem__.side_effect = lambda x: mock_invoice
         invoice_filter.return_value = mock_invoice_qs
 
-        mock_quote_qs = MagicMock()
+        mock_quote_qs = MagicMock(name='mock_quote_qs')
+        mock_quote_qs.__len__.return_value = 5
+
         quote_filter.return_value = mock_quote_qs
         
         factory = APIRequestFactory()
