@@ -6,10 +6,11 @@ from rest_framework.decorators import api_view
 from hsabackend.models.organization import Organization
 from rest_framework import status   
 from hsabackend.models.invoice import Invoice
-from hsabackend.models.organization import Organization
+from hsabackend.models.job_material import JobMaterial
 from hsabackend.models.quote import Quote
 from hsabackend.utils.string_formatters import format_title_case, format_phone_number_with_parens, format_maybe_null_date, format_currency, format_percent, format_tax_percent
 from decimal import Decimal
+from hsabackend.models.job_service import JobService
 
 def generate_pdf_customer_org_header(pdf: FPDF, org: Organization, invoice: Invoice):
     pdf.set_auto_page_break(auto=True, margin=15)
@@ -141,14 +142,58 @@ def add_total_and_disclaimer(pdf: FPDF, total, org_name):
         """
     pdf.ln(5) 
     pdf.set_left_margin(10) # don't remove or it will mess up alignment
-    pdf.multi_cell(0, text=f"Please make payment to {format_title_case(org_name)} for amount $ {format_currency(total)}*", align="L")
+    pdf.multi_cell(0, text=f"Please make payment to {format_title_case(org_name)} for amount {format_currency(total)}*", align="L")
     pdf.ln(5) 
     pdf.set_left_margin(0) # don't remove or it will mess up alignmentpdf.set_y(-20)  # Move to 20 units above the bottom
     pdf.set_y(-40)  # Move to 20 units above the bottom
     pdf.multi_cell(0, text=disclaimer_text, align="C")
 
-def generate_table_for_specific_job(jobid):
-    pass
+def generate_table_for_specific_job(pdf: FPDF, jobid: int, num_jobs: int, idx: int):
+    print(f'got jobid {jobid}')
+    greyscale = 215 # higher no --> lighter grey
+    pdf.set_x(10)
+    pdf.multi_cell(100, text=f"Job #{idx + 1} of {num_jobs}", align="L")
+    with pdf.table(line_height=4, padding=2, text_align=("LEFT", "LEFT", "LEFT", "LEFT", "LEFT"), borders_layout="SINGLE_TOP_LINE", cell_fill_color=greyscale, cell_fill_mode="ROWS") as table:
+        header = table.row()
+        header.cell("Services Rendered", colspan=2, align="C")
+        services = JobService.objects.select_related("service").filter(
+            job=jobid
+        )
+        for service in services:
+            json = service.get_service_info_for_detailed_invoice()
+            service_row = table.row()
+            service_row.cell(json["service name"])
+            service_row.cell(json["service description"])
+
+    pdf.ln(5) 
+
+    with pdf.table(line_height=4, padding=2, text_align=("LEFT", "LEFT", "LEFT", "LEFT", "LEFT"), borders_layout="SINGLE_TOP_LINE", cell_fill_color=greyscale, cell_fill_mode="ROWS") as table:
+        materials = JobMaterial.objects.filter(job=jobid)
+        
+        header = table.row()
+        header.cell("Material Name")
+        header.cell("Per Unit")
+        header.cell("Units Used")
+        header.cell("Total")
+
+        total = Decimal(0)
+        for mat in materials:
+            material_row = table.row()
+            json = mat.invoice_material_row()
+            material_row.cell(json["material name"])
+            material_row.cell(format_currency(json["per unit"]))
+            material_row.cell(str(json["units used"]))
+            total += json["total"]
+            material_row.cell(format_currency(json["total"]))
+
+        total_row = table.row()
+        total_row.cell("Materials Total")
+        total_row.cell("")
+        total_row.cell("")
+        total_row.cell(format_currency(total))
+
+
+
 
 @api_view(["GET"])
 def generate_pdf(request, id):
@@ -175,7 +220,12 @@ def generate_pdf(request, id):
     generate_pdf_customer_org_header(pdf,org,inv)
     job_ids, total = generate_global_jobs_table(pdf, inv)
     add_total_and_disclaimer(pdf, total, org.org_name)
-    print(pdf.page_no())
+    # cursor is on page 2
+    for i in range(len(job_ids)):
+        generate_table_for_specific_job(pdf,job_ids[i], len(job_ids), i)
+        if i != len(job_ids) - 1:
+            pdf.add_page() # move to top of next page
+
     # Save PDF to a BytesIO buffer
     pdf_buffer = io.BytesIO()
     pdf.output(pdf_buffer)

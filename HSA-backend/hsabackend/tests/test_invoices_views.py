@@ -186,7 +186,8 @@ class InvoiceViewTest(APITestCase):
         request = factory.post('api/create/invoice', {
             "customerID": 1,
             "quoteIDs": [1],
-            "status": "created"
+            "status": "created",
+            "tax": "0.06"
         }, format='json')
         request.user = mock_user  
         response = createInvoice(request)
@@ -217,7 +218,8 @@ class InvoiceViewTest(APITestCase):
         request = factory.post('api/create/invoice', {
             "customerID": 1,
             "quoteIDs": [1],
-            "status": "created"
+            "status": "created",
+            "tax": "0.06"
         }, format='json')
         request.user = mock_user  
         response = createInvoice(request)
@@ -251,7 +253,8 @@ class InvoiceViewTest(APITestCase):
         request = factory.post('api/create/invoice', {
             "customerID": 1,
             "quoteIDs": [1],
-            "status": "created"
+            "status": "created",
+            "tax": "0.06"
         }, format='json')
         request.user = mock_user  
         response = createInvoice(request)

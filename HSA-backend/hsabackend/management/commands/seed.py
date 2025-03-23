@@ -7,6 +7,7 @@ from hsabackend.models.contractor import Contractor
 from hsabackend.models.material import Material
 from django.contrib.auth.models import User
 from hsabackend.models.request import Request
+from hsabackend.models.job_service import JobService
 from hsabackend.models.job import Job
 from hsabackend.models.quote import Quote
 from hsabackend.models.discount_type import DiscountType
@@ -15,8 +16,21 @@ from hsabackend.models.job_template import JobTemplate
 from hsabackend.models.subscription import Subscription
 from django.utils import timezone
 import traceback
+from hsabackend.models.job_material import JobMaterial
 
 import random
+
+
+def random_currency(min_value=0.01, max_value=1000.00):
+    """
+    Generate a random currency value within a given range.
+    
+    :param min_value: Minimum currency value (default is 0.01)
+    :param max_value: Maximum currency value (default is 1000.00)
+    :param currency_symbol: Currency symbol to prefix (default is "$")
+    :return: A formatted string representing the random currency value
+    """
+    return round(random.uniform(min_value, max_value), 2)
 
 class Command(BaseCommand):
     """seeds the database with test data. DO NOT RUN ON PROD!"""
@@ -382,7 +396,48 @@ class Command(BaseCommand):
                     )
             q.save()
 
+            jobs_for_invoice = Job.objects.filter(
+                customer=customers[1],
+                job_status="completed",
+                quote__status="accepted",  # Ensures only jobs with accepted quotes are selected
+                customer__organization=org
+            )
 
+            services_org = Service.objects.filter(
+                organization = org
+            )
+
+            s1, s2 = services_org[:len(services_org) // 2], services_org[len(services_org) // 2:]
+
+            for service in s1:
+                js = JobService(job=jobs_for_invoice[0], service = service)
+                js.save()
+
+            for service in s2:
+                js = JobService(job=jobs_for_invoice[1], service = service)
+                js.save()
+
+            mats = Material.objects.filter(organization=org)
+            m1,m2 = mats[:len(mats) // 2], mats[len(mats) // 2:]
+            for m in m1:
+                jm = JobMaterial(
+                    price_per_unit = random_currency(10, 50),
+                    units_used = random.randint(1,100),
+                    job = jobs_for_invoice[0],
+                    material = m
+                )
+                jm.save()
+
+            for m in m2:
+                jm = JobMaterial(
+                    price_per_unit = random_currency(0, 50),
+                    units_used = random.randint(1,100),
+                    job = jobs_for_invoice[1],
+                    material = m
+                )
+                jm.save()
+
+            
 
             for i in range(5):
                 j = JobTemplate.objects.create(
