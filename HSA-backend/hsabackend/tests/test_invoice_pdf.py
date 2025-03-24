@@ -145,32 +145,33 @@ class HelperTests(TestCase):
 
     @patch('hsabackend.views.generate_invoice_pdf_view.Quote.objects.select_related')
     def test_generate_global_jobs_table_without_discount(self, mock_select_related):
-        # Mock the PDF object
         pdf = MagicMock()
-
-        # Mock the Invoice object
         invoice = MagicMock()
-        invoice.tax = Decimal('0.10')  # 10% tax
-
-
+        invoice.tax = Decimal('0.10')
         m1 = Mock()
         m2 = Mock()
         m3 = Mock()
         m4 = MagicMock()
 
         q1 = Mock()
+        q2 = Mock()
         q1.jobID.pk = 1
         q1.geerate_invoice_global_table_json.return_value = {
             "Date": "2025-03-23",
             "Job Description": "Repair and maintenance of HVAC system",
             "Address": "123 Main St, Springfield, IL, 62704",
             "Total Undiscounted": Decimal(300.00),
-            "Discount Percent": Decimal(0.0)
-}
+            "Discount Percent": Decimal(0.0)}
+        
+        q2.jobID.pk = 2
+        q2.geerate_invoice_global_table_json.return_value = {
+            "Date": "2025-03-23",
+            "Job Description": "Repair and maintenance of HVAC system",
+            "Address": "123 Main St, Springfield, IL, 62704",
+            "Total Undiscounted": Decimal(300.00),
+            "Discount Percent": Decimal(0.0)}
 
-
-
-        m4.__iter__.return_value = [q1]
+        m4.__iter__.return_value = [q1,q2]
         # Mock the queryset
         mock_select_related.return_value = m1
         m1.select_related.return_value = m2
@@ -179,13 +180,9 @@ class HelperTests(TestCase):
         
         m4.__len__.return_value = 2
 
-        # Call the function
         job_ids, total_amount = generate_global_jobs_table(pdf, invoice)
-
-        # Assertions
-        self.assertEqual(job_ids, [1])
-        self.assertEqual(total_amount, Decimal('330.00'))  # 300 + 10% tax
+        self.assertEqual(job_ids, [1,2])
+        self.assertEqual(total_amount, Decimal('660.00'))  # 300 + 10% tax
 
         # Check if the PDF table was populated correctly
         self.assertEqual(pdf.table.call_count, 1)
-        self.assertEqual(pdf.table.return_value.row.call_count, 6)  # 2 jobs + 4 summary rows

@@ -52,7 +52,6 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
     quotes = Quote.objects.select_related("jobID").select_related("discount_type").filter(
         invoice=invoice
     ).order_by("-jobID__end_date")
-    print(quotes)
     res = []
     greyscale = 215 # higher no --> lighter grey
     with pdf.table(line_height=4, padding=2, text_align=("LEFT", "LEFT", "LEFT", "LEFT", "LEFT"), borders_layout="SINGLE_TOP_LINE", cell_fill_color=greyscale, cell_fill_mode="ROWS") as table:
@@ -87,10 +86,10 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
         undiscounted_total_row.cell("")
         undiscounted_total_row.cell("")
         undiscounted_total_row.cell(str(format_currency(total)))
-
         total_discnt_aggregate = total_discnt_aggregate/len(quotes) # ex 30.01%
-        math_discount_percent = Decimal(f"0.{str(100 - total_discnt_aggregate).replace('.', "")}")
-        print(math_discount_percent)
+        # this solution sucks so much ass, and I am open to discussing how to fix it
+        math_discount_percent = Decimal((1-(total_discnt_aggregate/100)))
+
         discounted_total = total * math_discount_percent
 
         is_discounted = discounted_total != total
@@ -153,7 +152,6 @@ def add_total_and_disclaimer(pdf: FPDF, total, org_name):
     pdf.multi_cell(0, text=disclaimer_text, align="C")
 
 def generate_table_for_specific_job(pdf: FPDF, jobid: int, num_jobs: int, idx: int):
-    print(f'got jobid {jobid}')
     greyscale = 215 # higher no --> lighter grey
     pdf.set_x(10)
     pdf.multi_cell(100, text=f"Job #{idx + 1} of {num_jobs}", align="L")
