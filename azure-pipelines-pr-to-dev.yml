@@ -78,13 +78,3 @@ stages:
         echo "Container ${CONTAINER_NAME} updated successfully"
         '
       displayName: 'Update Docker Container on Remote Host'
-    
-    - bash: |
-        # Verify container deployment
-        ssh root@192.169.178.198 -o StrictHostKeyChecking=no "
-        docker ps | grep '$(Docker Username)/hsa:latest'
-        
-        # Optional: Add a health check
-        curl -f http://localhost:8080 || exit 1
-        "
-      displayName: 'Verify Container Deployment'
