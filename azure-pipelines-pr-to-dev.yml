@@ -52,7 +52,7 @@ stages:
         IMAGE="$(Docker Username)/hsa:latest"
         
         # Find the container name
-        CONTAINER_NAME=$(docker ps --filter ancestor=${IMAGE} --format "{{.Names}}" | head -n 1)
+        (docker ps --filter ancestor=${IMAGE} --format "{{.Names}}" | head -n 1)
         echo "CONTAINER NAME IS {$CONTAINER_NAME}"
         # Check if container name was found
         if [ -z "$CONTAINER_NAME" ]; then
