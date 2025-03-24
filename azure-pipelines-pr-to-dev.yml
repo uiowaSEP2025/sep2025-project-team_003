@@ -15,19 +15,19 @@ variables:
   group: dev-db-secrets
 
 stages:
-# - stage: Build
-#   displayName: Build image
-#   jobs:
-#   - job: Build
-#     displayName: Build and Push to Docker Hub
-#     pool:
-#       vmImage: ubuntu-latest
-#     steps:
-#     - script: |
-#         echo $(Docker Token) | docker login -u $(Docker Username) --password-stdin
-#         docker build --build-arg DATABASE_IP="$(DATABASE_IP)" --build-arg DATABASE_NAME="$(DATABASE_NAME)" --build-arg DATABASE_USERNAME="$(DATABASE_USERNAME)" --build-arg DATABASE_PASSWORD="$(DATABASE_PASSWORD)" -f '$(Build.SourcesDirectory)'/staging/Dockerfile -t $(Docker Username)/hsa:latest  .
-#         docker push $(Docker Username)/hsa:latest
-#       displayName: Run Docker build and push Scripts
+- stage: Build
+  displayName: Build image
+  jobs:
+  - job: Build
+    displayName: Build and Push to Docker Hub
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - script: |
+        echo $(Docker Token) | docker login -u $(Docker Username) --password-stdin
+        docker build --build-arg DATABASE_IP="$(DATABASE_IP)" --build-arg DATABASE_NAME="$(DATABASE_NAME)" --build-arg DATABASE_USERNAME="$(DATABASE_USERNAME)" --build-arg DATABASE_PASSWORD="$(DATABASE_PASSWORD)" -f '$(Build.SourcesDirectory)'/staging/Dockerfile -t $(Docker Username)/hsa:latest  .
+        docker push $(Docker Username)/hsa:latest
+      displayName: Run Docker build and push Scripts
 - stage: Deploy
   displayName: Deploy image from Docker Hub to K3s
   jobs:
