@@ -61,7 +61,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
 
-    "http://198.178.169.192.host.secureserver.net",
+    "http://198.178.169.192.host.secureserver.net:8080",
 
     "https://198.178.169.192.host.secureserver.net",
 
