@@ -85,6 +85,6 @@ stages:
         docker ps | grep '$(Docker Username)/hsa:latest'
         
         # Optional: Add a health check
-        docker exec $(docker ps -q --filter ancestor='$(Docker Username)/hsa:latest') curl -f http://localhost:8080/health || exit 1
+        curl -f http://localhost:8080 || exit 1
         "
       displayName: 'Verify Container Deployment'
