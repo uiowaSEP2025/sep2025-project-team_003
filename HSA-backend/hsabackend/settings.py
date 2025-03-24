@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
     'hsabackend'
 ]
 
@@ -65,6 +66,9 @@ CORS_ALLOWED_ORIGINS = [
     "https://198.178.169.192.host.secureserver.net",
 
     "http://192.169.178.198:8080",
+
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 
 ]
 
