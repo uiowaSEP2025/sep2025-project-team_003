@@ -52,6 +52,7 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
     quotes = Quote.objects.select_related("jobID").select_related("discount_type").filter(
         invoice=invoice
     ).order_by("-jobID__end_date")
+    print(quotes)
     res = []
     greyscale = 215 # higher no --> lighter grey
     with pdf.table(line_height=4, padding=2, text_align=("LEFT", "LEFT", "LEFT", "LEFT", "LEFT"), borders_layout="SINGLE_TOP_LINE", cell_fill_color=greyscale, cell_fill_mode="ROWS") as table:
@@ -89,9 +90,12 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
 
         total_discnt_aggregate = total_discnt_aggregate/len(quotes) # ex 30.01%
         math_discount_percent = Decimal(f"0.{str(100 - total_discnt_aggregate).replace('.', "")}")
+        print(math_discount_percent)
         discounted_total = total * math_discount_percent
 
         is_discounted = discounted_total != total
+
+        discounted_amout = total # will be the full total if not is_discounted
 
         if is_discounted:
             discount_percent_row = table.row()

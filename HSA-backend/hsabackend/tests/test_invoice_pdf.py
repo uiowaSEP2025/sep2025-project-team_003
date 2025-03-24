@@ -5,10 +5,11 @@ from rest_framework.test import APIRequestFactory
 from rest_framework.test import APITestCase
 from unittest import TestCase
 from django.contrib.auth.models import User
-from hsabackend.views.generate_invoice_pdf_view import generate_pdf, generate_pdf_customer_org_header, add_total_and_disclaimer
+from hsabackend.views.generate_invoice_pdf_view import generate_pdf, generate_pdf_customer_org_header, add_total_and_disclaimer, generate_global_jobs_table
 from rest_framework import status
 from hsabackend.models.organization import Organization
 from decimal import Decimal
+from hsabackend.models.quote import Quote
 
 class PdfAPITest(APITestCase):
     def test_api_unauth(self):
@@ -141,3 +142,50 @@ class HelperTests(TestCase):
         mock_pdf.set_left_margin.assert_any_call(0)
         mock_pdf.set_y.assert_any_call(-40)
         mock_pdf.multi_cell.assert_any_call(0, text=disclaimer_text, align="C")
+
+    @patch('hsabackend.views.generate_invoice_pdf_view.Quote.objects.select_related')
+    def test_generate_global_jobs_table_without_discount(self, mock_select_related):
+        # Mock the PDF object
+        pdf = MagicMock()
+
+        # Mock the Invoice object
+        invoice = MagicMock()
+        invoice.tax = Decimal('0.10')  # 10% tax
+
+
+        m1 = Mock()
+        m2 = Mock()
+        m3 = Mock()
+        m4 = MagicMock()
+
+        q1 = Mock()
+        q1.jobID.pk = 1
+        q1.geerate_invoice_global_table_json.return_value = {
+            "Date": "2025-03-23",
+            "Job Description": "Repair and maintenance of HVAC system",
+            "Address": "123 Main St, Springfield, IL, 62704",
+            "Total Undiscounted": Decimal(300.00),
+            "Discount Percent": Decimal(0.0)
+}
+
+
+
+        m4.__iter__.return_value = [q1]
+        # Mock the queryset
+        mock_select_related.return_value = m1
+        m1.select_related.return_value = m2
+        m2.filter.return_value = m3
+        m3.order_by.return_value = m4
+        
+        m4.__len__.return_value = 2
+
+        # Call the function
+        job_ids, total_amount = generate_global_jobs_table(pdf, invoice)
+
+        # Assertions
+        self.assertEqual(job_ids, [1])
+        self.assertEqual(total_amount, Decimal('330.00'))  # 300 + 10% tax
+
+        # Check if the PDF table was populated correctly
+        self.assertEqual(pdf.table.call_count, 1)
+        self.assertEqual(pdf.table.return_value.row.call_count, 6)  # 2 jobs + 4 summary rows
