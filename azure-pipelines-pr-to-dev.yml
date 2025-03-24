@@ -28,3 +28,63 @@ stages:
         docker build --build-arg DATABASE_IP="$(DATABASE_IP)" --build-arg DATABASE_NAME="$(DATABASE_NAME)" --build-arg DATABASE_USERNAME="$(DATABASE_USERNAME)" --build-arg DATABASE_PASSWORD="$(DATABASE_PASSWORD)" -f '$(Build.SourcesDirectory)'/staging/Dockerfile -t $(Docker Username)/hsa:latest  .
         docker push $(Docker Username)/hsa:latest
       displayName: Run Docker build and push Scripts
+- stage: Deploy
+  displayName: Deploy image from Docker Hub to K3s
+  jobs:
+  - job: Deployment
+    steps:
+    - task: InstallSSHKey@0
+      inputs:
+        knownHostsEntry: '192.169.178.198'
+        sshPublicKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCuyBwp3syM5kIuDHGTPeTQleW5UxpeJe1m7fT44Z74mOpA29kn+XBaGorEyB4OTOWrWg+KXjmMcfUKt0VTHtpqGRhc1ScFFENhh+4VrSvJjKV+uploILC6+Y09vln6MKOiofqKnqbjPBPVMv3AQCoXDf/cqMjNF42Zfg2ovJ96Ge4HUj+sBjdrP9yhQW4L8EI5QctxHKKkZEbZ4FtA2MeL1MsCwcJnEcThLYvTPD68BaIMHPBr87DgTzrX+l5OTX1swz6Wl2fSlqXGXtYDbFfFQEYiyOkizKqW0DwlvV5rm0zLBjPTYjHFN/M6H77u9+jWcpDyxnhBU0Kqv9mhMrd'
+        sshPassphrase: '$(SSH Passphrase)'
+        sshKeySecureFile: 'hsa_dev'
+        configHostAlias: 'sshKey'
+        configHostname: '192.169.178.198'
+        addEntryToConfig: true
+      displayName: 'Install SSH Key'
+    
+    - bash: |
+        # Login to Docker Hub
+        ssh root@192.169.178.198 -o StrictHostKeyChecking=no "echo $(Docker Token) | docker login -u $(Docker Username) --password-stdin"
+        
+        # Find and update the container
+        IMAGE="$(Docker Username)/hsa:latest"
+        
+        # Find the container name
+        CONTAINER_NAME=$(docker ps --filter ancestor=${IMAGE} --format "{{.Names}}" | head -n 1)
+        
+        # Check if container name was found
+        if [ -z "$CONTAINER_NAME" ]; then
+          echo "No running container found for image ${IMAGE}"
+          exit 1
+        fi
+        
+        # Pull the latest image
+        docker pull ${IMAGE}
+        
+        # Stop the existing container
+        docker stop ${CONTAINER_NAME}
+        
+        # Remove the existing container
+        docker rm ${CONTAINER_NAME}
+        
+        # Recreate the container with any necessary run parameters
+        # Adjust the run command as needed for your specific container
+        docker run -d --name ${CONTAINER_NAME} \
+          -p 8080:8000 \
+          ${IMAGE}
+        
+        echo "Container ${CONTAINER_NAME} updated successfully"
+        '
+      displayName: 'Update Docker Container on Remote Host'
+    
+    - bash: |
+        # Verify container deployment
+        ssh root@192.169.178.198 -o StrictHostKeyChecking=no "
+        docker ps | grep '$(Docker Username)/hsa:latest'
+        
+        # Optional: Add a health check
+        docker exec $(docker ps -q --filter ancestor='$(Docker Username)/hsa:latest') curl -f http://localhost:8080/health || exit 1
+        "
+      displayName: 'Verify Container Deployment'
