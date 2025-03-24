@@ -71,7 +71,7 @@ stages:
         
         # Recreate the container with any necessary run parameters
         # Adjust the run command as needed for your specific container
-        docker run -d --name ${CONTAINER_NAME} --add-host 198.178.169.192.host.secureserver.net:127.0.0.1 \
+        docker run -d --name ${CONTAINER_NAME} \
           -p 8080:8000 \
           ${IMAGE}
         
