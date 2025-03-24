@@ -50,10 +50,8 @@ stages:
         
         # Find and update the container
         IMAGE="$(Docker Username)/hsa:latest"
+        CONTAINER_NAME="hsa_dev_deployment"
         
-        # Find the container name
-        (docker ps --filter ancestor=${IMAGE} --format "{{.Names}}" | head -n 1)
-        echo "CONTAINER NAME IS {$CONTAINER_NAME}"
         # Check if container name was found
         if [ -z "$CONTAINER_NAME" ]; then
           echo "No running container found for image ${IMAGE}"
