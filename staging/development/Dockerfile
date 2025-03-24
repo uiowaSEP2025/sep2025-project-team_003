@@ -42,4 +42,4 @@ RUN pip3 install -r requirements.txt
 
 # Final server command
 STOPSIGNAL SIGINT
-CMD python3 manage.py runserver 0.0.0.0:8000
+CMD python3 manage.py runserver 198.178.169.192.host.secureserver.net:8000
