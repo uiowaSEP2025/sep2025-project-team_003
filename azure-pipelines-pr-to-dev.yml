@@ -46,7 +46,9 @@ stages:
     
     - bash: |
         # Login to Docker Hub
-        ssh root@192.169.178.198 -o StrictHostKeyChecking=no "echo $(Docker Token) | docker login -u $(Docker Username) --password-stdin"
+        ssh root@192.169.178.198 -o StrictHostKeyChecking=no
+        
+        echo $(Docker Token) | docker login -u $(Docker Username) --password-stdin
         
         # Find and update the container
         IMAGE="$(Docker Username)/hsa:latest"
