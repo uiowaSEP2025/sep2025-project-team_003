@@ -62,54 +62,36 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
 
     "http://198.178.169.192.host.secureserver.net:8080",
-
     "https://198.178.169.192.host.secureserver.net",
-
     "http://192.169.178.198:8080",
-
     "http://localhost:8000",
     "http://127.0.0.1:8000",
+    "http://localhost:4200",
+    "http://127.0.0.1:4200",
 
 ]
 
 
 CORS_ALLOW_METHODS = [
-
     'DELETE',
-
     'GET',
-
     'OPTIONS',
-
     'PATCH',
-
     'POST',
-
     'PUT',
-
 ]
 
 
 CORS_ALLOW_HEADERS = [
-
     'accept',
-
     'accept-encoding',
-
     'authorization',
-
     'content-type',
-
     'dnt',
-
     'origin',
-
     'user-agent',
-
     'x-csrftoken',
-
     'x-requested-with',
-
 ]
 
 
