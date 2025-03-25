@@ -77,7 +77,7 @@
         }
     
         <tr mat-header-row *matHeaderRowDef="headersWithActions"></tr>
-        <tr mat-row class="{{clickableRows ? 'cursor-pointer' : ''}}" (click)="rowClick(row)" *matRowDef="let row; columns: headersWithActions; let rowIndex = index"></tr>
+        <tr mat-row class="{{clickableRows ? 'cursor-pointer darkenOnHover' : ''}}" (click)="rowClick(row)" *matRowDef="let row; columns: headersWithActions;"></tr>
       </table>
     </div>
     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons [length]="dataSize"></mat-paginator>

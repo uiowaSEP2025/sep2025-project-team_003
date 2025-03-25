@@ -13,14 +13,16 @@ interface CreateInvoiceInterface {
     quoteIDs: number[],
     status: "created" | "issued" | "paid"
     issuedDate: string,
-    dueDate: string
+    dueDate: string,
+    tax: string
 }
 
 interface UpdateInvoiceInterface {
         quoteIDs: number[],
         status: "created" | "issued" | "paid",
         issuedDate: string,
-        dueDate: string
+        dueDate: string, 
+        tax: string
 }
 
 @Injectable({
@@ -49,7 +51,6 @@ export class InvoiceService {
     }
 
     public createInvoice(json: CreateInvoiceInterface): Observable<StandardApiResponse> {
-        console.log('create')
         return this.http.post<StandardApiResponse>(this.createUrl, json);
     }
 

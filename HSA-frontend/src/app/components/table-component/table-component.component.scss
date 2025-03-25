@@ -28,3 +28,12 @@ td , th {
     padding: 50px 0;
     font-size: 1.2rem;
 }
+
+
+.darkenOnHover {
+  filter: brightness(100%); // Default brightness
+
+  &:hover {
+    filter: brightness(90%); // Darken on hover
+  }
+}

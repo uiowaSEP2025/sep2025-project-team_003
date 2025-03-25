@@ -19,6 +19,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { InvoiceService } from '../../services/invoice.service';
 import { StringFormatter } from '../../utils/string-formatter';
 import { Router } from '@angular/router';
+import { Validators } from '@angular/forms';
+import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
 
 export interface DateRange {
   issued: FormControl<Date | null>;
@@ -44,6 +46,7 @@ export class EditInvoicePageComponent implements OnInit {
   dueDate!: string
   status!: 'issued' | 'created' | 'paid'// also serves as a form control
   initialStatus!: string
+  tax!: number
   readonly range: FormGroup<DateRange> = new FormGroup({
     issued: new FormControl<Date | null>(null),
     due: new FormControl<Date | null>(null),
@@ -52,6 +55,12 @@ export class EditInvoicePageComponent implements OnInit {
   isDateSelectVisible = () => (!(this.status === 'created'))
   @ViewChild(InvoiceDatePickerComponent) datePicker!: InvoiceDatePickerComponent;
   readonly dialog = inject(MatDialog);
+    taxAmount: FormControl = new FormControl('', [Validators.required,  Validators.min(0),
+      Validators.max(1),Validators.pattern(/^(0(\.\d{1,2})?|1(\.00)?)$/)
+    ])
+
+    matcher = new GenericFormErrorStateMatcher()
+  
 
   
   constructor(private quoteService: QuoteService, private activatedRoute: ActivatedRoute, 
@@ -69,7 +78,9 @@ export class EditInvoicePageComponent implements OnInit {
       this.dueDate = params['due_date'];
       this.issuanceDate = params['issuance_date'];
       this.customerName = params['customer'];
+      this.tax = parseFloat(params['tax']);
     })
+    this.taxAmount.setValue(this.tax.toFixed(2))
 
     if (this.issuanceDate !== "N/A") {
       const split =  this.issuanceDate.split('-')
@@ -105,13 +116,15 @@ export class EditInvoicePageComponent implements OnInit {
     const dialogRef = this.dialog.open(InvoiceStateRegressionConfirmerComponent,
       {data: this.initialStatus}
     );
+
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
         const data = {
           quoteIDs: this.selectedQuotes,
           status: this.status,
           issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
-          dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value)
+          dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
+          tax: this.taxAmount.value.toString()
         }
         this.invoiceService.updateInvoice(this.invoiceID, data).subscribe(
           {next: (response) => {
@@ -155,7 +168,8 @@ export class EditInvoicePageComponent implements OnInit {
       quoteIDs: this.selectedQuotes,
       status: this.status,
       issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value) ,
-      dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value)
+      dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
+      tax: this.taxAmount.value.toString()
     }
     this.invoiceService.updateInvoice(this.invoiceID, data).subscribe(
       {next: (response) => {

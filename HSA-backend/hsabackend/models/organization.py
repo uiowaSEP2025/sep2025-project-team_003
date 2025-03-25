@@ -10,6 +10,7 @@ class Organization(models.Model):
     org_requestor_state = models.CharField(max_length=50, validators=[model_validators.isNonEmpty, model_validators.validate_state])
     org_requestor_zip = models.CharField(max_length=10, validators=[model_validators.isNonEmpty])
     org_requestor_address = models.CharField(max_length=100, validators=[model_validators.isNonEmpty])
+    org_phone = models.CharField(max_length=10, validators=[model_validators.isValidPhone])
     org_owner_first_name = models.CharField(max_length=100, validators=[model_validators.isNonEmpty])
     org_owner_last_name = models.CharField(max_length=100, validators=[model_validators.isNonEmpty])
     owning_User = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -23,8 +23,11 @@ describe('ViewInvoicePageComponent', () => {
       quotes: {
         quotes: [],
         totalMaterialSubtotal: '0.00',
-        totalPrice: '0.00'
-      }
+        subtotal: '0.00',
+        taxPercent: '0.00',
+        totalDiscount: '0.00',
+        "grandtotal" : 'O.00'
+      }     
     }
 
     paramMapSubject = new Subject();

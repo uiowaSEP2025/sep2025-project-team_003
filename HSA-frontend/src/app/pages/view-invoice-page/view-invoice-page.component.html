@@ -10,7 +10,7 @@
         <app-invoice-quotes-display-table
             [dataSource]="invoiceData.quotes"
         ></app-invoice-quotes-display-table>
-        <button mat-fab extended class="m-10" >
+        <button mat-fab extended class="m-10" (click)="navigateViewInvoice()">
             <mat-icon>auto_awesome</mat-icon>
             Generate Invoice
         </button>

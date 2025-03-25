@@ -6,10 +6,10 @@ from hsabackend.models.quote import Quote
 from hsabackend.models.invoice import Invoice
 from hsabackend.models.organization import Organization
 from django.core.exceptions import ValidationError
-from django.utils import timezone
 from django.db.models import Q
 from django.db.models import Sum
-from hsabackend.utils.api_validators import parseAndReturnDate
+from hsabackend.utils.api_validators import parseAndReturnDate, parse_and_return_decimal
+from decimal import Decimal
 
 @api_view(["POST"])
 def createInvoice(request):
@@ -33,6 +33,7 @@ def createInvoice(request):
     invoice_status = json.get("status",None)
     issued = parseAndReturnDate(json.get("issuedDate",""))
     due = parseAndReturnDate(json.get("dueDate",""))
+    tax_percent = json.get("tax",None)
 
     if not invoice_status or invoice_status not in ('created', 'issued', 'paid'):
         return Response({"message": "Must include a valid status 'created' | 'issued' | 'paid'"}, status=status.HTTP_400_BAD_REQUEST)  
@@ -42,9 +43,12 @@ def createInvoice(request):
 
     if invoice_status != 'created' and (not issued or not due):
         return Response({"message": "Must include valid issuance and due dates"}, status=status.HTTP_400_BAD_REQUEST)  
-    
+
     if invoice_status != 'created' and due < issued:
         return Response({"message": "Due date can not be before the issuance date"}, status=status.HTTP_400_BAD_REQUEST)  
+    
+    if not parse_and_return_decimal(tax_percent):
+        return Response({"message": "Tax must be a valid percentage of the form 0.XX"}, status=status.HTTP_400_BAD_REQUEST)  
 
     cust_qs = Customer.objects.filter(pk=int(customer_id), organization=org)
 
@@ -55,7 +59,8 @@ def createInvoice(request):
     invoice = Invoice(
         customer = cust_qs[0],
         issuance_date = issued,
-        due_date = due
+        due_date = due,
+        tax = parse_and_return_decimal(tax_percent)
     )
     
     try:
@@ -138,6 +143,7 @@ def updateInvoice(request, id):
 
     issued = parseAndReturnDate(json.get("issuedDate",""))
     due = parseAndReturnDate(json.get("dueDate",""))
+    tax_percent = json.get("tax",None)
 
     if invoice_status == 'created':
         issued = due = None
@@ -147,7 +153,6 @@ def updateInvoice(request, id):
     
     if invoice_status != 'created' and due < issued:
         return Response({"message": "Due date can not be before the issuance date"}, status=status.HTTP_400_BAD_REQUEST)  
-        
 
     invoice_qs = Invoice.objects.filter(
         customer__organization=org.pk,
@@ -162,6 +167,7 @@ def updateInvoice(request, id):
     invoice.status = invoice_status
     invoice.issuance_date = issued
     invoice.due_date = due
+    invoice.tax = parse_and_return_decimal(tax_percent)
 
     try:
         invoice.full_clean()
@@ -219,17 +225,23 @@ def get_data_for_invoice(request, id):
         total_material_subtotal=Sum("material_subtotal"),
         total_total_price=Sum("total_price"),
     )
-
+    total_discnt = Decimal(0)
 
     for quote in quotes:
+        total_discnt += quote.discount_type.discount_percent if quote.discount_type else Decimal(0)
         res_quotes.append(quote.jsonToDisplayForInvoice())
 
-    
+    total_discnt = total_discnt/len(quotes)
+    aggregated_subtotal = aggregated_values["total_total_price"] or 0
+
     res["quotes"] = {
         "quotes": res_quotes,
-        "totalMaterialSubtotal": aggregated_values["total_material_subtotal"] or 0,
-        "totalPrice": aggregated_values["total_total_price"] or 0,
+        "totalMaterialSubtotal": str(aggregated_values["total_material_subtotal"] or 0),
+        "subtotal": str(aggregated_subtotal),
+        "taxPercent": str(invoice_qs[0].tax),
+        "totalDiscount": str(total_discnt), # this is agregated from the discounts, eg 0.3 (30%)
+        # total_discnt is like 30.05%, i know the casting is disgusting, sorry -alex
+        "grandtotal" : str((aggregated_subtotal * (Decimal(f"0.{str(100 - total_discnt).replace('.', "")}"))) * (1 + invoice_qs[0].tax))
     }
 
-    
     return Response(res, status=status.HTTP_200_OK)
