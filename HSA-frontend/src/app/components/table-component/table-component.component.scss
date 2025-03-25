@@ -10,3 +10,12 @@
     border-bottom-color: rgb(116, 119, 127);
     border-bottom-width: 1px;
 }
+
+
+.darkenOnHover {
+  filter: brightness(100%); // Default brightness
+
+  &:hover {
+    filter: brightness(90%); // Darken on hover
+  }
+}

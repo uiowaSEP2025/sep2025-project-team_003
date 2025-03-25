@@ -6,7 +6,7 @@
         searchHint="search by customer name" 
         [fetchedData]="invoices"
         [headers]="['Status', 'Due Date', 'Customer']"
-        [hideValues]="['Id']"
+        [hideValues]="['Id', 'Tax']"
         [clickableRows]="true"
         [onRowClick]="redirectInvoiceDetails.bind(this)"
         ></app-table-component>

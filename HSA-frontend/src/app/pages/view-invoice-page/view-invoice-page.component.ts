@@ -11,6 +11,7 @@ import { InvoiceQuotesDisplayTableComponent } from '../../components/invoice-quo
 import { MatCardModule } from '@angular/material/card';
 import { ErrorHandlerService } from '../../services/error.handler.service';
 
+
 @Component({
   selector: 'app-view-invoice-page',
   imports: [LoadingFallbackComponent,CommonModule, MatButtonModule, MatIconModule, InvoiceQuotesDisplayTableComponent, MatCardModule],
@@ -21,7 +22,7 @@ export class ViewInvoicePageComponent implements OnInit{
   invoiceID!: number
   invoiceData: InvoiceDataInterface | null = null;
 
-  constructor (private invoiceService: InvoiceService, private activatedRoute:ActivatedRoute, private router: Router, private errorHandler: ErrorHandlerService) {
+  constructor (private invoiceService: InvoiceService, private activatedRoute:ActivatedRoute, private errorHandler: ErrorHandlerService) {
     this.activatedRoute.paramMap.subscribe(params => {
       this.invoiceID = Number(params.get('id'));
     })
@@ -39,6 +40,10 @@ export class ViewInvoicePageComponent implements OnInit{
     
   }
 
+  navigateViewInvoice() {
+    window.open(`/api/generate/invoice/${this.invoiceID}`, '_blank');
+
+  }
 
 
 }

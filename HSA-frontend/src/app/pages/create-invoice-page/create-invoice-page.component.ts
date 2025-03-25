@@ -18,12 +18,15 @@ import { MatLabel } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ViewChild } from '@angular/core';
 import { StringFormatter } from '../../utils/string-formatter';
+import { Validators } from '@angular/forms';
+import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-create-invoice-page',
   imports: [TableComponentComponent, CommonModule, MatButtonModule, MatError,
     FormsModule, MatFormFieldModule, InvoiceDatePickerComponent, MatSelectModule,
-    MatLabel, MatInputModule
+    MatLabel, MatInputModule, ReactiveFormsModule
   ],
   templateUrl: './create-invoice-page.component.html',
   styleUrl: './create-invoice-page.component.scss'
@@ -36,12 +39,17 @@ export class CreateInvoicePageComponent implements OnInit {
   selectedQuotes: any = []
   selectedQuotesIsError: boolean = false
   status: 'created' | 'issued' | 'paid' = 'created'
+  matcher = new GenericFormErrorStateMatcher()
   @ViewChild(InvoiceDatePickerComponent) datePicker!: InvoiceDatePickerComponent;
 
   readonly range: FormGroup<DateRange> = new FormGroup({
     issued: new FormControl<Date | null>(null),
     due: new FormControl<Date | null>(null),
   });
+
+  taxAmount: FormControl = new FormControl('', [Validators.required,  Validators.min(0),
+    Validators.max(1),Validators.pattern(/^(0(\.\d{1,2})?|1(\.00)?)$/)
+  ])
 
   constructor(private customerService: CustomerService, private router: Router, private quoteService: QuoteService,
     private invoiceService: InvoiceService, private errorHandler: ErrorHandlerService,
@@ -120,7 +128,8 @@ export class CreateInvoicePageComponent implements OnInit {
       quoteIDs: this.selectedQuotes,
       status: this.status,
       issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
-      dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value)
+      dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
+      tax: this.taxAmount.value.toString()
     }
     this.invoiceService.createInvoice(json).subscribe(
       {

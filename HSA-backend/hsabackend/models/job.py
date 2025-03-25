@@ -2,6 +2,7 @@ from django.db import models
 from hsabackend.models.organization import Organization
 from hsabackend.models.model_validators import isNonEmpty, validate_state
 from hsabackend.models.customer import Customer
+from hsabackend.models.service import Service
 
 class Job(models.Model):
     """A request for service from a customer to an organization"""
@@ -9,7 +10,6 @@ class Job(models.Model):
         ('created', 'created'),
         ('completed', 'completed'),
     ]
-
 
     job_status = models.CharField(max_length=50, choices=status_choices, default="created")
     start_date = models.DateField(null=True)
@@ -40,4 +40,3 @@ class Job(models.Model):
             'requestor_zip': self.requestor_zip,
             'requestor_address': self.requestor_address,
         }
-

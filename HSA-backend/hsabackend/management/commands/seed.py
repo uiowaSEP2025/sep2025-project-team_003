@@ -7,6 +7,7 @@ from hsabackend.models.contractor import Contractor
 from hsabackend.models.material import Material
 from django.contrib.auth.models import User
 from hsabackend.models.request import Request
+from hsabackend.models.job_service import JobService
 from hsabackend.models.job import Job
 from hsabackend.models.quote import Quote
 from hsabackend.models.discount_type import DiscountType
@@ -15,8 +16,21 @@ from hsabackend.models.job_template import JobTemplate
 from hsabackend.models.subscription import Subscription
 from django.utils import timezone
 import traceback
+from hsabackend.models.job_material import JobMaterial
 
 import random
+
+
+def random_currency(min_value=0.01, max_value=1000.00):
+    """
+    Generate a random currency value within a given range.
+    
+    :param min_value: Minimum currency value (default is 0.01)
+    :param max_value: Maximum currency value (default is 1000.00)
+    :param currency_symbol: Currency symbol to prefix (default is "$")
+    :return: A formatted string representing the random currency value
+    """
+    return round(random.uniform(min_value, max_value), 2)
 
 class Command(BaseCommand):
     """seeds the database with test data. DO NOT RUN ON PROD!"""
@@ -45,7 +59,8 @@ class Command(BaseCommand):
                 org_requestor_address = "123 main st",
                 org_owner_first_name = "Dev",
                 org_owner_last_name = "User",
-                owning_User = usr
+                owning_User = usr,
+                org_phone = "1234567890"
                 )
             org.save()
             org1 = Organization.objects.create(
@@ -57,7 +72,8 @@ class Command(BaseCommand):
                 org_requestor_address = "123 main st",
                 org_owner_first_name = "Test",
                 org_owner_last_name = "User",
-                owning_User = usr1
+                owning_User = usr1,
+                org_phone = "1234567890"
                 )
             org1.save()
             
@@ -265,12 +281,16 @@ class Command(BaseCommand):
             # Generate 5 mock Job instances
             for i in range(5):
                 j = Job.objects.create(
-                    job_status=random.choice(['created', 'completed']),
+                    job_status=random.choice(['completed']),
                     start_date=timezone.now().date(),
                     end_date=timezone.now().date() + timezone.timedelta(days=random.randint(1, 30)),
                     description=random.choice(job_descriptions),
                     organization=org,
-                    customer=customers[i]
+                    customer=customers[i],
+                    requestor_city = "Iowa City",
+                    requestor_state = "2 W Washington St",
+                    requestor_zip = "52240",
+                    requestor_address = "IA"
                 )
                 j.save()
 
@@ -280,7 +300,11 @@ class Command(BaseCommand):
                     end_date=timezone.now().date() + timezone.timedelta(days=random.randint(1, 30)),
                     description=random.choice(job_descriptions) + " test",
                     organization=org1,
-                    customer=customers_1[i]
+                    customer=customers_1[i],
+                    requestor_city = "Iowa City",
+                    requestor_state = "2 W Washington St",
+                    requestor_zip = "52240",
+                    requestor_address = "IA"
                 )
                 j.save()
 
@@ -312,14 +336,14 @@ class Command(BaseCommand):
                 due_date = issuance_date + timezone.timedelta(days=30)
                 status = 'created' if i % 2 == 0 else 'accepted'
                 material_subtotal = 1000.0 * (i + 1)
-                total_price = material_subtotal * 0.9  # 10% discount
+                total_price = material_subtotal 
                 jobID = jobs_org_1[i]
                 
 
                 q = Quote.objects.create(
                     issuance_date=issuance_date,
                     due_date=due_date,
-                    status=status,
+                    status='accepted',
                     material_subtotal=material_subtotal,
                     total_price=total_price,
                     jobID=jobID,
@@ -331,7 +355,7 @@ class Command(BaseCommand):
                 due_date = issuance_date + timezone.timedelta(days=30)
                 status = 'created' if i % 2 == 0 else 'accepted'
                 material_subtotal = 1000.0 * (i + 1)
-                total_price = material_subtotal * 0.9  # 10% discount
+                total_price = material_subtotal 
                 jobID = jobs_org[i]
                 
 
@@ -346,6 +370,74 @@ class Command(BaseCommand):
                     )
                 q.save()
 
+            # create another job and tie a quote to it
+            j = Job.objects.create(
+                    job_status=random.choice(['completed']),
+                    start_date=timezone.now().date(),
+                    end_date=timezone.now().date() + timezone.timedelta(days=random.randint(1, 30)),
+                    description=random.choice(job_descriptions),
+                    organization=org,
+                    customer=customers[1],
+                    requestor_city = "Iowa City",
+                    requestor_state = "2 W Washington St",
+                    requestor_zip = "52240",
+                    requestor_address = "IA"
+                )
+            j.save()
+
+            q = Quote.objects.create(
+                    issuance_date=issuance_date,
+                    due_date=due_date,
+                    status='accepted',
+                    material_subtotal=material_subtotal,
+                    total_price=total_price,
+                    jobID=j,
+                    discount_type = random.choice(discounts_1)
+                    )
+            q.save()
+
+            jobs_for_invoice = Job.objects.filter(
+                customer=customers[1],
+                job_status="completed",
+                quote__status="accepted",  # Ensures only jobs with accepted quotes are selected
+                customer__organization=org
+            )
+
+            services_org = Service.objects.filter(
+                organization = org
+            )
+
+            s1, s2 = services_org[:len(services_org) // 2], services_org[len(services_org) // 2:]
+
+            for service in s1:
+                js = JobService(job=jobs_for_invoice[0], service = service)
+                js.save()
+
+            for service in s2:
+                js = JobService(job=jobs_for_invoice[1], service = service)
+                js.save()
+
+            mats = Material.objects.filter(organization=org)
+            m1,m2 = mats[:len(mats) // 2], mats[len(mats) // 2:]
+            for m in m1:
+                jm = JobMaterial(
+                    price_per_unit = random_currency(10, 50),
+                    units_used = random.randint(1,100),
+                    job = jobs_for_invoice[0],
+                    material = m
+                )
+                jm.save()
+
+            for m in m2:
+                jm = JobMaterial(
+                    price_per_unit = random_currency(0, 50),
+                    units_used = random.randint(1,100),
+                    job = jobs_for_invoice[1],
+                    material = m
+                )
+                jm.save()
+
+            
 
             for i in range(5):
                 j = JobTemplate.objects.create(

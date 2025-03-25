@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+import decimal
 
 def isValidPhone(phone:str) -> bool:
     """validates a phone number without any separating parentheses 
@@ -24,6 +25,13 @@ def validate_state(state:str):
     }
     if state not in states["state_names"]: # TODO: find out what to validate by
         raise ValidationError(
-            _("%(input)s not a valid state"),
+            _("%(input) is not a valid state"),
+            params={"value": input},
+        )
+    
+def is_valid_percent(percent: decimal):
+    if percent < 0 or percent > 100:
+        raise ValidationError(
+            _("%(input) is not a valid percentage"),
             params={"value": input},
         )

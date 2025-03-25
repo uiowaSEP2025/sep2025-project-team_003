@@ -5,7 +5,6 @@ from hsabackend.models.organization import Organization
 from hsabackend.models.job_material import JobMaterial
 from hsabackend.models.job import Job
 from hsabackend.models.material import Material
-from django.db.models import Q
 from django.core.exceptions import ValidationError
 
 @api_view(["GET"])

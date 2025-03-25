@@ -45,7 +45,6 @@ export class InvoiceDatePickerComponent implements OnInit{
     }
 
     if (issued > due) {
-      console.log('invalid')
       this.isInvalidRange = true;
       return false;
     }

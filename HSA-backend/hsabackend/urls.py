@@ -18,6 +18,7 @@ from hsabackend.views.jobs_materials import get_job_material_table_data, create_
 from hsabackend.views.jobs_contractors import get_job_contractor_table_data, create_job_contractor, delete_job_contractor, delete_cached_job_contractor
 from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice
 from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForInvoiceByInvoice
+from hsabackend.views.generate_invoice_pdf_view import generate_pdf
 
 def handle_unmatched_api(request):
     return HttpResponseNotFound("404 Not Found")
@@ -81,8 +82,8 @@ urlpatterns = [
     path("api/get/invoices", getInvoices),
     path("api/delete/invoice/<int:id>", deleteInvoice),
     path("api/edit/invoice/<int:id>", updateInvoice),
+    path("api/generate/invoice/<int:id>", generate_pdf),
     path("api/get/invoice/displaydata/<int:id>", get_data_for_invoice),
-    
 
     # quotes
     path("api/get/quotesforinvoice/customer/<int:id>", getQuotesForInvoiceByCustomer),
