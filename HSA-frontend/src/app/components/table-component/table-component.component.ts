@@ -158,7 +158,6 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
           this.headersWithActions = ['Checkbox', ...this.headers].filter((header) => {
             return !this.hideValues.includes(header)
           })
-          console.log(this.headersWithActions)
         }
       }
     }

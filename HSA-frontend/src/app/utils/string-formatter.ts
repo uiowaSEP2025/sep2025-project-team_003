@@ -38,11 +38,11 @@ export class StringFormatter {
     }
 
     formatPercent(percent: string) {
-      return `${percent} %`
+      return `${percent}%`
     }
 
     formatTaxPercent(percent: string) {
-      return `${percent.split('.')[1]} %`
+      return `${percent.split('.')[1]}%`
     }
     
 }
