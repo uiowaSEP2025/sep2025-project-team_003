@@ -5,7 +5,7 @@ from rest_framework.test import APIRequestFactory
 from rest_framework.test import APITestCase
 from unittest import TestCase
 from django.contrib.auth.models import User
-from hsabackend.views.generate_invoice_pdf_view import generate_pdf, generate_pdf_customer_org_header, add_total_and_disclaimer, generate_global_jobs_table
+from hsabackend.views.generate_invoice_pdf_view import generate_pdf, generate_pdf_customer_org_header, add_total_and_disclaimer, generate_global_jobs_table, generate_table_for_specific_job
 from rest_framework import status
 from hsabackend.models.organization import Organization
 from decimal import Decimal
@@ -230,3 +230,61 @@ class HelperTests(TestCase):
 
         # Check if the PDF table was populated correctly
         self.assertEqual(pdf.table.call_count, 1)
+
+    @patch('hsabackend.views.generate_invoice_pdf_view.JobService.objects.select_related')
+    @patch('hsabackend.views.generate_invoice_pdf_view.JobMaterial.objects.filter')
+    def test_generate_table_for_specific_job(self, mock_material_filter, mock_service_select):
+        # Setup PDF mock
+        pdf = MagicMock()
+        pdf.table.return_value.__enter__.return_value = MagicMock()
+        
+        # Mock services data
+        service1 = Mock()
+        service1.get_service_info_for_detailed_invoice.return_value = {
+            "service name": "Service 1",
+            "service description": "Description 1"
+        }
+        service2 = Mock()
+        service2.get_service_info_for_detailed_invoice.return_value = {
+            "service name": "Service 2",
+            "service description": "Description 2"
+        }
+        
+        # Mock materials data
+        material1 = Mock()
+        material1.invoice_material_row.return_value = {
+            "material name": "Material 1",
+            "per unit": Decimal('10.00'),
+            "units used": 2,
+            "total": Decimal('20.00')
+        }
+        material2 = Mock()
+        material2.invoice_material_row.return_value = {
+            "material name": "Material 2",
+            "per unit": Decimal('15.00'),
+            "units used": 1,
+            "total": Decimal('15.00')
+        }
+        
+        # Configure mocks
+        mock_service_select.return_value.filter.return_value = [service1, service2]
+        mock_material_filter.return_value = [material1, material2]
+        
+        # Call the function
+        generate_table_for_specific_job(pdf, jobid=1, num_jobs=3, idx=0)
+        
+        # Assertions
+        # Check PDF methods were called
+        pdf.set_x.assert_called_once_with(10)
+        pdf.multi_cell.assert_called_once_with(100, text="Job #1 of 3", align="L")
+        pdf.ln.assert_called_once_with(5)
+        
+        # Check table creation (should be called twice - once for services, once for materials)
+        self.assertEqual(pdf.table.call_count, 2)
+        
+        # Get the table context manager
+        table_mock = pdf.table.return_value.__enter__.return_value
+        
+        # Check service table rows
+        service_header = table_mock.row.call_args_list[0]
+        self.assertEqual(service_header.kwargs, {})
