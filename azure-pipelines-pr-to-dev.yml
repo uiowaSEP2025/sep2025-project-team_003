@@ -19,7 +19,7 @@ stages:
   displayName: Build image
   jobs:
   - job: Build
-    displayName: Build and Push to Docker Hub
+    displayName: Build and push to Docker Hub
     pool:
       vmImage: ubuntu-latest
     steps:
@@ -29,7 +29,7 @@ stages:
         docker push $(Docker Username)/hsa:latest
       displayName: Run Docker build and push Scripts
 - stage: Deploy
-  displayName: Deploy image from Docker Hub to K3s
+  displayName: Deploy image from Docker Hub to dev server
   jobs:
   - job: Deployment
     steps:
