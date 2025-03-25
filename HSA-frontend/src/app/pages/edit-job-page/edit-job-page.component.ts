@@ -199,6 +199,7 @@ export class EditJobPageComponent {
       if (result.length !== 0) {
         let customerEntry = result.itemsInfo[0]
         this.jobForm.controls['customerName'].setValue(customerEntry.first_name + " " + customerEntry.last_name)
+        this.customerID = customerEntry.id;
         this.selectedCustomer = customerEntry.id
 
         this.onChangeUpdateButton()
