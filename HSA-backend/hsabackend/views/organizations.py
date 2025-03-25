@@ -63,7 +63,6 @@ def createOrganization(request):
     # users can only have a single organization
     org_count = Organization.objects.filter(owning_User=request.user.pk).count()
     if org_count > 0:
-        print(org_count)
         return Response({"errors": "This user already has an organization"}, status=status.HTTP_400_BAD_REQUEST)
 
     name = request.data.get('name', '')
@@ -101,11 +100,21 @@ def createOrganization(request):
 
 @api_view(["POST"])
 def deleteOrganization(request):
+    # This API seems unusable... likely.
+    # due to the fact that users cannot have more than 1 org, but yet have to have 1 org
+    # the deletion feature might never be used.
+
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
     try:
+        org_count = Organization.objects.filter(owning_User=request.user.pk).count()
+        if org_count <= 1:
+            return Response({"errors": "All users must have at least 1 org; You only have 1 or less orgs, cannot delete."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # code coverage here is wanky due to the fact that the delete path will never get walked under normal app circumstances.
+        # because a user should never be left without an org.
         Organization.objects.filter(owning_User=request.user.pk).delete()
-        return Response({"message": "Organization created"}, status=status.HTTP_201_CREATED)
+        return Response({"message": "Organization deleted"}, status=status.HTTP_200_OK)
     except Exception as e:
-        return Response({"error":"An error occured trying to delete organization. Please contact admin."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error":f"An error occured trying to delete organization. Please contact admin. Error: {e}"}, status=status.HTTP_400_BAD_REQUEST)
