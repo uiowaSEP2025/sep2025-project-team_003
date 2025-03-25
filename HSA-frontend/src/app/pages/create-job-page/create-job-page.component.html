@@ -27,6 +27,7 @@
         @if (selectedCustomersIsError) {
             <mat-error class="mt-3">You must select a customer to continue</mat-error>    
         }
+        <div class="spacer"></div>
 
         @if (selectedCustomers.length !== 0) {
           <app-table-component 
@@ -44,6 +45,7 @@
               <mat-error class="mt-3">You must include at least a service to a job</mat-error>    
           }
         }
+        <div class="spacer"></div>
 
         @if (selectedServices.length !== 0) {
           <app-table-component 
@@ -62,6 +64,7 @@
               [headers]="['Checkbox', 'Material Name', 'Material Description']"
           ></app-table-component> 
         }
+        <div class="spacer"></div>
 
         @if (selectedServices.length !== 0) {
           <app-table-component 
@@ -76,6 +79,7 @@
               [headers]="['Checkbox', 'Contractor Name', 'Phone Number', 'Email']"
           ></app-table-component> 
         }
+        <div class="spacer"></div>
         <form class="parent" [formGroup]="jobForm" (ngSubmit)="onSubmit()">
           <div class="grid-container">
             <mat-form-field >
