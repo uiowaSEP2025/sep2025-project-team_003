@@ -18,6 +18,15 @@ FROM python:3.13 AS backend
 # Create necessary directories first
 WORKDIR /app
 
+ARG DATABASE_IP
+ARG DATABASE_USERNAME
+ARG DATABASE_PASSWORD
+ARG DATABASE_NAME
+ENV DATABASE_IP=$DATABASE_IP
+ENV DATABASE_USERNAME=$DATABASE_USERNAME
+ENV DATABASE_PASSWORD=$DATABASE_PASSWORD
+ENV DATABASE_NAME=$DATABASE_NAME
+
 # Copy from frontend stage with specific paths
 COPY --from=frontend /HSA-frontend /app/HSA-frontend
 COPY --from=frontend /build_django_index.py /app/
