@@ -265,7 +265,7 @@ class contractorViewTest(APITestCase):
         mock_user.is_authenticated = True
 
         mockdata = {
-            "job_contractors": [
+            "jobContractors": [
                 {
                     "id": 2
                 },
@@ -291,7 +291,7 @@ class contractorViewTest(APITestCase):
         job_contractor.return_value = job_contractor_obj
 
         mockdata = {
-            "job_contractors": [
+            "jobContractors": [
                 {
                     "id": 2
                 },
@@ -307,4 +307,4 @@ class contractorViewTest(APITestCase):
         response = delete_cached_job_contractor(request, 1)
         
         assert response.status_code == status.HTTP_200_OK
-        assert job_contractor_obj.delete.call_count == len(mockdata["job_contractors"])
+        assert job_contractor_obj.delete.call_count == len(mockdata["jobContractors"])

@@ -74,6 +74,7 @@ def get_job_individual_data(request, id):
     if not job:
         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
+    
     job_services = JobService.objects.filter(job=job.pk)
     job_materials = JobMaterial.objects.filter(job=job.pk)
     job_contractors = JobContractor.objects.filter(job=job.pk)

@@ -45,19 +45,18 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
   displayedMaterialColumns: string[] = []
   displayedContractorColumns: string[] = []
 
-  services!: ServiceJSON[]
-  materials!: MaterialJSON[]
-  contractors!: ContractorJSON[]
-  displayServices!: ServiceRowItem[]
-  displayMaterials!: MaterialRowItem[]
-  displayContractors!: ContractorRowItem[]
+  services: ServiceJSON[] = []
+  materials: MaterialJSON[] = []
+  contractors: ContractorJSON[] = []
+  displayServices: ServiceRowItem[] = []
+  displayMaterials: MaterialRowItem[] = []
+  displayContractors: ContractorRowItem[] = []
 
   constructor (public dialog: MatDialog, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {}
 
   ngOnInit(): void {
     if (this.typeToDisplay === "service") {
       this.updateServiceTable()
-      
     }
     else if (this.typeToDisplay === "material") {
       this.updateMaterialTable()
@@ -82,41 +81,47 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
   }
 
   updateServiceTable() {
-    this.displayServices = this.dataSource.services.map(
-      (service) => ({
-        "Service ID": service.serviceID,
-        "Service Name": service.serviceName,
-        "Service Description": service.serviceDescription
-      })
-    )
+    if (this.dataSource) {
+      this.displayServices = this.dataSource.services.map(
+        (service) => ({
+          "Service ID": service.serviceID,
+          "Service Name": service.serviceName,
+          "Service Description": service.serviceDescription
+        })
+      )
+    }
     
     this.displayedServiceColumns = ["Service ID", "Service Name", "Service Description"]
     this.displayedServiceColumns = this.isEditRow === true ? [...this.displayedServiceColumns, "Actions"] : this.displayedServiceColumns
   }
 
   updateMaterialTable() {
-    this.displayMaterials = this.dataSource.materials.map(
-      (material) => ({
-        "Material ID": material.materialID,
-        "Material Name": material.materialName,
-        "Units Used": material.unitsUsed,
-        "Price Per Unit": "$" + material.pricePerUnit
-      })
-    )
+    if (this.dataSource) {
+      this.displayMaterials = this.dataSource.materials.map(
+        (material) => ({
+          "Material ID": material.materialID,
+          "Material Name": material.materialName,
+          "Units Used": material.unitsUsed,
+          "Price Per Unit": "$" + material.pricePerUnit
+        })
+      )
+    }
 
     this.displayedMaterialColumns = ["Material ID", "Material Name", "Units Used", "Price Per Unit"]
     this.displayedMaterialColumns = this.isEditRow === true ? [...this.displayedMaterialColumns, "Actions"] : this.displayedMaterialColumns
   }
 
   updateContractorTable() {
-    this.displayContractors = this.dataSource.contractors.map(
-      (contractor) => ({
-        "Contractor ID": contractor.contractorID,
-        "Contractor Name": contractor.contractorName,
-        "Contractor Phone No": contractor.contractorPhoneNo,
-        "Contractor Email": contractor.contractorEmail
-      })
-    )
+    if (this.dataSource) {
+      this.displayContractors = this.dataSource.contractors.map(
+        (contractor) => ({
+          "Contractor ID": contractor.contractorID,
+          "Contractor Name": contractor.contractorName,
+          "Contractor Phone No": contractor.contractorPhoneNo,
+          "Contractor Email": contractor.contractorEmail
+        })
+      )
+    }
     
     this.displayedContractorColumns = ["Contractor ID", "Contractor Name", "Contractor Phone No", "Contractor Email"]
     this.displayedContractorColumns = this.isEditRow === true ? [...this.displayedContractorColumns, "Actions"] : this.displayedContractorColumns

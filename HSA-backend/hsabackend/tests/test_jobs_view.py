@@ -62,7 +62,7 @@ class jobViewTest(APITestCase):
         response = get_job_table_data(request)
         
         assert response.status_code == status.HTTP_200_OK
-        qs.filter.assert_called_with(Q(description__icontains='bob')) 
+        qs.filter.assert_called_with(Q(customer__first_name__icontains='bob') | Q(customer__last_name__icontains='bob') | Q(start_date__icontains='bob') | Q(end_date__icontains='bob') | Q(job_status__icontains='bob')) 
 
     @patch('hsabackend.views.jobs.Job.objects.filter')
     @patch('hsabackend.views.jobs.Organization.objects.get')
@@ -121,20 +121,21 @@ class jobViewTest(APITestCase):
         get_org.return_value = org
 
         mock_response = {
-            'id': 0,
-            'job_status': '',
-            'start_date': '',
-            'end_date': '',
-            'description': '',
-            'customer_name': '',
-            'customer_id': '',
-            'requestor_city': '',
-            'requestor_state': '',
-            'requestor_zip': '',
-            'requestor_address': '',
+            "id": 1,
+            "jobStatus": "",
+            "startDate": "",
+            "endDate": "",
+            "description": "",
+            "customerName": "",
+            "customerID": 1,
+            "requestorAddress": "",
+            "requestorCity": "",
+            "requestorState": "",
+            "requestorZip": ""
         }
 
         job = Mock(spec=Job)
+        job.pk = 1
         job.json.return_value = mock_response
         get_job.return_value = job
 
@@ -169,10 +170,11 @@ class jobViewTest(APITestCase):
         factory = APIRequestFactory()
         request = factory.post('api/create/job',
             data={
-                "job_status": "created",
-                "start_date": "2026-01-02",
-                "end_date": "2026-02-02",
+                "jobStatus": "created",
+                "startDate": "2026-01-02",
+                "endDate": "2026-02-02",
                 "description": "Test Job",
+                "customerID": 1,
                 "city": "Test City",
                 "state": "Iowa",
                 "zip": "99999",
@@ -193,12 +195,12 @@ class jobViewTest(APITestCase):
                 "materials": [
                     {
                         "id": 2,
-                        "unit": 0,
+                        "unitsUsed": 0,
                         "pricePerUnit": 0.00
                     },
                     {
                         "id": 4,
-                        "unit": 0,
+                        "unitsUsed": 0,
                         "pricePerUnit": 0.00
                     }
                 ]
@@ -241,10 +243,11 @@ class jobViewTest(APITestCase):
         factory = APIRequestFactory()
 
         mock_data = {
-                "job_status": "created",
-                "start_date": "2026-01-02",
-                "end_date": "2026-02-02",
+                "jobStatus": "created",
+                "startDate": "2026-01-02",
+                "endDate": "2026-02-02",
                 "description": "Test Job",
+                "customerID": 1,
                 "city": "Test City",
                 "state": "Iowa",
                 "zip": "99999",
@@ -265,12 +268,12 @@ class jobViewTest(APITestCase):
                 "materials": [
                     {
                         "id": 2,
-                        "unit": 0,
+                        "unitsUsed": 0,
                         "pricePerUnit": 0.00
                     },
                     {
                         "id": 4,
-                        "unit": 0,
+                        "unitsUsed": 0,
                         "pricePerUnit": 0.00
                     }
                 ]
