@@ -21,7 +21,10 @@ describe('InvoiceQuotesDisplayTableComponent', () => {
           "totalPrice": "200",
           "jobDescription": "dog"}],
         'totalMaterialSubtotal': "300",
-        'totalPrice': '300'
+        "subtotal": '$300.00',
+        "taxPercent": '0.10',
+    "totalDiscount": '0.10',
+    "grandtotal" : '400.00',
     }
 
     fixture = TestBed.createComponent(InvoiceQuotesDisplayTableComponent);
@@ -48,7 +51,7 @@ describe('InvoiceQuotesDisplayTableComponent', () => {
     expect(row1.textContent).toContain('cat')
     expect(row2.textContent).toContain('$200.00')
     expect(row2.textContent).toContain('dog')
-    expect(totals.textContent).toContain('Total:')
+    expect(totals.textContent).toContain('Subtotal:')
     expect(totals.textContent).toContain('$300.00')
 
   })
