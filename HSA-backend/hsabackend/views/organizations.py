@@ -13,7 +13,6 @@ def getOrganizationDetail(request):
 
     try:
         org = Organization.objects.get(owning_User=request.user.pk)
-        print(org.json())
         return Response(org.json(), status=status.HTTP_200_OK)
 
     except Exception as e:
