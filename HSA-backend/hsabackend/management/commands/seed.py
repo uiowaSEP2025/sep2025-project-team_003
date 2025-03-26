@@ -379,9 +379,9 @@ class Command(BaseCommand):
                     organization=org,
                     customer=customers[1],
                     requestor_city = "Iowa City",
-                    requestor_state = "2 W Washington St",
+                    requestor_state = "IA",
                     requestor_zip = "52240",
-                    requestor_address = "IA"
+                    requestor_address = "2 W Washington St"
                 )
             j.save()
 
