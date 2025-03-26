@@ -10,13 +10,13 @@ class Invoice(models.Model):
         ('issued', 'issued'),
         ('paid','paid')
     ]
-
+ 
     issuance_date = models.DateField(null=True,blank=True, default=None)
     due_date = models.DateField(null=True,blank=True, default=None)
     status = models.CharField(max_length=50, choices=status_choices, default="created")
     tax = models.DecimalField(max_digits=2, decimal_places=2)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-
+ 
     def __str__(self):
         return f"<Invoice, customer: {self.customer}>"
     
@@ -26,7 +26,7 @@ class Invoice(models.Model):
             "status": self.status,
             "dueDate": "N/A" if self.due_date == None else self.due_date,
             "issuanceDate": "N/A" if self.issuance_date == None else self.issuance_date,
-            "customer": f"{self.customer.first_name}, {self.customer.last_name}" 
+            "customer": f"{self.customer.first_name}, {self.customer.last_name}"
         }
     
     def json(self):

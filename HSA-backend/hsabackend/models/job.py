@@ -8,6 +8,7 @@ class Job(models.Model):
     """A request for service from a customer to an organization"""
     status_choices = [
         ('created', 'created'),
+        ('in-progress', 'in-progress'),
         ('completed', 'completed'),
     ]
 
@@ -29,14 +30,26 @@ class Job(models.Model):
     def json(self):
         return {
             'id': self.pk,
+            'jobStatus': self.job_status,
+            'startDate': self.start_date,
+            'endDate': self.end_date,
+            'description': self.description,
+            'customerName': self.customer.first_name + " " + self.customer.last_name,
+            'customerID': self.customer.id,
+            'requestorAddress': self.requestor_address,
+            "requestorCity": self.requestor_city,
+            "requestorState": self.requestor_state,
+            "requestorZip": self.requestor_zip
+        }
+    
+    def json_simplify(self):
+        return {
+            'id': self.pk,
+            # cap at 50 so table doesn't stretch
+        
+            'description': self.description[:50] + ("..." if len(self.description) > 50 else ""),
             'job_status': self.job_status,
             'start_date': self.start_date,
             'end_date': self.end_date,
-            'description': self.description,
             'customer_name': self.customer.first_name + " " + self.customer.last_name,
-            'customer_id': self.customer.id,
-            'requestor_city': self.requestor_city,
-            'requestor_state': self.requestor_state,
-            'requestor_zip': self.requestor_zip,
-            'requestor_address': self.requestor_address,
         }

@@ -19,6 +19,10 @@ import { CreateInvoicePageComponent } from './pages/create-invoice-page/create-i
 import { ViewInvoicePageComponent } from './pages/view-invoice-page/view-invoice-page.component';
 import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.component';
 import { EditInvoicePageComponent } from './pages/edit-invoice-page/edit-invoice-page.component';
+import { JobPageComponent } from './pages/job-page/job-page.component';
+import { ViewJobPageComponent } from './pages/view-job-page/view-job-page.component';
+import { CreateJobPageComponent } from './pages/create-job-page/create-job-page.component';
+import { EditJobPageComponent } from './pages/edit-job-page/edit-job-page.component';
 
 export const routes: Routes = [
   {
@@ -70,7 +74,16 @@ export const routes: Routes = [
     path: 'contractors/create', component: CreateContractorsPageComponent
   },
   {
-    path: 'services', component: ServicePageComponent
+    path: 'jobs', component: JobPageComponent
+  }, 
+  {
+    path: 'job/:id', component: ViewJobPageComponent
+  },
+  {
+    path: 'jobs/create', component: CreateJobPageComponent
+  },
+  {
+    path: 'jobs/edit/:id', component: EditJobPageComponent
   },
   {
     path: 'invoices', component: InvoicesPageComponent

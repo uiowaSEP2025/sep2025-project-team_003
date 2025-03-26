@@ -4,3 +4,10 @@ export interface Contractor extends PersonalInformationHelper {
   contractorID: number;
   organizationID: number;
 }
+
+export interface ContractorParams {
+  excludeIDs?: number[];
+  search: string,
+  pagesize: number,
+  offset: number,
+}

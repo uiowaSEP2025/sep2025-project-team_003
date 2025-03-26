@@ -1,0 +1,32 @@
+<div class="dialog-content">
+	<h2 mat-dialog-title>Select new {{ this.typeOfDialog }}</h2>
+	<mat-dialog-content>
+		@if (dialogData === null) {
+			<app-loading-fallback stringToDisplay="Loading the job"></app-loading-fallback>
+		}
+		@else {
+			<app-table-component 
+				[loadDataToTable]="typeOfDialog === 'customer' ? this.loadCustomersToTable.bind(this) : typeOfDialog === 'service' ? this.loadServicesToTable.bind(this) : typeOfDialog === 'material' ? this.loadMaterialsToTable.bind(this): this.loadContractorsToTable.bind(this)" 
+				editRedirect="" 
+				[hideValues]="['Actions', 'Id']"
+				[fetchedData]="this.dialogData"
+				[checkbox]="this.typeOfDialog === 'customer' ? 'single' : 'multiple'"
+				[unitUsedField]="this.isMaterial"
+				[pricePerUnitField]="this.isMaterial"
+				[checkedIds]="typeOfDialog === 'customer' ? this.selectedCustomer : typeOfDialog === 'service' ? this.selectedServices : typeOfDialog === 'material' ? this.selectedMaterials: this.selectedContractors"
+				[materialInputFields]="this.materialInputFields"
+				[setCheckedIds]="typeOfDialog === 'customer' ? this.setSelectedCustomer.bind(this) : typeOfDialog === 'service' ? this.setSelectedServices.bind(this) : typeOfDialog === 'material' ? this.setSelectedMaterials.bind(this): this.setSelectedContractors.bind(this)"
+				[setMaterialInputFields]="this.setMaterialInput.bind(this)"
+				[searchHint]="this.searchHint"
+				[width]="'700vw'"
+			></app-table-component> 
+		}
+	</mat-dialog-content>
+	<mat-dialog-actions>
+		<button mat-stroked-button (click)="onCancel()">Cancel</button>
+		<button mat-flat-button type="submit" [disabled]="this.isNotSelectedItems" (click)="onConfirm()">
+			{{this.typeOfDialog === 'customer' ? 'Change' : 'Add' }}
+		</button>
+	</mat-dialog-actions>
+</div>
+

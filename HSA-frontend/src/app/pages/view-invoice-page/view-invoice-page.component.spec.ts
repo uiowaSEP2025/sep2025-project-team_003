@@ -60,10 +60,10 @@ describe('ViewInvoicePageComponent', () => {
     const compiled = fixture.debugElement.nativeElement;
     const button = compiled.querySelector('button')
     expect(button).toBeTruthy()
-    expect(compiled.textContent).toContain('Invoice for customer Alex Guo')
-    expect(compiled.textContent).toContain('Invoice was issued: N/A')
-    expect(compiled.textContent).toContain('Invoice is due: N/A')
-    expect(compiled.textContent).toContain('Invoice status: created')
+    expect(compiled.textContent).toContain('Customer')
+    expect(compiled.textContent).toContain('Issued Date')
+    expect(compiled.textContent).toContain('Due Date')
+    expect(compiled.textContent).toContain('Status')
   })
 
   it('should set the invoice id correctly', () => {

@@ -1,15 +1,23 @@
-<div class="flex items-center  flex-col">
-<app-table-component 
-    editRedirect="/customers/edit" 
-    [fetchedData]="customers"
-    [deleteRequest]="customerService.deleteCustomer.bind(customerService)"
-    [loadDataToTable]="this.loadDataToTable.bind(this)"
-    [hideValues]="['Id', 'Phone No']"
-    searchHint="Search by customer name"
-    [headers]="['First Name', 'Last Name', 'Email']"
+<div class="parent">
+  <div class="main-heading">
+    <h1>
+      <span>Customers</span>
+    </h1>
+    <app-table-component 
+      editRedirect="/customers/edit" 
+      [fetchedData]="customers"
+      [deleteRequest]="customerService.deleteCustomer.bind(customerService)"
+      [loadDataToTable]="this.loadDataToTable.bind(this)"
+      [hideValues]="['Id']"
+      searchHint="Search by customer name"
+      [headers]="['First Name', 'Last Name', 'Email']"
     ></app-table-component>
-    <button mat-fab extended class="m-10" (click)="navigateToPage('customers/create')">
-        <mat-icon>note_add</mat-icon>
-        Add a Customer
+      
+  </div>
+  <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">  
+    <button mat-fab extended class="m-10" id="add-customer-button" (click)="navigateToPage('customers/create')">
+      <mat-icon>note_add</mat-icon>
+      Add a Customer
     </button>
+  </div>
 </div>

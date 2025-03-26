@@ -205,13 +205,13 @@ class materialViewTest(APITestCase):
             "materials": [
                 {
                     'id': 2,
-                    'units_used': 1,
-                    'price_per_unit': 0.00
+                    'unitsUsed': 1,
+                    'pricePerUnit': 0.00
                 },
                 {
                     'id': 4,
-                    'units_used': 1,
-                    'price_per_unit': 0.00
+                    'unitsUsed': 1,
+                    'pricePerUnit': 0.00
                 }
             ]
         }
@@ -277,7 +277,7 @@ class materialViewTest(APITestCase):
         mock_user.is_authenticated = True
 
         mockdata = {
-            "job_materials": [
+            "jobMaterials": [
                 {
                     "id": 2
                 },
@@ -303,7 +303,7 @@ class materialViewTest(APITestCase):
         job_material.return_value = job_material_obj
 
         mockdata = {
-            "job_materials": [
+            "jobMaterials": [
                 {
                     "id": 2
                 },
@@ -319,5 +319,5 @@ class materialViewTest(APITestCase):
         response = delete_cached_job_material(request, 1)
         
         assert response.status_code == status.HTTP_200_OK
-        assert job_material_obj.delete.call_count == len(mockdata["job_materials"])
+        assert job_material_obj.delete.call_count == len(mockdata["jobMaterials"])
     

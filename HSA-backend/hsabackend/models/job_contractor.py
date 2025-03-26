@@ -13,7 +13,8 @@ class JobContractor(models.Model):
     def json(self):
         return {
             'id': self.pk,
-            'job_id': self.job.pk,
-            'contractor_id': self.contractor.pk,
-            'contractor_name': self.contractor.first_name + " " + self.contractor.last_name
+            'contractorID': self.contractor.pk,
+            'contractorName': self.contractor.first_name + " " + self.contractor.last_name,
+            'contractorPhoneNo': self.contractor.phone,
+            'contractorEmail': self.contractor.email
         }

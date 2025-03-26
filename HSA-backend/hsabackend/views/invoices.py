@@ -241,7 +241,7 @@ def get_data_for_invoice(request, id):
         "taxPercent": str(invoice_qs[0].tax),
         "totalDiscount": str(total_discnt), # this is agregated from the discounts, eg 0.3 (30%)
         # total_discnt is like 30.05%, i know the casting is disgusting, sorry -alex
-        "grandtotal" : str((aggregated_subtotal * (Decimal(f"0.{str(100 - total_discnt).replace('.', "")}"))) * (1 + invoice_qs[0].tax))
+        "grandtotal" : str((aggregated_subtotal * (Decimal(f"0.{str(100 - total_discnt).replace('.', '')}"))) * (1 + invoice_qs[0].tax))
     }
 
     return Response(res, status=status.HTTP_200_OK)

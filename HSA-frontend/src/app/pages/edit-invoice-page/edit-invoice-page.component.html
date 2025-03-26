@@ -15,7 +15,10 @@
         </mat-select>
     </mat-form-field>
     @if (isDateSelectVisible()) {
-        <app-invoice-date-picker [formControll]="range"></app-invoice-date-picker>
+        <app-invoice-date-picker 
+            [formControll]="range"
+            [dateLabels]="['Issuance date', 'Due date']"
+        ></app-invoice-date-picker>
     }
 
     <h1 class="pb-5">Select new quotes for this invoice</h1>

@@ -267,7 +267,7 @@ class ServiceViewTest(APITestCase):
         mock_user.is_authenticated = True
 
         mockdata = {
-            "job_services": [
+            "jobServices": [
                 {
                     "id": 2
                 },
@@ -293,7 +293,7 @@ class ServiceViewTest(APITestCase):
         job_service.return_value = job_service_obj
 
         mockdata = {
-            "job_services": [
+            "jobServices": [
                 {
                     "id": 2
                 },
@@ -309,4 +309,4 @@ class ServiceViewTest(APITestCase):
         response = delete_cached_job_service(request, 1)
         
         assert response.status_code == status.HTTP_200_OK
-        assert job_service_obj.delete.call_count == len(mockdata["job_services"])
+        assert job_service_obj.delete.call_count == len(mockdata["jobServices"])

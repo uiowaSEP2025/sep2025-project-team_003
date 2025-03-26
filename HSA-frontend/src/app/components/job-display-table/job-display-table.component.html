@@ -1,0 +1,115 @@
+<div class="mt-5 border-solid table">
+  @if (typeToDisplay === 'service') {
+    <table mat-table [dataSource]="displayServices" class="mat-elevation-z8 thetable">
+      <ng-container matColumnDef="Service ID">
+        <th mat-header-cell *matHeaderCellDef> Service ID </th>
+        <td mat-cell *matCellDef="let element"> {{ element["Service ID"] }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="Service Name">
+        <th mat-header-cell *matHeaderCellDef> Service Name </th>
+        <td mat-cell *matCellDef="let element"> {{ element["Service Name"] }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="Service Description">
+        <th mat-header-cell *matHeaderCellDef> Service Description </th>
+        <td mat-cell *matCellDef="let element"> {{ element["Service Description"] }} </td>
+      </ng-container>
+
+      @if (isEditRow === true) {
+        <ng-container matColumnDef="Actions">
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-mini-fab click-stop-propagation (click)="openDeleteDialog(element, 'service')">     
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+      }
+  
+      <tr mat-header-row *matHeaderRowDef="displayedServiceColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedServiceColumns;" ></tr>
+    </table>
+  }
+  
+  @if (typeToDisplay === 'material') {
+    <table mat-table [dataSource]="displayMaterials" class="mat-elevation-z8 thetable">
+      <ng-container matColumnDef="Material ID">
+        <th mat-header-cell *matHeaderCellDef> Material ID </th>
+        <td mat-cell *matCellDef="let element"> {{ element["Material ID"] }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Material Name">
+        <th mat-header-cell *matHeaderCellDef> Material Name </th>
+        <td mat-cell *matCellDef="let element"> {{ element["Material Name"] }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Material Description">
+        <th mat-header-cell *matHeaderCellDef> Material Description </th>
+        <td mat-cell *matCellDef="let element"> {{ element["Material Description"] }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Units Used">
+        <th mat-header-cell *matHeaderCellDef> Units Used </th>
+        <td mat-cell *matCellDef="let element"> {{ element["Units Used"] }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Price Per Unit">
+        <th mat-header-cell *matHeaderCellDef> Price Per Unit </th>
+        <td mat-cell *matCellDef="let element"> {{ element["Price Per Unit"] }} </td>
+      </ng-container>
+
+      @if (isEditRow === true) {
+        <ng-container matColumnDef="Actions">
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-mini-fab click-stop-propagation (click)="openDeleteDialog(element, 'material')">     
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+      }
+
+      <tr mat-header-row *matHeaderRowDef="displayedMaterialColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedMaterialColumns;" ></tr>
+    </table>
+  }
+
+  @if (typeToDisplay === 'contractor') {
+    <table mat-table [dataSource]="displayContractors" class="mat-elevation-z8 thetable">
+      <ng-container matColumnDef="Contractor ID">
+        <th mat-header-cell *matHeaderCellDef> Contractor ID </th>
+        <td mat-cell *matCellDef="let element"> {{ element["Contractor ID"] }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Contractor Name">
+        <th mat-header-cell *matHeaderCellDef> Contractor Name </th>
+        <td mat-cell *matCellDef="let element"> {{ element["Contractor Name"] }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Contractor Phone No">
+        <th mat-header-cell *matHeaderCellDef> Contractor Phone No </th>
+        <td mat-cell *matCellDef="let element"> {{ element["Contractor Phone No"] }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Contractor Email">
+        <th mat-header-cell *matHeaderCellDef> Contractor Email </th>
+        <td mat-cell *matCellDef="let element"> {{ element["Contractor Email"] }} </td>
+      </ng-container>
+
+      @if (isEditRow === true) {
+        <ng-container matColumnDef="Actions">
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-mini-fab click-stop-propagation (click)="openDeleteDialog(element, 'contractor')">     
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+      }
+
+      <tr mat-header-row *matHeaderRowDef="displayedContractorColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedContractorColumns;" ></tr>
+    </table>
+  }
+</div>

@@ -22,7 +22,7 @@ export class ViewInvoicePageComponent implements OnInit{
   invoiceID!: number
   invoiceData: InvoiceDataInterface | null = null;
 
-  constructor (private invoiceService: InvoiceService, private activatedRoute:ActivatedRoute, private errorHandler: ErrorHandlerService) {
+  constructor (private router: Router, private invoiceService: InvoiceService, private activatedRoute:ActivatedRoute, private errorHandler: ErrorHandlerService) {
     this.activatedRoute.paramMap.subscribe(params => {
       this.invoiceID = Number(params.get('id'));
     })
@@ -32,6 +32,7 @@ export class ViewInvoicePageComponent implements OnInit{
     this.invoiceService.getSpecificInvoiceData(this.invoiceID).subscribe(
       {next: (response) => {
         this.invoiceData = response
+        console.log(this.invoiceData)
       },
       error: (error) => {
         this.errorHandler.handleError(error)
@@ -42,8 +43,9 @@ export class ViewInvoicePageComponent implements OnInit{
 
   navigateViewInvoice() {
     window.open(`/api/generate/invoice/${this.invoiceID}`, '_blank');
-
   }
 
-
+  navigateToPage(pagePath: string) {
+    this.router.navigate([`/${pagePath}`]);
+  }
 }

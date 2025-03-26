@@ -11,8 +11,8 @@
       [hideValues]="['Id']"
       searchHint="Search by material name"
       [headers]="['Material Name']"
-      ></app-table-component>
-      
+      [width]="'40vw'"
+    ></app-table-component>
   </div>
   <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
     <button mat-fab extended class="m-10" id="add-material-button" (click)="navigateToPage('materials/create')">

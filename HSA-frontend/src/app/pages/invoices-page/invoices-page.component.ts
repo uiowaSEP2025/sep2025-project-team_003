@@ -5,16 +5,22 @@ import { InvoiceService } from '../../services/invoice.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ErrorHandlerService } from '../../services/error.handler.service';
+import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 
 @Component({
   selector: 'app-invoices-page',
-  imports: [TableComponentComponent, MatButtonModule, MatIconModule],
+  imports: [
+    TableComponentComponent, 
+    MatButtonModule, 
+    MatIconModule,
+    LoadingFallbackComponent
+  ],
   templateUrl: './invoices-page.component.html',
   styleUrl: './invoices-page.component.scss'
 })
 export class InvoicesPageComponent implements OnInit{
   invoiceService: InvoiceService
-
+  
 
   constructor (private router: Router, invoiceService: InvoiceService, private errorHandler: ErrorHandlerService) {
     this.invoiceService = invoiceService
@@ -32,7 +38,7 @@ export class InvoicesPageComponent implements OnInit{
         this.invoices = response
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
+        this.errorHandler.handleError(error, 'invoices')
       }
     })
   }

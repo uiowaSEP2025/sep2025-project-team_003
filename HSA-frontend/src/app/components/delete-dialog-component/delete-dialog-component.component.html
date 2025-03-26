@@ -2,5 +2,5 @@
 <mat-dialog-content>Are you sure you want to delete this {{ itemDescription }}?</mat-dialog-content>
 <mat-dialog-actions>
   <button mat-stroked-button (click)="onCancel()">Cancel</button>
-  <button mat-flat-button type="submit" (click)="onConfirm()">Delete</button>
+  <button mat-flat-button type="submit" class='delete-button' (click)="onConfirm()">Delete</button>
 </mat-dialog-actions>

@@ -13,9 +13,9 @@ class JobService(models.Model):
     def json(self):
         return {
             'id': self.pk,
-            'job_id': self.job.id,
-            'service_id': self.service.id,
-            'service_name': self.service.service_name
+            'serviceID': self.service.id,
+            'serviceName': self.service.service_name,
+            'serviceDescription': self.service.service_description
         }
     
     def get_service_info_for_detailed_invoice(self):

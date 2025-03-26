@@ -12,6 +12,7 @@ import { ErrorHandlerService } from '../../services/error.handler.service';
   templateUrl: './customers-page.component.html',
   styleUrl: './customers-page.component.scss'
 })
+
 export class CustomersPageComponent implements OnInit {
   customers: any
   customerService: CustomerService
@@ -30,7 +31,7 @@ export class CustomersPageComponent implements OnInit {
         this.customers = response
       },
       error: (error) => {
-          this.errorHandler.handleError(error)
+          this.errorHandler.handleError(error, 'customers')
       }
     })
   }

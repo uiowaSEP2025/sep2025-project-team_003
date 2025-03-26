@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewInit, Input, input, OnChanges, SimpleChanges, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, Input, input, OnChanges, SimpleChanges, ChangeDetectorRef, OnDestroy, ElementRef } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
@@ -19,6 +19,8 @@ import { FormsModule } from '@angular/forms';
 import { ClickStopPropagationDirective } from '../../utils/click-event-propogation-stopper';
 import { ErrorHandlerService } from '../../services/error.handler.service';
 import { OnInit } from '@angular/core';
+import { InputFieldDictionary } from '../../interfaces/interface-helpers/inputField-row-helper.interface';
+import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.component';
 
 @Component({
   selector: 'app-table-component',
@@ -32,7 +34,8 @@ import { OnInit } from '@angular/core';
     MatButtonModule,
     MatCheckboxModule,
     FormsModule,
-    ClickStopPropagationDirective
+    ClickStopPropagationDirective,
+    LoadingFallbackComponent
   ],
   templateUrl: './table-component.component.html',
   styleUrl: './table-component.component.scss'
@@ -42,9 +45,14 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   @Input() deleteRequest!: (data: any) => Observable<StandardApiResponse>
   @Input({ required: true }) loadDataToTable!: (search: string, pageSize: number, offSet: number) => void
   @Input() hideValues: string[] = [];
+  @Input() width: string = 'auto'
   @Input() checkbox: 'none' | 'single' | 'multiple' = 'none';
+  @Input() unitUsedField: boolean = false;
+  @Input() pricePerUnitField: boolean = false;
   @Input() checkedIds: number[] | null = null;
+  @Input() materialInputFields: InputFieldDictionary[] = []
   @Input() setCheckedIds: ((checkedIds: number[]) => void) | null = null;
+  @Input() setMaterialInputFields: ((inputFields: InputFieldDictionary[]) => void) | null = null;
   @Input() hideSearch: boolean = false
   @Input() clickableRows: boolean = false
   @Input() onRowClick: any = null // if clickable rows is enabled this the function that handles the click
@@ -62,16 +70,16 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   page: number | null = null
   pageSize: number | null = null
   dataSize: number | null = null
+  checkedRowIndexes = new Set<number>();
   
   headersWithActions = [...this.headers, 'Actions']
-
   editRedirect = input.required<string>()
+  isDataNotAvailable: boolean = false
 
   data = new MatTableDataSource(this.fetchedData ?? []);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngAfterViewInit() {
-    
     if (this.dataSubscription) {
       this.dataSubscription.unsubscribe();
     }
@@ -146,9 +154,12 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       this.fetchedData = changes["fetchedData"].currentValue;
       this.data = new MatTableDataSource(this.fetchedData.data ?? []);
       this.dataSize = this.fetchedData.totalCount
+      this.isDataNotAvailable = this.dataSize === 0 ? true : false
+
       if (this.fetchedData.data && this.fetchedData.data[0] !== undefined) {
         this.headers = Object.keys(this.fetchedData.data[0]);
         this.headers = this.headers.map(header => this.stringFormatter.formatSnakeToCamel(header))
+
         if (this.checkbox === "none") {
           this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
             return !this.hideValues.includes(header)
@@ -159,6 +170,10 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
             return !this.hideValues.includes(header)
           })
         }
+
+        if (this.unitUsedField === true) {
+          this.headersWithActions = [...this.headersWithActions, 'Unit Used', 'Price Per Unit']
+        }
       }
     }
   }
@@ -168,6 +183,18 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       return;
     }
     this.onRowClick(element)
+  }
+
+  handleCheckedRowIndex(id: number) {
+    if (this.checkedRowIndexes.has(id)) {
+      this.checkedRowIndexes.delete(id);
+      if (this.unitUsedField === true) {
+        let currentUnitsUsedDict = this.materialInputFields.filter((item) => item.id !== id)
+        this.setMaterialInputFields!(currentUnitsUsedDict)
+      }
+    } else {
+      this.checkedRowIndexes.add(id);
+    }
   }
 
   handleCheckBoxClick(id: number) {
@@ -190,6 +217,37 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
     }
   }
 
+  handleUnitsUsedField(id: number, event: Event) {
+    if (this.unitUsedField === true) {
+      const parsedNumber = parseFloat((event.target as HTMLInputElement).value);
+      const number = isNaN(parsedNumber) ? 0: parsedNumber
+      let currentUnitsUsedDict = this.materialInputFields
+      let specificEntry = currentUnitsUsedDict.find((item) => item.id === id)
+      
+      if (specificEntry) {
+        specificEntry['unitsUsed'] = number
+      }
+
+      this.setMaterialInputFields!(currentUnitsUsedDict)
+    }
+  }
+
+  handlePricePerUnitField(id: number, event: Event) {
+    if (this.pricePerUnitField === true) {
+      const parsedNumber = parseFloat((event.target as HTMLInputElement).value);
+      const number = isNaN(parsedNumber) ? 0: parsedNumber
+      let currentUnitsUsedDict = this.materialInputFields
+      let specificEntry = currentUnitsUsedDict.find((item) => item.id === id)
+      
+      if (specificEntry) {
+        specificEntry['pricePerUnit'] = number
+      }
+
+      this.setMaterialInputFields!(currentUnitsUsedDict)
+    }
+  }
+  
+
   ngOnDestroy() {
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();
@@ -206,5 +264,15 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
 
   shouldCheckCheckbox(id: number): boolean {
     return this.checkedIds!.includes(id)
+  }
+
+  getUnitsUsedValue(id: number): number | string {
+    const entry = this.materialInputFields.find(item => item.id === id);
+    return entry?.['unitsUsed'] ?? ''; 
+  }
+
+  getPricePerUnitValue(id: number): number | string {
+    const entry = this.materialInputFields.find(item => item.id === id);
+    return entry?.['pricePerUnit'] ?? ''; 
   }
 }

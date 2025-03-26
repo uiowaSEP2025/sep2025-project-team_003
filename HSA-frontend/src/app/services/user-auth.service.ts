@@ -14,11 +14,16 @@ interface LoginPostData {
   providedIn: 'root'
 })
 export class UserAuthService {
-  private apiUrl = `${environment.apiUrl}/api/login`; // Example API
+  private apiLoginUrl = `${environment.apiUrl}/api/login`;
+  private apiLogoutUrl = `${environment.apiUrl}/api/logout`
 
   constructor(private http: HttpClient) {}
 
   login(data: LoginPostData): Observable<StandardApiResponse> {
-    return this.http.post<StandardApiResponse>(this.apiUrl, data);
+    return this.http.post<StandardApiResponse>(this.apiLoginUrl, data);
+  }
+
+  logout() {
+    return this.http.post<StandardApiResponse>(this.apiLogoutUrl, null);
   }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TableComponentComponent } from '../../components/table-component/table-component.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -12,12 +12,16 @@ import { ErrorHandlerService } from '../../services/error.handler.service';
   templateUrl: './contractors-page.component.html',
   styleUrl: './contractors-page.component.scss'
 })
-export class ContractorsPageComponent {
+export class ContractorsPageComponent implements OnInit  {
   contractors: any
   contractorService: ContractorService
 
   constructor(private router: Router, contractorService: ContractorService, private errorHandler: ErrorHandlerService) {
     this.contractorService = contractorService
+  }
+
+  ngOnInit(): void {
+    this.loadDataToTable("", 5, 0);
   }
 
   loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {
@@ -26,7 +30,7 @@ export class ContractorsPageComponent {
         this.contractors = response
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
+        this.errorHandler.handleError(error, 'contractors')
       }
     })
   }

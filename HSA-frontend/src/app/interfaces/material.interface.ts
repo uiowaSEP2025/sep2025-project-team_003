@@ -3,3 +3,10 @@ export interface Material {
   organizationID: number;
   materialName: string;
 }
+
+export interface MaterialParams {
+  excludeIDs?: number[];
+  search: string,
+  pagesize: number,
+  offset: number,
+}
