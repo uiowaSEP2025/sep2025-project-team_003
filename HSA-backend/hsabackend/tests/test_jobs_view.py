@@ -62,7 +62,7 @@ class jobViewTest(APITestCase):
         response = get_job_table_data(request)
         
         assert response.status_code == status.HTTP_200_OK
-        qs.filter.assert_called_with(Q(customer__first_name__icontains='bob') | Q(customer__last_name__icontains='bob') | Q(start_date__icontains='bob') | Q(end_date__icontains='bob') | Q(job_status__icontains='bob')) 
+        qs.filter.assert_called_with(Q(customer__first_name__icontains='bob') | Q(customer__last_name__icontains='bob') | Q(start_date__icontains='bob') | Q(end_date__icontains='bob') | Q(job_status__icontains='bob') | Q(description__icontains='bob')) 
 
     @patch('hsabackend.views.jobs.Job.objects.filter')
     @patch('hsabackend.views.jobs.Organization.objects.get')

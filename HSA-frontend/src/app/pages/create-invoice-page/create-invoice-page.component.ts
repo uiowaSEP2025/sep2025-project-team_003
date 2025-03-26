@@ -144,6 +144,8 @@ export class CreateInvoicePageComponent implements OnInit {
     return;
   }
 
-
+  navigateToPage(pagePath: string) {
+    this.router.navigate([`/${pagePath}`]);
+  }
 }
 

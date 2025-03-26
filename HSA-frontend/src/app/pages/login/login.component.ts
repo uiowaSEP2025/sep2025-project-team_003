@@ -31,7 +31,9 @@ export class LoginComponent {
 
   constructor(private router: Router, private route: ActivatedRoute, private authService: UserAuthService, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {
     this.route.queryParams.subscribe(params => {
-      this.previousUrlPath = params['prevPath']
+      if (params['prevPath'] !== undefined) {
+        this.previousUrlPath = params['prevPath']
+      }
     })
   }
 
@@ -48,7 +50,13 @@ export class LoginComponent {
           this.navigateToPage(`/${this.previousUrlPath}`)
         },
         error: (error) => {
-          this.errorHandler.handleError(error)
+          if (error.status === 401) {
+            this.snackBar.open('Username or password is invalid, please try again!', '', {
+              duration: 3000
+            });
+          } else {
+            this.errorHandler.handleError(error)
+          }
         }
       });
     }

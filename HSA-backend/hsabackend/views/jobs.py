@@ -38,7 +38,8 @@ def get_job_table_data(request):
         Q(customer__last_name__icontains=search) | 
         Q(start_date__icontains=search) | 
         Q(end_date__icontains=search) |
-        Q(job_status__icontains=search)
+        Q(job_status__icontains=search) |
+        Q(description__icontains=search)
     )[offset:offset + pagesize] if search else Job.objects.filter(organization=org.pk)[offset:offset + pagesize]
 
     data = []
@@ -50,7 +51,8 @@ def get_job_table_data(request):
         Q(customer__last_name__icontains=search) | 
         Q(start_date__icontains=search) | 
         Q(end_date__icontains=search) |
-        Q(job_status__icontains=search)
+        Q(job_status__icontains=search) |
+        Q(description__icontains=search)
     ).count()
 
     res = {

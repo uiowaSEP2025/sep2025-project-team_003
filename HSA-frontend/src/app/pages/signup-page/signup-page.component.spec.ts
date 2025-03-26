@@ -102,7 +102,7 @@ describe('SignupPageComponent', () => {
     expect(organizationEmailErrorText.textContent).toEqual('Email format is invalid');
   });
 
-  it('should navigate to home page on cancel button', fakeAsync(() => {
+  it('should navigate to login page on cancel button', fakeAsync(() => {
     const compiled = fixture.debugElement.nativeElement;
     const buttonsArray:Element[] = Array.from(compiled.querySelectorAll('button'));
     const cancelButton = buttonsArray.filter((el:Element) => (el.textContent == 'Cancel'))[0];
@@ -110,7 +110,7 @@ describe('SignupPageComponent', () => {
     (cancelButton as HTMLElement).click();
     tick();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/home']);
+    expect(router.navigate).toHaveBeenCalledWith(['/login']);
   }));
 
   afterEach(() => {

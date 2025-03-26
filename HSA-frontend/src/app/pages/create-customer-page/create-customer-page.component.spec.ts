@@ -159,7 +159,7 @@ describe('CreateCustomerPageComponent', () => {
       expect(req.request.method).toBe('POST');
       req.flush(null, { status: 401, statusText: 'Unauthorized' });
   
-      expect(router.navigate).toHaveBeenCalledWith(['/login']);
+      expect(router.navigate).toHaveBeenCalledWith(['/login'], { queryParams: { prevPath: 'home' } });
     });
   
     it('should redirect to customers on successful response', () => {

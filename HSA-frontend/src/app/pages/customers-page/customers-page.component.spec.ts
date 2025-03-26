@@ -58,7 +58,7 @@ describe('CustomersPageComponent', () => {
       expect(req.request.method).toBe('GET');
       req.flush(null, { status: 401, statusText: 'Unauthorized' });
 
-      expect(router.navigate).toHaveBeenCalledWith(['/login']);
+      expect(router.navigate).toHaveBeenCalledWith(['/login'], { queryParams: { prevPath: 'customers' } });
     });
 
     it('should load data to table on successful response', () => {
