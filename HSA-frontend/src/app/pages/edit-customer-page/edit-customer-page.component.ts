@@ -8,10 +8,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { CustomerService } from '../../services/customer.service';
 import { Router } from '@angular/router';
 import { ErrorHandlerService } from '../../services/error.handler.service';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-edit-customer-page',
-  imports: [MatFormFieldModule, ReactiveFormsModule, MatInputModule, MatButtonModule, FormsModule],
+  imports: [
+    MatFormFieldModule, 
+    ReactiveFormsModule, 
+    MatInputModule, 
+    MatButtonModule,
+    MatCardModule, 
+    FormsModule
+  ],
   templateUrl: './edit-customer-page.component.html',
   styleUrl: './edit-customer-page.component.scss'
 })
@@ -61,8 +69,6 @@ export class EditCustomerPageComponent implements OnInit {
     return false
   }
 
-
-
   handleSave() {
     if (!this.isFormValid()) {
       return
@@ -87,4 +93,7 @@ export class EditCustomerPageComponent implements OnInit {
     )
   }
 
+  navigateToPage(pagePath: string) {
+    this.router.navigate([`/${pagePath}`]);
+  }
 }

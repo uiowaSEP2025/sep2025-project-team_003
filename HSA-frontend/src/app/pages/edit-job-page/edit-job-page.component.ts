@@ -105,6 +105,7 @@ export class EditJobPageComponent {
     this.activatedRoute.paramMap.subscribe(params => {
       this.jobID = Number(params.get('id'));
     })
+    this.states = StateList.getStates()
 
     this.jobForm = this.jobFormBuilder.group({
       customerName: ['', Validators.required],
@@ -117,8 +118,6 @@ export class EditJobPageComponent {
       requestorZip: [''],
       requestorStateSelect: ['', Validators.required]
     }, { validators: this.dateValidator });
-
-    this.states = StateList.getStates()
   }
 
   ngOnInit(): void {

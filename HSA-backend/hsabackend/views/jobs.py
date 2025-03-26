@@ -235,7 +235,7 @@ def edit_job(request, id):
         job.save()
         return Response({"message": "Job edited successfully"}, status=status.HTTP_200_OK)
     except ValidationError as e:
-        return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"errors": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     
 @api_view(["POST"])

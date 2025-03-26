@@ -288,9 +288,9 @@ class Command(BaseCommand):
                     organization=org,
                     customer=customers[i],
                     requestor_city = "Iowa City",
-                    requestor_state = "2 W Washington St",
+                    requestor_state = "IA",
                     requestor_zip = "52240",
-                    requestor_address = "IA"
+                    requestor_address = "2 W Washington St"
                 )
                 j.save()
 
@@ -302,9 +302,9 @@ class Command(BaseCommand):
                     organization=org1,
                     customer=customers_1[i],
                     requestor_city = "Iowa City",
-                    requestor_state = "2 W Washington St",
+                    requestor_state = "IA",
                     requestor_zip = "52240",
-                    requestor_address = "IA"
+                    requestor_address = "2 W Washington St"
                 )
                 j.save()
 

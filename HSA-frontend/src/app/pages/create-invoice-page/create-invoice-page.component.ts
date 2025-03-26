@@ -48,7 +48,7 @@ export class CreateInvoicePageComponent implements OnInit {
   });
 
   taxAmount: FormControl = new FormControl('', [Validators.required,  Validators.min(0),
-    Validators.max(1),Validators.pattern(/^(0(\.\d{1,2})?|1(\.00)?)$/)
+    Validators.max(1), Validators.pattern(/^(0(\.\d{1,2})?|1(\.00)?)$/)
   ])
 
   constructor(private customerService: CustomerService, private router: Router, private quoteService: QuoteService,
