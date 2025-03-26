@@ -22,6 +22,7 @@ class Organization(models.Model):
         return {
             'org_name': self.org_name,
             'org_email': self.org_email,
+            'org_phone' : self.org_phone,
             'org_city': self.org_city,
             'org_requestor_state': self.org_requestor_state,
             'org_requestor_zip': self.org_requestor_zip,

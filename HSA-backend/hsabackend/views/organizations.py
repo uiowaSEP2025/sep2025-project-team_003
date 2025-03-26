@@ -31,6 +31,7 @@ def editOrganizationDetail(request):
     name = request.data.get('name', org.org_name)
     email = request.data.get('email', org.org_email)
     city = request.data.get('city', org.org_city)
+    phone = request.data.get('phone', org.org_phone)
     requestor_state = request.data.get('requestor_state', org.org_requestor_state)
     requestor_zip = request.data.get('requestor_zip', org.org_requestor_zip)
     requestor_address = request.data.get('requestor_address', org.org_requestor_address)
@@ -43,6 +44,7 @@ def editOrganizationDetail(request):
     org.org_requestor_state = requestor_state
     org.org_requestor_zip = requestor_zip
     org.org_requestor_address = requestor_address
+    org.org_phone = phone
     org.org_owner_first_name = ownerFn
     org.org_owner_last_name = ownerLn
     
@@ -67,6 +69,7 @@ def createOrganization(request):
     name = request.data.get('name', '')
     email = request.data.get('email', '')
     city = request.data.get('city', '')
+    phone = request.data.get('phone', '')
     requestor_state = request.data.get('requestor_state', '')
     requestor_zip = request.data.get('requestor_zip', '')
     requestor_address = request.data.get('requestor_address', '')
@@ -82,6 +85,7 @@ def createOrganization(request):
         org_city = city,
         org_requestor_state = requestor_state,
         org_requestor_zip = requestor_zip,
+        org_phone=phone,
         org_requestor_address = requestor_address,
         org_owner_first_name = ownerFn,
         org_owner_last_name = ownerLn,
