@@ -1,12 +1,16 @@
-asgiref==3.8.1
-Django==5.1.5
+backports.tarfile==1.2.0
+coverage==7.6.12
+cryptography==44.0.2
+django-behave==0.1.6
+django-cors-headers==4.7.0
+django-sslserver==0.22
 djangorestframework==3.15.2
-psycopg==3.2.4
-sqlparse==0.5.3
-coverage
 fpdf2==2.7.6
-django-sslserver
-gunicorn
-cryptography
-django-cors-headers
-
+gunicorn==23.0.0
+importlib-metadata==8.0.0
+jaraco.collections==5.1.0
+pip-chill==1.0.3 # used to generate clean requiremnt files without listing dependencies
+platformdirs==4.2.2
+psycopg==3.2.4
+pysocks==1.7.1
+tomli==2.0.1
