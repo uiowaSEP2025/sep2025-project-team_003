@@ -30,24 +30,7 @@ interface State {
 
 export class SignupPageComponent implements OnInit {
   registrationForm: FormGroup;
-  states: State[] = [];
-
-  constructor(private router: Router, private registrationFormBuilder: FormBuilder, private http: HttpClient) {
-    this.registrationForm = this.registrationFormBuilder.group({
-      organizationName: ['', Validators.required],
-      organizationEmail: ['', [Validators.required, Validators.email]],
-      addressOne: ['', Validators.required],
-      ownerName: ['', Validators.required],
-      stateSelect: ['', Validators.required],
-    });
-  }
-
-  ngOnInit() {
-    this.loadStates();
-  }
-
-  loadStates() {
-    this.states = [
+  states: State[] = [
       { "name":  "Alabama", "code":  "AL"},
       { "name":  "Alaska", "code":  "AK"},
       { "name":  "Arkansas", "code":  "AR"},
@@ -98,7 +81,19 @@ export class SignupPageComponent implements OnInit {
       { "name":  "West Virginia", "code":  "WV"},
       { "name":  "Wisconsin", "code":  "WI"},
       { "name":  "Wyoming", "code":  "WY"}
-    ]    
+    ]
+
+  constructor(private router: Router, private registrationFormBuilder: FormBuilder, private http: HttpClient) {
+    this.registrationForm = this.registrationFormBuilder.group({
+      organizationName: ['', Validators.required],
+      organizationEmail: ['', [Validators.required, Validators.email]],
+      addressOne: ['', Validators.required],
+      ownerName: ['', Validators.required],
+      stateSelect: ['', Validators.required],
+    });
+  }
+
+  ngOnInit() {
   }
 
   onSubmit() {
