@@ -17,4 +17,20 @@ class Organization(models.Model):
 
     def __str__(self):
         return f"<Organization, org_name: {self.org_name}>"
+
+    def json(self):
+        return {
+            'org_name': self.org_name,
+            'org_email': self.org_email,
+            'org_phone' : self.org_phone,
+            'org_city': self.org_city,
+            'org_requestor_state': self.org_requestor_state,
+            'org_requestor_zip': self.org_requestor_zip,
+            'org_requestor_address': self.org_requestor_address,
+            'org_owner_first_name': self.org_owner_first_name,
+            'org_owner_last_name': self.org_owner_last_name,
+            'owning_User': self.owning_User.id if self.owning_User else None
+        }
+
+
     
