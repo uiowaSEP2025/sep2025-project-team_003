@@ -54,7 +54,7 @@ class Command(BaseCommand):
                 org_name = "devorg",
                 org_email = "org@org.dev",
                 org_city = "Iowa City",
-                org_requestor_state = "IA",
+                org_requestor_state = "Iowa",
                 org_requestor_zip = "52240",
                 org_requestor_address = "123 main st",
                 org_owner_first_name = "Dev",
@@ -67,7 +67,7 @@ class Command(BaseCommand):
                 org_name = "testorg",
                 org_email = "org1@org1.dev",
                 org_city = "Iowa City",
-                org_requestor_state = "IA",
+                org_requestor_state = "Iowa",
                 org_requestor_zip = "52240",
                 org_requestor_address = "123 main st",
                 org_owner_first_name = "Test",
@@ -288,7 +288,7 @@ class Command(BaseCommand):
                     organization=org,
                     customer=customers[i],
                     requestor_city = "Iowa City",
-                    requestor_state = "IA",
+                    requestor_state = "Iowa",
                     requestor_zip = "52240",
                     requestor_address = "2 W Washington St"
                 )
@@ -302,7 +302,7 @@ class Command(BaseCommand):
                     organization=org1,
                     customer=customers_1[i],
                     requestor_city = "Iowa City",
-                    requestor_state = "IA",
+                    requestor_state = "Iowa",
                     requestor_zip = "52240",
                     requestor_address = "2 W Washington St"
                 )
@@ -379,7 +379,7 @@ class Command(BaseCommand):
                     organization=org,
                     customer=customers[1],
                     requestor_city = "Iowa City",
-                    requestor_state = "IA",
+                    requestor_state = "Iowa",
                     requestor_zip = "52240",
                     requestor_address = "2 W Washington St"
                 )
