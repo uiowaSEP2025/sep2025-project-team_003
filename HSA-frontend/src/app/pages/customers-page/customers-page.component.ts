@@ -31,7 +31,7 @@ export class CustomersPageComponent implements OnInit {
         this.customers = response
       },
       error: (error) => {
-          this.errorHandler.handleError(error)
+          this.errorHandler.handleError(error, 'customers')
       }
     })
   }

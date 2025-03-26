@@ -34,7 +34,7 @@ export class ServicePageComponent implements OnInit {
         this.services = response
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
+        this.errorHandler.handleError(error, 'services')
       }
     })
   }

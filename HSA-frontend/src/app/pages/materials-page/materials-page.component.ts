@@ -36,7 +36,7 @@ export class MaterialsPageComponent implements OnInit {
         this.materials = response
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
+        this.errorHandler.handleError(error, 'materials')
       }
     })
   }

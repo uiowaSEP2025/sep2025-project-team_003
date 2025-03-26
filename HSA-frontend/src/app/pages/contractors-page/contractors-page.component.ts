@@ -30,7 +30,7 @@ export class ContractorsPageComponent implements OnInit  {
         this.contractors = response
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
+        this.errorHandler.handleError(error, 'contractors')
       }
     })
   }

@@ -14,7 +14,7 @@ import { ErrorHandlerService } from '../../services/error.handler.service';
 })
 export class InvoicesPageComponent implements OnInit{
   invoiceService: InvoiceService
-
+  
 
   constructor (private router: Router, invoiceService: InvoiceService, private errorHandler: ErrorHandlerService) {
     this.invoiceService = invoiceService
@@ -32,7 +32,7 @@ export class InvoicesPageComponent implements OnInit{
         this.invoices = response
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
+        this.errorHandler.handleError(error, 'invoices')
       }
     })
   }

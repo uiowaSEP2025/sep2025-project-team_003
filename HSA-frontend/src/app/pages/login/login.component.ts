@@ -1,30 +1,39 @@
 import { Component } from '@angular/core';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatButtonModule} from '@angular/material/button';
-import {
-  FormControl,
-  Validators,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
 import { UserAuthService } from '../../services/user-auth.service';
 import { ErrorHandlerService } from '../../services/error.handler.service';
+import { MatCardModule } from '@angular/material/card';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule,ReactiveFormsModule],
+  imports: [
+    FormsModule, 
+    MatFormFieldModule, 
+    MatInputModule, 
+    MatButtonModule,
+    MatCardModule,
+    ReactiveFormsModule
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
+  previousUrlPath: string = 'home'
   matcher = new GenericFormErrorStateMatcher();
   usernameFormControl = new FormControl('', [Validators.required]);
   passwordFormControl = new FormControl('', [Validators.required]);
 
-  constructor(private authService: UserAuthService, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {}
+  constructor(private router: Router, private route: ActivatedRoute, private authService: UserAuthService, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {
+    this.route.queryParams.subscribe(params => {
+      this.previousUrlPath = params['prevPath']
+    })
+  }
 
   onSubmit() {
     if (this.usernameFormControl.valid && this.passwordFormControl.valid) {
@@ -36,11 +45,16 @@ export class LoginComponent {
           this.snackBar.open('Login Successful', '', {
             duration: 3000
           });
+          this.navigateToPage(`/${this.previousUrlPath}`)
         },
         error: (error) => {
           this.errorHandler.handleError(error)
         }
       });
     }
+  }
+
+  navigateToPage(pagePath: string) {
+    this.router.navigate([`/${pagePath}`]);
   }
 }

@@ -31,7 +31,7 @@ export class JobPageComponent implements OnInit  {
         this.jobs = response
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
+        this.errorHandler.handleError(error, 'jobs')
       }
     })
   }
