@@ -6,7 +6,6 @@ from requests.exceptions import ConnectionError
 import time
 from selenium import webdriver
 
-
 def block_until_server_is_up(url, timeout=30, interval=2):
     """Block untill the server is up."""
     start_time = time.time()
@@ -24,9 +23,10 @@ def block_until_server_is_up(url, timeout=30, interval=2):
 def before_all(context):
     """If runing on CICD ```behave -D CI=True```"""
     context.is_CI = context.config.userdata.get("CI", False)
+    context.is_dev = context.config.userdata.get("DEV", False) # if the integration tests are being ran against dev
     context.browser = webdriver.Chrome()
+    context.url = "http://localhost:4200" if not context.is_dev else "FIX IT PLEASE"
 
-    
     if context.is_CI:
         pass
     else:
@@ -49,4 +49,3 @@ def after_all(context):
         pass
     else:
         context.angular_process.terminate()
-        context.browser.quit()
