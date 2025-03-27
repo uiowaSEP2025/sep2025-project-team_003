@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'hsabackend'
+    'hsabackend', 
+    'django_behave',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
