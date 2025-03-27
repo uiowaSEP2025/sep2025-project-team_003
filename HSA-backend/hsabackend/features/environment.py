@@ -6,6 +6,9 @@ from requests.exceptions import ConnectionError
 import time
 from selenium import webdriver
 import psycopg2
+from django.core.management import call_command
+import django
+import sys
 
 def block_until_server_is_up(url, timeout=30, interval=2):
     """Block until the server is up."""
@@ -26,7 +29,7 @@ def before_all(context):
     context.is_CI = context.config.userdata.get("CI", False)
     context.is_dev = context.config.userdata.get("DEV", False) # if the integration tests are being ran against dev
     context.browser = webdriver.Chrome()
-    context.url = "http://localhost:4200" if not context.is_dev else "FIX IT PLEASE"
+    context.url = "http://localhost:4200" if not context.is_dev else "TODO: FIX IT PLEASE"
 
     connection = psycopg2.connect(database="postgres", 
                                   user=os.environ["DATABASE_USERNAME"], 
@@ -58,6 +61,25 @@ def before_all(context):
             else:
                 error_message += f"Process exited with return code {context.server_process.returncode} \n"
             raise RuntimeError(error_message)
+        
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')) # frontend to do ng serve
+    os.chdir(path)
+    sys.path.append(path) # we need this so python can find our app as a module
+    
+    os.environ["DJANGO_SETTINGS_MODULE"] =  "hsabackend.settings"
+    django.setup()  # This initializes Django
+
+    call_command('migrate', interactive=False)
+    context.django_process = subprocess.Popen(["python3", "manage.py", "runserver"])
+    block_until_server_is_up("http://localhost:8000/api/healthcheck")
+    
+    if context.django_process.poll() is not None:
+        error_message = "Django failed to start. \n"
+        if context.server_process.returncode == 0:
+            error_message += "Process exited successfully but shouldn't have.\n"
+        else:
+            error_message += f"Process exited with return code {context.server_process.returncode} \n"
+        raise RuntimeError(error_message)
 
 
 def after_all(context):
@@ -76,3 +98,5 @@ def after_all(context):
         pass
     else:
         context.angular_process.terminate()
+
+    context.django_process.terminate()
