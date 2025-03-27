@@ -11,6 +11,21 @@ import django
 import sys
 import signal
 
+def kill_all_connections():
+    """we need this or we can't run the flush command or we can't drop or flush the database
+    idk what's causing the connection not to be released"""
+    connection = psycopg2.connect(database="postgres", 
+                                  user=os.environ["DATABASE_USERNAME"], 
+                                  password=os.environ["DATABASE_PASSWORD"], 
+                                  host=os.environ["DATABASE_IP"], port=5432)
+    
+    connection.autocommit = True
+    cursor = connection.cursor()
+    connection.autocommit = True
+    cursor.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'hsatest';")
+    
+    cursor.close()
+    connection.close()
 
 def block_until_server_is_up(url, timeout=30, interval=2):
     """Block until the server is up."""
@@ -26,7 +41,9 @@ def block_until_server_is_up(url, timeout=30, interval=2):
     return False
 
 def before_scenario(context, scenario):
+    kill_all_connections()
     call_command('seedint') # clears the database between runs
+    
 
 def before_all(context):
     """If runing on CICD ```behave -D CI=True```"""
@@ -108,6 +125,7 @@ def after_all(context):
     
     connection.autocommit = True
     cursor = connection.cursor()
+    kill_all_connections()
     cursor.execute("DROP DATABASE IF EXISTS hsatest;")
     cursor.close()
     connection.close()
