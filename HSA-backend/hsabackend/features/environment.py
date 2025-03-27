@@ -1,4 +1,5 @@
-# -- FILE: my_django/behave_fixtures.py
+# WARNING, DO NOT CTRL-C THE INT TESTS, OR IT WON'T CLEAN UP PROPERLY!!!!!!!!
+from django.db import connections
 from behave import fixture
 from behave import use_fixture
 from django.test.testcases import LiveServerTestCase
@@ -28,7 +29,10 @@ def before_all(context):
 
     django.setup()
     call_command("create_database")
+    call_command("migrate")
     use_fixture(django_test_case, context)
 
 def after_all(context):
+    for conn in connections.all():
+        conn.close()
     call_command('drop_database', interactive=False)

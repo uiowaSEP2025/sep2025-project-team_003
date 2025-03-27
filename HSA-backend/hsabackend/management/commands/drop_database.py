@@ -28,19 +28,37 @@ class Command(BaseCommand):
                 return
 
         try:
-            # First flush the database to clear all data
-            self.stdout.write("Flushing database contents...")
-            call_command('flush', interactive=False)
+            # Close the existing connection
+            connection.close()
             
-            # Create a temporary connection without specifying the database
+            # Create a new connection to the 'postgres' database
             from django.db import connections
             temp_connection = connections['default']
-            temp_connection.settings_dict['NAME'] = None
+            
+            # Save original settings
+            original_settings = temp_connection.settings_dict.copy()
+            
+            # Modify settings to connect to 'postgres' database
+            temp_connection.settings_dict['NAME'] = 'postgres'
+            
+            # Reconnect with new settings
+            temp_connection.close()
             cursor = temp_connection.cursor()
             
-            # Try to drop the database
+            # Ensure we're connected to the postgres database
+            cursor.execute("SELECT current_database()")
+            current_db = cursor.fetchone()[0]
+            self.stdout.write(f"Connected to database: {current_db}")
+            
+            
+            # Drop the database
             cursor.execute(f"DROP DATABASE IF EXISTS {db_name}")
             self.stdout.write(self.style.SUCCESS(f"Successfully dropped database '{db_name}'"))
+            
+            # Restore original connection settings
+            temp_connection.settings_dict.update(original_settings)
+            temp_connection.close()
+            
         except Exception as e:
             self.stdout.write(self.style.ERROR(f"Error dropping database: {e}"))
             sys.exit(1)
