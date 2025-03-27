@@ -9,6 +9,8 @@ import psycopg2
 from django.core.management import call_command
 import django
 import sys
+import signal
+
 
 def block_until_server_is_up(url, timeout=30, interval=2):
     """Block until the server is up."""
@@ -17,12 +19,14 @@ def block_until_server_is_up(url, timeout=30, interval=2):
         try:
             response = requests.get(url)
             if response.ok:
-                print("angular was started successfully!!")
                 return True
         except ConnectionError:
             pass
         time.sleep(interval)
     return False
+
+def before_scenario(context, scenario):
+    call_command('seedint') # clears the database between runs
 
 def before_all(context):
     """If runing on CICD ```behave -D CI=True```"""
@@ -56,11 +60,12 @@ def before_all(context):
         
         if context.angular_process.poll() is not None:
             error_message = "Angular server failed to start. \n"
-            if context.server_process.returncode == 0:
+            if context.angular_process.returncode == 0:
                 error_message += "Process exited successfully but shouldn't have.\n"
             else:
                 error_message += f"Process exited with return code {context.server_process.returncode} \n"
             raise RuntimeError(error_message)
+        print("Angular was started successfully")
         
     path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')) # frontend to do ng serve
     os.chdir(path)
@@ -80,9 +85,22 @@ def before_all(context):
         else:
             error_message += f"Process exited with return code {context.server_process.returncode} \n"
         raise RuntimeError(error_message)
+    print("Django was started successfully")
 
 
 def after_all(context):
+    if context.is_CI:
+        pass
+    else:
+        context.angular_process.kill()
+        context.angular_process.wait()
+        
+    # WARNING, THIS NEEDS TO BE SIGINT OR DJANGO WILL NOT CLEAN UP PROPERLY. I HAVE SPENT 2 HOURS SOLVING THIS!!!!. DO NOT
+    # CHANGE THE NEXT LINE. YOU HAVE BEEN WARNED!!!!!!!!
+    context.django_process.send_signal(signal.SIGINT)
+    context.django_process.wait()
+    print(context.django_process.poll(), "djoango killed with")
+    print("About to drop the test database")
     connection = psycopg2.connect(database="postgres", 
                                   user=os.environ["DATABASE_USERNAME"], 
                                   password=os.environ["DATABASE_PASSWORD"], 
@@ -94,9 +112,3 @@ def after_all(context):
     cursor.close()
     connection.close()
     
-    if context.is_CI:
-        pass
-    else:
-        context.angular_process.terminate()
-
-    context.django_process.terminate()
