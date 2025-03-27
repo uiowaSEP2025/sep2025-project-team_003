@@ -5,9 +5,10 @@ import requests
 from requests.exceptions import ConnectionError
 import time
 from selenium import webdriver
+import psycopg2
 
 def block_until_server_is_up(url, timeout=30, interval=2):
-    """Block untill the server is up."""
+    """Block until the server is up."""
     start_time = time.time()
     while time.time() - start_time < timeout:
         try:
@@ -27,6 +28,21 @@ def before_all(context):
     context.browser = webdriver.Chrome()
     context.url = "http://localhost:4200" if not context.is_dev else "FIX IT PLEASE"
 
+    connection = psycopg2.connect(database="postgres", 
+                                  user=os.environ["DATABASE_USERNAME"], 
+                                  password=os.environ["DATABASE_PASSWORD"], 
+                                  host=os.environ["DATABASE_IP"], port=5432)
+    
+    connection.autocommit = True
+    cursor = connection.cursor()
+    cursor.execute("DROP DATABASE IF EXISTS hsatest;")
+    cursor.execute("CREATE DATABASE hsatest;")
+
+    os.environ["DATABASE_NAME"] = "hsatest"
+
+    cursor.close()
+    connection.close()
+
     if context.is_CI:
         pass
     else:
@@ -45,6 +61,17 @@ def before_all(context):
 
 
 def after_all(context):
+    connection = psycopg2.connect(database="postgres", 
+                                  user=os.environ["DATABASE_USERNAME"], 
+                                  password=os.environ["DATABASE_PASSWORD"], 
+                                  host=os.environ["DATABASE_IP"], port=5432)
+    
+    connection.autocommit = True
+    cursor = connection.cursor()
+    cursor.execute("DROP DATABASE IF EXISTS hsatest;")
+    cursor.close()
+    connection.close()
+    
     if context.is_CI:
         pass
     else:
