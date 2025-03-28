@@ -17,8 +17,7 @@ class Command(BaseCommand):
         except CommandError as e:
             self.stdout.write(self.style.ERROR(f'Error flushing the database: {e}'))
         try:
-            pass
-
+            add_users()
         except Exception as e:
             stack_trace = traceback.format_exc()
             self.stdout.write(self.style.ERROR(f'Error seeding the database: {e}\n{stack_trace}'))

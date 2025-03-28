@@ -7,7 +7,8 @@ import time
 import requests
 import traceback
 from behave import fixture, use_fixture
-
+from django.core.management import call_command
+from django.core.management.base import CommandError
 
 def block_for_server(url):
      # Wait for Angular to be ready
@@ -37,15 +38,21 @@ def django_server(context):
     # Start Django dev server in the background on port 8000
     path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../HSA-backend'))
     os.chdir(path)
-    print(path, 'pathhhhhhh')
+    os.environ["DATABASE_NAME"] = "hsaint"
     context.django = subprocess.Popen(["python", "manage.py", "runserver", "8000"])
-    print(context.django.poll())
     block_for_server("http://localhost:8000/api/healthcheck")
     yield
     # Stop server after tests
     context.django.terminate()
     context.django.wait()
 
+def before_scenario(context, scenario):
+    """Run before each scenario."""
+    try:
+        print('\n\n\n')
+        call_command('seedint') # truncates all tables
+    except CommandError as e:
+        print(f'Error flushing the database: {e}')
 
 def before_all(context):
     try:
