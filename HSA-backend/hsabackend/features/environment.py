@@ -6,8 +6,8 @@ from django.test.testcases import LiveServerTestCase
 import os
 from selenium import webdriver
 import sys
-import django
 import subprocess
+import django
 from django.core.management import call_command
 
 @fixture
@@ -23,12 +23,14 @@ def before_all(context):
     path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
     sys.path.append(path) # we need this so python can find our app as a module
     os.environ["DJANGO_SETTINGS_MODULE"] = "hsabackend.settings"
-    context.url = "localhost:8000"
+    context.url = "localhost:4200"
+    os.chdir(path)
     os.environ["DATABASE_NAME"] = "hsaint"
     context.browser = webdriver.Chrome()
 
     django.setup()
     call_command("create_database")
+    call_command("makemigrations")
     call_command("migrate")
     use_fixture(django_test_case, context)
 

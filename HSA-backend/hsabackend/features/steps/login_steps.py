@@ -4,8 +4,6 @@ from selenium.webdriver.common.by import By
 
 @given('I am on the login page')
 def step_given_user_on_login_page(context):
-    context.browser = webdriver.Chrome()
-    print(f"{context.url}/login")
     context.browser.get(f"{context.url}/login")
 
 @when('I type "{text}" into the username field')

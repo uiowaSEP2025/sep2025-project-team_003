@@ -141,6 +141,9 @@ DATABASES = {
         "PASSWORD": os.environ["DATABASE_PASSWORD"],
         "HOST": os.environ["DATABASE_IP"],
         "PORT": "5432",
+        'TEST': {
+            'NAME': 'hsaint',  
+        },
     }
 }
 
