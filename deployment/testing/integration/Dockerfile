@@ -26,6 +26,8 @@ RUN ng build
 
 
 FROM python:3.13 AS backend
+
+WORKDIR /app
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -38,7 +40,12 @@ RUN apt-get update && apt-get install -y \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-COPY . /app
+# Copy from frontend stage with specific paths
+COPY --from=frontend /HSA-frontend /app/HSA-frontend
+COPY --from=frontend /build_django_index.py /app/
+COPY --from=frontend /HSA-backend /app/HSA-backend
+
+WORKDIR /app
 RUN python3 build_django_index.py
 WORKDIR /app/HSA-backend
 ENV DATABASE_NAME=django_db

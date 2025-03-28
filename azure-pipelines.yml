@@ -18,6 +18,7 @@ stages:
   displayName: Run Unit Tests
   jobs:
     - job: Frontend
+      environment: dev
       displayName: Test Frontend
       pool:
         vmImage: ubuntu-latest
@@ -31,6 +32,7 @@ stages:
             tags: |
               $(tag)
     - job: Backend
+      environment: dev
       displayName: Test Backend
       pool:
         vmImage: ubuntu-latest
@@ -44,6 +46,7 @@ stages:
             tags: |
               $(tag)
     - job: Integration
+      environment: dev
       displayName: Integration Tests
       pool:
         vmImage: ubuntu-latest
