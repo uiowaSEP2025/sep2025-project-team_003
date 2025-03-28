@@ -39,6 +39,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 COPY . /app
+RUN python3 build_django_index.py
 WORKDIR /app/HSA-backend
 ENV DATABASE_NAME=django_db
 ENV DATABASE_USERNAME=django_user
