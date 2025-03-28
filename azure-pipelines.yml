@@ -27,7 +27,7 @@ stages:
           inputs:
             command: build
             buildContext: '$(Build.SourcesDirectory)'
-            dockerfile: '**/testing/frontend/Dockerfile'
+            dockerfile: '**/deployment/testing/frontend/Dockerfile'
             tags: |
               $(tag)
     - job: Backend
@@ -40,6 +40,19 @@ stages:
           inputs:
             command: build
             buildContext: '$(Build.SourcesDirectory)'
-            dockerfile: '**/testing/backend/Dockerfile'
+            dockerfile: '**/deployment/testing/backend/Dockerfile'
+            tags: |
+              $(tag)
+    - job: Integration
+      displayName: Integration Tests
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+        - task: Docker@2
+          displayName: Test an image
+          inputs:
+            command: build
+            buildContext: '$(Build.SourcesDirectory)'
+            dockerfile: '**/deployment/testing/integration/Dockerfile'
             tags: |
               $(tag)
