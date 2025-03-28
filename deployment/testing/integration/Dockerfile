@@ -1,14 +1,6 @@
 FROM node:22-alpine AS frontend
 # Copy the rest of the application
 COPY . .
-# Install Chrome and dependencies
-RUN apk add --no-cache \
-    chromium \
-    chromium-chromedriver \
-    harfbuzz \
-    nss \
-    freetype \
-    ttf-freefont
 
 # Set Chrome environment variables
 ENV CHROME_BIN=/usr/bin/chromium-browser
@@ -44,6 +36,7 @@ RUN apt-get update && apt-get install -y \
 COPY --from=frontend /HSA-frontend /app/HSA-frontend
 COPY --from=frontend /build_django_index.py /app/
 COPY --from=frontend /HSA-backend /app/HSA-backend
+COPY --from=frontend /deployment /app/deployment
 
 WORKDIR /app
 RUN python3 build_django_index.py
