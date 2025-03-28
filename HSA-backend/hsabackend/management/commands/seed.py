@@ -11,7 +11,6 @@ from hsabackend.models.job_service import JobService
 from hsabackend.models.job import Job
 from hsabackend.models.quote import Quote
 from hsabackend.models.discount_type import DiscountType
-from hsabackend.models.invoice  import Invoice
 from hsabackend.models.job_template import JobTemplate
 from hsabackend.models.subscription import Subscription
 from django.utils import timezone
@@ -33,7 +32,7 @@ def random_currency(min_value=0.01, max_value=1000.00):
     return round(random.uniform(min_value, max_value), 2)
 
 class Command(BaseCommand):
-    """seeds the database with test data. DO NOT RUN ON PROD!"""
+    """seeds the database with test data. DO NOT RUN ON PROD! Is non-deterministic!!!!"""
 
     def handle(self, *args, **options):
         self.stdout.write(

@@ -3,8 +3,6 @@ from django.urls import path, re_path
 from django.conf.urls.static import static
 from django.conf import settings
 from django.http import HttpResponseNotFound
-
-
 import hsabackend.views.index as hview
 from hsabackend.views.user_auth import login_view, logout_view
 from hsabackend.views.customers import get_customer_excluded_table_data, get_customer_table_data, create_customer, edit_customer, delete_customer
@@ -21,14 +19,20 @@ from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice,
 from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForInvoiceByInvoice
 from hsabackend.views.generate_invoice_pdf_view import generate_pdf
 from hsabackend.views.organizations import createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail
+from django.http import HttpResponse
 
 def handle_unmatched_api(request):
     return HttpResponseNotFound("404 Not Found")
 
+def handle_health_check(request):
+    return HttpResponse("OK", content_type="text/plain", status=200)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    
+
+    # health check (used for int testing)
+    path("api/healthcheck", handle_health_check),
+
     # auth
     path("api/login", login_view),
     path("api/logout", logout_view),

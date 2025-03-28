@@ -7,7 +7,7 @@
       <form class="flex flex-col justify-center">
         <mat-form-field>
           <mat-label>Username</mat-label>
-          <input matInput 
+          <input matInput data-testid="username-input"
             [formControl]="usernameFormControl" [errorStateMatcher]="matcher"
             placeholder="username">
             @if (usernameFormControl.hasError('required')) {
@@ -17,14 +17,14 @@
       
         <mat-form-field>
           <mat-label>Password</mat-label>
-          <input matInput placeholder="password" type="password"
+          <input matInput data-testid="password-input" placeholder="password" type="password"
             [formControl]="passwordFormControl" [errorStateMatcher]="matcher">
             @if (passwordFormControl.hasError('required')) {
               <mat-error>Password is <strong>required</strong></mat-error>
             }
         </mat-form-field>
         <div class="items-center">
-          <button mat-flat-button type="submit" class="mt-10 mb-5" (click)="onSubmit()">Login</button>
+          <button mat-flat-button type="submit" data-testid="submit" class="mt-10 mb-5" (click)="onSubmit()">Login</button>
           <button mat-raised-button class="mt-10 mb-5" (click)="navigateToPage('signup')">Sign up</button>
         </div>
       </form>
