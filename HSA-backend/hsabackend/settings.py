@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'hsabackend', 
-    'django_behave',
+    'behave_django',
     'django_extensions'
 ]
 

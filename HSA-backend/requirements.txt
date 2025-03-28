@@ -1,16 +1,20 @@
 backports.tarfile==1.2.0
+behave-django==1.5.0
 coverage==7.6.12
 cryptography==44.0.2
-django-behave==0.1.6
 django-cors-headers==4.7.0
+django-extensions==3.2.3
 django-sslserver==0.22
 djangorestframework==3.15.2
 fpdf2==2.7.6
 gunicorn==23.0.0
 importlib-metadata==8.0.0
 jaraco.collections==5.1.0
-pip-chill==1.0.3 # used to generate clean requiremnt files without listing dependencies
+pip-chill==1.0.3
 platformdirs==4.2.2
 psycopg==3.2.4
+psycopg2-binary==2.9.10
 pysocks==1.7.1
+requests==2.32.3
+selenium==4.30.0
 tomli==2.0.1
