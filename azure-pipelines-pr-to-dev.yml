@@ -19,7 +19,6 @@ stages:
   displayName: Build image
   jobs:
   - job: Build
-    environment: dev
     displayName: Build and push to Docker Hub
     pool:
       vmImage: ubuntu-latest
@@ -33,7 +32,6 @@ stages:
   displayName: Deploy image from Docker Hub to dev server
   jobs:
   - job: Deployment
-    environment: dev
     steps:
     - task: InstallSSHKey@0
       inputs:
