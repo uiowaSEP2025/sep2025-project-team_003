@@ -44,7 +44,6 @@ stages:
             tags: |
               $(tag)
     - job: Integration
-      environment: dev
       displayName: Integration Tests
       pool:
         vmImage: ubuntu-latest
