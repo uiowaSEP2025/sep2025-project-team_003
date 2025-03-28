@@ -23,7 +23,6 @@ def block_for_server(url):
                 response = requests.get(url, timeout=5)
                 if response.status_code == 200:
                     success = True
-                    print("Angular dev server is ready!")
                 else:
                     time.sleep(1)
             except (requests.exceptions.ConnectionError, requests.exceptions.RequestException):
