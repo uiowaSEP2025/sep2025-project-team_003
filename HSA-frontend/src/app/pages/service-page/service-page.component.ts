@@ -5,19 +5,23 @@ import {TableComponentComponent} from '../../components/table-component/table-co
 import {Router} from '@angular/router';
 import { ServiceService } from '../../services/service.service';
 import { ErrorHandlerService } from '../../services/error.handler.service';
+import { CommonModule } from '@angular/common';
+import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 
 @Component({
   selector: 'app-service-page',
   imports: [
     TableComponentComponent,
     MatFabButton,
-    MatIcon
+    MatIcon,
+    CommonModule,
+    LoadingFallbackComponent
   ],
   templateUrl: './service-page.component.html',
   styleUrl: './service-page.component.scss'
 })
 export class ServicePageComponent implements OnInit {
-  services: any
+  services: any = null;
   serviceService: ServiceService
   
   constructor(private router: Router, serviceService: ServiceService, private errorHandler: ErrorHandlerService) {
