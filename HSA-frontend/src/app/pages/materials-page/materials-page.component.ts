@@ -4,21 +4,24 @@ import {MatFabButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {TableComponentComponent} from '../../components/table-component/table-component.component';
 import { MaterialService } from '../../services/material.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorHandlerService } from '../../services/error.handler.service';
+import { CommonModule } from '@angular/common';
+import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 
 @Component({
   selector: 'app-materials-page',
   imports: [
     MatFabButton,
     MatIcon,
-    TableComponentComponent
+    TableComponentComponent,
+    CommonModule,
+    LoadingFallbackComponent
   ],
   templateUrl: './materials-page.component.html',
   styleUrl: './materials-page.component.scss'
 })
 export class MaterialsPageComponent implements OnInit {
-  materials: any
+  materials: any = null
   materialService: MaterialService
   @ViewChild(TableComponentComponent) tableComponent!: TableComponentComponent 
 
