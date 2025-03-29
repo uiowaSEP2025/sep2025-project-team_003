@@ -18,6 +18,7 @@ describe('InvoicesPageComponent', () => {
 
     fixture = TestBed.createComponent(InvoicesPageComponent);
     component = fixture.componentInstance;
+    component.invoices = []
     fixture.detectChanges();
   });
 
