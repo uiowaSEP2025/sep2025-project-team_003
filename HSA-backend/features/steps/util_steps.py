@@ -57,12 +57,48 @@ def find_rows(context, should_or_not):
 @when('I click the delete button')
 def set_click_delete(context):
     rows = context.browser.find_elements(By.TAG_NAME, "tr")
-    second_row = rows[0]
+    second_row = rows[1]
     buttons = second_row.find_elements(By.TAG_NAME, "mat-icon")
     found = False
     for button in buttons:
-        print(button.text.strip().lower(), 'asdfa')
         if button.text.strip().lower() == "delete":
             found = True
             button.click()
     assert found, "Did not find the delete button"
+
+@when('I don\'t see the loading spinner')
+def await_not_showing_spinner(context):
+    # Wait until the element with class "lds-roller" is no longer visible
+    WebDriverWait(context.browser, 10).until(
+        EC.invisibility_of_element_located((By.CLASS_NAME, "lds-roller"))
+    )
+
+@when('I confirm the delete dialog')
+def step_confirm_delete_dialog(context):
+    wait = WebDriverWait(context.browser, 10)
+    
+    # Find the delete confirmation dialog
+    dialog = wait.until(
+        EC.presence_of_element_located((By.CLASS_NAME, "mat-mdc-dialog-surface"))
+    )
+    assert dialog is not None, "Delete confirmation dialog not found"
+
+    # Find and click the Delete button
+    delete_button = wait.until(
+        EC.element_to_be_clickable((By.CLASS_NAME, "delete-button"))
+    )
+    delete_button.click()
+
+@then('I should see "Nothing to show here" in the table')
+def step_impl(context):
+    # Wait for the table to be visible
+    table = WebDriverWait(context.browser, 10).until(
+        EC.visibility_of_element_located((By.TAG_NAME, "app-table-component"))
+    )
+
+    # Get all child elements of the table
+    child_elements = table.find_elements(By.XPATH, ".//*")
+
+    # Check if any child element contains the expected text
+    assert any("Nothing to show here" in child.text for child in child_elements), \
+        'Expected text "Nothing to show here" not found in table'

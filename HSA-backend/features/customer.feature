@@ -6,6 +6,7 @@ Feature: Customer CRUDS
     Scenario: View Customers page
         Given I am logged in
         Given I am on the customers page
+        When I don't see the loading spinner
         Then I should see a table row with the following elements
             | Firstorg1              |
             | Lastorg1               |
@@ -23,5 +24,8 @@ Feature: Customer CRUDS
     Scenario: Delete customer
         Given I am logged in
         And I am on the customers page
+        When I don't see the loading spinner
         When  I click the delete button
-        Then I wait for 20 seconds
+        When I confirm the delete dialog
+        Then I wait for 0.5 seconds 
+        Then I should see "Nothing to show here" in the table
