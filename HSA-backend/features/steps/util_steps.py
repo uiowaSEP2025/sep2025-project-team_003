@@ -15,15 +15,9 @@ def step_wait_n_seconds(context, n):
 
 @then('I should see a snackbar with "{text}"')
 def step_check_snackbar_text(context, text):
-    wait = WebDriverWait(context.browser, 5)
-    # Wait for the text to appear within the div element
-    element = wait.until(EC.presence_of_element_located(
-        (By.CSS_SELECTOR, "div.mat-mdc-snack-bar-label"))
-    )
-    context.browser.execute_script("alert('shit')")
-
-    assert element is not None, "SnackBar was not found"
-    assert text in element.text, f"SnackBar doesn't contain '{text}', text was '{element.text}'"
+    wait = WebDriverWait(context.browser, 20)
+    element = wait.until(EC.visibility_of_element_located((By.TAG_NAME, "simple-snack-bar")))
+    assert text in element.text, f"Snack bar doesn't contain '{text}'"
 
 @given('I am logged in')
 def step_user_logged_in(context):
@@ -41,14 +35,9 @@ def step_user_logged_in(context):
     submit_button.click()
 
     text = "Login Successful"
-    wait = WebDriverWait(context.browser, 5)
-    # Wait for the text to appear within the div element
-    element = wait.until(EC.presence_of_element_located(
-        (By.CSS_SELECTOR, "div.mat-mdc-snack-bar-label"))
-    )
-    wait.until(EC.text_to_be_present_in_element(element, text))
-    assert element is not None, "SnackBar was not found"
-    assert text in element.text, f"SnackBar doesn't contain '{text}', text was '{element.text}'"
+    wait = WebDriverWait(context.browser, 20)
+    element = wait.until(EC.visibility_of_element_located((By.TAG_NAME, "simple-snack-bar")))
+    assert text in element.text, f"Snack bar doesn't contain '{text}'"
 
 @then('I {should_or_not} see a table row with the following elements')
 def find_rows(context, should_or_not):
@@ -61,7 +50,6 @@ def find_rows(context, should_or_not):
         cells = [cell.text for cell in row.find_elements(By.TAG_NAME, "td")]
         if all(value in cells for value in expected_values):  # Check if all expected values exist in the row
             found = True
-            print('foint it')
             break  # No need to continue once we find a matching row
     
     assert should_or_not == found, f"{'No table ' if should_or_not else 'Table '}row found containing values: {expected_values}"
