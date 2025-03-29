@@ -90,7 +90,7 @@ def step_confirm_delete_dialog(context):
     delete_button.click()
 
 @then('I should see "Nothing to show here" in the table')
-def step_impl(context):
+def step_look_for_empty_table(context):
     # Wait for the table to be visible
     table = WebDriverWait(context.browser, 10).until(
         EC.visibility_of_element_located((By.TAG_NAME, "app-table-component"))
@@ -102,3 +102,16 @@ def step_impl(context):
     # Check if any child element contains the expected text
     assert any("Nothing to show here" in child.text for child in child_elements), \
         'Expected text "Nothing to show here" not found in table'
+    
+@when('I click the edit button')
+def set_click_edit(context):
+    rows = context.browser.find_elements(By.TAG_NAME, "tr")
+    second_row = rows[1]
+    buttons = second_row.find_elements(By.TAG_NAME, "mat-icon")
+    found = False
+    for button in buttons:
+        if button.text.strip().lower() == "edit":
+            found = True
+            button.click()
+            break # avoid stale element exception
+    assert found, "Did not find the edit button"
