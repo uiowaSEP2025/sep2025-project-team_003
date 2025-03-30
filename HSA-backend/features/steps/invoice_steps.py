@@ -52,17 +52,28 @@ def step_select_invoice_status(context, n):
 @when('I fill in the dates with "{d1}" and "{d2}"')
 def step_fill_in_dates(context, d1, d2):
     wait = WebDriverWait(context.browser, 10)
-    
-    # Find the delete confirmation dialog
-    dialog = wait.until(
+    dates = wait.until(
         EC.presence_of_element_located((By.CSS_SELECTOR, '[data-testid="date-picker"]'))
     )
-    inputs = dialog.find_elements(By.TAG_NAME, "input")
+    inputs = dates.find_elements(By.TAG_NAME, "input")
     start, end = inputs[0], inputs[1]
-    for i in range(10):
+    for i in range(10):                 # calling .clear does not work on date pickers
         start.send_keys(Keys.BACKSPACE)
     start.send_keys(d1)
     for i in range(10):
         end.send_keys(Keys.BACKSPACE)
     end.send_keys(d2)
 
+@when('I click the first checkbox in the invoice quotes table')
+def step_click_first_checkbox_invoice_quotes(context):
+    wait = WebDriverWait(context.browser, 10)
+    table = wait.until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, '[data-testid="invoice-quotes-table"]'))
+    )
+    row1 = table.find_elements(By.TAG_NAME, "tr")[1]  # Assuming the first row is the header
+    checkbox = row1.find_element(By.CSS_SELECTOR, 'input[type="checkbox"]')
+    checkbox.click()
+
+@when('I fill in the tax rate with "{n}"')
+def step_fill_in_tax_rate(context,n):
+    pass

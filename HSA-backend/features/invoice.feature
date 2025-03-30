@@ -51,6 +51,7 @@ Scenario: Edit Inovoice
     When I click the edit button
     And I select a status with "issued"
     And I fill in the dates with "02/01/2025" and "02/08/2025"
+    And I click the first checkbox in the invoice quotes table
     Then I wait for 20 seconds
 
 # Scenario: Create Invocice

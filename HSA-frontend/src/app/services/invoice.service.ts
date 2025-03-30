@@ -35,6 +35,14 @@ export class InvoiceService {
     private getSpecificUrl = `${environment.apiUrl}/api/get/invoice/displaydata`;
     private editUrl = `${environment.apiUrl}/api/edit/invoice`;
 
+
+    private convertTaxInputToMathPercent(input: string): string {
+        if (input === "100") {
+            return "1.00"
+        }
+        return input.length === 2 ? `0.${input}` : `0.0${input}`
+    }
+
     constructor(private http: HttpClient) { }
 
     public getInvoicesForOrganization(params?: Record<string, string | number>): Observable<TableApiResponse<Invoice>> {
@@ -51,10 +59,12 @@ export class InvoiceService {
     }
 
     public createInvoice(json: CreateInvoiceInterface): Observable<StandardApiResponse> {
+        json.tax = this.convertTaxInputToMathPercent(json.tax)
         return this.http.post<StandardApiResponse>(this.createUrl, json);
     }
 
     public updateInvoice(id: number, data: UpdateInvoiceInterface) {
+        data.tax = this.convertTaxInputToMathPercent(data.tax)
         return this.http.post<StandardApiResponse>(`${this.editUrl}/${id}`, data);
     }
 

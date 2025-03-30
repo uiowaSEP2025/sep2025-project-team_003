@@ -64,8 +64,11 @@
 					@if (taxAmount.hasError('required')) {
 							<mat-error>Tax amount is <strong>required</strong></mat-error>
 					}
-					@else if (taxAmount.hasError('min') || taxAmount.hasError('max') || taxAmount.hasError('pattern')) {
-							<mat-error>Tax amount must be <strong>0.XX</strong></mat-error>
+					@else if (taxAmount.hasError('min') || taxAmount.hasError('max') ) {
+						<mat-error class="mb-5">Tax must be between 0-100</mat-error>
+					}
+					@else if (taxAmount.hasError('notInteger')) {
+						<mat-error class="mb-5">Tax must be a whole number</mat-error>
 					}
 			</mat-form-field>
 			</div>

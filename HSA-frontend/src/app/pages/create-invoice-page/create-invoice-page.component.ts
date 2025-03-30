@@ -21,6 +21,7 @@ import { StringFormatter } from '../../utils/string-formatter';
 import { Validators } from '@angular/forms';
 import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
 import { ReactiveFormsModule } from '@angular/forms';
+import integerValidator from '../../utils/whole-number-validator';
 
 @Component({
   selector: 'app-create-invoice-page',
@@ -48,7 +49,7 @@ export class CreateInvoicePageComponent implements OnInit {
   });
 
   taxAmount: FormControl = new FormControl('', [Validators.required,  Validators.min(0),
-    Validators.max(1), Validators.pattern(/^(0(\.\d{1,2})?|1(\.00)?)$/)
+    Validators.min(0), Validators.max(100), integerValidator
   ])
 
   constructor(private customerService: CustomerService, private router: Router, private quoteService: QuoteService,
@@ -119,7 +120,9 @@ export class CreateInvoicePageComponent implements OnInit {
       }
       return;
     }
-    
+    if (!this.taxAmount.valid) {
+      return;
+    }
     if (this.isDateSelectVisible() && !validDates) {
       return;
     }
