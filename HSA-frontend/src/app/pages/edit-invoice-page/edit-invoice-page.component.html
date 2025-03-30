@@ -8,7 +8,7 @@
 
     <mat-form-field class="pt-5">
         <mat-label>Status</mat-label>
-        <mat-select matNativeControl required [(ngModel)]="status">
+        <mat-select data-testid="status-selector" matNativeControl required [(ngModel)]="status">
             <mat-option value="created">created</mat-option>
             <mat-option value="issued">issued</mat-option>
             <mat-option value="paid">paid</mat-option>

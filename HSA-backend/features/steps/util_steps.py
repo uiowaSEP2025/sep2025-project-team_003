@@ -58,6 +58,7 @@ def find_rows(context, should_or_not):
 def set_click_delete(context):
     rows = context.browser.find_elements(By.TAG_NAME, "tr")
     second_row = rows[1]
+    print(rows)
     buttons = second_row.find_elements(By.TAG_NAME, "mat-icon")
     found = False
     for button in buttons:

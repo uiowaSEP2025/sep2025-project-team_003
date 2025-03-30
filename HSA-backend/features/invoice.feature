@@ -34,8 +34,6 @@ Scenario: View detailed invoice
         | Tax:              |                   | 10%         |
         | Total:            |                   | $396.00     |
 
-        
-
 Scenario: Delete Invoice
     Given I am logged in
     And I am on the invoices page
@@ -45,7 +43,15 @@ Scenario: Delete Invoice
     Then I wait for 0.5 seconds 
     Then I should see "Nothing to show here" in the table
 
-# Scenario: Edit Inovoice
+Scenario: Edit Inovoice
+    Given I am logged in
+    And I am on the invoices page
+    When I don't see the loading spinner
+    Then I wait for 1 seconds
+    When I click the edit button
+    And I select a status with "issued"
+    And I fill in the dates with "02/01/2025" and "02/08/2025"
+    Then I wait for 20 seconds
 
 # Scenario: Create Invocice
 

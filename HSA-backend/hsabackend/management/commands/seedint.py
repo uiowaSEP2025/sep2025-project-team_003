@@ -66,7 +66,7 @@ def add_customers(org1,org2):
 
 def add_jobs(c1,o1):
     j1 = Job.objects.create(
-        job_status=['completed'],
+        job_status='completed',
         start_date=date(2025, 3, 20),
         end_date=date(2025, 3, 27),
         description="description j1",
@@ -78,7 +78,7 @@ def add_jobs(c1,o1):
         requestor_address = "2 W Washington St"
     )
     j2 = Job.objects.create(
-        job_status=['completed'],
+        job_status='completed',
         start_date=date(2025, 3, 20),
         end_date=date(2025, 3, 27),
         description="description j2",
