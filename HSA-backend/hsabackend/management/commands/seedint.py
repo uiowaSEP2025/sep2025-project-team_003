@@ -4,6 +4,12 @@ import traceback
 from django.contrib.auth.models import User
 from hsabackend.models.organization import Organization
 from hsabackend.models.customer import Customer
+from hsabackend.models.job import Job
+from datetime import date
+from hsabackend.models.quote import Quote
+from decimal import Decimal
+from hsabackend.models.discount_type import DiscountType
+from hsabackend.models.invoice import Invoice
 
 def add_users():
     User.objects.create_user("devuser", "dev@uiowa.edu", "SepTeam003!")
@@ -58,6 +64,75 @@ def add_customers(org1,org2):
     )
     return c1,c2
 
+def add_jobs(c1,o1):
+    j1 = Job.objects.create(
+        job_status=['completed'],
+        start_date=date(2025, 3, 20),
+        end_date=date(2025, 3, 27),
+        description="description j1",
+        organization=o1,
+        customer=c1,
+        requestor_city = "Iowa City",
+        requestor_state = "Iowa",
+        requestor_zip = "52240",
+        requestor_address = "2 W Washington St"
+    )
+    j2 = Job.objects.create(
+        job_status=['completed'],
+        start_date=date(2025, 3, 20),
+        end_date=date(2025, 3, 27),
+        description="description j2",
+        organization=o1,
+        customer=c1,
+        requestor_city = "Iowa City",
+        requestor_state = "Iowa",
+        requestor_zip = "52240",
+        requestor_address = "2 W Washington St"
+    )
+    return j1,j2
+
+def add_discount(o1):
+    d = DiscountType.objects.create(
+        discount_name="Holiday Sale",
+        discount_percent=Decimal(20.00),
+        organization=o1
+    )
+    return d
+
+
+def add_quotes(j1,j2, d1):
+    q1 = Quote.objects.create(
+        issuance_date=date(2025, 3, 20),
+        due_date=date(2025, 3, 27),
+        status="accepted",
+        material_subtotal=Decimal(100.00),
+        total_price=Decimal(200),
+        jobID=j1,
+        discount_type = d1)
+    q2 = Quote.objects.create(
+        issuance_date=date(2025, 3, 20),
+        due_date=date(2025, 3, 27),
+        status="accepted",
+        material_subtotal=Decimal(100.00),
+        total_price=Decimal(200),
+        jobID=j2,
+        discount_type = None)
+    return q1,q2
+    
+def add_invoice(q1:Quote,q2:Quote,c1):
+    inv = Invoice.objects.create(
+        issuance_date=date(2025, 3, 20),
+        due_date=date(2025, 3, 27),
+        status = "paid",
+        tax = Decimal(0.10),
+        customer = c1,
+    )
+    q1.invoice = inv
+    q2.invoice = inv
+    q1.save()
+    q2.save()
+
+
 
 class Command(BaseCommand):
     """Seeds the database with deterministic test data. Used for integration tests"""
@@ -65,13 +140,17 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             call_command('flush', interactive=False) # truncates all tables
-            self.stdout.write(self.style.SUCCESS('Database flushed successfully'))
         except CommandError as e:
             self.stdout.write(self.style.ERROR(f'Error flushing the database: {e}'))
         try:
             u1,u2 = add_users()
             o1,o2 = add_orgs(u1,u2)
             c1,c2 = add_customers(o1,o2)
+            j1,j2 = add_jobs(c1,o1)
+            d = add_discount(o1)
+            q1,q2 = add_quotes(j1,j2,d)
+            add_invoice(q1,q2,c1)
+
             
         except Exception as e:
             stack_trace = traceback.format_exc()

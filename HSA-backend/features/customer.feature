@@ -1,6 +1,6 @@
 Feature: Customer CRUDS
     As a handyman
-    I want to create customers
+    I want to CRUD customers
     So that I can track them in the application
 
     Scenario: View Customers page

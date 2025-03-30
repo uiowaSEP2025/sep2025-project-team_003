@@ -104,7 +104,7 @@ def step_look_for_empty_table(context):
         'Expected text "Nothing to show here" not found in table'
     
 @when('I click the edit button')
-def set_click_edit(context):
+def step_click_edit(context):
     rows = context.browser.find_elements(By.TAG_NAME, "tr")
     second_row = rows[1]
     buttons = second_row.find_elements(By.TAG_NAME, "mat-icon")
@@ -115,3 +115,9 @@ def set_click_edit(context):
             button.click()
             break # avoid stale element exception
     assert found, "Did not find the edit button"
+
+@when('I click the first table row')
+def step_click_table_row(context):
+    rows = context.browser.find_elements(By.TAG_NAME, "tr")
+    second_row = rows[1]
+    second_row.click()
