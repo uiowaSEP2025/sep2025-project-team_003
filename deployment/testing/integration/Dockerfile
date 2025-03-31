@@ -42,7 +42,7 @@ RUN apt-get install -y chromedriver
 # (Optional) Cleanup APT caches to reduce image size
 RUN rm -rf /var/lib/apt/lists/*
 
-Copy the application code and set working directory
+# Copy the application code and set working directory
 COPY . /app
 WORKDIR /app/HSA-backend
 
