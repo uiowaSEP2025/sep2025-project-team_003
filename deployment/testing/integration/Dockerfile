@@ -43,9 +43,6 @@ COPY --from=frontend /build_django_index.py /app/
 COPY --from=frontend /HSA-backend /app/HSA-backend
 COPY --from=frontend /deployment /app/deployment
 
-# In the Dockerfile
-RUN chmod +x ../deployment/testing/integration/install-chromedriver.sh \
-    && ../deployment/testing/integration/install-chromedriver.sh
 
 WORKDIR /app
 RUN python3 build_django_index.py
@@ -56,6 +53,9 @@ ENV DATABASE_PASSWORD=123abc!
 ENV DATABASE_IP=localhost
 ENV INTEGRATION_FLAG=1
 
+# In the Dockerfile
+RUN chmod +x ../deployment/testing/integration/install-chromedriver.sh \
+    && ../deployment/testing/integration/install-chromedriver.sh
 # Setup backend
 RUN pip3 install --no-cache-dir -r requirements.txt
 
