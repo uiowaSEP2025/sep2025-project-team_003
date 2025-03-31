@@ -40,10 +40,15 @@ apt-get install -y google-chrome-stable
 # (Optional) Cleanup APT caches to reduce image size
 RUN rm -rf /var/lib/apt/lists/*
 
-# Copy the application code and set working directory
-COPY . /app
+# Copy from frontend stage with specific paths
+COPY --from=frontend /HSA-frontend /app/HSA-frontend
+COPY --from=frontend /build_django_index.py /app/
+COPY --from=frontend /HSA-backend /app/HSA-backend
+
+# Run the build script
 WORKDIR /app
-RUN python build_django_index.py
+RUN python3 build_django_index.py
+
 WORKDIR /app/HSA-backend
 
 # Environment variables for Django database configuration
