@@ -1,5 +1,5 @@
 Feature: User Login
-  As a user
+  As a handyman
   I want to log in to my account
   So that I can access my dashboard
 

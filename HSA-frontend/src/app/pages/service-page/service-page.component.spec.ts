@@ -30,6 +30,7 @@ describe('ServicePageComponent', () => {
 
     fixture = TestBed.createComponent(ServicePageComponent);
     component = fixture.componentInstance;
+    component.services = []
     router = TestBed.inject(Router);
     httpMock = TestBed.inject(HttpTestingController);
     fixture.detectChanges();

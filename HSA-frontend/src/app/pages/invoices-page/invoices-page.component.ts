@@ -26,7 +26,7 @@ export class InvoicesPageComponent implements OnInit{
     this.invoiceService = invoiceService
   }
 
-  invoices: any
+  invoices: any = null;
 
   ngOnInit(): void {
     this.loadDataToTable("", 5, 0);

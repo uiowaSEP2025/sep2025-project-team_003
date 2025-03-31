@@ -29,6 +29,7 @@ describe('CustomersPageComponent', () => {
 
     fixture = TestBed.createComponent(CustomersPageComponent);
     component = fixture.componentInstance;
+    component.customers = []
     router = TestBed.inject(Router);
     httpMock = TestBed.inject(HttpTestingController);
     fixture.detectChanges();

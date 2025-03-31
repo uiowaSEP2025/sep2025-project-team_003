@@ -31,6 +31,7 @@ describe('MaterialsPageComponent', () => {
 
     fixture = TestBed.createComponent(MaterialsPageComponent);
     component = fixture.componentInstance;
+    component.materials = []
     router = TestBed.inject(Router);
     httpMock = TestBed.inject(HttpTestingController);
     fixture.detectChanges();

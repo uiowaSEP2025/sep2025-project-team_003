@@ -5,16 +5,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { JobService } from '../../services/job.service';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
+import { CommonModule } from '@angular/common';
 import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-job-page',
-  imports: [TableComponentComponent, MatButtonModule, MatIconModule, LoadingFallbackComponent],
+  imports: [TableComponentComponent, MatButtonModule, MatIconModule, LoadingFallbackComponent, CommonModule],
   templateUrl: './job-page.component.html',
   styleUrl: './job-page.component.scss'
 })
 export class JobPageComponent implements OnInit  {
-  jobs: any
+  jobs: any = null;
   jobService: JobService
 
   constructor(private router: Router, jobService: JobService, private errorHandler: ErrorHandlerService) {
