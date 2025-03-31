@@ -36,9 +36,6 @@ echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" \
 apt-get update && \
 apt-get install -y google-chrome-stable
 
-# Install Chromedriver (this is a simple option; ensure its version is compatible with your Chrome)
-RUN apt-get install -y chromedriver
-
 # (Optional) Cleanup APT caches to reduce image size
 RUN rm -rf /var/lib/apt/lists/*
 
