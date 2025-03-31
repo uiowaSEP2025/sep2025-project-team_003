@@ -62,11 +62,18 @@ export class EditInvoicePageComponent implements OnInit {
 
     matcher = new GenericFormErrorStateMatcher()
   
-
   
   constructor(private quoteService: QuoteService, private activatedRoute: ActivatedRoute, 
     private errorHandler: ErrorHandlerService, private invoiceService: InvoiceService,
     private stringFormatter: StringFormatter, private router: Router) { }
+
+    private fixBackendTaxPercentage(tax: string): string {
+      if (tax === "1.00") {
+        return "100"
+      }
+      tax = tax.split('.')[1]
+      return tax
+    }
 
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe(params => {
@@ -79,7 +86,7 @@ export class EditInvoicePageComponent implements OnInit {
       this.dueDate = params['due_date'];
       this.issuanceDate = params['issuance_date'];
       this.customerName = params['customer'];
-      this.tax = parseFloat(params['tax']);
+      this.tax = parseInt(this.fixBackendTaxPercentage(params['tax']));
     })
     this.taxAmount.setValue(this.tax.toFixed(2))
 
