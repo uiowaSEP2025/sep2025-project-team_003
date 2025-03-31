@@ -44,7 +44,7 @@ RUN rm -rf /var/lib/apt/lists/*
 COPY --from=frontend /HSA-frontend /app/HSA-frontend
 COPY --from=frontend /build_django_index.py /app/
 COPY --from=frontend /HSA-backend /app/HSA-backend
-
+COPY --from=frontend /deployment/testing/integration/entrypoint.sh /app/deployment/testing/integration/
 # Run the build script
 WORKDIR /app
 RUN python3 build_django_index.py

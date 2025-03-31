@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -x
 
 # Start Xvfb
 Xvfb :99 -ac &
