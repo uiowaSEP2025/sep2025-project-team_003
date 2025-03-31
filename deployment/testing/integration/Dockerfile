@@ -1,7 +1,13 @@
 FROM node:22-alpine AS frontend
 # Copy the rest of the application
 COPY . .
-
+RUN apk add --no-cache \
+    chromium \
+    chromium-chromedriver \
+    harfbuzz \
+    nss \
+    freetype \
+    ttf-freefont
 # Set Chrome environment variables
 ENV CHROME_BIN=/usr/bin/chromium-browser
 ENV CHROME_PATH=/usr/lib/chromium/
@@ -45,6 +51,7 @@ ENV DATABASE_NAME=django_db
 ENV DATABASE_USERNAME=django_user
 ENV DATABASE_PASSWORD=123abc!
 ENV DATABASE_IP=localhost
+ENV INTEGRATION_FLAG=1
 
 
 # Setup backend

@@ -9,6 +9,7 @@ import traceback
 from behave import fixture, use_fixture
 from django.core.management import call_command
 from django.core.management.base import CommandError
+import os
 
 def block_for_server(url):
      # Wait for Angular to be ready
@@ -56,13 +57,16 @@ def before_scenario(context, scenario):
 def before_all(context):
     try:
         path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
-        sys.path.append(path) # we need this so python can find our app as a module
+        sys.path.append(path)  # we need this so python can find our app as a module
         os.environ["DJANGO_SETTINGS_MODULE"] = "hsabackend.settings"
-        context.url = "http://localhost:4200"
-        path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../HSA-frontend'))
-        os.chdir(path)
-        context.angular = subprocess.Popen(["ng", "serve"])
-        block_for_server("http://localhost:4200")
+        if os.environ['INTEGRATION_FLAG'] == 1:
+            context.url = "http://localhost:8000"
+        else:
+            context.url = "http://localhost:4200"
+            path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../HSA-frontend'))
+            os.chdir(path)
+            context.angular = subprocess.Popen(["ng", "serve"])
+            block_for_server("http://localhost:4200")
         context.browser = webdriver.Chrome()
         use_fixture(django_server, context)  # Start server before all scenarios
         
