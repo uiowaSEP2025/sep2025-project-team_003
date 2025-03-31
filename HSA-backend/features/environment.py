@@ -1,6 +1,7 @@
 import os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 import sys
 import subprocess
 import signal
@@ -68,8 +69,13 @@ def before_all(context):
             chrome_options.add_argument('--headless')
             chrome_options.add_argument('--disable-dev-shm-usage')
             chrome_options.add_argument('--remote-debugging-port=9222')
-            context.driver = webdriver.Chrome(options=chrome_options)
+            service = Service('/usr/local/bin/chromedriver')
             context.url = "http://localhost:8000"
+            try:
+                context.browser = webdriver.Chrome(service=service, options=chrome_options)
+            except Exception as e:
+                print(f"Error creating WebDriver: {e}")
+                raise
         else:
             print("CONTEXT IGNORED, Integration flag value was set to: ", os.environ["INTEGRATION_FLAG"])
             context.url = "http://localhost:4200"
@@ -77,7 +83,7 @@ def before_all(context):
             os.chdir(path)
             context.angular = subprocess.Popen(["ng", "serve"])
             block_for_server("http://localhost:4200")
-        context.browser = webdriver.Chrome()
+            context.browser = webdriver.Chrome()
         use_fixture(django_server, context)  # Start server before all scenarios
         
     except Exception as e:
@@ -88,7 +94,7 @@ def before_all(context):
 
 def after_all(context):
     if "INTEGRATION_FLAG" in os.environ:
-        context.driver.quit()
+        context.browser.quit()
     else:
         context.angular.send_signal(signal.SIGINT)
         context.angular.wait()
