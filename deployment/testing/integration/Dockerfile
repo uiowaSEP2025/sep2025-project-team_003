@@ -52,7 +52,7 @@ ENV DATABASE_IP=localhost
 ENV INTEGRATION_FLAG=1
 # In the Dockerfile
 RUN chmod +x ../deployment/testing/integration/install-chromedriver.sh \
-RUN chmod +x ../deployment/testing/integration/install-chrome.sh
+    && chmod +x ../deployment/testing/integration/install-chrome.sh
 
 RUN ../deployment/testing/integration/install-chromedriver.sh \
     && ../deployment/testing/integration/install-chrome.sh
