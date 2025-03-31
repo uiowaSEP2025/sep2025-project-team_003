@@ -19,7 +19,4 @@ def type_into_password(context, text):
     username_field.clear()
     username_field.send_keys(text)
 
-@when('I click the submit button')
-def click_submit(context):
-    submit_button = context.browser.find_element(By.CSS_SELECTOR, '[data-testid="submit"]')
-    submit_button.click()
+

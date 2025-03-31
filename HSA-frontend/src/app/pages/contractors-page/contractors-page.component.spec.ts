@@ -31,6 +31,7 @@ describe('ContractorsPageComponent', () => {
     router = TestBed.inject(Router);
     httpMock = TestBed.inject(HttpTestingController);
     component = fixture.componentInstance;
+    component.contractors = []
     fixture.detectChanges();
   });
 

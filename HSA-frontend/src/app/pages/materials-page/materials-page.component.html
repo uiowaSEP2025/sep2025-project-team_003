@@ -1,27 +1,27 @@
 <div class="parent">
   <div class="main-heading">
-    <h1>
-      <span>Materials</span>
-    </h1>
-    <app-table-component 
-      editRedirect="/materials/edit" 
-      [fetchedData]="materials" 
-      [deleteRequest]="materialService.deleteMaterial.bind(materialService)" 
-      [loadDataToTable]="this.loadDataToTable.bind(this)"
-      [hideValues]="['Id']"
-      searchHint="Search by material name"
-      [headers]="['Material Name']"
-      [width]="'40vw'"
-    ></app-table-component>
-  </div>
-  <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
-    <button mat-fab extended class="m-10" id="add-material-button" (click)="navigateToPage('materials/create')">
-      <mat-icon>note_add</mat-icon>
-      Add a Material
-    </button>
-    <button mat-fab extended class="m-10" id="service-list-button" (click)="navigateToPage('services')">
-      <mat-icon>list</mat-icon>
-      Service lists
-    </button>
+    @if (materials === null) {
+      <app-loading-fallback stringToDisplay="Loading materials"></app-loading-fallback>
+    } 
+    @else {
+      <h1>
+        <span>Materials</span>
+      </h1>
+      <app-table-component editRedirect="/materials/edit" [fetchedData]="materials"
+        [deleteRequest]="materialService.deleteMaterial.bind(materialService)"
+        [loadDataToTable]="this.loadDataToTable.bind(this)" [hideValues]="['Id']" searchHint="Search by material name"
+        [headers]="['Material Name']" [width]="'40vw'"></app-table-component>
+  
+      <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
+        <button mat-fab extended class="m-10" id="add-material-button" (click)="navigateToPage('materials/create')">
+          <mat-icon>note_add</mat-icon>
+          Add a Material
+        </button>
+      </div>
+      <button mat-fab extended class="m-10" id="service-list-button" (click)="navigateToPage('services')">
+        <mat-icon>list</mat-icon>
+        Service lists
+      </button>
+    }
   </div>
 </div>

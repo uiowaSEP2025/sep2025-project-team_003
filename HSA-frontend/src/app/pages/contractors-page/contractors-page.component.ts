@@ -5,15 +5,17 @@ import { MatIcon } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { ContractorService } from '../../services/contractor.service';
 import { ErrorHandlerService } from '../../services/error.handler.service';
+import { CommonModule } from '@angular/common';
+import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 
 @Component({
   selector: 'app-contractors-page',
-  imports: [TableComponentComponent, MatButtonModule, MatIcon],
+  imports: [TableComponentComponent, MatButtonModule, MatIcon, CommonModule, LoadingFallbackComponent],
   templateUrl: './contractors-page.component.html',
   styleUrl: './contractors-page.component.scss'
 })
 export class ContractorsPageComponent implements OnInit  {
-  contractors: any
+  contractors: any = null
   contractorService: ContractorService
 
   constructor(private router: Router, contractorService: ContractorService, private errorHandler: ErrorHandlerService) {
