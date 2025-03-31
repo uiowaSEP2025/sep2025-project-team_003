@@ -27,7 +27,8 @@ postgresql \
 postgresql-contrib \
 libpq-dev \
 python3-dev \
-gcc
+gcc \
+xvfb
 
 # Add the Google Chrome signing key and repository, then install Google Chrome Stable
 RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
@@ -44,6 +45,8 @@ COPY . /app
 WORKDIR /app/HSA-backend
 
 # Environment variables for Django database configuration
+ENV CHROME_BIN=/usr/bin/google-chrome
+ENV DISPLAY=:99
 ENV DATABASE_NAME=django_db
 ENV DATABASE_USERNAME=django_user
 ENV DATABASE_PASSWORD=123abc!
