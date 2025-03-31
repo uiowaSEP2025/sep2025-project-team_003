@@ -42,6 +42,8 @@ RUN rm -rf /var/lib/apt/lists/*
 
 # Copy the application code and set working directory
 COPY . /app
+WORKDIR /app
+RUN python build_django_index.py
 WORKDIR /app/HSA-backend
 
 # Environment variables for Django database configuration
