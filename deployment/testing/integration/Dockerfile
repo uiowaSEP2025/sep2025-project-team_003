@@ -1,16 +1,6 @@
 FROM node:22-alpine AS frontend
 # Copy the rest of the application
 COPY . .
-RUN apk add --no-cache \
-    chromium \
-    chromium-chromedriver \
-    harfbuzz \
-    nss \
-    freetype \
-    ttf-freefont
-# Set Chrome environment variables
-ENV CHROME_BIN=/usr/bin/chromium-browser
-ENV CHROME_PATH=/usr/lib/chromium/
 
 # Set working directory
 WORKDIR /HSA-frontend
@@ -29,14 +19,29 @@ WORKDIR /app
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-# Install postgresql client
+
+# Install dependencies for Chrome Headless
 RUN apt-get update && apt-get install -y \
     postgresql \
     postgresql-contrib \
     libpq-dev \
     python3-dev \
     gcc \
+    wget \
+    unzip \
+    gnupg \
+    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
     && rm -rf /var/lib/apt/lists/*
+
+# Install ChromeDriver
+RUN CHROME_DRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE) \
+    && wget -N https://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/chromedriver_linux64.zip -P ~/tmp \
+    && unzip ~/tmp/chromedriver_linux64.zip -d ~/tmp \
+    && mv ~/tmp/chromedriver /usr/local/bin/chromedriver \
+    && chmod +x /usr/local/bin/chromedriver
 
 # Copy from frontend stage with specific paths
 COPY --from=frontend /HSA-frontend /app/HSA-frontend
@@ -53,11 +58,12 @@ ENV DATABASE_PASSWORD=123abc!
 ENV DATABASE_IP=localhost
 ENV INTEGRATION_FLAG=1
 
-
 # Setup backend
 RUN pip3 install --no-cache-dir -r requirements.txt
+
+# Install Selenium if needed
+RUN pip3 install selenium
 
 # Set up entrypoint script
 RUN chmod +x ../deployment/testing/integration/entrypoint.sh
 RUN ../deployment/testing/integration/entrypoint.sh
-
