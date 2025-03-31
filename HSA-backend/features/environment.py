@@ -61,9 +61,10 @@ def before_all(context):
         path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
         sys.path.append(path)  # we need this so python can find our app as a module
         os.environ["DJANGO_SETTINGS_MODULE"] = "hsabackend.settings"
-        if os.environ["INTEGRATION_FLAG"] == 1:
+        if "INTEGRATION_FLAG" in os.environ:
             context.url = "http://localhost:8000"
         else:
+            print("CONTEXT IGNORED, Integration flag value was set to: ", os.environ["INTEGRATION_FLAG"])
             context.url = "http://localhost:4200"
             path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../HSA-frontend'))
             os.chdir(path)
