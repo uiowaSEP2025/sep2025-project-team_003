@@ -9,7 +9,7 @@ echo "Latest ChromeDriver version: $CHROMEDRIVER_VERSION"
 CHROME_MAJOR_VERSION=$(echo $CHROMEDRIVER_VERSION | cut -d. -f1)
 
 # Download specific Chrome version
-wget -q https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_MAJOR_VERSION}.0.6998.0-1_amd64.deb -O /tmp/chrome.deb
+wget -q https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_MAJOR_VERSION}-1_amd64.deb -O /tmp/chrome.deb
 
 # Remove existing Chrome
 apt-get remove -y google-chrome-stable
