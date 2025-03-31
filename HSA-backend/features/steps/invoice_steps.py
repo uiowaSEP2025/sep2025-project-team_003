@@ -15,8 +15,11 @@ def step_check_invoice_info(context):
     """WARNING: Behave will always ignore the first row becuaase it's a header. 
     need to pass a dummy 1st row for it to work
     """
+    wait = WebDriverWait(context.browser, 10)
+    table = wait.until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, '[data-testid="info-table"]'))
+    )
     expected_values = [list(row) for row in context.table]
-    table = context.browser.find_element(By.CSS_SELECTOR, '[data-testid="info-table"]')
     rows = table.find_elements(By.TAG_NAME, "tr")
     actual_values = [
         [cell.text.strip() for cell in row.find_elements(By.TAG_NAME, "td")]
@@ -74,6 +77,16 @@ def step_click_first_checkbox_invoice_quotes(context):
     checkbox = row1.find_element(By.CSS_SELECTOR, 'input[type="checkbox"]')
     checkbox.click()
 
+@when('I click the first checkbox in the invoice customer table')
+def step_click_first_checkbox_invoice_quotes(context):
+    wait = WebDriverWait(context.browser, 10)
+    table = wait.until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, '[data-testid="invoice-customers-table"]'))
+    )
+    row1 = table.find_elements(By.TAG_NAME, "tr")[1]  # Assuming the first row is the header
+    checkbox = row1.find_element(By.CSS_SELECTOR, 'input[type="checkbox"]')
+    checkbox.click()
+
 @when('I fill in the tax rate with "{n}"')
 def step_fill_in_tax_rate(context,n):
     wait = WebDriverWait(context.browser, 10)
@@ -93,3 +106,12 @@ def step_invoice_confirmation(context):
         EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-testid="confirm-button"]'))
     )
     confirm_button.click()
+
+@when('I click the create invoice button')
+def step_click_create_invoice(context):
+    wait = WebDriverWait(context.browser, 10)
+    confirm_button = wait.until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-testid="create-button"]'))
+    )
+    confirm_button.click()
+    

@@ -60,7 +60,8 @@ def createInvoice(request):
         customer = cust_qs[0],
         issuance_date = issued,
         due_date = due,
-        tax = parse_and_return_decimal(tax_percent)
+        tax = parse_and_return_decimal(tax_percent),
+        status=invoice_status
     )
     
     try:

@@ -6,6 +6,7 @@
 			</h1>
 			<h2 class="pb-5 pt-5">Select a customer to invoice</h2>
 			<app-table-component 
+					data-testid="invoice-customers-table"
 					[loadDataToTable]="loadCustomersToTable.bind(this)" 
 					editRedirect="" 
 					[hideValues]="['Actions', 'Id']"
@@ -23,6 +24,7 @@
 			<div class="m-10"></div>
 			@if (selectedCustomers.length !== 0) {
 				<app-table-component 
+						data-testid="invoice-quotes-table"
 						[loadDataToTable]="loadQuotesToTable.bind(this)" 
 						editRedirect="" 
 						[hideValues]="['Actions', 'Id']"
@@ -41,7 +43,7 @@
 			<div>
 				<mat-form-field class="mt-5 mr-5">
 					<mat-label>Status</mat-label>
-					<mat-select matNativeControl required [(ngModel)]="status">
+					<mat-select data-testid="status-selector" matNativeControl required [(ngModel)]="status">
 							<mat-option value="created">created</mat-option>
 							<mat-option value="issued">issued</mat-option>
 							<mat-option value="paid">paid</mat-option>
@@ -57,6 +59,7 @@
 			<mat-form-field>
 					<mat-label>Tax rate</mat-label>
 					<input matInput
+							data-testid="tax-input"
 							[formControl]="taxAmount" 
 							[errorStateMatcher]="matcher"
 							type="number"
@@ -81,7 +84,7 @@
 						</p>
 			</div>
 			<div class="items-center">
-				<button mat-flat-button type="submit" class="mt-10 mb-5" (click)="onSubmit()">Create</button>
+				<button mat-flat-button type="submit" class="mt-10 mb-5" (click)="onSubmit()" data-testid="submit">Create</button>
 				<button mat-raised-button class="mt-10 mb-5" (click)="navigateToPage('invoices')">Cancel</button>
 			</div>
 		</div>
