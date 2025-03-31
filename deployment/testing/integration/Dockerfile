@@ -33,30 +33,19 @@ RUN apt-get update && apt-get install -y \
     && apt-get install -y google-chrome-stable \
     && rm -rf /var/lib/apt/lists/*
 
-# Install ChromeDriver
-RUN CHROME_VERSION=$(google-chrome --version | cut -d ' ' -f 3 | cut -d '.' -f 1) \
-    && echo "Detected Chrome version: $CHROME_VERSION" \
-    && CHROME_DRIVER_VERSION=$(curl -sS "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}" || echo "latest") \
-    && if [ "$CHROME_DRIVER_VERSION" = "latest" ]; then \
-        CHROME_DRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE); \
-       fi \
-    && echo "Using ChromeDriver version: $CHROME_DRIVER_VERSION" \
-    && wget -q https://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/chromedriver_linux64.zip -O /tmp/chromedriver.zip \
-    && unzip /tmp/chromedriver.zip -d /usr/local/bin/ \
-    && chmod +x /usr/local/bin/chromedriver \
-    && rm /tmp/chromedriver.zip \
-    && chromedriver --version
-
 # Set environment variables
 ENV CHROME_BIN=/usr/bin/google-chrome
 ENV DISPLAY=:99
-
 
 # Copy from frontend stage with specific paths
 COPY --from=frontend /HSA-frontend /app/HSA-frontend
 COPY --from=frontend /build_django_index.py /app/
 COPY --from=frontend /HSA-backend /app/HSA-backend
 COPY --from=frontend /deployment /app/deployment
+
+# In the Dockerfile
+RUN chmod +x ../deployment/testing/integration/install-chromedriver.sh \
+    && ../deployment/testing/integration/install-chromedriver.sh
 
 WORKDIR /app
 RUN python3 build_django_index.py
