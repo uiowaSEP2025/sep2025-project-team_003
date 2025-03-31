@@ -55,11 +55,13 @@ def before_scenario(context, scenario):
         print(f'Error flushing the database: {e}')
 
 def before_all(context):
+    for evn in os.environ:
+        print (evn)
     try:
         path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
         sys.path.append(path)  # we need this so python can find our app as a module
         os.environ["DJANGO_SETTINGS_MODULE"] = "hsabackend.settings"
-        if os.environ['INTEGRATION_FLAG'] == 1:
+        if os.environ["INTEGRATION_FLAG"] == 1:
             context.url = "http://localhost:8000"
         else:
             context.url = "http://localhost:4200"
