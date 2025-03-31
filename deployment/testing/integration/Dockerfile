@@ -54,8 +54,8 @@ ENV INTEGRATION_FLAG=1
 RUN chmod +x ../deployment/testing/integration/install-chromedriver.sh \
     && chmod +x ../deployment/testing/integration/install-chrome.sh
 
-RUN ../deployment/testing/integration/install-chromedriver.sh \
-    && ../deployment/testing/integration/install-chrome.sh
+RUN ../deployment/testing/integration/install-chromedriver.sh
+RUN ../deployment/testing/integration/install-chrome.sh
 
 # Setup backend
 RUN pip3 install --no-cache-dir -r requirements.txt
