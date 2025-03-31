@@ -5,14 +5,33 @@ set -e
 CHROME_VERSION=$(google-chrome --version | cut -d ' ' -f 3 | cut -d '.' -f 1)
 echo "Detected Chrome version: $CHROME_VERSION"
 
-# Try to get ChromeDriver version for specific Chrome version
-CHROME_DRIVER_VERSION=$(curl -sS "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}" || echo "")
+# Function to get the latest compatible ChromeDriver
+get_chromedriver_version() {
+    local major_version=$1
 
-# If specific version fails, use latest
-if [ -z "$CHROME_DRIVER_VERSION" ]; then
-    CHROME_DRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE)
-fi
+    # Try descending versions until we find a compatible ChromeDriver
+    while [ $major_version -gt 0 ]; do
+        echo "Trying to find ChromeDriver for version $major_version" >&2
 
+        # Attempt to get the latest release for this version
+        DRIVER_VERSION=$(curl -sS "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${major_version}" 2>/dev/null)
+
+        # Check if we got a valid version
+        if [[ "$DRIVER_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "$DRIVER_VERSION"
+            return 0
+        fi
+
+        # Decrement version and try again
+        major_version=$((major_version - 1))
+    done
+
+    # If all else fails, get the latest overall version
+    curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE
+}
+
+# Get the appropriate ChromeDriver version
+CHROME_DRIVER_VERSION=$(get_chromedriver_version $CHROME_VERSION)
 echo "Using ChromeDriver version: $CHROME_DRIVER_VERSION"
 
 # Download ChromeDriver
