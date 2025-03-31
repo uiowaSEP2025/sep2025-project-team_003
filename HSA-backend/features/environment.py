@@ -64,15 +64,15 @@ def before_all(context):
         sys.path.append(path)  # we need this so python can find our app as a module
         os.environ["DJANGO_SETTINGS_MODULE"] = "hsabackend.settings"
         if "INTEGRATION_FLAG" in os.environ:
-            chrome_options = Options()
-            chrome_options.add_argument('--no-sandbox')
-            chrome_options.add_argument('--headless')
-            chrome_options.add_argument('--disable-dev-shm-usage')
-            chrome_options.add_argument('--remote-debugging-port=9222')
-            service = Service('/usr/local/bin/chromedriver')
+            chrome_options = webdriver.ChromeOptions()
+            chrome_options.add_argument('--headless')  # Run in headless mode
+            chrome_options.add_argument('--disable-gpu')  # Disable GPU usage (often recommended)
+            chrome_options.add_argument('--window-size=1920,1080')  # Set a binary size (if needed)
+            chrome_options.add_argument('--no-sandbox')  # (Optional) May help in some CI environments
+            chrome_options.add_argument('--disable-dev-shm-usage')  # (Optional) Overcome limited resource problems
             context.url = "http://localhost:8000"
             try:
-                context.browser = webdriver.Chrome(service=service, options=chrome_options)
+                context.browser = webdriver.Chrome(options=chrome_options)
             except Exception as e:
                 print(f"Error creating WebDriver: {e}")
                 raise
