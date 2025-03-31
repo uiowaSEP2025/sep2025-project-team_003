@@ -28,10 +28,7 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     xvfb \
     && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable \
-    && rm -rf /var/lib/apt/lists/*
+    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
 
 # Set environment variables
 ENV CHROME_BIN=/usr/bin/google-chrome
@@ -53,9 +50,13 @@ ENV DATABASE_PASSWORD=123abc!
 ENV DATABASE_IP=localhost
 ENV INTEGRATION_FLAG=1
 
-# In the Dockerfile
+# Chrome installation scripts
 RUN chmod +x ../deployment/testing/integration/install-chromedriver.sh \
-    && ../deployment/testing/integration/install-chromedriver.sh
+    && chmod +x ../deployment/testing/integration/install-chrome.sh
+
+RUN ../deployment/testing/integration/install-chromedriver.sh \
+    && ../deployment/testing/integration/install-chrome.sh
+
 # Setup backend
 RUN pip3 install --no-cache-dir -r requirements.txt
 
