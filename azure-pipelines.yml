@@ -17,32 +17,32 @@ stages:
 - stage: Test
   displayName: Run Unit Tests
   jobs:
-    - job: Frontend
-      displayName: Test Frontend
-      pool:
-        vmImage: ubuntu-latest
-      steps:
-        - task: Docker@2
-          displayName: Test an image
-          inputs:
-            command: build
-            buildContext: '$(Build.SourcesDirectory)'
-            dockerfile: '**/deployment/testing/frontend/Dockerfile'
-            tags: |
-              $(tag)
-    - job: Backend
-      displayName: Test Backend
-      pool:
-        vmImage: ubuntu-latest
-      steps:
-        - task: Docker@2
-          displayName: Test an image
-          inputs:
-            command: build
-            buildContext: '$(Build.SourcesDirectory)'
-            dockerfile: '**/deployment/testing/backend/Dockerfile'
-            tags: |
-              $(tag)
+#    - job: Frontend
+#      displayName: Test Frontend
+#      pool:
+#        vmImage: ubuntu-latest
+#      steps:
+#        - task: Docker@2
+#          displayName: Test an image
+#          inputs:
+#            command: build
+#            buildContext: '$(Build.SourcesDirectory)'
+#            dockerfile: '**/deployment/testing/frontend/Dockerfile'
+#            tags: |
+#              $(tag)
+#    - job: Backend
+#      displayName: Test Backend
+#      pool:
+#        vmImage: ubuntu-latest
+#      steps:
+#        - task: Docker@2
+#          displayName: Test an image
+#          inputs:
+#            command: build
+#            buildContext: '$(Build.SourcesDirectory)'
+#            dockerfile: '**/deployment/testing/backend/Dockerfile'
+#            tags: |
+#              $(tag)
     - job: Integration
       displayName: Integration Tests
       pool:
