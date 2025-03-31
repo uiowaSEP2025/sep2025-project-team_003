@@ -1,5 +1,6 @@
 import os
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 import sys
 import subprocess
 import signal
@@ -62,6 +63,12 @@ def before_all(context):
         sys.path.append(path)  # we need this so python can find our app as a module
         os.environ["DJANGO_SETTINGS_MODULE"] = "hsabackend.settings"
         if "INTEGRATION_FLAG" in os.environ:
+            chrome_options = Options()
+            chrome_options.add_argument('--no-sandbox')
+            chrome_options.add_argument('--headless')
+            chrome_options.add_argument('--disable-dev-shm-usage')
+            chrome_options.add_argument('--remote-debugging-port=9222')
+            context.driver = webdriver.Chrome(options=chrome_options)
             context.url = "http://localhost:8000"
         else:
             print("CONTEXT IGNORED, Integration flag value was set to: ", os.environ["INTEGRATION_FLAG"])
@@ -80,5 +87,8 @@ def before_all(context):
         
 
 def after_all(context):
-    context.angular.send_signal(signal.SIGINT)
-    context.angular.wait()
+    if "INTEGRATION_FLAG" in os.environ:
+        context.driver.quit()
+    else:
+        context.angular.send_signal(signal.SIGINT)
+        context.angular.wait()

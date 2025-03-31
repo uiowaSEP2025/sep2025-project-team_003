@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+# Start Xvfb
+Xvfb :99 -ac &
+export DISPLAY=:99
+
 # Ensure PostgreSQL data directory exists
 mkdir -p /var/lib/postgresql/data
 
@@ -26,4 +30,8 @@ sleep 5
 # Run Django migrations
 python manage.py migrate
 
+# Run Behave tests
 python manage.py behave
+
+# Cleanup Xvfb process
+pkill Xvfb

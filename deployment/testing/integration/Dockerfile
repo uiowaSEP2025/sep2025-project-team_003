@@ -15,12 +15,7 @@ RUN ng build
 
 FROM python:3.13 AS backend
 
-WORKDIR /app
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Install dependencies for Chrome Headless
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     postgresql \
     postgresql-contrib \
@@ -30,6 +25,7 @@ RUN apt-get update && apt-get install -y \
     wget \
     unzip \
     gnupg \
+    xvfb \ \
     && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
     && apt-get update \
@@ -42,6 +38,11 @@ RUN CHROME_DRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com
     && unzip ~/tmp/chromedriver_linux64.zip -d ~/tmp \
     && mv ~/tmp/chromedriver /usr/local/bin/chromedriver \
     && chmod +x /usr/local/bin/chromedriver
+
+# Set environment variables
+ENV CHROME_BIN=/usr/bin/google-chrome
+ENV DISPLAY=:99
+
 
 # Copy from frontend stage with specific paths
 COPY --from=frontend /HSA-frontend /app/HSA-frontend
@@ -60,9 +61,6 @@ ENV INTEGRATION_FLAG=1
 
 # Setup backend
 RUN pip3 install --no-cache-dir -r requirements.txt
-
-# Install Selenium if needed
-RUN pip3 install selenium
 
 # Set up entrypoint script
 RUN chmod +x ../deployment/testing/integration/entrypoint.sh
