@@ -51,7 +51,7 @@ ENV DATABASE_NAME=django_db
 ENV DATABASE_USERNAME=django_user
 ENV DATABASE_PASSWORD=123abc!
 ENV DATABASE_IP=localhost
-
+ENV INTEGRATION_FLAG=1
 # Install Python dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
 
