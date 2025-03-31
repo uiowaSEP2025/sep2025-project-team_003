@@ -24,6 +24,7 @@ RUN apt-get update && apt-get install -y \
     gcc \
     wget \
     unzip \
+    curl \
     gnupg \
     xvfb \
     && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
@@ -34,12 +35,17 @@ RUN apt-get update && apt-get install -y \
 
 # Install ChromeDriver
 RUN CHROME_VERSION=$(google-chrome --version | cut -d ' ' -f 3 | cut -d '.' -f 1) \
-    && CHROME_DRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}) \
-    && wget -N https://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/chromedriver_linux64.zip -P ~/tmp \
-    && unzip ~/tmp/chromedriver_linux64.zip -d ~/tmp \
-    && mv ~/tmp/chromedriver /usr/local/bin/chromedriver \
+    && echo "Detected Chrome version: $CHROME_VERSION" \
+    && CHROME_DRIVER_VERSION=$(curl -sS "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}" || echo "latest") \
+    && if [ "$CHROME_DRIVER_VERSION" = "latest" ]; then \
+        CHROME_DRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE); \
+       fi \
+    && echo "Using ChromeDriver version: $CHROME_DRIVER_VERSION" \
+    && wget -q https://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/chromedriver_linux64.zip -O /tmp/chromedriver.zip \
+    && unzip /tmp/chromedriver.zip -d /usr/local/bin/ \
     && chmod +x /usr/local/bin/chromedriver \
-    && rm ~/tmp/chromedriver_linux64.zip
+    && rm /tmp/chromedriver.zip \
+    && chromedriver --version
 
 # Set environment variables
 ENV CHROME_BIN=/usr/bin/google-chrome
