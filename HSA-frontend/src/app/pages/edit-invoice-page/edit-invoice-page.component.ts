@@ -21,6 +21,7 @@ import { StringFormatter } from '../../utils/string-formatter';
 import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
+import integerValidator from '../../utils/whole-number-validator';
 
 export interface DateRange {
   issued: FormControl<Date | null>;
@@ -56,16 +57,23 @@ export class EditInvoicePageComponent implements OnInit {
   @ViewChild(InvoiceDatePickerComponent) datePicker!: InvoiceDatePickerComponent;
   readonly dialog = inject(MatDialog);
     taxAmount: FormControl = new FormControl('', [Validators.required,  Validators.min(0),
-      Validators.max(1),Validators.pattern(/^(0(\.\d{1,2})?|1(\.00)?)$/)
+      Validators.min(0), Validators.max(100), integerValidator
     ])
 
     matcher = new GenericFormErrorStateMatcher()
   
-
   
   constructor(private quoteService: QuoteService, private activatedRoute: ActivatedRoute, 
     private errorHandler: ErrorHandlerService, private invoiceService: InvoiceService,
     private stringFormatter: StringFormatter, private router: Router) { }
+
+    private fixBackendTaxPercentage(tax: string): string {
+      if (tax === "1.00") {
+        return "100"
+      }
+      tax = tax.split('.')[1]
+      return tax
+    }
 
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe(params => {
@@ -78,7 +86,7 @@ export class EditInvoicePageComponent implements OnInit {
       this.dueDate = params['due_date'];
       this.issuanceDate = params['issuance_date'];
       this.customerName = params['customer'];
-      this.tax = parseFloat(params['tax']);
+      this.tax = parseInt(this.fixBackendTaxPercentage(params['tax']));
     })
     this.taxAmount.setValue(this.tax.toFixed(2))
 
@@ -150,6 +158,10 @@ export class EditInvoicePageComponent implements OnInit {
   }
 
   onSubmit() {
+    console.log(this.taxAmount.errors)
+    if (!this.taxAmount.valid) {
+      return;
+    }
     if (this.selectedQuotes.length === 0) {
       this.datePicker?.validate()
       this.selectedQuotesIsError = true;
@@ -164,6 +176,7 @@ export class EditInvoicePageComponent implements OnInit {
       this.openDialog()
       return;
     }
+    
     const data = {
       quoteIDs: this.selectedQuotes,
       status: this.status,

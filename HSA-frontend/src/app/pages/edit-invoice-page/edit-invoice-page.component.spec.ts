@@ -24,7 +24,8 @@ describe('EditInvoicePageComponent', () => {
         queryParams: of({ status: 'created',
             "due_date": "N/A",
             "issuance_date": "N/A",
-            "customer": "Alex Guo"
+            "customer": "Alex Guo",
+            "tax":"0.06"
          })
       };
 
@@ -39,6 +40,7 @@ describe('EditInvoicePageComponent', () => {
     component = fixture.componentInstance;
     loader = TestbedHarnessEnvironment.loader(fixture);
     invoiceService = TestBed.inject(InvoiceService);
+    component.tax = 0.06
     fixture.detectChanges();
   });
 

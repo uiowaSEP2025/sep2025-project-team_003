@@ -8,24 +8,22 @@
 
     <mat-form-field class="pt-5">
         <mat-label>Status</mat-label>
-        <mat-select matNativeControl required [(ngModel)]="status">
+        <mat-select data-testid="status-selector" matNativeControl required [(ngModel)]="status">
             <mat-option value="created">created</mat-option>
             <mat-option value="issued">issued</mat-option>
             <mat-option value="paid">paid</mat-option>
         </mat-select>
     </mat-form-field>
     @if (isDateSelectVisible()) {
-        <app-invoice-date-picker 
-            [formControll]="range"
-            [dateLabels]="['Issuance date', 'Due date']"
-        ></app-invoice-date-picker>
+    <app-invoice-date-picker [formControll]="range"
+        [dateLabels]="['Issuance date', 'Due date']"></app-invoice-date-picker>
     }
 
     <h1 class="pb-5">Select new quotes for this invoice</h1>
 
-    <app-table-component [loadDataToTable]="loadQuotesToTable.bind(this)" editRedirect=""
-        [hideValues]="['Actions', 'Id']" [fetchedData]="quotes" checkbox="multiple" [checkedIds]="selectedQuotes"
-        [setCheckedIds]="setSelectedQuotes.bind(this)" [hideSearch]="true"
+    <app-table-component data-testid="invoice-quotes-table" [loadDataToTable]="loadQuotesToTable.bind(this)"
+        editRedirect="" [hideValues]="['Actions', 'Id']" [fetchedData]="quotes" checkbox="multiple"
+        [checkedIds]="selectedQuotes" [setCheckedIds]="setSelectedQuotes.bind(this)" [hideSearch]="true"
         [headers]="['Checkbox','Material Subtotal', 'Total Price', 'Job Description']">
     </app-table-component>
     @if (selectedQuotesIsError) {
@@ -34,26 +32,27 @@
 
     <mat-form-field class="pt-10">
         <mat-label>Tax rate</mat-label>
-        <input matInput
-            [formControl]="taxAmount" 
-            [errorStateMatcher]="matcher"
-            type="number"
-        >
+        <input matInput [formControl]="taxAmount" [errorStateMatcher]="matcher" type="number" data-testid="tax-input">
         @if (taxAmount.hasError('required')) {
-            <mat-error>Tax amount is <strong>required</strong></mat-error>
+        <mat-error>Tax amount is <strong>required</strong></mat-error>
         }
-        @else if (taxAmount.hasError('min') || taxAmount.hasError('max') || taxAmount.hasError('pattern')) {
-            <mat-error>Tax amount must be <strong>0.XX</strong></mat-error>
+        @else if (taxAmount.hasError('min') || taxAmount.hasError('max') ) {
+            <mat-error class="mb-5">Tax must be between 0-100</mat-error>
+        }
+        @else if (taxAmount.hasError('notInteger')) {
+            <mat-error class="mb-5">Tax must be a whole number</mat-error>
         }
     </mat-form-field>
     <div class="max-w-md pt-3">
         <p class="text-center text-sm text-gray-600">
-            <strong>Disclaimer:</strong> You are responsible for understanding and complying with the tax laws of your jurisdiction.
-            We, the software developers, are not liable for any errors, omissions, or legal consequences resulting from your use of this software.
+            <strong>Disclaimer:</strong> You are responsible for understanding and complying with the tax laws of your
+            jurisdiction.
+            We, the software developers, are not liable for any errors, omissions, or legal consequences resulting from
+            your use of this software.
             Always consult a tax professional for guidance.
-          </p>
+        </p>
     </div>
 
-    <button mat-raised-button class="mt-10 mb-5" (click)="onSubmit()">Submit</button>
+    <button mat-raised-button class="mt-10 mb-5" (click)="onSubmit()" data-testid="submit">Submit</button>
 
 </div>
