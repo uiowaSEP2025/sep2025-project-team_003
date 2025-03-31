@@ -56,7 +56,7 @@ def before_scenario(context, scenario):
 
 def before_all(context):
     for evn in os.environ:
-        print (evn)
+        print (evn,"=", os.environ[evn])
     try:
         path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
         sys.path.append(path)  # we need this so python can find our app as a module
