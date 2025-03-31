@@ -121,6 +121,7 @@ describe('CreateInvoicePageComponent', () => {
   })
 
   it('should call the service when everything is valid', async () => {
+    const compiled = fixture.debugElement.nativeElement;
     component.selectedCustomers = [1]
     component.selectedQuotes= [2]
     fixture.detectChanges()
@@ -131,6 +132,12 @@ describe('CreateInvoicePageComponent', () => {
         return text === 'Create' ? button : null;
       })
     ).then(results => results.filter(button => button !== null)); // correctly working async filter
+    
+    const tax = compiled.querySelector('[data-testid="tax-input"]');
+    tax.value = 6
+
+    tax.dispatchEvent(new Event('input'));
+    
     spyOn(invoiceService, 'createInvoice').and.callThrough();
     const submit = filteredButtons[0]
     await submit.click()

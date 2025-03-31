@@ -33,7 +33,9 @@ def format_percent(s:str):
     """Only things like 30.00 -> 30.00%"""
     return f"{s} %"
 
-def format_tax_percent(s:str):
+def format_tax_percent(s: str) -> str:
     percent = s.split('.')[1]
-    return f"{percent} %"
+    if percent[0] == '0':
+        return f"{percent[1]}%"
+    return f"{percent}%"
 
