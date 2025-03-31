@@ -53,5 +53,5 @@ ENV DATABASE_IP=localhost
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Set up entrypoint script for testing
-RUN chmod +x ../deployment/testing/backend/entrypoint.sh
-RUN ../deployment/testing/backend/entrypoint.sh
+RUN chmod +x ../deployment/testing/integration/entrypoint.sh
+RUN ../deployment/testing/integration/entrypoint.sh
