@@ -32,7 +32,7 @@
 
     <mat-form-field class="pt-10">
         <mat-label>Tax rate</mat-label>
-        <input matInput [formControl]="taxAmount" [errorStateMatcher]="matcher" type="number">
+        <input matInput [formControl]="taxAmount" [errorStateMatcher]="matcher" type="number" data-testid="tax-input">
         @if (taxAmount.hasError('required')) {
         <mat-error>Tax amount is <strong>required</strong></mat-error>
         }
@@ -53,6 +53,6 @@
         </p>
     </div>
 
-    <button mat-raised-button class="mt-10 mb-5" (click)="onSubmit()">Submit</button>
+    <button mat-raised-button class="mt-10 mb-5" (click)="onSubmit()" data-testid="submit">Submit</button>
 
 </div>

@@ -122,3 +122,8 @@ def step_click_table_row(context):
     rows = context.browser.find_elements(By.TAG_NAME, "tr")
     second_row = rows[1]
     second_row.click()
+
+@when('I click the submit button')
+def click_submit(context):
+    submit_button = context.browser.find_element(By.CSS_SELECTOR, '[data-testid="submit"]')
+    submit_button.click()

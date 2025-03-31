@@ -76,4 +76,20 @@ def step_click_first_checkbox_invoice_quotes(context):
 
 @when('I fill in the tax rate with "{n}"')
 def step_fill_in_tax_rate(context,n):
-    pass
+    wait = WebDriverWait(context.browser, 10)
+    tax_input = wait.until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, '[data-testid="tax-input"]'))
+    )
+    tax_input.clear()
+    tax_input.send_keys(n)
+
+@when('I confirm the edit')
+def step_invoice_confirmation(context):
+    wait = WebDriverWait(context.browser, 10)
+    confirmation_dialog = wait.until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, '[data-testid="tax-input"]'))
+    )
+    confirm_button = wait.until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, '[data-testid="confirm-button"]'))
+    )
+    confirm_button.click()

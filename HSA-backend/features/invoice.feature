@@ -52,7 +52,25 @@ Scenario: Edit Inovoice
     And I select a status with "issued"
     And I fill in the dates with "02/01/2025" and "02/08/2025"
     And I click the first checkbox in the invoice quotes table
-    Then I wait for 20 seconds
+    And I fill in the tax rate with "5"
+    And I click the submit button
+    And I confirm the edit
+    When I don't see the loading spinner
+    Then I wait for 0.5 seconds
+    When I click the first table row
+    Then I should see the info table with the following data 
+        | Label       | Data                |
+        | Customer    | Firstorg1, Lastorg1 |
+        | Status      | issued              |
+        | Issued Date | 2025-02-01          |
+        | Due Date    | 2025-02-08          |
+    Then I should see the cost table with the following data
+        | Job Description   | Material Subtotal | Total Price |
+        | description j1...	| $100.00	        | $200.00     |
+        | Subtotal:         | $100.00	        | $200.00     |
+        | Discount:         |                   | 20.00%      |
+        | Tax:              |                   | 5%          |
+        | Total:            |                   | $168.00     |
 
 # Scenario: Create Invocice
 
