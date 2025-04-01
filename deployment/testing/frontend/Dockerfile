@@ -1,8 +1,9 @@
 FROM node:22-alpine AS frontend
 # Copy the rest of the application
-COPY . .
+COPY . /app/
 # Install Chrome and dependencies
 RUN apk add --no-cache \
+    --upgrade bash \
     chromium \
     chromium-chromedriver \
     harfbuzz \
@@ -15,13 +16,16 @@ ENV CHROME_BIN=/usr/bin/chromium-browser
 ENV CHROME_PATH=/usr/lib/chromium/
 
 # Set working directory
-WORKDIR /HSA-frontend
+WORKDIR /app/HSA-frontend
 
 # Copy package files first for better caching
 COPY package*.json ./
 RUN npm install -g @angular/cli
 RUN npm install
 
+COPY ./deployment/testing/frontend/entrypoint.sh /app/HSA-frontend/entrypoint.sh
 
-# Run tests in headless mode
-RUN ng test --watch=false --browsers=ChromeHeadless
+# Set up entrypoint script
+RUN chmod +x entrypoint.sh
+ENTRYPOINT ["/app/HSA-frontend/entrypoint.sh"]
+

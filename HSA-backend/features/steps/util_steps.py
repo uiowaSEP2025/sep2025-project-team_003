@@ -8,10 +8,10 @@ def step_wait_n_seconds(context, n):
     """This makes the browser freeze for n secs. use for debugging"""
     try:
         WebDriverWait(context.browser, float(n)).until(
-            lambda _: False  
+            lambda _: False
         )
     except:
-        pass  
+        pass
 
 @then('I should see a snackbar with "{text}"')
 def step_check_snackbar_text(context, text):
@@ -43,15 +43,26 @@ def step_user_logged_in(context):
 def find_rows(context, should_or_not):
     should_or_not = should_or_not == 'should'
     expected_values = [row[0] for row in context.table]  # Extract expected values
-    rows = context.browser.find_elements(By.CSS_SELECTOR, "table tr")
-    
+    wait = WebDriverWait(context.browser, 20)
+    element = wait.until(EC.presence_of_element_located((By.TAG_NAME, "table")))
+    rows = element.find_elements(By.TAG_NAME, "tr")
+    print("DEBUGGER")
+    print(rows)
+
+    print("EXPECTED")
+    print(expected_values)
+
+    print("CONTEXT")
+    for row in context.table:
+        print(row)
+
     found = False
     for row in rows:
         cells = [cell.text for cell in row.find_elements(By.TAG_NAME, "td")]
         if all(value in cells for value in expected_values):  # Check if all expected values exist in the row
             found = True
             break  # No need to continue once we find a matching row
-    
+
     assert should_or_not == found, f"{'No table ' if should_or_not else 'Table '}row found containing values: {expected_values}"
 
 @when('I click the delete button')
@@ -77,7 +88,7 @@ def await_not_showing_spinner(context):
 @when('I confirm the delete dialog')
 def step_confirm_delete_dialog(context):
     wait = WebDriverWait(context.browser, 10)
-    
+
     # Find the delete confirmation dialog
     dialog = wait.until(
         EC.presence_of_element_located((By.CLASS_NAME, "mat-mdc-dialog-surface"))
@@ -103,7 +114,7 @@ def step_look_for_empty_table(context):
     # Check if any child element contains the expected text
     assert any("Nothing to show here" in child.text for child in child_elements), \
         'Expected text "Nothing to show here" not found in table'
-    
+
 @when('I click the edit button')
 def step_click_edit(context):
     rows = context.browser.find_elements(By.TAG_NAME, "tr")
