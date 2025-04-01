@@ -13,38 +13,33 @@ RUN npm install
 RUN ng build
 
 
-FROM python:3.13 AS backend
+FROM python:3.13-alpine3.21 AS backend
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Install system dependencies including PostgreSQL, build tools, and utilities for installing Chrome
-RUN apt-get update && apt-get install -y \
-wget \
-gnupg2 \
-postgresql \
-postgresql-contrib \
-libpq-dev \
-python3-dev \
-gcc \
-xvfb
-
-# Add the Google Chrome signing key and repository, then install Google Chrome Stable
-RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" \
-> /etc/apt/sources.list.d/google-chrome.list && \
-apt-get update && \
-apt-get install -y google-chrome-stable
-
-# (Optional) Cleanup APT caches to reduce image size
-RUN rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache \
+    --upgrade bash \
+    chromium \
+    chromium-chromedriver \
+    su-exec \
+    build-base \
+    postgresql17 \
+    postgresql17-contrib \
+    postgresql17-dev \
+    build-base \
+    libpq-dev \
+    python3-dev \
+    gcc \
+    xvfb
 
 # Copy from frontend stage with specific paths
 COPY --from=frontend /HSA-frontend /app/HSA-frontend
 COPY --from=frontend /build_django_index.py /app/
 COPY --from=frontend /HSA-backend /app/HSA-backend
-COPY --from=frontend /deployment/testing/integration/entrypoint.sh /app/deployment/testing/integration/
+COPY --from=frontend /deployment/testing/integration/entrypoint.sh /app/HSA-backend/entrypoint.sh
 # Run the build script
 WORKDIR /app
 RUN python3 build_django_index.py
@@ -62,6 +57,7 @@ ENV INTEGRATION_FLAG=1
 # Install Python dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Set up entrypoint script for testing
-RUN chmod +x ../deployment/testing/integration/entrypoint.sh
-RUN ../deployment/testing/integration/entrypoint.sh
+RUN chmod +x entrypoint.sh
+
+# Set entrypoint
+ENTRYPOINT ["/app/HSA-backend/entrypoint.sh"]
