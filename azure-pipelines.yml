@@ -28,6 +28,7 @@ stages:
             command: build
             buildContext: '$(Build.SourcesDirectory)'
             dockerfile: '**/deployment/testing/frontend/Dockerfile'
+            repository: 'hsa-frontend-tests'
             tags: |
               $(tag)
         - bash: |
@@ -35,7 +36,7 @@ stages:
             docker run \
               --name frontend-tests \
               hsa-frontend-tests:$(tag)
-          displayName: 'Run Backend Unit Tests'
+          displayName: 'Run Frontend Unit Tests'
           continueOnError: true  # Allow subsequent steps to run
 
         - bash: |
@@ -78,6 +79,7 @@ stages:
             command: build
             buildContext: '$(Build.SourcesDirectory)'
             dockerfile: '**/deployment/testing/backend/Dockerfile'
+            repository: 'hsa-backend-tests'
             tags: |
               $(tag)
         - bash: |
