@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 def step_wait_n_seconds(context, n):
     """This makes the browser freeze for n secs. use for debugging"""
     try:
-        WebDriverWait(context.driver, float(n)).until(
+        WebDriverWait(context.browser, float(n)).until(
             lambda _: False
         )
     except:
@@ -15,27 +15,27 @@ def step_wait_n_seconds(context, n):
 
 @then('I should see a snackbar with "{text}"')
 def step_check_snackbar_text(context, text):
-    wait = WebDriverWait(context.driver, 20)
+    wait = WebDriverWait(context.browser, 20)
     element = wait.until(EC.visibility_of_element_located((By.TAG_NAME, "simple-snack-bar")))
     assert text in element.text, f"Snack bar doesn't contain '{text}'"
 
 @given('I am logged in')
 def step_user_logged_in(context):
-    context.driver.get(f"{context.url}/login")
+    context.browser.get(f"{context.url}/login")
 
-    username_field = context.driver.find_element(By.CSS_SELECTOR, '[data-testid="username-input"]')
+    username_field = context.browser.find_element(By.CSS_SELECTOR, '[data-testid="username-input"]')
     username_field.clear()
     username_field.send_keys("devuser")
 
-    password_field = context.driver.find_element(By.CSS_SELECTOR, '[data-testid="password-input"]')
+    password_field = context.browser.find_element(By.CSS_SELECTOR, '[data-testid="password-input"]')
     password_field.clear()
     password_field.send_keys("SepTeam003!")
 
-    submit_button = context.driver.find_element(By.CSS_SELECTOR, '[data-testid="submit"]')
+    submit_button = context.browser.find_element(By.CSS_SELECTOR, '[data-testid="submit"]')
     submit_button.click()
 
     text = "Login Successful"
-    wait = WebDriverWait(context.driver, 20)
+    wait = WebDriverWait(context.browser, 20)
     element = wait.until(EC.visibility_of_element_located((By.TAG_NAME, "simple-snack-bar")))
     assert text in element.text, f"Snack bar doesn't contain '{text}'"
 
@@ -43,7 +43,7 @@ def step_user_logged_in(context):
 def find_rows(context, should_or_not):
     should_or_not = should_or_not == 'should'
     expected_values = [row[0] for row in context.table]  # Extract expected values
-    rows = context.driver.find_elements(By.CSS_SELECTOR, "table tr")
+    rows = context.browser.find_elements(By.CSS_SELECTOR, "table tr")
     print("DEBUGGER")
     print(rows)
 
@@ -64,7 +64,7 @@ def find_rows(context, should_or_not):
 
 @when('I click the delete button')
 def set_click_delete(context):
-    rows = context.driver.find_elements(By.TAG_NAME, "tr")
+    rows = context.browser.find_elements(By.TAG_NAME, "tr")
     second_row = rows[1]
     print(rows)
     buttons = second_row.find_elements(By.TAG_NAME, "mat-icon")
@@ -78,13 +78,13 @@ def set_click_delete(context):
 @when('I don\'t see the loading spinner')
 def await_not_showing_spinner(context):
     # Wait until the element with class "lds-roller" is no longer visible
-    WebDriverWait(context.driver, 10).until(
+    WebDriverWait(context.browser, 10).until(
         EC.invisibility_of_element_located((By.CLASS_NAME, "lds-roller"))
     )
 
 @when('I confirm the delete dialog')
 def step_confirm_delete_dialog(context):
-    wait = WebDriverWait(context.driver, 10)
+    wait = WebDriverWait(context.browser, 10)
 
     # Find the delete confirmation dialog
     dialog = wait.until(
@@ -101,7 +101,7 @@ def step_confirm_delete_dialog(context):
 @then('I should see "Nothing to show here" in the table')
 def step_look_for_empty_table(context):
     # Wait for the table to be visible
-    table = WebDriverWait(context.driver, 10).until(
+    table = WebDriverWait(context.browser, 10).until(
         EC.visibility_of_element_located((By.TAG_NAME, "app-table-component"))
     )
 
@@ -114,7 +114,7 @@ def step_look_for_empty_table(context):
 
 @when('I click the edit button')
 def step_click_edit(context):
-    rows = context.driver.find_elements(By.TAG_NAME, "tr")
+    rows = context.browser.find_elements(By.TAG_NAME, "tr")
     second_row = rows[1]
     buttons = second_row.find_elements(By.TAG_NAME, "mat-icon")
     found = False
@@ -127,11 +127,11 @@ def step_click_edit(context):
 
 @when('I click the first table row')
 def step_click_table_row(context):
-    rows = context.driver.find_elements(By.TAG_NAME, "tr")
+    rows = context.browser.find_elements(By.TAG_NAME, "tr")
     second_row = rows[1]
     second_row.click()
 
 @when('I click the submit button')
 def click_submit(context):
-    submit_button = context.driver.find_element(By.CSS_SELECTOR, '[data-testid="submit"]')
+    submit_button = context.browser.find_element(By.CSS_SELECTOR, '[data-testid="submit"]')
     submit_button.click()
