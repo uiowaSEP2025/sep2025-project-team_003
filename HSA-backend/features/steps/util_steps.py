@@ -42,12 +42,14 @@ def step_user_logged_in(context):
 @then('I {should_or_not} see a table row with the following elements')
 def find_rows(context, should_or_not):
     should_or_not = should_or_not == 'should'
+    print("DEBUGGING HERE:")
+    for row in context.table:
+        print (row)
     expected_values = [row[0] for row in context.table]  # Extract expected values
     rows = context.browser.find_elements(By.CSS_SELECTOR, "table tr")
     
     found = False
     for row in rows:
-        print(row)
         cells = [cell.text for cell in row.find_elements(By.TAG_NAME, "td")]
         if all(value in cells for value in expected_values):  # Check if all expected values exist in the row
             found = True
