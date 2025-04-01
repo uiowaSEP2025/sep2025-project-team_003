@@ -11,7 +11,6 @@ resources:
 - repo: self
 
 variables:
-  imageName: 'hsa-test'
   tag: '$(Build.BuildId)'
 
 stages:
@@ -29,18 +28,17 @@ stages:
             command: build
             buildContext: '$(Build.SourcesDirectory)'
             dockerfile: '**/deployment/testing/Dockerfile'
-            repository: $(imageName)
+            repository: 'hsa-test'
             tags: |
               $(tag)
               latest
         # Makes sure image is available
         - bash: |
             docker images
-            docker tag $(imageName):$(tag) $(imageName):latest
+            docker tag hsa-test:$(tag) hsa-test:latest
           displayName: 'Tag Docker Image'
 - stage: Test
   displayName: Run Tests
-  dependsOn: Build
   jobs:
     - job: Frontend
       displayName: Test Frontend
@@ -50,7 +48,7 @@ stages:
         - bash: |
             docker run \
               --name frontend-tests \  # Fixed container name to match inspection
-              $(imageName):$(tag) \
+              hsa-test:$(tag) \
               frontend
           displayName: 'Run Frontend Unit Tests'
           continueOnError: true
@@ -96,7 +94,7 @@ stages:
               -e DATABASE_PASSWORD=test_password \
               -e DATABASE_IP=localhost \
               --name backend-tests \
-              $(imageName):$(tag) \
+              hsa-test:$(tag) \
               backend
           displayName: 'Run Backend Unit Tests'
           continueOnError: true  # Allow subsequent steps to run
@@ -142,7 +140,7 @@ stages:
               -e DATABASE_IP=localhost \
               -e INTEGRATION_FLAG=1 \
               --name integration-tests \
-              $(imageName):$(tag) \
+              hsa-test:$(tag) \
               integration
           displayName: 'Run Integration Tests'
           continueOnError: true  # Allow subsequent steps to run
