@@ -14,6 +14,23 @@ variables:
   tag: '$(Build.BuildId)'
 
 stages:
+- stage: Build
+  displayName: Build Testing Environment
+  jobs:
+    - job: Build
+      displayName: Build Container
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+        - task: Docker@2
+          displayName: Build Docker Container
+          inputs:
+            command: build
+            buildContext: '$(Build.SourcesDirectory)'
+            dockerfile: '**/deployment/testing/frontend/Dockerfile'
+            repository: 'hsa-test'
+            tags: |
+              $(tag)
 - stage: Test
   displayName: Run Unit Tests
   jobs:
@@ -22,20 +39,12 @@ stages:
       pool:
         vmImage: ubuntu-latest
       steps:
-        - task: Docker@2
-          displayName: Test an image
-          inputs:
-            command: build
-            buildContext: '$(Build.SourcesDirectory)'
-            dockerfile: '**/deployment/testing/frontend/Dockerfile'
-            repository: 'hsa-frontend-tests'
-            tags: |
-              $(tag)
         - bash: |
             # Run Docker container with detailed logging
             docker run \
-              --name frontend-tests \
-              hsa-frontend-tests:$(tag)
+              --name frontend-test \
+              hsa-test:$(tag) \
+              frontend
           displayName: 'Run Frontend Unit Tests'
           continueOnError: true  # Allow subsequent steps to run
 
@@ -46,7 +55,7 @@ stages:
             # Capture logs regardless of test outcome
             docker logs frontend-tests > $(Build.ArtifactStagingDirectory)/frontend-test-results.txt
             
-            # Check for any Behave test failures
+            # Check for any Karma test failures
             if grep -q "FAILED" $(Build.ArtifactStagingDirectory)/frontend-test-results.txt; then
               echo "frontend tests detected failures"
               exit 1
@@ -73,15 +82,6 @@ stages:
       pool:
         vmImage: ubuntu-latest
       steps:
-        - task: Docker@2
-          displayName: Test an image
-          inputs:
-            command: build
-            buildContext: '$(Build.SourcesDirectory)'
-            dockerfile: '**/deployment/testing/backend/Dockerfile'
-            repository: 'hsa-backend-tests'
-            tags: |
-              $(tag)
         - bash: |
             # Run Docker container with detailed logging
             docker run \
@@ -90,7 +90,8 @@ stages:
               -e DATABASE_PASSWORD=test_password \
               -e DATABASE_IP=localhost \
               --name backend-tests \
-              hsa-backend-tests:$(tag)
+              hsa-test:$(tag) \
+              backend
           displayName: 'Run Backend Unit Tests'
           continueOnError: true  # Allow subsequent steps to run
 
@@ -101,7 +102,7 @@ stages:
             # Capture logs regardless of test outcome
             docker logs backend-tests > $(Build.ArtifactStagingDirectory)/backend-test-results.txt
             
-            # Check for any Behave test failures
+            # Check for any Django test failures
             if grep -q "FAILED" $(Build.ArtifactStagingDirectory)/backend-test-results.txt; then
               echo "backend tests detected failures"
               exit 1
@@ -127,17 +128,6 @@ stages:
       pool:
         vmImage: ubuntu-latest
       steps:
-        - task: Docker@2
-          displayName: Build Integration Test Image
-          inputs:
-            command: build
-            buildContext: '$(Build.SourcesDirectory)'
-            dockerfile: '**/deployment/testing/integration/Dockerfile'
-            repository: 'hsa-integration-tests'
-            tags: |
-              $(tag)
-              latest
-
         - bash: |
             # Run Docker container with detailed logging
             docker run \
@@ -147,10 +137,10 @@ stages:
               -e DATABASE_IP=localhost \
               -e INTEGRATION_FLAG=1 \
               --name integration-tests \
-              hsa-integration-tests:$(tag)
+              hsa-test:$(tag) \
+              integration
           displayName: 'Run Integration Tests'
           continueOnError: true  # Allow subsequent steps to run
-
         - bash: |
             # Capture and analyze test results
             TEST_CONTAINER_EXIT_CODE=$(docker inspect integration-tests --format='{{.State.ExitCode}}')
@@ -171,7 +161,6 @@ stages:
             fi
           displayName: 'Analyze Test Results'
           condition: always()
-
         - task: PublishBuildArtifacts@1
           displayName: 'Publish Test Results'
           inputs:
