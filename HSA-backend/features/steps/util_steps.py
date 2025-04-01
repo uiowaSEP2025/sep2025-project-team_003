@@ -47,6 +47,7 @@ def find_rows(context, should_or_not):
     
     found = False
     for row in rows:
+        print(row)
         cells = [cell.text for cell in row.find_elements(By.TAG_NAME, "td")]
         if all(value in cells for value in expected_values):  # Check if all expected values exist in the row
             found = True
