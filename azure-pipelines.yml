@@ -38,12 +38,10 @@ stages:
             docker images
             docker tag $(imageName):$(tag) $(imageName):latest
           displayName: 'Tag Docker Image'
-- stage: Test
-  displayName: Run Tests
-  dependsOn: Build
-  jobs:
     - job: Frontend
       displayName: Test Frontend
+      dependsOn:
+        - Build
       pool:
         vmImage: ubuntu-latest
       steps:
@@ -85,6 +83,8 @@ stages:
     # Similar improvements for Backend and Integration jobs
     - job: Backend
       displayName: Test Backend
+      dependsOn:
+        - Build
       pool:
         vmImage: ubuntu-latest
       steps:
@@ -130,6 +130,8 @@ stages:
 
     - job: Integration
       displayName: Integration Tests
+      dependsOn:
+        - Build
       pool:
         vmImage: ubuntu-latest
       steps:
