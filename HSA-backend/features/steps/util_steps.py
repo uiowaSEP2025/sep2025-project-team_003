@@ -51,7 +51,8 @@ def find_rows(context, should_or_not):
     print(expected_values)
 
     print("CONTEXT")
-    print(context.table)
+    for row in context.table:
+        print(row)
 
     found = False
     for row in rows:
