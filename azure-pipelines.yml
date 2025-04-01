@@ -15,10 +15,10 @@ variables:
   tag: '$(Build.BuildId)'
 
 stages:
-- stage: Build
-  displayName: Build Testing Environment
+- stage: Test
+  displayName: Build and Run Testing Environments
   jobs:
-    - job: Build
+    - job: Frontend
       displayName: Build Container
       pool:
         vmImage: ubuntu-latest
@@ -28,7 +28,7 @@ stages:
           inputs:
             command: build
             buildContext: '$(Build.SourcesDirectory)'
-            dockerfile: '**/deployment/testing/Dockerfile'
+            dockerfile: '**/deployment/testing/frontend/Dockerfile'
             repository: $(imageName)
             tags: |
               $(tag)
@@ -38,13 +38,6 @@ stages:
             docker images
             docker tag $(imageName):$(tag) $(imageName):latest
           displayName: 'Tag Docker Image'
-    - job: Frontend
-      displayName: Test Frontend
-      dependsOn:
-        - Build
-      pool:
-        vmImage: ubuntu-latest
-      steps:
         - bash: |
             docker run \
               --name frontend-tests \  # Fixed container name to match inspection
@@ -52,7 +45,6 @@ stages:
               frontend
           displayName: 'Run Frontend Unit Tests'
           continueOnError: true
-
         - bash: |
             # Capture and analyze test results
             TEST_CONTAINER_EXIT_CODE=$(docker inspect frontend-tests --format='{{.State.ExitCode}}')
@@ -79,15 +71,26 @@ stages:
             PathtoPublish: '$(Build.ArtifactStagingDirectory)'
             ArtifactName: 'FrontendTestResults'
           condition: always()
-
-    # Similar improvements for Backend and Integration jobs
     - job: Backend
       displayName: Test Backend
-      dependsOn:
-        - Build
       pool:
         vmImage: ubuntu-latest
       steps:
+        - task: Docker@2
+          displayName: Build Docker Container
+          inputs:
+            command: build
+            buildContext: '$(Build.SourcesDirectory)'
+            dockerfile: '**/deployment/testing/backend/Dockerfile'
+            repository: $(imageName)
+            tags: |
+              $(tag)
+              latest
+        # Makes sure image is available
+        - bash: |
+            docker images
+            docker tag $(imageName):$(tag) $(imageName):latest
+          displayName: 'Tag Docker Image'
         - bash: |
             # Run Docker container with detailed logging
             docker run \
@@ -100,7 +103,6 @@ stages:
               backend
           displayName: 'Run Backend Unit Tests'
           continueOnError: true  # Allow subsequent steps to run
-
         - bash: |
             # Capture and analyze test results
             TEST_CONTAINER_EXIT_CODE=$(docker inspect backend-tests --format='{{.State.ExitCode}}')
@@ -130,11 +132,24 @@ stages:
 
     - job: Integration
       displayName: Integration Tests
-      dependsOn:
-        - Build
       pool:
         vmImage: ubuntu-latest
       steps:
+        - task: Docker@2
+          displayName: Build Docker Container
+          inputs:
+            command: build
+            buildContext: '$(Build.SourcesDirectory)'
+            dockerfile: '**/deployment/testing/integration/Dockerfile'
+            repository: $(imageName)
+            tags: |
+              $(tag)
+              latest
+        # Makes sure image is available
+        - bash: |
+            docker images
+            docker tag $(imageName):$(tag) $(imageName):latest
+          displayName: 'Tag Docker Image'
         - bash: |
             # Run Docker container with detailed logging
             docker run \
