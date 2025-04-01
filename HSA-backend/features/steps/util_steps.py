@@ -43,8 +43,9 @@ def step_user_logged_in(context):
 def find_rows(context, should_or_not):
     should_or_not = should_or_not == 'should'
     expected_values = [row[0] for row in context.table]  # Extract expected values
-    rows = context.browser.find_elements(By.CSS_SELECTOR, "table tr")
-    
+    rows = context.browser.find_elements(By.CLASS_NAME, "mat-mdc-row")
+    print("DEBUGGER")
+    print(rows)
     found = False
     for row in rows:
         cells = [cell.text for cell in row.find_elements(By.TAG_NAME, "td")]
@@ -58,7 +59,6 @@ def find_rows(context, should_or_not):
 def set_click_delete(context):
     rows = context.browser.find_elements(By.TAG_NAME, "tr")
     second_row = rows[1]
-    print(rows)
     buttons = second_row.find_elements(By.TAG_NAME, "mat-icon")
     found = False
     for button in buttons:
