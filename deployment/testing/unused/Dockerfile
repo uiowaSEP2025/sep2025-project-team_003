@@ -1,3 +1,5 @@
+# This version of the dockerfile would combine all 3 tests and run them under one build. Unfortunately this is not available in the Azure Free version.
+# Saving it for future use.
 FROM python:3.13-alpine3.21
 
 # Copy the rest of the application
