@@ -32,11 +32,6 @@ stages:
             tags: |
               $(tag)
               latest
-        # Makes sure image is available
-        - bash: |
-            docker images
-            docker tag hsa-test:$(tag) hsa-test:latest
-          displayName: 'Tag Docker Image'
 - stage: Test
   displayName: Run Tests
   jobs:
