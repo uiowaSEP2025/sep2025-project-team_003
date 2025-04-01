@@ -43,7 +43,9 @@ def step_user_logged_in(context):
 def find_rows(context, should_or_not):
     should_or_not = should_or_not == 'should'
     expected_values = [row[0] for row in context.table]  # Extract expected values
-    rows = context.browser.find_elements(By.CSS_SELECTOR, "table tr")
+    wait = WebDriverWait(context.browser, 20)
+    element = wait.until(EC.presence_of_element_located((By.TAG_NAME, "table")))
+    rows = element.find_elements(By.TAG_NAME, "tr")
     print("DEBUGGER")
     print(rows)
 
