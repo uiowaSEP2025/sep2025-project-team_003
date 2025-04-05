@@ -56,7 +56,7 @@ def create_job_template_service(request, id):
     try:
         job_template_object = JobTemplate.objects.get(organization=org.pk, id=id)
     except:
-        return Response({"message": "The job_template does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "The job template does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
     services_list = request.data.get('services', '')
     
@@ -97,10 +97,10 @@ def delete_job_template_service(request, job_template_id, job_template_service_i
     job_template_service = JobTemplateService.objects.filter(pk=job_template_service_id, job_template=job_template_id)
 
     if not job_template_service.exists():
-        return Response({"message": "The service in this job_template does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "The service in this job template does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
     job_template_service[0].delete()
-    return Response({"message": "The service in this job_template deleted sucessfully"}, status=status.HTTP_200_OK)
+    return Response({"message": "The service in this job template deleted sucessfully"}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 def delete_cached_job_template_service(request, job_template_id):
@@ -114,10 +114,10 @@ def delete_cached_job_template_service(request, job_template_id):
             try:
                 job_template_service_object = JobTemplateService.objects.get(id=job_template_service["id"])
             except:
-                return Response({"message": "The service in this job_template does not exist"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"message": "The service in this job template does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
             job_template_service_object.delete()
     else:
         return Response({"message": "There is no service to delete"}, status=status.HTTP_400_BAD_REQUEST)
 
-    return Response({"message": "The services in this job_template deleted sucessfully"}, status=status.HTTP_200_OK)
+    return Response({"message": "The services in this job template deleted sucessfully"}, status=status.HTTP_200_OK)

@@ -69,7 +69,7 @@ def create_job_template_material(request, id):
             job_template_material_object = JobTemplateMaterial.objects.filter(job_template=job_template_object.pk, material=material_object.pk)
 
             if job_template_material_object.exists():
-                return Response({"message": "The material for this job_template already in the list"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"message": "The material for this job template already in the list"}, status=status.HTTP_400_BAD_REQUEST)
 
             job_template_material = JobTemplateMaterial(
                 job_template = job_template_object,
@@ -85,7 +85,7 @@ def create_job_template_material(request, id):
             except ValidationError as e:
                 return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
         
-        return Response({"message": "Materials added to job_template successfully"}, status=status.HTTP_201_CREATED)
+        return Response({"message": "Materials added to job template successfully"}, status=status.HTTP_201_CREATED)
     else:
         return Response({"message": "There is no material to add"}, status=status.HTTP_400_BAD_REQUEST)
     

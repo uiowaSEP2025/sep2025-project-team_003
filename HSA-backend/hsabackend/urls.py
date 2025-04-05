@@ -16,6 +16,8 @@ from hsabackend.views.jobs_services import get_job_service_table_data, create_jo
 from hsabackend.views.jobs_materials import get_job_material_table_data, create_job_material, delete_job_material, delete_cached_job_material
 from hsabackend.views.jobs_contractors import get_job_contractor_table_data, create_job_contractor, delete_job_contractor, delete_cached_job_contractor
 from hsabackend.views.job_templates import get_job_template_table_data, get_job_template_individual_data, create_job_template, edit_job_template, delete_job_template
+from hsabackend.views.job_templates_services import get_job_template_service_table_data, create_job_template_service, delete_job_template_service, delete_cached_job_template_service
+from hsabackend.views.job_templates_materials import get_job_template_material_table_data, create_job_template_material, delete_job_template_material, delete_cached_job_template_material
 from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice
 from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForInvoiceByInvoice
 from hsabackend.views.generate_invoice_pdf_view import generate_pdf
@@ -102,6 +104,18 @@ urlpatterns = [
     path("api/create/jobtemplate", create_job_template),
     path("api/edit/jobtemplate/<int:id>", edit_job_template),
     path("api/delete/jobtemplate/<int:id>", delete_job_template),
+
+    # job_templates_services join
+    path("api/get/jobtemplate/<int:id>/services", get_job_template_service_table_data),
+    path("api/create/jobtemplate/<int:id>/service", create_job_template_service),
+    path("api/delete/jobtemplate/<int:job_template_id>/service/<int:job_template_service_id>", delete_job_template_service),
+    path("api/delete/jobtemplate/<int:job_template_id>/services", delete_cached_job_template_service),
+
+    # job_templates_materials join
+    path("api/get/jobtemplate/<int:id>/materials", get_job_template_material_table_data),
+    path("api/create/jobtemplate/<int:id>/material", create_job_template_material),
+    path("api/delete/jobtemplate/<int:job_template_id>/material/<int:job_template_material_id>", delete_job_template_material),
+    path("api/delete/jobtemplate/<int:job_template_id>/materials", delete_cached_job_template_material),
 
     # invoices
     path("api/create/invoice", createInvoice),
