@@ -441,10 +441,12 @@ class Command(BaseCommand):
             for i in range(5):
                 j = JobTemplate.objects.create(
                     description=f"Job Template Description {i+1}",
+                    name=f"Template {i+1}",
                     organization=org)
                 j.save()
                 j = JobTemplate.objects.create(
                     description=f"Job Template Description {i+1}",
+                    name=f"Template {i+1}",
                     organization=org1)
                 j.save()
             

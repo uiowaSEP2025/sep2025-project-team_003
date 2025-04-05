@@ -15,6 +15,7 @@ from hsabackend.views.jobs import get_job_table_data, get_job_individual_data, c
 from hsabackend.views.jobs_services import get_job_service_table_data, create_job_service, delete_job_service, delete_cached_job_service
 from hsabackend.views.jobs_materials import get_job_material_table_data, create_job_material, delete_job_material, delete_cached_job_material
 from hsabackend.views.jobs_contractors import get_job_contractor_table_data, create_job_contractor, delete_job_contractor, delete_cached_job_contractor
+from hsabackend.views.job_templates import get_job_template_table_data, get_job_template_individual_data, create_job_template, edit_job_template, delete_job_template
 from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice
 from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForInvoiceByInvoice
 from hsabackend.views.generate_invoice_pdf_view import generate_pdf
@@ -94,6 +95,13 @@ urlpatterns = [
     path("api/create/job/<int:id>/contractor", create_job_contractor),
     path("api/delete/job/<int:job_id>/contractor/<int:job_contractor_id>", delete_job_contractor),
     path("api/delete/job/<int:job_id>/contractors", delete_cached_job_contractor),
+
+    # job_templates
+    path("api/get/jobtemplates", get_job_template_table_data),
+    path("api/get/jobtemplate/<int:id>", get_job_template_individual_data),
+    path("api/create/jobtemplate", create_job_template),
+    path("api/edit/jobtemplate/<int:id>", edit_job_template),
+    path("api/delete/jobtemplate/<int:id>", delete_job_template),
 
     # invoices
     path("api/create/invoice", createInvoice),
