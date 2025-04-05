@@ -15,7 +15,8 @@ interface LoginPostData {
 })
 export class UserAuthService {
   private apiLoginUrl = `${environment.apiUrl}/api/login`;
-  private apiLogoutUrl = `${environment.apiUrl}/api/logout`
+  private apiLogoutUrl = `${environment.apiUrl}/api/logout`;
+  private apiUserCheckUrl = `${environment.apiUrl}/api/usercheck`;
 
   constructor(private http: HttpClient) {}
 
@@ -25,5 +26,9 @@ export class UserAuthService {
 
   logout() {
     return this.http.post<StandardApiResponse>(this.apiLogoutUrl, null);
+  }
+
+  checkUserAuth() {
+    return this.http.post<StandardApiResponse>(this.apiUserCheckUrl, null);
   }
 }

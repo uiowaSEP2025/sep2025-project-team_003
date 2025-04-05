@@ -63,6 +63,8 @@ export class LoginComponent {
   }
 
   navigateToPage(pagePath: string) {
-    this.router.navigate([`/${pagePath}`]);
+    this.router.navigate([`/${pagePath}`]).then(() => {
+      window.location.reload();
+    });;
   }
 }

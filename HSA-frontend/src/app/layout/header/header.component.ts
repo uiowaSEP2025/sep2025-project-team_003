@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { UserAuthService } from '../../services/user-auth.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-header',
@@ -13,18 +14,31 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatToolbar,
     MatIcon,
     MatIconButton,
+    MatTooltip,
     CommonModule
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   sidebarExpanded = false;
+  isLoggout = true
 
   constructor(private userAuth: UserAuthService, private router: Router, private snackBar: MatSnackBar) {}
 
   toggleSidebar() {
     this.sidebarExpanded = !this.sidebarExpanded
+  }
+
+  ngOnInit() {
+    this.userAuth.checkUserAuth().subscribe({
+      next: (response) => {
+        this.isLoggout = false;
+      },
+      error: (error) => {
+        this.isLoggout = true;
+      }
+    });
   }
 
   onLogout() {
@@ -33,17 +47,21 @@ export class HeaderComponent {
         this.snackBar.open('Logout successfully!', '', {
           duration: 3000
         });
+        this.isLoggout = false;
         this.navigateToPage('login')
       },
       error: (error) => {
         this.snackBar.open('You are already logout!', '', {
           duration: 3000
         });
+        this.isLoggout = true;
       }
     })
   }
 
   navigateToPage(pagePath: string) {
-    this.router.navigate([`/${pagePath}`]);
+    this.router.navigate([`/${pagePath}`]).then(() => {
+      window.location.reload();
+    });
   }
 }

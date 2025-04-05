@@ -1,96 +1,173 @@
 <div class="parent">
   <div class="main-heading">
-    <h1>
-      <span>Create your organization</span>
+    <h1 style="margin-bottom: 40px;">
+      Let's get started
     </h1>
+    <mat-stepper #stepper [linear]="true">
+      <mat-step [stepControl]="userAccountForm">
+        <form class="parent" [formGroup]="userAccountForm" (ngSubmit)="onSubmitUserCreation()">
+          <ng-template matStepLabel>Account information</ng-template>
+          <mat-form-field>
+            <mat-label>User First Name</mat-label>
+            <input
+              formControlName = "userFirstName"
+              matInput
+              placeholder="Ex: John"
+              required
+            >
+            @if (userAccountForm.get('userFirstName')?.touched && userAccountForm.get('userFirstName')?.hasError('required')) {
+              <mat-error>First Name is required</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>User Last Name</mat-label>
+            <input
+              formControlName = "userLastName"
+              matInput
+              placeholder="Ex: Browns"
+              required
+            >
+            @if (userAccountForm.get('userLastName')?.touched && userAccountForm.get('userLastName')?.hasError('required')) {
+              <mat-error>Last Name is required</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>User Email</mat-label>
+            <input
+              formControlName = "userEmail"
+              matInput
+              placeholder="Ex: first.last@gmail.com"
+              required
+            >
+            @if (userAccountForm.get('userEmail')?.touched && userAccountForm.get('userEmail')?.hasError('required')) {
+              <mat-error>Email is required</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Username</mat-label>
+            <input
+              formControlName = "username"
+              matInput
+              placeholder="Ex: johnbrowns"
+              required
+            >
+            @if (userAccountForm.get('username')?.touched && userAccountForm.get('username')?.hasError('required')) {
+              <mat-error>Username is required</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Password</mat-label>
+            <input
+              formControlName = "password"
+              matInput
+              placeholder="8-16 characters"
+              required
+            >
+            @if (userAccountForm.get('password')?.touched && userAccountForm.get('password')?.hasError('required')) {
+              <mat-error>Last Name is required</mat-error>
+            }
+          </mat-form-field>
+          <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
+            <button mat-stroked-button (click)="navigateToPage('login')">Cancel</button>
+            <button mat-flat-button matStepperNext type="submit">Next</button>
+          </div>
+        </form>
+      </mat-step>
+      <mat-step [stepControl]="registrationForm">
+        <form class="parent" [formGroup]="registrationForm" (ngSubmit)="onSubmitRegistration()">
+          <ng-template matStepLabel>Organization details</ng-template>
+          <mat-form-field>
+            <mat-label>Organization Name</mat-label>
+            <input
+              formControlName = "organizationName"
+              matInput
+              placeholder="Ex: Handyman LLC"
+              required
+            >
+            @if (registrationForm.get('organizationName')?.touched && registrationForm.get('organizationName')?.hasError('required')) {
+              <mat-error>Organization Name is required</mat-error>
+            }
+          </mat-form-field>
+      
+          <mat-form-field>
+            <mat-label>Organization Email</mat-label>
+            <input
+              formControlName = "organizationEmail"
+              matInput
+              required
+            >
+            @if (registrationForm.get('organizationEmail')?.touched && registrationForm.get('organizationEmail')?.hasError('required')) {
+              <mat-error>Organization Email is required</mat-error>
+            }
+            @if (registrationForm.get('organizationEmail')?.touched && registrationForm.get('organizationEmail')?.hasError('email')) {
+              <mat-error>Email format is invalid</mat-error>
+            }
+          </mat-form-field>
+      
+          <mat-form-field>
+            <mat-label>Address 1</mat-label>
+            <input
+              formControlName = "addressOne"
+              matInput
+              required
+            >
+            @if (registrationForm.get('addressOne')?.touched && registrationForm.get('addressOne')?.hasError('required')) {
+              <mat-error>Primary Address is required</mat-error>
+            }
+          </mat-form-field>
+      
+          <mat-form-field>
+            <mat-label>Address 2</mat-label>
+            <input
+              matInput
+            >
+          </mat-form-field>
+      
+          <mat-form-field>
+            <mat-label>City</mat-label>
+            <input
+              matInput
+            >
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>State</mat-label>
+            <mat-select formControlName="stateSelect">
+              @for (state of states; track state) {
+                <mat-option [value]="state.name">{{state.name}} - {{state.code}}</mat-option>
+              }
+            </mat-select>
+            @if (registrationForm.get('stateSelect')?.touched && registrationForm.get('stateSelect')?.hasError('required')) {
+              <mat-error>State is required</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Zip Code</mat-label>
+            <input
+              matInput
+            >
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Owner Name</mat-label>
+            <input
+              formControlName = "ownerName"
+              matInput
+              required
+              placeholder="Ex: John Smith"
+            >
+            @if (registrationForm.get('ownerName')?.touched && registrationForm.get('ownerName')?.hasError('required')) {
+              <mat-error>Valid Owner is required</mat-error>
+            }
+          </mat-form-field>
+          <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
+            <button mat-stroked-button matStepperPrevious>Back</button>
+            <button mat-flat-button type="submit">Create</button>
+          </div>
+        </form>
+      </mat-step>
+    </mat-stepper>
   </div>
-  <form class="parent" [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
-    <mat-form-field>
-      <mat-label>Organization Name</mat-label>
-      <input
-        formControlName = "organizationName"
-        matInput
-        placeholder="Ex: Handyman LLC"
-        required
-      >
-      @if (registrationForm.get('organizationName')?.touched && registrationForm.get('organizationName')?.hasError('required')) {
-        <mat-error>Organization Name is required</mat-error>
-      }
-    </mat-form-field>
+  
 
-    <mat-form-field>
-      <mat-label>Organization Email</mat-label>
-      <input
-        formControlName = "organizationEmail"
-        matInput
-        required
-      >
-      @if (registrationForm.get('organizationEmail')?.touched && registrationForm.get('organizationEmail')?.hasError('required')) {
-        <mat-error>Organization Email is required</mat-error>
-      }
-      @if (registrationForm.get('organizationEmail')?.touched && registrationForm.get('organizationEmail')?.hasError('email')) {
-        <mat-error>Email format is invalid</mat-error>
-      }
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>Address 1</mat-label>
-      <input
-        formControlName = "addressOne"
-        matInput
-        required
-      >
-      @if (registrationForm.get('addressOne')?.touched && registrationForm.get('addressOne')?.hasError('required')) {
-        <mat-error>Primary Address is required</mat-error>
-      }
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>Address 2</mat-label>
-      <input
-        matInput
-      >
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>City</mat-label>
-      <input
-        matInput
-      >
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>State</mat-label>
-      <mat-select formControlName="stateSelect">
-        @for (state of states; track state) {
-          <mat-option [value]="state.name">{{state.name}} - {{state.code}}</mat-option>
-        }
-      </mat-select>
-      @if (registrationForm.get('stateSelect')?.touched && registrationForm.get('stateSelect')?.hasError('required')) {
-        <mat-error>State is required</mat-error>
-      }
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Zip Code</mat-label>
-      <input
-        matInput
-      >
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Owner Name</mat-label>
-      <input
-        formControlName = "ownerName"
-        matInput
-        required
-        placeholder="Ex: John Smith"
-      >
-      @if (registrationForm.get('ownerName')?.touched && registrationForm.get('ownerName')?.hasError('required')) {
-        <mat-error>Valid Owner is required</mat-error>
-      }
-    </mat-form-field>
-
-    <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
-      <button mat-flat-button type="submit">Create</button>
-      <button mat-stroked-button (click)="navigateToPage('login')">Cancel</button>
-    </div>
-  </form>
+    
+  
 </div>
