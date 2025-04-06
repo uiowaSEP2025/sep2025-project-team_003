@@ -5,17 +5,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
-import { UserAuthService } from '../../services/user-auth.service';
 import { ErrorHandlerService } from '../../services/error.handler.service';
 import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
+import {UserAuthService} from '../../services/user-auth.service';
 
 @Component({
   selector: 'app-login',
   imports: [
-    FormsModule, 
-    MatFormFieldModule, 
-    MatInputModule, 
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
     MatButtonModule,
     MatCardModule,
     ReactiveFormsModule
@@ -24,7 +24,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
-  previousUrlPath: string = 'home'
+  previousUrlPath = 'home'
   matcher = new GenericFormErrorStateMatcher();
   usernameFormControl = new FormControl('', [Validators.required]);
   passwordFormControl = new FormControl('', [Validators.required]);
@@ -63,6 +63,6 @@ export class LoginComponent {
   }
 
   navigateToPage(pagePath: string) {
-    this.router.navigate([`/${pagePath}`]);
+    void this.router.navigate([`/${pagePath}`]);
   }
 }

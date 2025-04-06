@@ -49,26 +49,26 @@ export class CreateJobPageComponent implements OnInit {
   materials: any
   contractors: any
   selectedCustomers: any = []
-  selectedCustomersIsError: boolean = false
+  selectedCustomersIsError = false
   selectedServices: any = []
-  selectedServicesIsError: boolean = false
+  selectedServicesIsError = false
   selectedMaterials: any = []
-  selectedMaterialsIsError: boolean = false
+  selectedMaterialsIsError = false
   selectedContractors: any = []
-  selectedContractorsIsError: boolean = false
+  selectedContractorsIsError = false
   materialInputFields: InputFieldDictionary[] = []
-  materialInputFieldsIsError: boolean = false
-  status: string = 'created'
-  description: string = ''
-  address: string = ''
-  city: string = ''
-  state: string = ''
-  zip: string = ''
+  materialInputFieldsIsError = false
+  status = 'created'
+  description = ''
+  address = ''
+  city = ''
+  state = ''
+  zip = ''
   jobForm: FormGroup;
   states: any = []
   @ViewChild(InvoiceDatePickerComponent) datePicker!: InvoiceDatePickerComponent;
 
-  readonly range: FormGroup<DateRange> = new FormGroup({
+  readonly range = new FormGroup<DateRange>({
     issued: new FormControl<Date | null>(null),
     due: new FormControl<Date | null>(null),
   });
@@ -92,7 +92,7 @@ export class CreateJobPageComponent implements OnInit {
       jobDescription: ['', Validators.required]
     });
 
-    this.states = StateList.getStates()
+    this.states = StateList
   }
 
   ngOnInit(): void {
@@ -145,7 +145,7 @@ export class CreateJobPageComponent implements OnInit {
 
   setSelectedServices(services: number[]) {
     this.selectedServices = [...services]
-    this.selectedServicesIsError = this.selectedServices.length === 0 ? true : false
+    this.selectedServicesIsError = this.selectedServices.length === 0
 
     if (this.selectedServices.length !== 0) {
       this.selectedMaterials = []
@@ -165,14 +165,14 @@ export class CreateJobPageComponent implements OnInit {
 
   setSelectedMaterials(materials: number[]) {
     this.selectedMaterials = [...materials]
-    this.selectedMaterialsIsError = this.selectedMaterials.length === 0 ? true : false
+    this.selectedMaterialsIsError = this.selectedMaterials.length === 0
 
-    if (this.selectedMaterialsIsError === false) {
-      let previousUnitsUsedFields = this.materialInputFields
+    if (!this.selectedMaterialsIsError) {
+      const previousUnitsUsedFields = this.materialInputFields
       this.materialInputFields = []
       this.selectedMaterials.forEach((element: any) => {
         if (previousUnitsUsedFields.some((item) => item.id === element)) {
-          let specificEntry = previousUnitsUsedFields.find((item) => item.id === element)
+          const specificEntry = previousUnitsUsedFields.find((item) => item.id === element)
           this.materialInputFields.push({"id": element, "unitsUsed": specificEntry!["unitsUsed"], "pricePerUnit": specificEntry!["pricePerUnit"]})
         } else {
           this.materialInputFields.push({"id": element, "unitsUsed": 0, "pricePerUnit": 0.00})
@@ -186,7 +186,7 @@ export class CreateJobPageComponent implements OnInit {
 
   setSelectedContractors(contractors: number[]) {
     this.selectedContractors = [...contractors]
-    this.selectedContractorsIsError = this.selectedContractors.length === 0 ? true : false
+    this.selectedContractorsIsError = this.selectedContractors.length === 0
   }
 
   setSelectedCustomers(cust: number[]) {
@@ -232,12 +232,12 @@ export class CreateJobPageComponent implements OnInit {
       return;
     }
 
-    let servicesField: { id: any; } [] = []
+    const servicesField: { id: any; } [] = []
     this.selectedServices.forEach((element: any) => {
       servicesField.push({ "id": element })
     })
 
-    let contractorsField: { id: any; } [] = []
+    const contractorsField: { id: any; } [] = []
     this.selectedContractors.forEach((element: any) => {
       contractorsField.push({ "id": element })
     })
@@ -264,7 +264,7 @@ export class CreateJobPageComponent implements OnInit {
     }
     this.jobService.createJob(requestJson).subscribe(
       {
-        next: (response) => {
+        next: () => {
           this.router.navigate(['/jobs']);
         },
         error: (error) => {

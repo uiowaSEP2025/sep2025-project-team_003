@@ -5,14 +5,6 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Contractor, ContractorParams } from '../interfaces/contractor.interface';
 import { environment } from '../../environments/environment';
-
-interface ContractorCreatePostData {
-  firstName: string | null
-  lastName: string | null
-  email: string | null
-  phone: string | null
-}
-
 interface ContractorEditPostData {
   id: number | null,
 }
@@ -45,17 +37,17 @@ export class ContractorService {
 
     return this.http.get<TableApiResponse<Contractor>>(this.apiGetUrl, { params: httpParams });
   }
-  
+
   public getExcludedContractor(params?: ContractorParams): Observable<TableApiResponse<Contractor>> {
       let httpParams = new HttpParams();
-  
+
       // Add query parameters
       if (params?.excludeIDs) {
         params.excludeIDs.forEach(id => {
           httpParams = httpParams.append('excludeIDs', id.toString());
         });
       }
-  
+
       if (params) {
         Object.keys(params).forEach(key => {
           if (key !== 'excludeIDs') {
@@ -66,11 +58,16 @@ export class ContractorService {
           }
         });
       }
-  
+
       return this.http.get<TableApiResponse<Contractor>>(this.apiGetExcludedUrl, { params: httpParams });
     }
 
-  public createContractor(data:ContractorCreatePostData): Observable<StandardApiResponse> {
+  public createContractor(data: {
+    first_name: string | null;
+    last_name: string | null;
+    email: string | null;
+    phone: string | null
+  }): Observable<StandardApiResponse> {
     return this.http.post<StandardApiResponse>(this.apiCreateUrl, data);
   }
 

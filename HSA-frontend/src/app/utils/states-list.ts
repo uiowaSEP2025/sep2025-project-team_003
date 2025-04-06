@@ -1,10 +1,9 @@
-interface State {
+export interface State {
   name: string,
   code: string
 }
 
-export class StateList {
-	static readonly STATES = [
+export const StateList: State[] = [
 		{ "name":  "Alabama", "code":  "AL"},
 		{ "name":  "Alaska", "code":  "AK"},
 		{ "name":  "Arkansas", "code":  "AR"},
@@ -55,13 +54,4 @@ export class StateList {
 		{ "name":  "West Virginia", "code":  "WV"},
 		{ "name":  "Wisconsin", "code":  "WI"},
 		{ "name":  "Wyoming", "code":  "WY"}
-	];
-
-	static getStates() {
-		return this.STATES
-	}
-
-	static getStateWithName(name: string) {
-		return this.STATES.filter(item => item.name === name)
-	}
-}
+	]

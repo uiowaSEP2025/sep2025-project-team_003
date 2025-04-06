@@ -8,7 +8,7 @@ import { Input } from '@angular/core';
   styleUrl: './loading-fallback.component.scss'
 })
 export class LoadingFallbackComponent {
-  @Input({required: true}) stringToDisplay: string = 'FIX ME!'
+  @Input({required: true}) stringToDisplay = ''
 
 
 }

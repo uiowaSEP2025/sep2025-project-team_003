@@ -10,6 +10,6 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideAnimationsAsync(),
-    provideHttpClient(withFetch(),withInterceptors([csrfInterceptor]))
+    provideHttpClient(withFetch(),withInterceptors([csrfInterceptor])),
   ]
 };

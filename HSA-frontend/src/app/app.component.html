@@ -1,3 +1,20 @@
-<app-header></app-header>
-<app-body></app-body>
-<app-footer></app-footer>
+<mat-drawer-container>
+  <mat-drawer #drawer class="example-sidenav" mode="over">
+    <mat-nav-list>
+      @for (item of menuItems; track item) {
+        <a (click)="drawer.close()" [style.border-radius]="'0px'" routerLink="{{item.route}}"  [routerLinkActive]="'active-link'" mat-list-item>
+          <mat-label [routerLinkActive]="'text-white'">{{item.name}}</mat-label></a>
+      }
+      <mat-list-item [style.border-radius]="'0px'" (click)="drawer.close()">
+        <mat-label>
+          <mat-icon>close</mat-icon>
+        </mat-label>
+      </mat-list-item>
+    </mat-nav-list>
+  </mat-drawer>
+  <mat-drawer-content>
+    <app-header [drawer]="drawer"></app-header>
+    <app-body></app-body>
+    <app-footer></app-footer>
+  </mat-drawer-content>
+  </mat-drawer-container>

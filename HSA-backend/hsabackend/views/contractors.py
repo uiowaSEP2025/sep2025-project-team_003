@@ -91,8 +91,8 @@ def create_contractor(request):
     
     org = Organization.objects.get(owning_User=request.user)
 
-    first_name = request.data.get('firstName', '')
-    last_name = request.data.get('lastName', '')
+    first_name = request.data.get('first_name', '')
+    last_name = request.data.get('last_name', '')
     email = request.data.get('email', '')
     phone = request.data.get('phone', '').replace("-","")
 

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { HttpClient} from '@angular/common/http';
-import { StateList } from '../../utils/states-list';
+import { State, StateList } from '../../utils/states-list';
 
 @Component({
   selector: 'app-signup-page',
@@ -24,9 +24,9 @@ import { StateList } from '../../utils/states-list';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
-export class SignupPageComponent implements OnInit {
+export class SignupPageComponent  {
   registrationForm: FormGroup;
-  states: any = []
+  states: State[]
 
   constructor(private router: Router, private registrationFormBuilder: FormBuilder, private http: HttpClient) {
     this.registrationForm = this.registrationFormBuilder.group({
@@ -37,18 +37,14 @@ export class SignupPageComponent implements OnInit {
       stateSelect: ['', Validators.required],
     });
 
-    this.states = StateList.getStates()
-  }
-
-  ngOnInit() {
+    this.states = StateList
   }
 
   onSubmit() {
     if (this.registrationForm.invalid) {
       this.registrationForm.markAllAsTouched();
       return;
-    } else {
-    }
+    } else { /* empty */ }
   }
 
   navigateToPage(pagePath: string) {

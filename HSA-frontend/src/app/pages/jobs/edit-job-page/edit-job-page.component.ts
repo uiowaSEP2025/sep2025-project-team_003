@@ -28,12 +28,8 @@ import { StringFormatter } from '../../../utils/string-formatter';
 import { UpdateConfirmDialogComponentComponent } from '../../../components/update-confirm-dialog-component/update-confirm-dialog-component.component';
 import { RequestTrackerService } from '../../../utils/request-tracker';
 import { take } from 'rxjs/operators';
-import { StateList } from '../../../utils/states-list';
+import { State, StateList } from '../../../utils/states-list';
 
-interface State {
-  name: string,
-  code: string
-}
 
 @Component({
   selector: 'app-edit-job-page',
@@ -70,7 +66,7 @@ export class EditJobPageComponent {
   allServices: any = []
   allMaterials: any = []
   allContractors: any = []
-  selectedCustomer: number = 0
+  selectedCustomer = 0
   selectedServices: any = []
   selectedMaterials: any = []
   selectedContractors: any = []
@@ -87,8 +83,8 @@ export class EditJobPageComponent {
   state: string = ''
   zip: string = ''
   jobForm: FormGroup;
-  states: any = []
-  isUpdatedField: boolean = false
+  states: State[]
+  isUpdatedField = false
 
   constructor (
     private jobService: JobService,
@@ -105,7 +101,7 @@ export class EditJobPageComponent {
     this.activatedRoute.paramMap.subscribe(params => {
       this.jobID = Number(params.get('id'));
     })
-    this.states = StateList.getStates()
+    this.states = StateList
 
     this.jobForm = this.jobFormBuilder.group({
       customerName: ['', Validators.required],
@@ -189,7 +185,7 @@ export class EditJobPageComponent {
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result.length !== 0) {
-        let customerEntry = result.itemsInfo[0]
+        const customerEntry = result.itemsInfo[0]
         this.jobForm.controls['customerName'].setValue(customerEntry.first_name + " " + customerEntry.last_name)
         this.customerID = customerEntry.id;
         this.selectedCustomer = customerEntry.id
