@@ -23,6 +23,8 @@ import { JobPageComponent } from './pages/job-page/job-page.component';
 import { ViewJobPageComponent } from './pages/view-job-page/view-job-page.component';
 import { CreateJobPageComponent } from './pages/create-job-page/create-job-page.component';
 import { EditJobPageComponent } from './pages/edit-job-page/edit-job-page.component';
+import { DiscountsPageComponent } from './pages/discounts-page/discounts-page.component';
+
 
 export const routes: Routes = [
   {
@@ -97,6 +99,7 @@ export const routes: Routes = [
   {
     path: 'edit/invoice/:id', component: EditInvoicePageComponent
   },
+  {path: "discounts", component: DiscountsPageComponent},
   {
     path: '404',
     component: NotFoundPageComponent

@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.core.exceptions import ValidationError
 
 @api_view(["GET"])
-def getInvoices(request):
+def get_discounts(request):
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
     org = Organization.objects.get(owning_User=request.user.pk)
@@ -92,3 +92,20 @@ def edit_discount(request,id):
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(["POST"])
+def delete_discount(request, id):
+    if not request.user.is_authenticated:
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    org = Organization.objects.get(owning_User=request.user)
+
+    discount = DiscountType.objects.filter(
+        pk=id,
+        organization = org
+    )
+
+    if not discount.exists():
+        return Response({"message": "not found"}, status=status.HTTP_404_NOT_FOUND)
+    discount = discount[0]
+    discount.delete()
+    return Response({"message": "discount deleted successfully"}, status=status.HTTP_200_OK)
