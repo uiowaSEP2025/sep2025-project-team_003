@@ -57,8 +57,6 @@ def before_scenario(context, scenario):
         print(f'Error flushing the database: {e}')
 
 def before_all(context):
-    for evn in os.environ:
-        print (evn,"=", os.environ[evn])
     try:
         path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
         sys.path.append(path)  # we need this so python can find our app as a module
@@ -77,7 +75,7 @@ def before_all(context):
                 print(f"Error creating WebDriver: {e}")
                 raise
         else:
-            print("CONTEXT IGNORED, Integration flag value was set to: ", os.environ["INTEGRATION_FLAG"])
+            print("CONTEXT IGNORED, Integration flag value was not set.")
             context.url = "http://localhost:4200"
             path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../HSA-frontend'))
             os.chdir(path)
