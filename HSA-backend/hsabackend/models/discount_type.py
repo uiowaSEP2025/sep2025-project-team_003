@@ -11,3 +11,9 @@ class DiscountType(models.Model):
     def __str__(self):
         return f"<DiscountType, organization: {self.organization}, percent: {self.discount_percent}>"
     
+
+    def json_for_discount_table(self):
+        return {
+            "discount_name": self.discount_name,
+            "discount_percent": self.discount_percent
+        }
