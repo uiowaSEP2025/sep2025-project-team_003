@@ -8,10 +8,16 @@
         <span>Create Jobs</span>
       </h1>
       <mat-card class="flex p-5 flex-direction: column; items-left">
+        <div class="customer-box-container">
+          <button type="button" mat-flat-button (click)="openApplyTemplateDialog()">Apply Template</button>
+        </div>
+        <div class="spacer"></div>
         <mat-accordion>
-          <mat-expansion-panel hideToggle [expanded]="true">
+          <mat-expansion-panel [expanded]="true">
             <mat-expansion-panel-header>
-              <mat-panel-title> Add General Info </mat-panel-title>
+              <mat-panel-title > 
+                Add General Info
+              </mat-panel-title>
             </mat-expansion-panel-header>
             <form class="parent" [formGroup]="jobForm" (ngSubmit)="onSubmit()">
               <table class="info-table">
@@ -163,7 +169,7 @@
         </mat-accordion>
         <div class="spacer"></div>
         <mat-accordion>
-          <mat-expansion-panel hideToggle [expanded]="true" >
+          <mat-expansion-panel [expanded]="true" >
             <mat-expansion-panel-header>
               <mat-panel-title> Add Services </mat-panel-title>
             </mat-expansion-panel-header>

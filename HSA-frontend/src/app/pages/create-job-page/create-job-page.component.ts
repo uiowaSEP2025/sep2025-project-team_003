@@ -132,6 +132,25 @@ export class CreateJobPageComponent implements OnInit {
     this.router.navigate([`/${pagePath}`]);
   }
 
+  openApplyTemplateDialog() {
+    const dialogData: AddSelectDialogData = {
+      typeOfDialog: 'template',
+      dialogData: this.customerID,
+      searchHint: 'Search by template name',
+      headers: ['Description','Name'],
+      materialInputFields: this.materialInputFields,
+    };
+
+    const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
+      width: 'auto', 
+      maxWidth: '90vw', 
+      height: 'auto', 
+      maxHeight: '90vh', 
+      data: dialogData
+    });
+  }
+
+
   openAddCustomerDialog() {
     const dialogData: AddSelectDialogData = {
       typeOfDialog: 'customer',
