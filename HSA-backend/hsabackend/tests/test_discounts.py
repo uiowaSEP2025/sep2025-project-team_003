@@ -120,7 +120,136 @@ class CreateDiscountTest(APITestCase):
     
 
 class EditDiscountTest(APITestCase):
-    pass
+    def test_edit_unauth(self):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = False
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/edit/discount/1')
+        request.user = mock_user  
+        response = edit_discount(request,1)
+        
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    @patch('hsabackend.views.discounts.DiscountType.objects.filter')
+    @patch('hsabackend.views.discounts.Organization.objects.get')
+    def test_edit_not_exist(self,org,discnt):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        
+        org.return_value = Organization()
+        discnt_mock = Mock()
+        discnt.return_value = discnt_mock
+        discnt_mock.exists.return_value = False
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/edit/discount/1')
+        request.user = mock_user  
+        response = edit_discount(request, 1)
+        
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    @patch('hsabackend.views.discounts.DiscountType.objects.filter')
+    @patch('hsabackend.views.discounts.Organization.objects.get')
+    def test_edit_fails_validation(self,org,discnt):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        
+        org.return_value = Organization()
+        discnt_qs = MagicMock()
+        discnt.return_value = discnt_qs
+        discnt_qs.exists.return_value = True
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/edit/discount/1')
+        request.user = mock_user  
+
+
+        mock_discnt = Mock()
+
+        discnt_qs.__getitem__.side_effect = lambda x: mock_discnt
+        mock_discnt.full_clean.side_effect = ValidationError({'name': ['This field is required.']})
+
+        response = edit_discount(request, 1)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+    @patch('hsabackend.views.discounts.DiscountType.objects.filter')
+    @patch('hsabackend.views.discounts.Organization.objects.get')
+    def test_edit_ok(self,org,discnt):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        
+        org.return_value = Organization()
+        discnt_qs = MagicMock()
+        discnt.return_value = discnt_qs
+        discnt_qs.exists.return_value = True
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/edit/discount/1', data={
+            "name": "summer sale",
+            "percent": "20.00"
+        })
+        request.user = mock_user  
+        response = edit_discount(request, 1)
+
+        mock_discnt = Mock()
+        discnt_qs.__getitem__.side_effect = lambda x: mock_discnt
+
+        assert response.status_code == status.HTTP_200_OK
+        
 
 class DeleteDiscountTest(APITestCase):
-    pass
+    def test_delete_unauth(self):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = False
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/delete/discount/1')
+        request.user = mock_user  
+        response = delete_discount(request,1)
+        
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    
+    @patch('hsabackend.views.discounts.DiscountType.objects.filter')
+    @patch('hsabackend.views.discounts.Organization.objects.get')
+    def test_delete_not_found(self, org, discnt):
+        org.return_value = Organization()
+        discnt_qs = MagicMock()
+        discnt.return_value = discnt_qs
+
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        discnt_qs.exists.return_value = False
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/delete/discount/1')
+        request.user = mock_user  
+        response = delete_discount(request,1)
+        
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    @patch('hsabackend.views.discounts.DiscountType.objects.filter')
+    @patch('hsabackend.views.discounts.Organization.objects.get')
+    def test_delete_ok(self, org, discnt):
+        org.return_value = Organization()
+        discnt_qs = MagicMock()
+        discnt.return_value = discnt_qs
+
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        discnt_qs.exists.return_value = True
+        mock_discnt = Mock()
+        discnt_qs.__getitem__.side_effect = lambda x: mock_discnt
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/delete/discount/1')
+        request.user = mock_user  
+        response = delete_discount(request,1)
+
+        mock_discnt.delete.assert_called_once()
+        
+        assert response.status_code == status.HTTP_200_OK
