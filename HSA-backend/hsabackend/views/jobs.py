@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from hsabackend.models.organization import Organization
 from hsabackend.models.customer import Customer
-from hsabackend.models.job import Job
+from hsabackend.models.job import Job, JobsServices, JobsMaterials
 from hsabackend.models.service import Service
 from hsabackend.models.material import Material
 from hsabackend.models.contractor import Contractor
@@ -74,9 +74,9 @@ def get_job_individual_data(request, id):
         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
     
-    job_services = JobService.objects.filter(job=job.pk)
-    job_materials = JobMaterial.objects.filter(job=job.pk)
-    job_contractors = JobContractor.objects.filter(job=job.pk)
+    job_services = job.services.all()
+    job_materials = job.materials.all()
+    job_contractors = job.contractors.all()
 
     job_services_data = []
     for service in job_services:
@@ -109,10 +109,10 @@ def create_job(request):
     job_start_date = request.data.get('startDate', '')
     job_end_date = request.data.get('endDate', '')
     customer = Customer.objects.get(id=request.data.get('customerID'))
-    requestor_city = request.data.get('city', '')
-    requestor_state = request.data.get('state', '')
-    requestor_zip = request.data.get('zip', '')
-    requestor_address = request.data.get('address', '')
+    job_city = request.data.get('city', '')
+    job_state = request.data.get('state', '')
+    job_zip = request.data.get('zip', '')
+    job_address = request.data.get('address', '')
 
     contractor_list = request.data.get('contractors', '')   # data send form: contractors: [{ "id": int }]
     service_list = request.data.get('services', '')         # data send form: services: [{ "id": int }]
@@ -126,10 +126,10 @@ def create_job(request):
         description = job_description,
         organization = org,
         customer = customer,
-        requestor_address = requestor_address,
-        requestor_city = requestor_city,
-        requestor_state = requestor_state,
-        requestor_zip = requestor_zip
+        job_address = job_address,
+        job_city = job_city,
+        job_state = job_state,
+        job_zip = job_zip
     )
 
     try:
@@ -143,57 +143,50 @@ def create_job(request):
         try:
             service_object = Service.objects.get(organization=org.pk, id=service["id"])
 
-            if (service_object):
-                job_service = JobService(
+            if service_object:
+                job_service = JobsServices(
                     job = job,
                     service = service_object
                 )
+                try:
+                    job_service.full_clean()
+                    job_service.save()
+                except ValidationError as e:
+                    return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
         except Service.DoesNotExist:
             return Response({"message": "The service does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
-        try:
-            job_service.full_clean()
-            job_service.save()
-        except ValidationError as e:
-            return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     # Add material and job join entry
     for material in material_list:
         try:
             material_object = Material.objects.get(organization=org.pk, id=material["id"])
-
-            if (material_object):
-                material_job = JobMaterial(
-                    material = material_object,
+            if material_object:
+                job_material = JobsMaterials(
                     job = job,
-                    units_used = material["unitsUsed"],
-                    price_per_unit = material["pricePerUnit"]
+                    material = material_object,
                 )
+                try:
+                    job_material.full_clean()
+                    job_material.save()
+                except ValidationError as e:
+                    return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
         except Material.DoesNotExist:
             return Response({"message": "The material does not exist"}, status=status.HTTP_404_NOT_FOUND)
-        
-        try:
-            material_job.full_clean()
-            material_job.save()
-        except ValidationError as e:
-            return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
-    
+
+
     # Add contractor and job join entry
     for contractor in contractor_list:
         try:
             contractor_object = Contractor.objects.get(organization=org.pk, id=contractor["id"])
 
-            if (contractor_object):
-                job_contractor = JobContractor(
-                    job = job,
-                    contractor = contractor_object
-                )
+            job.contractors.add(contractor_object)
         except Contractor.DoesNotExist:
             return Response({"message": "The contractor does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
         try:
-            job_contractor.full_clean()
-            job_contractor.save()
+            job.full_clean()
+            job.save()
         except ValidationError as e:
             return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)      
           
@@ -214,14 +207,17 @@ def edit_job(request, id):
     if not job:
         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
+
     job.job_status = request.data.get('jobStatus','')
     job.start_date = request.data.get('startDate','')
     job.end_date = request.data.get('endDate','')
+    job.services = request.data.get('services','')
+    job.materials = request.data.get('materials','')
     job.description = request.data.get('description','')
-    job.requestor_address = request.data.get('address','')
-    job.requestor_city = request.data.get('city','')
-    job.requestor_state = request.data.get('state','')
-    job.requestor_zip = request.data.get('zip','')   
+    job.job_address = request.data.get('address','')
+    job.job_city = request.data.get('city','')
+    job.job_state = request.data.get('state','')
+    job.job_zip = request.data.get('zip','')
 
     try:
         customer = Customer.objects.get(id=request.data.get('customerID'))
