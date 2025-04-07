@@ -44,4 +44,14 @@ describe('UpdateConfirmDialogComponentComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should call dialogRef.close with false when onCancel is called', () => {
+    component.onCancel();
+    expect(mockDialogRef.close).toHaveBeenCalledWith(false);
+  });
+
+  it('should call dialogRef.close with true when onConfirm is called', () => {
+    component.onConfirm();
+    expect(mockDialogRef.close).toHaveBeenCalledWith(true);
+  });
 });
