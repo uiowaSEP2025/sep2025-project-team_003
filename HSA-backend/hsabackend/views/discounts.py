@@ -87,11 +87,12 @@ def edit_discount(request,id):
     if not discount.exists():
         return Response({"message": "not found"}, status=status.HTTP_404_NOT_FOUND)
     discount = discount[0]
-    discount.name = name
+    discount.discount_name = name
     discount.discount_percent = percent
     try:
         discount.full_clean()
         discount.save()
+        return Response({"message": "discount edited"}, status=status.HTTP_200_OK)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 

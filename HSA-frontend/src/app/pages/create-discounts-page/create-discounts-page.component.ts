@@ -37,7 +37,7 @@ export class CreateDiscountsPageComponent {
         this.router.navigate(['/discounts']);
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
+        this.errorHandler.handleError(error, "discounts/create")
       }
     }
     )

@@ -17,6 +17,12 @@ interface createDiscountInterface {
     percent: string | null
 }
 
+interface editDiscountInterface {
+  name:string | null,
+  percent: string | null,
+  id: string | null
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -24,6 +30,7 @@ export class DiscountsService {
   private apiGetUrl = `${environment.apiUrl}/api/get/discounts`;
   private apiCreateUrl = `${environment.apiUrl}/api/create/discount`;
   private apiDeleteUrl = `${environment.apiUrl}/api/delete/discount`;
+  private apiEditUrl = `${environment.apiUrl}/api/edit/discount`;
 
   constructor(private http: HttpClient) { }
 
@@ -46,9 +53,12 @@ export class DiscountsService {
 
   public deleteDiscount(id: any) {
     id = id.id
-    console.log('jheiujesiu')
     return this.http.post<StandardApiResponse>(`${this.apiDeleteUrl}/${id}`, null);
     
+  }
+
+  public editDiscount(data: editDiscountInterface) {
+    return this.http.post<StandardApiResponse>(`${this.apiEditUrl}/${data.id}`, data);
   }
   
   

@@ -10,6 +10,7 @@
         editRedirect="/discounts/edit" 
         [fetchedData]="customers"
         [deleteRequest]="this.discountService.deleteDiscount.bind(discountService)"
+        editRedirect="discounts/edit"
         [loadDataToTable]="this.loadDataToTable.bind(this)"
         [hideValues]="['Id']"
         searchHint="Search by discount name"
