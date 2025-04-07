@@ -8,7 +8,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient } from '@angular/common/http';
 
-fdescribe('CreateDiscountsPageComponent', () => {
+describe('CreateDiscountsPageComponent', () => {
   let component: CreateDiscountsPageComponent;
   let fixture: ComponentFixture<CreateDiscountsPageComponent>;
   let httpMock: HttpTestingController;

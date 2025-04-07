@@ -1,5 +1,5 @@
 <div class="main-heading">
-    @if (customers === null) {
+    @if (discounts === null) {
       <app-loading-fallback stringToDisplay="Loading discounts"></app-loading-fallback>
     }
     @else {
@@ -8,13 +8,13 @@
       </h1>
       <app-table-component 
         editRedirect="/discounts/edit" 
-        [fetchedData]="customers"
+        [fetchedData]="discounts"
         [deleteRequest]="this.discountService.deleteDiscount.bind(discountService)"
         editRedirect="discounts/edit"
         [loadDataToTable]="this.loadDataToTable.bind(this)"
         [hideValues]="['Id']"
         searchHint="Search by discount name"
-        [headers]="['Discount Name', 'Discount Percent', 'Phone Number', 'Actions']"
+        [headers]="['Discount Name', 'Discount Percent', 'Phone Number']"
       ></app-table-component>
         
 

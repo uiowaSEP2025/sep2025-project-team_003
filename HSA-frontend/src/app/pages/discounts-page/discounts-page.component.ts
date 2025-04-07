@@ -14,7 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrl: './discounts-page.component.scss'
 })
 export class DiscountsPageComponent implements OnInit{
-  customers: any = null
+  discounts: any = null
   discountService: DiscountsService
 
 
@@ -29,7 +29,7 @@ export class DiscountsPageComponent implements OnInit{
   loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {
     this.discountService.getDiscounts({ search: searchTerm, pagesize: pageSize, offset: offSet}).subscribe({
       next: (response) => {
-        this.customers = response
+        this.discounts = response
       },
       error: (error) => {
           this.errorHandler.handleError(error, 'discounts')
