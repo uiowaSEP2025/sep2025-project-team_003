@@ -18,10 +18,10 @@ class Job(models.Model):
     description = models.CharField(max_length=200, blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    requestor_city = models.CharField(max_length=50,validators=[isNonEmpty])
-    requestor_state = models.CharField(max_length=50,validators=[isNonEmpty,validate_state])
-    requestor_zip = models.CharField(max_length=10,validators=[isNonEmpty])
-    requestor_address = models.CharField(max_length=100,validators=[isNonEmpty])
+    requester_city = models.CharField(max_length=50,validators=[isNonEmpty])
+    requester_state = models.CharField(max_length=50,validators=[isNonEmpty,validate_state])
+    requester_zip = models.CharField(max_length=10,validators=[isNonEmpty])
+    requester_address = models.CharField(max_length=100,validators=[isNonEmpty])
 
     def __str__(self):
         return f"<Job, organization: {self.organization}, description: {self.description}>"
@@ -36,10 +36,10 @@ class Job(models.Model):
             'description': self.description,
             'customerName': self.customer.first_name + " " + self.customer.last_name,
             'customerID': self.customer.id,
-            'requestorAddress': self.requestor_address,
-            "requestorCity": self.requestor_city,
-            "requestorState": self.requestor_state,
-            "requestorZip": self.requestor_zip
+            'requesterAddress': self.requester_address,
+            "requesterCity": self.requester_city,
+            "requesterState": self.requester_state,
+            "requesterZip": self.requester_zip
         }
     
     def json_simplify(self):

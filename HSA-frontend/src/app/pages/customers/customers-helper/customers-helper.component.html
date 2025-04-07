@@ -1,0 +1,75 @@
+<h2 mat-dialog-title>
+  @switch (crudType) {
+    @case ('Update') {
+      Edit Customer
+    }
+    @case ('Create') {
+      Create Customer
+    }
+  }
+</h2>
+<mat-dialog-content>
+  <form>
+    <div>
+      <mat-form-field>
+        <mat-label>First Name</mat-label>
+        <input matInput
+               [formControl]="firstNameControl" [errorStateMatcher]="matcher"
+               placeholder="First Name">
+        @if (firstNameControl.hasError('required')) {
+          <mat-error>First Name is <strong>required</strong></mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field>
+        <mat-label>Last Name</mat-label>
+        <input matInput
+               [formControl]="lastNameControl" [errorStateMatcher]="matcher"
+               placeholder="Last Name">
+        @if (lastNameControl.hasError('required')) {
+          <mat-error>Last Name is <strong>required</strong></mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput
+               [formControl]="emailControl" [errorStateMatcher]="matcher"
+               placeholder="Email">
+        @if (emailControl.hasError('required')) {
+          <mat-error>Email is <strong>required</strong></mat-error>
+        }
+        @if (emailControl.hasError('email')) {
+          <mat-error>Email is <strong>invalid</strong></mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field>
+        <mat-label>Phone Number</mat-label>
+        <input matInput placeholder="Phone Number"
+               [formControl]="phoneControl">
+        @if (phoneControl.hasError('required')) {
+          <mat-error>Phone is <strong>required</strong></mat-error>
+        }
+        @if (phoneControl.hasError('invalidPhone')) {
+          <mat-error>Format is <strong>xxx-xxx-xxxx</strong></mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div>
+
+      <mat-form-field>
+        <mat-label>Add Notes</mat-label>
+        <textarea matInput placeholder=""
+                  [formControl]="notesControl"></textarea>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="onSubmit()">{{ crudType }}</button>
+  <button mat-raised-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

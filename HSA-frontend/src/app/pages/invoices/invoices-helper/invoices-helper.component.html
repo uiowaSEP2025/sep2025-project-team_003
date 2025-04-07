@@ -1,0 +1,19 @@
+<h2 mat-dialog-title>
+  @switch (crudType) {
+    @case ('Update') {
+      Edit Invoice
+    }
+    @case ('Create') {
+      Create Invoice
+    }
+  }
+</h2>
+<mat-dialog-content>
+  <form>
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="onSubmit()">{{ crudType }}</button>
+  <button mat-raised-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

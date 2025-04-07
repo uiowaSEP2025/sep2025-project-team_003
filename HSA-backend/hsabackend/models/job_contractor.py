@@ -15,6 +15,6 @@ class JobContractor(models.Model):
             'id': self.pk,
             'contractorID': self.contractor.pk,
             'contractorName': self.contractor.first_name + " " + self.contractor.last_name,
-            'contractorPhoneNo': self.contractor.phone,
+            'contractorPhone': self.contractor.phone,
             'contractorEmail': self.contractor.email
         }

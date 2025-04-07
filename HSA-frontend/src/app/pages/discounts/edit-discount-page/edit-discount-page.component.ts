@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
-import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
+import { GenericFormErrorStateMatcher } from '../../../utils/generic-form-error-state-matcher';
 import { MatButtonModule } from '@angular/material/button';
-import { DiscountsService } from '../../services/discount.service';
+import { DiscountsService } from '../../../services/discount.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ErrorHandlerService } from '../../services/error.handler.service';
+import { ErrorHandlerService } from '../../../services/error.handler.service';
 
 @Component({
   selector: 'app-edit-discount-page',
@@ -35,7 +35,7 @@ export class EditDiscountPageComponent implements OnInit{
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
       this.name = params["discount_name"]
-      
+
       this.percent = params['discount_percent'];
       this.nameControl.setValue(this.name);
       this.percentControl.setValue(this.parsePercentage(this.percent));

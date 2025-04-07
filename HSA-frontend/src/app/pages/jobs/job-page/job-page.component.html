@@ -7,12 +7,12 @@
       <h1>
         <span>Jobs</span>
       </h1>
-      <app-table-component 
-        editRedirect="/jobs/edit" 
-        [fetchedData]="jobs" 
-        [deleteRequest]="jobService.deleteJob.bind(jobService)" 
+      <app-table-component
+        [tableModel]="'jobs'"
+        [fetchedData]="jobs"
+        [deleteRequest]="jobService.deleteJob.bind(jobService)"
         [loadDataToTable]="this.loadDataToTable.bind(this)"
-        searchHint="Search by any keywords" 
+        searchHint="Search by any keywords"
         [hideValues]="['Id']"
         [width]="'auto'"
         [clickableRows]="true"

@@ -1,9 +1,13 @@
 export interface Job {
-  jobID: number;
-  organizationID: number;
-  customerID: number;
-  jobStatus: string;
-  jobStartDate: Date;
-  jobEndDate: Date;
-  jobDescription: string;
+ id: number
+ jobStatus: 'created' | 'in-progress' | 'completed'
+ startDate: Date
+ endDate: Date
+ description: string
+ customerName: string
+ customerID: number
+ requesterAddress: string
+ requesterCity: string
+ requesterState: string
+ requesterZip: string
 }

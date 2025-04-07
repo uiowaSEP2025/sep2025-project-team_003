@@ -17,19 +17,20 @@ class Request(models.Model):
     requestor_state = models.CharField(max_length=50,validators=[isNonEmpty,validate_state])
     requestor_zip = models.CharField(max_length=10,validators=[isNonEmpty])
     requestor_address = models.CharField(max_length=100,validators=[isNonEmpty])
-    requestor_phone_no = models.CharField(max_length=10, validators=[isValidPhone])
+    requestor_phone = models.CharField(max_length=10, validators=[isValidPhone])
     description = models.CharField(max_length=200, validators=[isNonEmpty])
     status = models.CharField(max_length=50, choices=status_choices, default="received") 
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     service = models.ManyToManyField(Service)
 
     def __str__(self):
-        return f"<Request, name: {self.requestor_name}, address: {self.requestor_address}>"
+        return f"<Request, name: {self.requestor_first_name} {self.requestor_last_name}, address: {self.requestor_address}>"
     
     def json(self):
         return {
             'id': self.id,
-            'requestor_name': self.requestor_name,
+            'requestor_first_name': self.requestor_first_name,
+            'requestor_last_name': self.requestor_last_name,
             'requestor_email': self.requestor_email,
             'requestor_city': self.requestor_city,
             'requestor_state': self.requestor_state,

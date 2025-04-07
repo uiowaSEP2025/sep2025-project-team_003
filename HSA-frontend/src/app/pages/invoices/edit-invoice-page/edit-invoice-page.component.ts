@@ -48,7 +48,7 @@ export class EditInvoicePageComponent implements OnInit {
   status!: 'issued' | 'created' | 'paid'// also serves as a form control
   initialStatus!: string
   tax!: number
-  readonly range: FormGroup<DateRange> = new FormGroup({
+  readonly range = new FormGroup<DateRange>({
     issued: new FormControl<Date | null>(null),
     due: new FormControl<Date | null>(null),
   });
@@ -135,8 +135,8 @@ export class EditInvoicePageComponent implements OnInit {
           tax: this.taxAmount.value.toString()
         }
         this.invoiceService.updateInvoice(this.invoiceID, data).subscribe(
-          {next: (response) => {
-            this.router.navigate(['/invoices']);
+          {next: () => {
+            void this.router.navigate(['/invoices']);
           },
           error: (error) => {
             this.errorHandler.handleError(error)
@@ -184,8 +184,8 @@ export class EditInvoicePageComponent implements OnInit {
       tax: this.taxAmount.value.toString()
     }
     this.invoiceService.updateInvoice(this.invoiceID, data).subscribe(
-      {next: (response) => {
-        this.router.navigate(['/invoices']);
+      {next: () => {
+        void this.router.navigate(['/invoices']);
       },
       error: (error) => {
         this.errorHandler.handleError(error)

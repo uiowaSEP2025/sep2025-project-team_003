@@ -7,10 +7,11 @@ import { CustomerService } from '../../../services/customer.service';
 import { ErrorHandlerService } from '../../../services/error.handler.service';
 import { CommonModule } from '@angular/common';
 import { LoadingFallbackComponent } from '../../../components/loading-fallback/loading-fallback.component';
+import {PageTemplateComponent} from '../../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-customers-page',
-  imports: [TableComponentComponent, MatButtonModule, MatIconModule, CommonModule, LoadingFallbackComponent],
+  imports: [TableComponentComponent, MatButtonModule, MatIconModule, CommonModule, LoadingFallbackComponent, PageTemplateComponent],
   templateUrl: './customers-page.component.html',
   styleUrl: './customers-page.component.scss'
 })

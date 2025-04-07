@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>
+  @switch (crudType) {
+    @case ('Update') {
+      Edit Material
+    }
+    @case ('Create') {
+      Create Material
+    }
+  }
+</h2>
+<mat-dialog-content>
+  <form>
+      <div>
+
+      <mat-form-field>
+      <mat-label>Material Name</mat-label>
+      <input matInput
+             [formControl]="nameControl" [errorStateMatcher]="matcher"
+             [placeholder]="'Material Name'">
+      @if (nameControl.hasError('required')) {
+          <mat-error>Material name is <strong>required</strong></mat-error>
+      }
+      </mat-form-field>
+      </div>
+      <div>
+      <mat-form-field>
+          <mat-label>Material Description</mat-label>
+          <input matInput
+                 [formControl]="descriptionControl"
+                 [placeholder]="'Description'">
+      </mat-form-field>
+      </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="onSubmit()">{{ crudType }}</button>
+  <button mat-raised-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

@@ -22,8 +22,13 @@ def get_customer_table_data(request):
         offset = int(offset)
     except:
         return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
-    
-    offset = offset * pagesize
+    count = Customer.objects.filter(organization=org.pk).filter(
+        Q(first_name__icontains=search) | Q(last_name__icontains=search)
+    ).count() if search else Customer.objects.filter(organization=org.pk).count()
+    if count < pagesize:
+        offset = 0
+    else:
+        offset = offset * pagesize
     customers = Customer.objects.filter(organization=org.pk).filter(
         Q(first_name__icontains=search) | Q(last_name__icontains=search) 
     )[offset:offset + pagesize] if search else Customer.objects.filter(organization=org.pk)[offset:offset + pagesize]
@@ -31,10 +36,6 @@ def get_customer_table_data(request):
     data = []
     for cust in customers:
         data.append(cust.json())
-    
-    count = Customer.objects.filter(organization=org.pk).filter(
-        Q(first_name__icontains=search) | Q(last_name__icontains=search)
-    ).count() if search else Customer.objects.filter(organization=org.pk).count()
 
     res = {
         'data': data,
@@ -79,7 +80,7 @@ def get_customer_excluded_table_data(request):
     res = {
         'data': data,
         'totalCount': count
-    }    
+    }
     return Response(res, status=status.HTTP_200_OK)
     
 @api_view(["POST"])
@@ -87,16 +88,16 @@ def create_customer(request):
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
     org = Organization.objects.get(owning_User=request.user)
-    first_name = request.data.get('firstn', '')
-    last_name = request.data.get('lastn', '')
+    first_name = request.data.get('first_name', '')
+    last_name = request.data.get('last_name', '')
     email = request.data.get('email', '')
-    phone_no = request.data.get('phoneno', '').replace("-","")
+    phone = request.data.get('phone', '').replace("-","")
     notes = request.data.get('notes', '')
     customer = Customer(
         first_name = first_name,
         last_name = last_name,
         email = email,
-        phone_no = phone_no,
+        phone = phone,
         notes = notes,
         organization = org,
     )
@@ -116,15 +117,15 @@ def edit_customer(request, id):
     if not customer_qs.exists():
         return Response({"message": "The customer does not exist"}, status=status.HTTP_404_NOT_FOUND)
     customer = customer_qs[0]
-    first_name = request.data.get('firstn', '')
-    last_name = request.data.get('lastn', '')
+    first_name = request.data.get('first_name', '')
+    last_name = request.data.get('last_name', '')
     email = request.data.get('email', '')
-    phone_no = request.data.get('phoneno', '')
+    phone = request.data.get('phone', '')
     notes = request.data.get('notes', '')
     customer.first_name = first_name
     customer.last_name = last_name
     customer.email = email
-    customer.phone_no = phone_no.replace("-",'')
+    customer.phone = phone.replace("-", '')
     customer.notes = notes
     
     try:

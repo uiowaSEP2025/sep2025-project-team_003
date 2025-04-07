@@ -11,12 +11,11 @@ import {MatInput, MatLabel} from '@angular/material/input';
 import {MatError, MatFormField} from '@angular/material/form-field';
 import {MatButton} from '@angular/material/button';
 import {GenericFormErrorStateMatcher} from '../../../utils/generic-form-error-state-matcher';
-import {CreateCustomerPageComponent} from '../../customers/create-customer-page/create-customer-page.component';
 import {ContractorService} from '../../../services/contractor.service';
-import {ActivatedRoute, Router} from '@angular/router';
 import {ErrorHandlerService} from '../../../services/error.handler.service';
 import {Contractor} from '../../../interfaces/contractor.interface';
 import {phoneValidator} from '../../../utils/phone-validator';
+import {CreateContractorPageComponent} from '../create-contractors-page/create-contractor-page.component';
 
 @Component({
   selector: 'app-contractors-helper',
@@ -51,10 +50,11 @@ export class ContractorsHelperComponent implements OnInit {
       this.phoneControl.valid;
   }
 
-  constructor(private activatedRoute: ActivatedRoute, public dialogRef: MatDialogRef<CreateCustomerPageComponent>, private contractorService: ContractorService, private router: Router, private errorHandler: ErrorHandlerService) {
+  constructor(public dialogRef: MatDialogRef<CreateContractorPageComponent>,
+              private contractorService: ContractorService,
+              private errorHandler: ErrorHandlerService) {
   }
 
-  email!: string
   @Input() contractor!: Contractor;
 
   ngOnInit() {

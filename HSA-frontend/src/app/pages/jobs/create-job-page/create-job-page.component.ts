@@ -57,7 +57,6 @@ export class CreateJobPageComponent implements OnInit {
   selectedContractors: any = []
   selectedContractorsIsError = false
   materialInputFields: InputFieldDictionary[] = []
-  materialInputFieldsIsError = false
   status = 'created'
   description = ''
   address = ''
@@ -212,8 +211,7 @@ export class CreateJobPageComponent implements OnInit {
   }
 
   onSubmit() {
-    let validDates: any
-    validDates = this.datePicker.validate()
+    const validDates = this.datePicker.validate()
 
     if (this.selectedCustomers.length === 0) {
       this.selectedCustomersIsError = true

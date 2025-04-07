@@ -6,19 +6,18 @@
       <h1>
         <span>Contractors</span>
       </h1>
-      <app-table-component 
-        editRedirect="/discounts/edit" 
+      <app-table-component
+        [tableModel]="'discounts'"
         [fetchedData]="discounts"
         [deleteRequest]="this.discountService.deleteDiscount.bind(discountService)"
-        editRedirect="discounts/edit"
         [loadDataToTable]="this.loadDataToTable.bind(this)"
         [hideValues]="['Id']"
         searchHint="Search by discount name"
         [headers]="['Discount Name', 'Discount Percent', 'Phone Number']"
       ></app-table-component>
-        
 
-    <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">  
+
+    <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
       <button mat-fab extended class="m-10" id="add-discount-button" (click)="navigateToPage('discounts/create')">
         <mat-icon>note_add</mat-icon>
         Add a Discount

@@ -25,18 +25,24 @@ def get_contractor_table_data(request):
     except:
         return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
     
-    offset = offset * pagesize
+
+    count = Contractor.objects.filter(organization=org.pk).filter(
+        Q(first_name__icontains=search) | Q(last_name__icontains=search)
+    ).count() if search else Contractor.objects.filter(organization=org.pk).count()
+    if count < pagesize:
+        offset = 0
+    else:
+        offset = offset * pagesize
     contractors = Contractor.objects.filter(organization=org.pk).filter(
         Q(first_name__icontains=search) | Q(last_name__icontains=search) 
     )[offset:offset + pagesize] if search else Contractor.objects.filter(organization=org.pk)[offset:offset + pagesize]
 
     data = []
-    for cust in contractors:
-        data.append(cust.json())
+    for contractor in contractors:
+        data.append(contractor.json())
     
-    count = Contractor.objects.filter(organization=org.pk).filter(
-        Q(first_name__icontains=search) | Q(last_name__icontains=search)
-    ).count() if search else Contractor.objects.filter(organization=org.pk).count()
+
+
 
     res = {
         'data': data,

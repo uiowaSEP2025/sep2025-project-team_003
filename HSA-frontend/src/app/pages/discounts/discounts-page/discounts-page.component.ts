@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { TableComponentComponent } from '../../components/table-component/table-component.component';
+import { TableComponentComponent } from '../../../components/table-component/table-component.component';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
-import { DiscountsService } from '../../services/discount.service';
-import { ErrorHandlerService } from '../../services/error.handler.service';
+import { LoadingFallbackComponent } from '../../../components/loading-fallback/loading-fallback.component';
+import { DiscountsService } from '../../../services/discount.service';
+import { ErrorHandlerService } from '../../../services/error.handler.service';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({

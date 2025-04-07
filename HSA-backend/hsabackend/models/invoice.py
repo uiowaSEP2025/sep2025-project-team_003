@@ -35,6 +35,7 @@ class Invoice(models.Model):
             "status": self.status,
             "due_date": format_maybe_null_date(self.due_date),
             "issuance_date": format_maybe_null_date(self.issuance_date),
-            "customer": f"{self.customer.first_name}, {self.customer.last_name}",
+            "customer_id": {self.customer.id},
+            "customer_name": f"{self.customer.first_name}, {self.customer.last_name}",
             "tax": str(self.tax)
         }

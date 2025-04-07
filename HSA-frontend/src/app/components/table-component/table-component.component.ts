@@ -32,6 +32,12 @@ import {LoadingFallbackComponent} from '../loading-fallback/loading-fallback.com
 import {
   EditContractorsPageComponent
 } from '../../pages/contractors/edit-contractors-page/edit-contractors-page.component';
+import {EditCustomerPageComponent} from '../../pages/customers/edit-customer-page/edit-customer-page.component';
+import {EditMaterialPageComponent} from '../../pages/materials/edit-material-page/edit-material-page.component';
+import {EditJobPageComponent} from '../../pages/jobs/edit-job-page/edit-job-page.component';
+import {EditServicePageComponent} from '../../pages/services/edit-service-page/edit-service-page.component';
+import {EditInvoicePageComponent} from '../../pages/invoices/edit-invoice-page/edit-invoice-page.component';
+import {EditDiscountPageComponent} from '../../pages/discounts/edit-discount-page/edit-discount-page.component';
 
 interface OpenEditDialogParams {
   element: any;
@@ -139,7 +145,66 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
         dialogRef.componentInstance.contractor.email = element.email;
         dialogRef.componentInstance.contractor.phone = element.phone;
         void dialogRef.afterClosed()
-      }
+      } break;
+      case 'customers':
+        { const dialogRef = this.dialog.open(EditCustomerPageComponent)
+          dialogRef.componentInstance.customer.customerID = element.id;
+          dialogRef.componentInstance.customer.email = element.email;
+          dialogRef.componentInstance.customer.phone = element.phone;
+          dialogRef.componentInstance.customer.notes = element.notes;
+          dialogRef.componentInstance.customer.firstName = element.first_name;
+          dialogRef.componentInstance.customer.lastName = element.last_name;
+          void dialogRef.afterClosed()
+        } break;
+      case 'materials':
+      { const dialogRef = this.dialog.open(EditMaterialPageComponent)
+        dialogRef.componentInstance.material.materialID = element.id;
+        dialogRef.componentInstance.material.materialName = element.material_name;
+        dialogRef.componentInstance.material.materialDescription = element.material_description;
+        void dialogRef.afterClosed()
+      } break;
+      case 'jobs':
+      { const dialogRef = this.dialog.open(EditJobPageComponent)
+       dialogRef.componentInstance.job.id=element.id
+       dialogRef.componentInstance.job.jobStatus=element.jobStatus
+       dialogRef.componentInstance.job.startDate=element.startDate
+       dialogRef.componentInstance.job.endDate=element.endDate
+       dialogRef.componentInstance.job.description=element.description
+       dialogRef.componentInstance.job.customerName=element.customerName
+       dialogRef.componentInstance.job.customerID=element.customerID
+       dialogRef.componentInstance.job.requesterAddress=element.requestorAddress
+       dialogRef.componentInstance.job.requesterCity=element.requestorCity
+       dialogRef.componentInstance.job.requesterState=element.requestorState
+       dialogRef.componentInstance.job.requesterZip=element.requestorZip
+        void dialogRef.afterClosed()
+      } break;
+      case 'services':
+      { const dialogRef = this.dialog.open(EditServicePageComponent)
+        dialogRef.componentInstance.service.serviceID = element.id;
+        dialogRef.componentInstance.service.serviceName = element.service_name;
+        dialogRef.componentInstance.service.serviceDescription = element.service_description;
+        void dialogRef.afterClosed()
+      } break;
+      case 'invoices':
+      { const dialogRef = this.dialog.open(EditInvoicePageComponent)
+        dialogRef.componentInstance.invoice.invoiceID = element.id;
+        dialogRef.componentInstance.invoice.customerID = element.customer_id;
+        dialogRef.componentInstance.invoice.customerName = element.customer_name;
+        dialogRef.componentInstance.invoice.invoiceStatus = element.status;
+        dialogRef.componentInstance.invoice.invoiceDueDate = element.due_date;
+        dialogRef.componentInstance.invoice.invoiceDate = element.issuance_date;
+        dialogRef.componentInstance.invoice.invoiceTax = element.tax;
+
+        void dialogRef.afterClosed()
+      } break;
+      case 'discounts':
+        { const dialogRef = this.dialog.open(EditDiscountPageComponent)
+          dialogRef.componentInstance.discount.id = element.id;
+          dialogRef.componentInstance.discount.discountName = element.discount_name;
+          dialogRef.componentInstance.discount.discountPercent = element.discount_percent;
+
+
+        }
     }
 
   }

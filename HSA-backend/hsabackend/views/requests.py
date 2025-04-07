@@ -68,16 +68,16 @@ def approve_request(request, id):
         first_name = the_req.requestor_first_name,
         last_name = the_req.requestor_last_name,
         email = the_req.requestor_email,
-        phone_no = the_req.requestor_phone_no,
+        phone = the_req.requestor_phone,
         notes = "",
         organization = org
     )
 
     new_job = Job(
-        requestor_city = the_req.requestor_city,
-        requestor_state = the_req.requestor_state,
-        requestor_zip = the_req.requestor_zip,
-        requestor_address = the_req.requestor_address,
+        requester_city = the_req.requestor_city,
+        requester_state = the_req.requestor_state,
+        requester_zip = the_req.requestor_zip,
+        requester_address = the_req.requestor_address,
         description = "",
         customer = cust
     )

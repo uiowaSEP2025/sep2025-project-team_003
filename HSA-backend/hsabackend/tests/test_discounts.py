@@ -47,7 +47,7 @@ class DiscountTableTest(APITestCase):
         
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    @patch('hsabackend.views.discounts.DiscountType.objects.filter')
+    @patch('hsabackend.views.discounts.Discount.objects.filter')
     @patch('hsabackend.views.discounts.Organization.objects.get')
     def test_get_discount_table_data_bad_data(self,org,discounts):
         mock_user = Mock(spec=User)
@@ -79,7 +79,7 @@ class CreateDiscountTest(APITestCase):
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
     
     @patch('hsabackend.views.discounts.Organization.objects.get')
-    @patch('hsabackend.views.discounts.DiscountType')
+    @patch('hsabackend.views.discounts.Discount')
     def test_create_disount_validation_failed(self,discnt, org):
         org.return_value = Organization()
         mock_discnt = Mock()
@@ -97,7 +97,7 @@ class CreateDiscountTest(APITestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @patch('hsabackend.views.discounts.Organization.objects.get')
-    @patch('hsabackend.views.discounts.DiscountType')
+    @patch('hsabackend.views.discounts.Discount')
     def test_create_disount_create_ok(self,discnt, org):
         org.return_value = Organization()
         mock_discnt = Mock()
@@ -131,7 +131,7 @@ class EditDiscountTest(APITestCase):
         
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    @patch('hsabackend.views.discounts.DiscountType.objects.filter')
+    @patch('hsabackend.views.discounts.Discount.objects.filter')
     @patch('hsabackend.views.discounts.Organization.objects.get')
     def test_edit_not_exist(self,org,discnt):
         mock_user = Mock(spec=User)
@@ -149,7 +149,7 @@ class EditDiscountTest(APITestCase):
         
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    @patch('hsabackend.views.discounts.DiscountType.objects.filter')
+    @patch('hsabackend.views.discounts.Discount.objects.filter')
     @patch('hsabackend.views.discounts.Organization.objects.get')
     def test_edit_fails_validation(self,org,discnt):
         mock_user = Mock(spec=User)
@@ -175,7 +175,7 @@ class EditDiscountTest(APITestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-    @patch('hsabackend.views.discounts.DiscountType.objects.filter')
+    @patch('hsabackend.views.discounts.Discount.objects.filter')
     @patch('hsabackend.views.discounts.Organization.objects.get')
     def test_edit_ok(self,org,discnt):
         mock_user = Mock(spec=User)
@@ -212,7 +212,7 @@ class DeleteDiscountTest(APITestCase):
         
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
     
-    @patch('hsabackend.views.discounts.DiscountType.objects.filter')
+    @patch('hsabackend.views.discounts.Discount.objects.filter')
     @patch('hsabackend.views.discounts.Organization.objects.get')
     def test_delete_not_found(self, org, discnt):
         org.return_value = Organization()
@@ -231,7 +231,7 @@ class DeleteDiscountTest(APITestCase):
         
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    @patch('hsabackend.views.discounts.DiscountType.objects.filter')
+    @patch('hsabackend.views.discounts.Discount.objects.filter')
     @patch('hsabackend.views.discounts.Organization.objects.get')
     def test_delete_ok(self, org, discnt):
         org.return_value = Organization()

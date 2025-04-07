@@ -8,7 +8,7 @@ from hsabackend.models.job import Job
 from datetime import date
 from hsabackend.models.quote import Quote
 from decimal import Decimal
-from hsabackend.models.discount_type import DiscountType
+from hsabackend.models.discount import Discount
 from hsabackend.models.invoice import Invoice
 
 def add_users():
@@ -50,7 +50,7 @@ def add_customers(org1,org2):
         first_name=f"Firstorg1",
         last_name=f"Lastorg1",
         email=f"custorg1@example.com",
-        phone_no=f"1234567890",
+        phone=f"1234567890",
         notes=f"Sample notes for user customer org1",
         organization=org1
     )
@@ -58,7 +58,7 @@ def add_customers(org1,org2):
         first_name=f"Firstorg2",
         last_name=f"Lastorg2",
         email=f"custorg1@example.com",
-        phone_no=f"0987654321",
+        phone=f"0987654321",
         notes=f"Sample notes for user customer org2",
         organization=org2
     )
@@ -92,7 +92,7 @@ def add_jobs(c1,o1):
     return j1,j2
 
 def add_discount(o1):
-    d = DiscountType.objects.create(
+    d = Discount.objects.create(
         discount_name="Holiday Sale",
         discount_percent=Decimal(20.00),
         organization=o1

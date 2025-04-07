@@ -7,7 +7,7 @@ import { CreateCustomerPageComponent } from './pages/customers/create-customer-p
 import { EditCustomerPageComponent } from './pages/customers/edit-customer-page/edit-customer-page.component';
 import { ContractorsPageComponent } from './pages/contractors/contractors-page/contractors-page.component';
 import { EditContractorsPageComponent } from './pages/contractors/edit-contractors-page/edit-contractors-page.component';
-import { CreateContractorsPageComponent } from './pages/contractors/create-contractors-page/create-contractors-page.component';
+import { CreateContractorPageComponent } from './pages/contractors/create-contractors-page/create-contractor-page.component';
 import { SignupPageComponent } from './pages/signup-page/signup-page.component';
 import { CreateServicePageComponent } from './pages/services/create-service-page/create-service-page.component';
 import { EditServicePageComponent } from './pages/services/edit-service-page/edit-service-page.component';
@@ -23,9 +23,9 @@ import { JobPageComponent } from './pages/jobs/job-page/job-page.component';
 import { ViewJobPageComponent } from './pages/jobs/view-job-page/view-job-page.component';
 import { CreateJobPageComponent } from './pages/jobs/create-job-page/create-job-page.component';
 import { EditJobPageComponent } from './pages/jobs/edit-job-page/edit-job-page.component';
-import { DiscountsPageComponent } from './pages/discounts-page/discounts-page.component';
-import { CreateDiscountsPageComponent } from './pages/create-discounts-page/create-discounts-page.component';
-import { EditDiscountPageComponent } from './pages/edit-discount-page/edit-discount-page.component';
+import { DiscountsPageComponent } from './pages/discounts/discounts-page/discounts-page.component';
+import { CreateDiscountsPageComponent } from './pages/discounts/create-discounts-page/create-discounts-page.component';
+import { EditDiscountPageComponent } from './pages/discounts/edit-discount-page/edit-discount-page.component';
 
 export const routes: Routes = [
   {
@@ -74,7 +74,7 @@ export const routes: Routes = [
     path: 'contractors/edit/:id', component: EditContractorsPageComponent
   },
   {
-    path: 'contractors/create', component: CreateContractorsPageComponent
+    path: 'contractors/create', component: CreateContractorPageComponent
   },
   {
     path: 'jobs', component: JobPageComponent

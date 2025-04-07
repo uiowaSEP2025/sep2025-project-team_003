@@ -1,5 +1,5 @@
 from django.db import models
-from hsabackend.models.discount_type import DiscountType
+from hsabackend.models.discount import Discount
 from hsabackend.models.job import Job
 from hsabackend.models.invoice import Invoice
 from hsabackend.utils.string_formatters import truncate_description_for_table, format_address, format_date_to_iso_string
@@ -18,7 +18,7 @@ class Quote(models.Model):
     material_subtotal = models.DecimalField(max_digits=9, decimal_places=2)
     total_price = models.DecimalField(max_digits=9, decimal_places=2) # undiscounted price
     jobID = models.OneToOneField(Job, on_delete= models.CASCADE)
-    discount_type = models.ForeignKey(DiscountType, null=True, on_delete=models.SET_NULL)
+    discount_type = models.ForeignKey(Discount, null=True, on_delete=models.SET_NULL)
     invoice = models.ForeignKey(Invoice, on_delete=models.SET_NULL, null=True)
     
     def __str__(self):

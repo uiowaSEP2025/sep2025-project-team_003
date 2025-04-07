@@ -6,9 +6,9 @@ import {ContractorsHelperComponent} from '../contractors-helper/contractors-help
 @Component({
   selector: 'app-create-contractors-page',
   imports: [MatInputModule, ReactiveFormsModule, FormsModule, ContractorsHelperComponent],
-  templateUrl: './create-contractors-page.component.html',
-  styleUrl: './create-contractors-page.component.scss'
+  templateUrl: './create-contractor-page.component.html',
+  styleUrl: './create-contractor-page.component.scss'
 })
-export class CreateContractorsPageComponent {
+export class CreateContractorPageComponent {
 
 }

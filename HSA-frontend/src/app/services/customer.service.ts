@@ -7,26 +7,26 @@ import { Customer, CustomerParams } from '../interfaces/customer.interface';
 import { TableApiResponse } from '../interfaces/api-responses/table.api.interface';
 
 interface CustomerCreatePostData {
-  firstn: string | null
-  lastn: string | null
+  first_name: string | null
+  last_name: string | null
   email: string | null
-  phoneno: string | null
+  phone: string | null
   notes: string | null
 }
 
 interface CustomerEditPostData {
   id: number | null,
-  firstn: string | null
-  lastn: string | null
+  first_name: string | null
+  last_name: string | null
   email: string | null
-  phoneno: string | null
+  phone: string | null
   notes: string | null
 }
 
 interface CustomerDeletePostData {
   id: number | null,
-  firstn: string | null
-  lastn: string | null
+  first_name: string | null
+  last_name: string | null
 }
 
 @Injectable({
@@ -38,11 +38,11 @@ export class CustomerService {
   private apiCreateUrl = `${environment.apiUrl}/api/create/customer`;
   private apiEditUrl = `${environment.apiUrl}/api/edit/customer`;
   private apiDeleteUrl = `${environment.apiUrl}/api/delete/customer`;
-  responses: any[]  = []
+  responses: Customer[]  = []
 
   constructor(private http: HttpClient) {}
 
-  public getCustomer(params?: Record<string, string | number>): Observable<StandardApiResponse> {
+  public getCustomer(params?: Record<string, string | number>): Observable<TableApiResponse<Customer>> {
     let httpParams = new HttpParams();
 
     // Add query parameters
@@ -52,19 +52,19 @@ export class CustomerService {
       })
     }
 
-    return this.http.get<StandardApiResponse>(this.apiGetUrl, { params: httpParams });
+    return this.http.get<TableApiResponse<Customer>>(this.apiGetUrl, { params: httpParams });
   }
 
   public getExcludedCustomer(params?: CustomerParams): Observable<TableApiResponse<Customer>> {
       let httpParams = new HttpParams();
-  
+
       // Add query parameters
       if (params?.excludeIDs) {
         params.excludeIDs.forEach(id => {
           httpParams = httpParams.append('excludeIDs', id.toString());
         });
       }
-  
+
       if (params) {
         Object.keys(params).forEach(key => {
           if (key !== 'excludeIDs') {
@@ -75,16 +75,17 @@ export class CustomerService {
           }
         });
       }
-  
+
       return this.http.get<TableApiResponse<Customer>>(this.apiGetExcludedUrl, { params: httpParams });
     }
-  
+
 
   public createCustomer(data:CustomerCreatePostData): Observable<StandardApiResponse> {
     return this.http.post<StandardApiResponse>(this.apiCreateUrl, data);
   }
 
   public editCustomer(data:CustomerEditPostData): Observable<StandardApiResponse> {
+    console.log(data);
     return this.http.post<StandardApiResponse>(this.apiEditUrl + `/${data.id}`, data);
   }
 

@@ -4,8 +4,9 @@ import {MatFabButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatDialog} from '@angular/material/dialog';
 import {
-  CreateContractorsPageComponent
-} from '../../pages/contractors/create-contractors-page/create-contractors-page.component';
+  CreateContractorPageComponent
+} from '../../pages/contractors/create-contractors-page/create-contractor-page.component';
+import {CreateCustomerPageComponent} from '../../pages/customers/create-customer-page/create-customer-page.component';
 
 @Component({
   selector: 'app-page-template',
@@ -24,9 +25,14 @@ export class PageTemplateComponent {
   openDialog() {
     switch (this.title) {
       case 'Contractors':
-        { const dialogRef = this.dialog.open(CreateContractorsPageComponent)
+        { const dialogRef = this.dialog.open(CreateContractorPageComponent)
         void dialogRef.afterClosed()
         }
+        break;
+      case 'Customers':
+      { const dialogRef = this.dialog.open(CreateCustomerPageComponent)
+        void dialogRef.afterClosed()
+      }
     }
   }
 
