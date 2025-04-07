@@ -17,7 +17,7 @@ class MockRouter {
 }
 
 
-fdescribe('EditDiscountPageComponent', () => {
+describe('EditDiscountPageComponent', () => {
   let component: EditDiscountPageComponent;
   let fixture: ComponentFixture<EditDiscountPageComponent>;
   let httpMock: HttpTestingController;
