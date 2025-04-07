@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StringFormatter } from '../../utils/string-formatter';
 import { ErrorHandlerService } from '../../services/error.handler.service';
@@ -24,8 +24,6 @@ import { AddConfirmDialogComponentComponent } from '../../components/add-confirm
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CreateTemplateConfirmDialogComponentComponent } from '../../components/create-template-confirm-dialog-component/create-template-confirm-dialog-component.component';
 import { JobTemplateService } from '../../services/jobTemplate.service';
-
-
 
 @Component({
   selector: 'app-create-job-page',
@@ -152,7 +150,31 @@ export class CreateJobPageComponent {
 
     firstDialogRef.afterClosed().subscribe(result => {
       if (result.length !== 0) {
-        console.log(result)
+        let data = result.selectedItems[0];
+        
+        this.jobForm.patchValue({
+          jobDescription: data.jobDescription
+        });
+      
+        this.services.services = []
+        data.services.services.forEach((element: { [x: string]: any; }) => {
+          this.services = { services: [...this.services.services, element] };
+        });
+      
+        this.selectedServices = result.selectedItems;
+
+        this.materials.materials = []
+        data.materials.materials.forEach((element: any) => {
+          this.materials = { materials: [...this.materials.materials, element] };
+        });
+
+        this.selectedMaterials = result.selectedItems;
+        this.onChangeUpdateButton();
+
+        this.snackBar.open('Job template applied successfully', '', {
+          duration: 3000
+        });
+        this.isAllowedTemplate = false
       }
     })
   }

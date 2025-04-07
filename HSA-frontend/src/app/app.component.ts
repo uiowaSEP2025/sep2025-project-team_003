@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import {HeaderComponent} from './layout/header/header.component';
 import {BodyComponent} from './layout/body/body.component';
 import {FooterComponent} from './layout/footer/footer.component';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -11,4 +13,12 @@ import {FooterComponent} from './layout/footer/footer.component';
 })
 export class AppComponent {
   title = 'HSA-frontend';
+
+  constructor(private router: Router) {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
 }

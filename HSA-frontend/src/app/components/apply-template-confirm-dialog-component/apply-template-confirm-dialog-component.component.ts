@@ -35,7 +35,6 @@ export class ApplyTemplateConfirmDialogComponentComponent implements OnInit {
     this.jobTemplateService.getSpecificJobTemplateData(this.templateID).subscribe({
       next: (response) => {
         this.jobTemplateData = response
-        console.log(this.jobTemplateData.data['name'])
       },
       error: (error) => {
         this.errorHandler.handleError(error);
