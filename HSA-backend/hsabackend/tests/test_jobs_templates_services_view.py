@@ -11,7 +11,6 @@ from django.db.models import QuerySet
 from django.db.models import Q
 from hsabackend.models.service import Service
 from hsabackend.models.job_template import JobTemplate
-from hsabackend.models.job_template_service import JobTemplateService
 from django.core.exceptions import ValidationError
 
 class ServiceViewTest(APITestCase):

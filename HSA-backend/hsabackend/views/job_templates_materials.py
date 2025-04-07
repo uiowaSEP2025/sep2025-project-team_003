@@ -2,7 +2,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from hsabackend.models.organization import Organization
-from hsabackend.models.job_template_material import JobTemplateMaterial
 from hsabackend.models.job_template import JobTemplate
 from hsabackend.models.material import Material
 from django.core.exceptions import ValidationError

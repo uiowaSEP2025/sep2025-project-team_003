@@ -6,7 +6,6 @@ from hsabackend.models.organization import Organization
 from hsabackend.models.customer import Customer
 from hsabackend.models.job import Job
 from datetime import date
-from hsabackend.models.quote import Quote
 from decimal import Decimal
 from hsabackend.models.discount import Discount
 from hsabackend.models.invoice import Invoice
@@ -72,10 +71,10 @@ def add_jobs(c1,o1):
         description="description j1",
         organization=o1,
         customer=c1,
-        requestor_city = "Iowa City",
-        requestor_state = "Iowa",
-        requestor_zip = "52240",
-        requestor_address = "2 W Washington St"
+        job_city = "Iowa City",
+        job_state = "Iowa",
+        job_zip = "52240",
+        job_address = "2 W Washington St"
     )
     j2 = Job.objects.create(
         job_status='completed',
@@ -84,10 +83,10 @@ def add_jobs(c1,o1):
         description="description j2",
         organization=o1,
         customer=c1,
-        requestor_city = "Iowa City",
-        requestor_state = "Iowa",
-        requestor_zip = "52240",
-        requestor_address = "2 W Washington St"
+        job_city = "Iowa City",
+        job_state = "Iowa",
+        job_zip = "52240",
+        job_address = "2 W Washington St"
     )
     return j1,j2
 
@@ -100,37 +99,20 @@ def add_discount(o1):
     return d
 
 
-def add_quotes(j1,j2, d1):
-    q1 = Quote.objects.create(
-        issuance_date=date(2025, 3, 20),
-        due_date=date(2025, 3, 27),
-        status="accepted",
-        material_subtotal=Decimal(100.00),
-        total_price=Decimal(200),
-        jobID=j1,
-        discount_type = d1)
-    q2 = Quote.objects.create(
-        issuance_date=date(2025, 3, 20),
-        due_date=date(2025, 3, 27),
-        status="accepted",
-        material_subtotal=Decimal(100.00),
-        total_price=Decimal(200),
-        jobID=j2,
-        discount_type = None)
-    return q1,q2
     
-def add_invoice(q1:Quote,q2:Quote,c1):
+def add_invoice(c1, jobs, discounts):
     inv = Invoice.objects.create(
         issuance_date=date(2025, 3, 20),
         due_date=date(2025, 3, 27),
         status = "paid",
         tax = Decimal(0.10),
         customer = c1,
+        discounts = discounts
     )
-    q1.invoice = inv
-    q2.invoice = inv
-    q1.save()
-    q2.save()
+    inv.save()
+    for job in jobs:
+        job.invoice = inv
+        job.save()
 
 
 
@@ -148,8 +130,7 @@ class Command(BaseCommand):
             c1,c2 = add_customers(o1,o2)
             j1,j2 = add_jobs(c1,o1)
             d = add_discount(o1)
-            q1,q2 = add_quotes(j1,j2,d)
-            add_invoice(q1,q2,c1)
+            add_invoice(c1, [j1, j2], [d])
 
             
         except Exception as e:

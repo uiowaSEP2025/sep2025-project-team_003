@@ -1,18 +1,17 @@
-from rest_framework.test import APIRequestFactory
-from rest_framework import status
 from unittest.mock import MagicMock
 from unittest.mock import Mock
 from unittest.mock import patch
 from django.contrib.auth.models import User
-from hsabackend.views.jobs_contractors import delete_cached_job_contractor, get_job_contractor_table_data, create_job_contractor, delete_job_contractor
-from rest_framework.test import APITestCase
-from hsabackend.models.organization import Organization
 from django.db.models import QuerySet
-from django.db.models import Q
+from rest_framework import status
+from rest_framework.test import APIRequestFactory
+from rest_framework.test import APITestCase
 from hsabackend.models.contractor import Contractor
 from hsabackend.models.job import Job
-from hsabackend.models.job_contractor import JobContractor
-from django.core.exceptions import ValidationError
+from hsabackend.models.organization import Organization
+from hsabackend.views.jobs_contractors import delete_cached_job_contractor, get_job_contractor_table_data, \
+    create_job_contractor, delete_job_contractor
+
 
 class contractorViewTest(APITestCase):
     def test_get_job_contractor_table_data_unauth(self):

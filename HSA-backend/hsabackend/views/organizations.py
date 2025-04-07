@@ -32,18 +32,18 @@ def editOrganizationDetail(request):
     email = request.data.get('email', org.org_email)
     city = request.data.get('city', org.org_city)
     phone = request.data.get('phone', org.org_phone)
-    requestor_state = request.data.get('requestor_state', org.org_requestor_state)
-    requestor_zip = request.data.get('requestor_zip', org.org_requestor_zip)
-    requestor_address = request.data.get('requestor_address', org.org_requestor_address)
+    requestor_state = request.data.get('requestor_state', org.org_requester_state)
+    requestor_zip = request.data.get('requestor_zip', org.org_requester_zip)
+    requestor_address = request.data.get('requestor_address', org.org_requester_address)
     ownerFn = request.data.get('ownerFn', org.org_owner_first_name)
     ownerLn = request.data.get('ownerLn', org.org_owner_last_name)
     
     org.org_name = name
     org.org_email = email
     org.org_city = city
-    org.org_requestor_state = requestor_state
-    org.org_requestor_zip = requestor_zip
-    org.org_requestor_address = requestor_address
+    org.org_requester_state = requestor_state
+    org.org_requester_zip = requestor_zip
+    org.org_requester_address = requestor_address
     org.org_phone = phone
     org.org_owner_first_name = ownerFn
     org.org_owner_last_name = ownerLn

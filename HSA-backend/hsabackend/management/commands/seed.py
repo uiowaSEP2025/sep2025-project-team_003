@@ -7,15 +7,14 @@ from hsabackend.models.contractor import Contractor
 from hsabackend.models.material import Material
 from django.contrib.auth.models import User
 from hsabackend.models.request import Request
-from hsabackend.models.job_service import JobService
-from hsabackend.models.job import Job
-from hsabackend.models.quote import Quote
+from hsabackend.models.job import Job, JobsServices, JobsMaterials
 from hsabackend.models.discount import Discount
 from hsabackend.models.job_template import JobTemplate
 from hsabackend.models.subscription import Subscription
 from django.utils import timezone
+from datetime import timedelta
 import traceback
-from hsabackend.models.job_material import JobMaterial
+
 
 import random
 
@@ -53,9 +52,9 @@ class Command(BaseCommand):
                 org_name = "devorg",
                 org_email = "org@org.dev",
                 org_city = "Iowa City",
-                org_requestor_state = "Iowa",
-                org_requestor_zip = "52240",
-                org_requestor_address = "123 main st",
+                org_requester_state = "Iowa",
+                org_requester_zip = "52240",
+                org_requester_address = "123 main st",
                 org_owner_first_name = "Dev",
                 org_owner_last_name = "User",
                 owning_User = usr,
@@ -66,9 +65,9 @@ class Command(BaseCommand):
                 org_name = "testorg",
                 org_email = "org1@org1.dev",
                 org_city = "Iowa City",
-                org_requestor_state = "Iowa",
-                org_requestor_zip = "52240",
-                org_requestor_address = "123 main st",
+                org_requester_state = "Iowa",
+                org_requester_zip = "52240",
+                org_requester_address = "123 main st",
                 org_owner_first_name = "Test",
                 org_owner_last_name = "User",
                 owning_User = usr1,
@@ -77,15 +76,26 @@ class Command(BaseCommand):
             org1.save()
             
             service_data = [
-                {"name": "Window Cleaning", "description": "Cleaning of windows for residential and commercial properties."},
-                {"name": "Pest Control", "description": "Extermination and prevention of pests."},
-                {"name": "Handyman Services", "description": "General repair and maintenance services."},
+                {"name": "Window Cleaning",
+                 "description": "Cleaning of windows for residential and commercial properties.",
+                 "default_hourly_rate": "35.50"},
+                {"name": "Pest Control",
+                 "description": "Extermination and prevention of pests.",
+                 "default_hourly_rate": "45.00"},
+                {"name": "Handyman Services", "description": "General repair and maintenance services.",
+                 "default_hourly_rate": "150.00"},
                 ]
             
             service_data1 = [
-                {"name": "Window Cleaning", "description": "Cleaning of windows for residential and commercial properties. (test user)"},
-                {"name": "Pest Control", "description": "Extermination and prevention of pests. (test user)"},
-                {"name": "Handyman Services", "description": "General repair and maintenance services. (test user)"},
+                {"name": "Window Cleaning",
+                 "description": "Cleaning of windows for residential and commercial properties. (test user)",
+                 "default_hourly_rate": "35.50"},
+                {"name": "Pest Control",
+                 "description": "Extermination and prevention of pests. (test user)",
+                 "default_hourly_rate": "85.00"},
+                {"name": "Handyman Services",
+                 "description": "General repair and maintenance services. (test user)",
+                 "default_hourly_rate": "150.00"},
                 ]
 
             # Create services in a loop
@@ -93,7 +103,8 @@ class Command(BaseCommand):
                 s1 = Service.objects.create(
                     service_name=data["name"],
                     service_description=data["description"],
-                    organization=org
+                    organization=org,
+                    default_hourly_rate=data["default_hourly_rate"],
                 )
                 s1.save
 
@@ -101,7 +112,8 @@ class Command(BaseCommand):
                 s2 = Service.objects.create(
                     service_name=data["name"],
                     service_description=data["description"],
-                    organization=org1
+                    organization=org1,
+                    default_hourly_rate=data["default_hourly_rate"],
                 )
                 s2.save
 
@@ -176,94 +188,94 @@ class Command(BaseCommand):
 
             mock_requests = [
                 {
-                    "requestor_first_name": "John",
-                    "requestor_last_name": "Doe",
-                    "requestor_email": "johndoe@example.com",
-                    "requestor_city": "New York",
-                    "requestor_state": "NY",
-                    "requestor_zip": "10001",
-                    "requestor_address": "123 Main St",
-                    "requestor_phone": "1234567890",
+                    "requester_first_name": "John",
+                    "requester_last_name": "Doe",
+                    "requester_email": "johndoe@example.com",
+                    "requester_city": "New York",
+                    "requester_state": "NY",
+                    "requester_zip": "10001",
+                    "requester_address": "123 Main St",
+                    "requester_phone": "1234567890",
                     "description": "Request for plumbing services due to a leaky faucet.",
-                    "status": "received",
+                    "request_status": "received",
                 },
                 {
-                    "requestor_first_name": "Jane",
-                    "requestor_last_name": "Smith",
-                    "requestor_email": "janesmith@example.com",
-                    "requestor_city": "Los Angeles",
-                    "requestor_state": "CA",
-                    "requestor_zip": "90001",
-                    "requestor_address": "456 Elm St",
-                    "requestor_phone": "9876543210",
+                    "requester_first_name": "Jane",
+                    "requester_last_name": "Smith",
+                    "requester_email": "janesmith@example.com",
+                    "requester_city": "Los Angeles",
+                    "requester_state": "CA",
+                    "requester_zip": "90001",
+                    "requester_address": "456 Elm St",
+                    "requester_phone": "9876543210",
                     "description": "Request for electrical repair for faulty wiring.",
-                    "status": "approved",
+                    "request_status": "approved",
                 },
                 {
-                    "requestor_first_name": "Alice",
-                    "requestor_last_name": "Johnson",
-                    "requestor_email": "alicej@example.com",
-                    "requestor_city": "Chicago",
-                    "requestor_state": "IL",
-                    "requestor_zip": "60601",
-                    "requestor_address": "789 Oak St",
-                    "requestor_phone": "5551234567",
+                    "requester_first_name": "Alice",
+                    "requester_last_name": "Johnson",
+                    "requester_email": "alicej@example.com",
+                    "requester_city": "Chicago",
+                    "requester_state": "IL",
+                    "requester_zip": "60601",
+                    "requester_address": "789 Oak St",
+                    "requester_phone": "5551234567",
                     "description": "Request for HVAC maintenance before winter.",
-                    "status": "received",
+                    "request_status": "received",
                 },
                 {
-                    "requestor_first_name": "Bob",
-                    "requestor_last_name": "Brown",
-                    "requestor_email": "bobbrown@example.com",
-                    "requestor_city": "Houston",
-                    "requestor_state": "TX",
-                    "requestor_zip": "77001",
-                    "requestor_address": "101 Pine St",
-                    "requestor_phone": "5557654321",
+                    "requester_first_name": "Bob",
+                    "requester_last_name": "Brown",
+                    "requester_email": "bobbrown@example.com",
+                    "requester_city": "Houston",
+                    "requester_state": "TX",
+                    "requester_zip": "77001",
+                    "requester_address": "101 Pine St",
+                    "requester_phone": "5557654321",
                     "description": "Request for landscaping services for backyard renovation.",
-                    "status": "received",
+                    "request_status": "received",
                 },
                 {
-                    "requestor_first_name": "Charlie",
-                    "requestor_last_name": "Davis",
-                    "requestor_email": "charlied@example.com",
-                    "requestor_city": "Phoenix",
-                    "requestor_state": "AZ",
-                    "requestor_zip": "85001",
-                    "requestor_address": "202 Maple St",
-                    "requestor_phone": "5559876543",
+                    "requester_first_name": "Charlie",
+                    "requester_last_name": "Davis",
+                    "requester_email": "charlied@example.com",
+                    "requester_city": "Phoenix",
+                    "requester_state": "AZ",
+                    "requester_zip": "85001",
+                    "requester_address": "202 Maple St",
+                    "requester_phone": "5559876543",
                     "description": "Request for pest control due to ant infestation.",
-                    "status": "approved",
+                    "request_status": "approved",
                 },
             ]
 
             for data in mock_requests:
                 r = Request.objects.create(
-                    requestor_first_name=data["requestor_first_name"],
-                    requestor_last_name=data["requestor_last_name"],
-                    requestor_phone=data["requestor_phone"],
-                    requestor_email=data["requestor_email"],
-                    requestor_city=data["requestor_city"],
-                    requestor_state=data["requestor_state"],
-                    requestor_zip=data["requestor_zip"],
-                    requestor_address=data["requestor_address"],
+                    requester_first_name=data["requester_first_name"],
+                    requester_last_name=data["requester_last_name"],
+                    requester_phone=data["requester_phone"],
+                    requester_email=data["requester_email"],
+                    requester_city=data["requester_city"],
+                    requester_state=data["requester_state"],
+                    requester_zip=data["requester_zip"],
+                    requester_address=data["requester_address"],
                     description=data["description"],
-                    status=data["status"],
+                    request_status=data["request_status"],
                     organization=org,
                 )
                 r.save()
 
                 r = Request.objects.create(
-                    requestor_first_name=data["requestor_first_name"] + "test",
-                    requestor_last_name=data["requestor_last_name"] + "test",
-                    requestor_phone=data["requestor_phone"],
-                    requestor_email=data["requestor_email"],
-                    requestor_city=data["requestor_city"],
-                    requestor_state=data["requestor_state"],
-                    requestor_zip=data["requestor_zip"],
-                    requestor_address=data["requestor_address"],
+                    requester_first_name=data["requester_first_name"] + "test",
+                    requester_last_name=data["requester_last_name"] + "test",
+                    requester_phone=data["requester_phone"],
+                    requester_email=data["requester_email"],
+                    requester_city=data["requester_city"],
+                    requester_state=data["requester_state"],
+                    requester_zip=data["requester_zip"],
+                    requester_address=data["requester_address"],
                     description=data["description"],
-                    status=data["status"],
+                    request_status=data["request_status"],
                     organization=org1,
                 )
                 r.save()
@@ -282,28 +294,28 @@ class Command(BaseCommand):
                 j = Job.objects.create(
                     job_status=random.choice(['completed']),
                     start_date=timezone.now().date(),
-                    end_date=timezone.now().date() + timezone.timedelta(days=random.randint(1, 30)),
+                    end_date=timezone.now().date() + timedelta(days=random.randint(1, 30)),
                     description=random.choice(job_descriptions),
                     organization=org,
                     customer=customers[i],
-                    requestor_city = "Iowa City",
-                    requestor_state = "Iowa",
-                    requestor_zip = "52240",
-                    requestor_address = "2 W Washington St"
+                    job_city = "Iowa City",
+                    job_state = "Iowa",
+                    job_zip = "52240",
+                    job_address = "2 W Washington St"
                 )
                 j.save()
 
                 j = Job.objects.create(
                     job_status=random.choice(['created', 'completed']),
                     start_date=timezone.now().date(),
-                    end_date=timezone.now().date() + timezone.timedelta(days=random.randint(1, 30)),
+                    end_date=timezone.now().date() + timedelta(days=random.randint(1, 30)),
                     description=random.choice(job_descriptions) + " test",
                     organization=org1,
                     customer=customers_1[i],
-                    requestor_city = "Iowa City",
-                    requestor_state = "Iowa",
-                    requestor_zip = "52240",
-                    requestor_address = "2 W Washington St"
+                    job_city = "Iowa City",
+                    job_state = "Iowa",
+                    job_zip = "52240",
+                    job_address = "2 W Washington St"
                 )
                 j.save()
 
@@ -325,80 +337,25 @@ class Command(BaseCommand):
                 )
                 d.save()
 
-            jobs_org_1 = Job.objects.filter(organization__pk=org1.pk)[:5]
-            jobs_org = Job.objects.filter(organization__pk=org.pk)[:5]
-            discounts_1 = Discount.objects.filter(organization__pk=org1.pk)[:5]
-            discounts = Discount.objects.filter(organization__pk=org.pk)[:5]
-
-            for i in range(5):
-                issuance_date = timezone.now().date()
-                due_date = issuance_date + timezone.timedelta(days=30)
-                status = 'created' if i % 2 == 0 else 'accepted'
-                material_subtotal = 1000.0 * (i + 1)
-                total_price = material_subtotal 
-                jobID = jobs_org_1[i]
-                
-
-                q = Quote.objects.create(
-                    issuance_date=issuance_date,
-                    due_date=due_date,
-                    status='accepted',
-                    material_subtotal=material_subtotal,
-                    total_price=total_price,
-                    jobID=jobID,
-                    discount_type = random.choice(discounts_1)
-                    )
-                q.save()
-
-                issuance_date = timezone.now().date()
-                due_date = issuance_date + timezone.timedelta(days=30)
-                status = 'created' if i % 2 == 0 else 'accepted'
-                material_subtotal = 1000.0 * (i + 1)
-                total_price = material_subtotal 
-                jobID = jobs_org[i]
-                
-
-                q = Quote.objects.create(
-                    issuance_date=issuance_date,
-                    due_date=due_date,
-                    status=status,
-                    material_subtotal=material_subtotal,
-                    total_price=total_price,
-                    jobID=jobID,
-                    discount_type = random.choice(discounts)
-                    )
-                q.save()
-
             # create another job and tie a quote to it
             j = Job.objects.create(
                     job_status=random.choice(['completed']),
                     start_date=timezone.now().date(),
-                    end_date=timezone.now().date() + timezone.timedelta(days=random.randint(1, 30)),
+                    end_date=timezone.now().date() + timedelta(days=random.randint(1, 30)),
                     description=random.choice(job_descriptions),
                     organization=org,
                     customer=customers[1],
-                    requestor_city = "Iowa City",
-                    requestor_state = "Iowa",
-                    requestor_zip = "52240",
-                    requestor_address = "2 W Washington St"
+                    job_city = "Iowa City",
+                    job_state = "Iowa",
+                    job_zip = "52240",
+                    job_address = "2 W Washington St"
                 )
             j.save()
 
-            q = Quote.objects.create(
-                    issuance_date=issuance_date,
-                    due_date=due_date,
-                    status='accepted',
-                    material_subtotal=material_subtotal,
-                    total_price=total_price,
-                    jobID=j,
-                    discount_type = random.choice(discounts_1)
-                    )
-            q.save()
 
             jobs_for_invoice = Job.objects.filter(
                 customer=customers[1],
                 job_status="completed",
-                quote__status="accepted",  # Ensures only jobs with accepted quotes are selected
                 customer__organization=org
             )
 
@@ -409,28 +366,34 @@ class Command(BaseCommand):
             s1, s2 = services_org[:len(services_org) // 2], services_org[len(services_org) // 2:]
 
             for service in s1:
-                js = JobService(job=jobs_for_invoice[0], service = service)
+                js = JobsServices(job=jobs_for_invoice[0],
+                                  service = service,
+                                  hourly_rate=random_currency(10,50),
+                                  minutes=random.randint(60, 640),)
                 js.save()
 
             for service in s2:
-                js = JobService(job=jobs_for_invoice[1], service = service)
+                js = JobsServices(job=jobs_for_invoice[1],
+                                  service = service,
+                                  hourly_rate=random_currency(10,50),
+                                  minutes=random.randint(60, 640),)
                 js.save()
 
             mats = Material.objects.filter(organization=org)
             m1,m2 = mats[:len(mats) // 2], mats[len(mats) // 2:]
             for m in m1:
-                jm = JobMaterial(
-                    price_per_unit = random_currency(10, 50),
-                    units_used = random.randint(1,100),
+                jm = JobsMaterials(
+                    unit_price = random_currency(10, 50),
+                    quantity = random.randint(1,100),
                     job = jobs_for_invoice[0],
                     material = m
                 )
                 jm.save()
 
             for m in m2:
-                jm = JobMaterial(
-                    price_per_unit = random_currency(0, 50),
-                    units_used = random.randint(1,100),
+                jm = JobsMaterials(
+                    unit_price = random_currency(0, 50),
+                    quantity = random.randint(1,100),
                     job = jobs_for_invoice[1],
                     material = m
                 )
@@ -441,12 +404,10 @@ class Command(BaseCommand):
             for i in range(5):
                 j = JobTemplate.objects.create(
                     description=f"Job Template Description {i+1}",
-                    name=f"Template {i+1}",
                     organization=org)
                 j.save()
                 j = JobTemplate.objects.create(
                     description=f"Job Template Description {i+1}",
-                    name=f"Template {i+1}",
                     organization=org1)
                 j.save()
             

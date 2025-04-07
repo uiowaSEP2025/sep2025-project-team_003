@@ -2,7 +2,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from hsabackend.models.organization import Organization
-from hsabackend.models.job_template_service import JobTemplateService
 from hsabackend.models.job_template import JobTemplate
 from hsabackend.models.service import Service
 from django.db.models import Q

@@ -65,19 +65,19 @@ def approve_request(request, id):
     the_req.delete()
 
     cust = Customer.objects.create(
-        first_name = the_req.requestor_first_name,
-        last_name = the_req.requestor_last_name,
-        email = the_req.requestor_email,
-        phone = the_req.requestor_phone,
+        first_name = the_req.requester_first_name,
+        last_name = the_req.requester_last_name,
+        email = the_req.requester_email,
+        phone = the_req.requester_phone,
         notes = "",
         organization = org
     )
 
     new_job = Job(
-        requester_city = the_req.requestor_city,
-        requester_state = the_req.requestor_state,
-        requester_zip = the_req.requestor_zip,
-        requester_address = the_req.requestor_address,
+        requester_city = the_req.requester_city,
+        requester_state = the_req.requester_state,
+        requester_zip = the_req.requester_zip,
+        requester_address = the_req.requester_address,
         description = "",
         customer = cust
     )

@@ -1,6 +1,5 @@
 from rest_framework.decorators import api_view
 from hsabackend.models.organization import Organization
-from hsabackend.models.quote import Quote
 from hsabackend.models.invoice import Invoice
 from hsabackend.models.customer import Customer
 from rest_framework.response import Response

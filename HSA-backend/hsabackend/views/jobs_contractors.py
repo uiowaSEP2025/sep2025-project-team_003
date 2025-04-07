@@ -2,7 +2,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from hsabackend.models.organization import Organization
-from hsabackend.models.job_contractor import JobContractor
 from hsabackend.models.job import Job
 from hsabackend.models.contractor import Contractor
 from django.db.models import Q

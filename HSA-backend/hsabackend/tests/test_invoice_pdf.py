@@ -9,7 +9,6 @@ from hsabackend.views.generate_invoice_pdf_view import generate_pdf, generate_pd
 from rest_framework import status
 from hsabackend.models.organization import Organization
 from decimal import Decimal
-from hsabackend.models.quote import Quote
 
 class PdfAPITest(APITestCase):
     def test_api_unauth(self):

@@ -11,9 +11,7 @@ from hsabackend.models.customer import Customer
 from hsabackend.models.service import Service
 from hsabackend.models.material import Material
 from hsabackend.models.contractor import Contractor
-from hsabackend.models.job_service import JobService
-from hsabackend.models.job_material import JobMaterial
-from hsabackend.models.job_contractor import JobContractor
+
 from django.db.models import QuerySet
 from django.db.models import Q
 from unittest.mock import call
