@@ -7,12 +7,13 @@
         <span>Contractors</span>
       </h1>
       <app-table-component 
-        editRedirect="/contractors/edit" 
+        editRedirect="/discounts/edit" 
         [fetchedData]="customers"
+        [deleteRequest]="this.discountService.deleteDiscount.bind(discountService)"
         [loadDataToTable]="this.loadDataToTable.bind(this)"
         [hideValues]="['Id']"
-        searchHint="Search by contractor name"
-        [headers]="['First Name', 'Last Name', 'Phone Number', 'Email']"
+        searchHint="Search by discount name"
+        [headers]="['Discount Name', 'Discount Percent', 'Phone Number', 'Actions']"
       ></app-table-component>
         
 
