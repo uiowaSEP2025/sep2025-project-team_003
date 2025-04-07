@@ -158,7 +158,6 @@ export class EditInvoicePageComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.taxAmount.errors)
     if (!this.taxAmount.valid) {
       return;
     }

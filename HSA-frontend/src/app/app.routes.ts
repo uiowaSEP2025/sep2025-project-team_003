@@ -23,6 +23,9 @@ import { JobPageComponent } from './pages/jobs/job-page/job-page.component';
 import { ViewJobPageComponent } from './pages/jobs/view-job-page/view-job-page.component';
 import { CreateJobPageComponent } from './pages/jobs/create-job-page/create-job-page.component';
 import { EditJobPageComponent } from './pages/jobs/edit-job-page/edit-job-page.component';
+import { DiscountsPageComponent } from './pages/discounts-page/discounts-page.component';
+import { CreateDiscountsPageComponent } from './pages/create-discounts-page/create-discounts-page.component';
+import { EditDiscountPageComponent } from './pages/edit-discount-page/edit-discount-page.component';
 
 export const routes: Routes = [
   {
@@ -96,6 +99,15 @@ export const routes: Routes = [
   },
   {
     path: 'edit/invoice/:id', component: EditInvoicePageComponent
+  },
+  {
+    path: "discounts", component: DiscountsPageComponent
+  },
+  {
+    path: "discounts/create", component: CreateDiscountsPageComponent
+  },
+  {
+    path: 'discounts/edit/:id', component: EditDiscountPageComponent
   },
   {
     path: '404',
