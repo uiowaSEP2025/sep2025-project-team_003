@@ -36,9 +36,9 @@ export class CreateInvoicePageComponent implements OnInit {
   quotes: any
   customers: any
   selectedCustomers: any = []
-  selectedCustomersIsError: boolean = false
+  selectedCustomersIsError = false
   selectedQuotes: any = []
-  selectedQuotesIsError: boolean = false
+  selectedQuotesIsError = false
   status: 'created' | 'issued' | 'paid' = 'created'
   matcher = new GenericFormErrorStateMatcher()
   @ViewChild(InvoiceDatePickerComponent) datePicker!: InvoiceDatePickerComponent;
@@ -127,16 +127,25 @@ export class CreateInvoicePageComponent implements OnInit {
       return;
     }
     const json = {
-      customerID: this.selectedCustomers[0],
-      quoteIDs: this.selectedQuotes,
       status: this.status,
-      issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
-      dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
-      tax: this.taxAmount.value.toString()
+      issuance_date: new Date,
+      due_date: new Date,
+      tax: this.taxAmount.value,
+      customer: {
+        customerID: 0,
+        organizationID: 0,
+        notes: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: ''
+      },
+      jobs: [],
+      discounts: []
     }
     this.invoiceService.createInvoice(json).subscribe(
       {
-        next: (response) => {
+        next: () => {
           this.router.navigate(['/invoices']);
         },
         error: (error) => {

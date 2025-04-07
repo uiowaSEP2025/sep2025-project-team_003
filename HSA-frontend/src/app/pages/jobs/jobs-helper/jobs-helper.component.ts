@@ -106,8 +106,8 @@ export class JobsHelperComponent {
     description: '',
     customerName: '',
     customerID: 0,
-    requesterAddress: '',
-    requesterCity: '',
+    jobAddress: '',
+    jobCity: '',
     requesterState: '',
     requesterZip: '',
 }

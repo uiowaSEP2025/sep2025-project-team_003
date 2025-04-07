@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, Input} from '@angular/core';
 import { JobDataInterface } from '../../../interfaces/api-responses/job.api.data.interface';
 import { JobService } from '../../../services/job.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -29,6 +29,7 @@ import { UpdateConfirmDialogComponentComponent } from '../../../components/updat
 import { RequestTrackerService } from '../../../utils/request-tracker';
 import { take } from 'rxjs/operators';
 import { State, StateList } from '../../../utils/states-list';
+import {Job} from '../../../interfaces/job.interface';
 
 
 @Component({
@@ -57,6 +58,29 @@ import { State, StateList } from '../../../utils/states-list';
   styleUrl: './edit-job-page.component.scss'
 })
 export class EditJobPageComponent {
+  @Input() job: Job = {
+    customer: {
+      customerID: 0,
+      organizationID: 0,
+      notes: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: ''
+    },
+    description: '',
+    endDate: new Date(),
+    id: 0,
+    jobAddress: '',
+    jobCity: '',
+    jobState: '',
+    jobStatus: 'created',
+    jobZip: '',
+    materials: [],
+    services: [],
+    startDate: new Date()
+
+  }
   jobID!: number | null
   jobData: JobDataInterface | null = null;
   customers: any

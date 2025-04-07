@@ -30,6 +30,17 @@
                  [placeholder]="'Description'">
       </mat-form-field>
       </div>
+      <div>
+          <mat-form-field>
+              <mat-label>Default Unit Cost</mat-label>
+              <input
+                      type="number"
+                      [step]="'0.50'"
+                      [formControl]="defaultCostControl"
+                      matInput
+              >
+          </mat-form-field>
+      </div>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>

@@ -36,9 +36,13 @@ import {CreateMaterialPageComponent} from '../create-material-page/create-materi
 })
 export class MaterialsHelperComponent implements OnInit {
   @Input() crudType: 'Create' | 'Update' = 'Create';
-  @Input() material!: Material;
+  @Input() material: Material = {
+    defaultCost: 0, materialDescription: '', materialID: 0, materialName: '', organizationID: 0
+
+  }
   nameControl = new FormControl('', Validators.required)
   descriptionControl = new FormControl('')
+  defaultCostControl = new FormControl(0)
   matcher = new GenericFormErrorStateMatcher()
 
   private isFormValid() {
@@ -52,6 +56,7 @@ export class MaterialsHelperComponent implements OnInit {
     if (this.crudType === 'Update') {
       this.nameControl = new FormControl(this.material.materialName, Validators.required)
       this.descriptionControl = new FormControl(this.material.materialDescription)
+      this.defaultCostControl = new FormControl(this.material.defaultCost)
     }
   }
 
@@ -59,12 +64,17 @@ export class MaterialsHelperComponent implements OnInit {
     if (!this.isFormValid()) {
       return
     }
-
+    const args = {
+      id: 0,
+      material_name: this.nameControl.value,
+      material_description: this.descriptionControl.value,
+      default_cost: this.defaultCostControl.value
+    }
+    if(!args.default_cost) {
+      args.default_cost = 0
+    }
     if (this.crudType === 'Update') {
-      const args = {
-        id: this.material.materialID,
-        material_name: this.nameControl.value
-      }
+      args.id = this.material.materialID
       this.materialService.editMaterial(args).subscribe(
         {
           next: () => {
@@ -78,10 +88,6 @@ export class MaterialsHelperComponent implements OnInit {
       )
     }
     else {
-      const args = {
-        id: 0,
-        material_name: this.nameControl.value
-      }
       this.materialService.createMaterial(args).subscribe({
         next: () => {
           this.dialogRef.close();

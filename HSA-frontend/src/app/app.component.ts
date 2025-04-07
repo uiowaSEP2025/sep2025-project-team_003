@@ -28,5 +28,6 @@ export class AppComponent {
     {name: 'Jobs', route: '/jobs'},
     {name: 'Materials', route: '/materials'},
     {name: 'Invoices', route: '/invoices'},
+    {name: 'Discounts', route: '/discounts'},
   ]
 }

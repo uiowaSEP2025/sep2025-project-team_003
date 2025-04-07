@@ -7,22 +7,28 @@ import { Observable } from "rxjs";
 import { HttpParams } from "@angular/common/http";
 import { StandardApiResponse } from "../interfaces/api-responses/standard-api-response.interface";
 import { InvoiceDataInterface } from "../interfaces/api-responses/invoice.api.data.interface";
+import {Job} from '../interfaces/job.interface';
+import {Customer} from '../interfaces/customer.interface';
+import {Discount} from '../interfaces/discount.interface';
 
 interface CreateInvoiceInterface {
-    customerID: number,
-    quoteIDs: number[],
-    status: "created" | "issued" | "paid"
-    issuedDate: string,
-    dueDate: string,
-    tax: string
+  customer: Customer,
+  status: "created" | "issued" | "paid"
+  issuance_date: Date,
+  due_date: Date,
+  tax: number
+  jobs: Job[]
+  discounts: Discount[]
 }
 
 interface UpdateInvoiceInterface {
-        quoteIDs: number[],
-        status: "created" | "issued" | "paid",
-        issuedDate: string,
-        dueDate: string, 
-        tax: string
+  customer: Customer,
+  status: "created" | "issued" | "paid"
+  issuance_date: Date,
+  due_date: Date,
+  tax: number
+  jobs: Job[]
+  discounts: Discount[]
 }
 
 @Injectable({
@@ -54,17 +60,15 @@ export class InvoiceService {
                 httpParams = httpParams.append(key, params[key])
             })
         }
-        
+
         return this.http.get<TableApiResponse<Invoice>>(this.apiGetUrl, { params: httpParams });
     }
 
     public createInvoice(json: CreateInvoiceInterface): Observable<StandardApiResponse> {
-        json.tax = this.convertTaxInputToMathPercent(json.tax)
         return this.http.post<StandardApiResponse>(this.createUrl, json);
     }
 
     public updateInvoice(id: number, data: UpdateInvoiceInterface) {
-        data.tax = this.convertTaxInputToMathPercent(data.tax)
         return this.http.post<StandardApiResponse>(`${this.editUrl}/${id}`, data);
     }
 

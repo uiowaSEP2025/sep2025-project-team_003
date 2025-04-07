@@ -3,24 +3,18 @@ import { StandardApiResponse } from '../interfaces/api-responses/standard-api-re
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Customer, CustomerParams } from '../interfaces/customer.interface';
 import { TableApiResponse } from '../interfaces/api-responses/table.api.interface';
-
-interface getTableResponse {
-    "id": number,
-    "discount_name": string 
-    "discount_percent": string 
-}
+import {Discount} from '../interfaces/discount.interface';
 
 interface createDiscountInterface {
-    name:string | null,
-    percent: string | null
+  discount_name:  string | null,
+  discount_percent: number | null
 }
 
 interface editDiscountInterface {
-  name:string | null,
-  percent: string | null,
-  id: string | null
+  discount_name:  string | null,
+  discount_percent: number | null,
+  id: number | null
 }
 
 @Injectable({
@@ -34,7 +28,7 @@ export class DiscountsService {
 
   constructor(private http: HttpClient) { }
 
-  public getDiscounts(params?: Record<string, string | number>): Observable<TableApiResponse<getTableResponse>> {
+  public getDiscounts(params?: Record<string, string | number>): Observable<TableApiResponse<Discount>> {
     let httpParams = new HttpParams();
 
     // Add query parameters
@@ -44,7 +38,7 @@ export class DiscountsService {
       })
     }
 
-    return this.http.get<TableApiResponse<getTableResponse>>(this.apiGetUrl, { params: httpParams });
+    return this.http.get<TableApiResponse<Discount>>(this.apiGetUrl, { params: httpParams });
   }
 
   public createDiscount(data: createDiscountInterface): Observable<StandardApiResponse> {
@@ -54,12 +48,12 @@ export class DiscountsService {
   public deleteDiscount(id: any) {
     id = id.id
     return this.http.post<StandardApiResponse>(`${this.apiDeleteUrl}/${id}`, null);
-    
+
   }
 
   public editDiscount(data: editDiscountInterface) {
     return this.http.post<StandardApiResponse>(`${this.apiEditUrl}/${data.id}`, data);
   }
-  
-  
+
+
 }

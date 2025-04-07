@@ -1,6 +1,5 @@
-import { Component, inject } from '@angular/core';
+import {Component, inject, Input} from '@angular/core';
 import { TableComponentComponent } from '../../../components/table-component/table-component.component';
-import { QuoteService } from '../../../services/quote.service';
 import { ActivatedRoute } from '@angular/router';
 import { OnInit } from '@angular/core';
 import { MatError } from '@angular/material/form-field';
@@ -22,6 +21,7 @@ import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { GenericFormErrorStateMatcher } from '../../../utils/generic-form-error-state-matcher';
 import integerValidator from '../../../utils/whole-number-validator';
+import {Invoice} from '../../../interfaces/invoice.interface';
 
 export interface DateRange {
   issued: FormControl<Date | null>;
@@ -38,9 +38,26 @@ export interface DateRange {
   styleUrl: './edit-invoice-page.component.scss'
 })
 export class EditInvoicePageComponent implements OnInit {
-  selectedQuotes: number[] = []
-  quotes: any
-  selectedQuotesIsError = false
+  @Input() invoice: Invoice = {
+    customer: {
+      customerID: 0,
+      organizationID: 0,
+      notes: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: ''
+    },
+    invoiceIssueDate: new Date(),
+    invoiceDueDate: new Date(),
+    invoiceID: 0,
+    invoicePrice: 0,
+    invoiceStatus: 'created',
+    invoiceTax: 0,
+    jobs: [],
+    discounts: []
+
+  };
   invoiceID!: number
   customerName!: string
   issuanceDate!: string
@@ -63,7 +80,7 @@ export class EditInvoicePageComponent implements OnInit {
     matcher = new GenericFormErrorStateMatcher()
 
 
-  constructor(private quoteService: QuoteService, private activatedRoute: ActivatedRoute,
+  constructor(private activatedRoute: ActivatedRoute,
     private errorHandler: ErrorHandlerService, private invoiceService: InvoiceService,
     private stringFormatter: StringFormatter, private router: Router) { }
 
@@ -105,20 +122,8 @@ export class EditInvoicePageComponent implements OnInit {
       const day = split[2]
       this.range.controls.due.setValue(new Date(parseInt(year), parseInt(month) - 1, parseInt(day)))
     }
-    this.loadQuotesToTable("", 5, 0);
   }
 
-  setSelectedQuotes(newQuotes: number[]) {
-    if (newQuotes.length === 0) {
-      this.selectedQuotesIsError = true
-      this.selectedQuotes = [...newQuotes]
-    }
-    else {
-      this.selectedQuotesIsError = false
-      this.selectedQuotes = [...newQuotes]
-    }
-
-  }
 
   openDialog(): void {
     const dialogRef = this.dialog.open(InvoiceStateRegressionConfirmerComponent,
@@ -128,11 +133,21 @@ export class EditInvoicePageComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
         const data = {
-          quoteIDs: this.selectedQuotes,
           status: this.status,
-          issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
-          dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
-          tax: this.taxAmount.value.toString()
+          issuance_date: new Date,
+          due_date: new Date,
+          tax: this.taxAmount.value,
+          customer: {
+            customerID: 0,
+            organizationID: 0,
+            notes: '',
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: ''
+          },
+          jobs: [],
+          discounts: []
         }
         this.invoiceService.updateInvoice(this.invoiceID, data).subscribe(
           {next: () => {
@@ -146,42 +161,27 @@ export class EditInvoicePageComponent implements OnInit {
   }
 
 
-  loadQuotesToTable(searchTerm: string, pageSize: number, offSet: number) {
-    this.quoteService.getQuotesByInvoice(this.invoiceID, { search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
-      next: (response) => {
-        this.quotes = response
-      },
-      error: (error) => {
-        this.errorHandler.handleError(error)
-      }
-    })
-  }
-
   onSubmit() {
     if (!this.taxAmount.valid) {
       return;
     }
-    if (this.selectedQuotes.length === 0) {
-      this.datePicker?.validate()
-      this.selectedQuotesIsError = true;
-      return;
-    }
-    if (this.isDateSelectVisible() && !this.datePicker.validate()) {
-      this.selectedQuotesIsError = false;
-      return false;
-    }
-    this.selectedQuotesIsError = false;
-    if (this.initialStatus === 'issued' || this.initialStatus === 'paid') {
-      this.openDialog()
-      return;
-    }
 
     const data = {
-      quoteIDs: this.selectedQuotes,
       status: this.status,
-      issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value) ,
-      dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
-      tax: this.taxAmount.value.toString()
+      issuance_date: new Date,
+      due_date: new Date,
+      tax: this.taxAmount.value,
+      customer: {
+        customerID: 0,
+        organizationID: 0,
+        notes: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: ''
+      },
+      jobs: [],
+      discounts: []
     }
     this.invoiceService.updateInvoice(this.invoiceID, data).subscribe(
       {next: () => {

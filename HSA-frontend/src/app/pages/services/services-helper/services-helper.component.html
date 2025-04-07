@@ -10,6 +10,7 @@
 </h2>
 <mat-dialog-content>
   <form>
+      <div>
       <mat-form-field>
           <mat-label>New name</mat-label>
           <input [formControl]="serviceNameControl"
@@ -21,7 +22,8 @@
               <mat-error>Service Name is required</mat-error>
           }
       </mat-form-field>
-
+      </div>
+<div>
       <mat-form-field>
           <mat-label>Description</mat-label>
           <textarea
@@ -29,6 +31,18 @@
                   matInput
           ></textarea>
       </mat-form-field>
+</div>
+      <div>
+          <mat-form-field>
+              <mat-label>Default Hourly Rate</mat-label>
+              <input
+                      type="number"
+                      [step]="'0.50'"
+                      [formControl]="serviceRateControl"
+                      matInput
+              >
+          </mat-form-field>
+      </div>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>

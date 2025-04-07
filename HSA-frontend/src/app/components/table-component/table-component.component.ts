@@ -135,7 +135,6 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   openEditDialog({element}: OpenEditDialogParams): void {
-    console.log(element);
     switch (this.tableModel) {
       case 'contractors':
       { const dialogRef = this.dialog.open(EditContractorsPageComponent)
@@ -161,6 +160,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
         dialogRef.componentInstance.material.materialID = element.id;
         dialogRef.componentInstance.material.materialName = element.material_name;
         dialogRef.componentInstance.material.materialDescription = element.material_description;
+        dialogRef.componentInstance.material.defaultCost = element.material_default_cost;
         void dialogRef.afterClosed()
       } break;
       case 'jobs':
@@ -169,13 +169,15 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
        dialogRef.componentInstance.job.jobStatus=element.jobStatus
        dialogRef.componentInstance.job.startDate=element.startDate
        dialogRef.componentInstance.job.endDate=element.endDate
+       dialogRef.componentInstance.job.services=element.services
+       dialogRef.componentInstance.job.materials=element.materials
        dialogRef.componentInstance.job.description=element.description
-       dialogRef.componentInstance.job.customerName=element.customerName
-       dialogRef.componentInstance.job.customerID=element.customerID
-       dialogRef.componentInstance.job.requesterAddress=element.requestorAddress
-       dialogRef.componentInstance.job.requesterCity=element.requestorCity
-       dialogRef.componentInstance.job.requesterState=element.requestorState
-       dialogRef.componentInstance.job.requesterZip=element.requestorZip
+       dialogRef.componentInstance.job.customer.firstName=element.customerName
+       dialogRef.componentInstance.job.customer=element.customer
+       dialogRef.componentInstance.job.jobAddress=element.job_address
+       dialogRef.componentInstance.job.jobCity=element.job_city
+       dialogRef.componentInstance.job.jobState=element.job_state
+       dialogRef.componentInstance.job.jobZip=element.job_zip
         void dialogRef.afterClosed()
       } break;
       case 'services':
@@ -183,23 +185,25 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
         dialogRef.componentInstance.service.serviceID = element.id;
         dialogRef.componentInstance.service.serviceName = element.service_name;
         dialogRef.componentInstance.service.serviceDescription = element.service_description;
+        dialogRef.componentInstance.service.defaultHourlyRate = element.default_hourly_rate;
         void dialogRef.afterClosed()
       } break;
       case 'invoices':
       { const dialogRef = this.dialog.open(EditInvoicePageComponent)
         dialogRef.componentInstance.invoice.invoiceID = element.id;
-        dialogRef.componentInstance.invoice.customerID = element.customer_id;
-        dialogRef.componentInstance.invoice.customerName = element.customer_name;
+        dialogRef.componentInstance.invoice.customer = element.customer;
         dialogRef.componentInstance.invoice.invoiceStatus = element.status;
         dialogRef.componentInstance.invoice.invoiceDueDate = element.due_date;
-        dialogRef.componentInstance.invoice.invoiceDate = element.issuance_date;
+        dialogRef.componentInstance.invoice.invoiceIssueDate = element.issuance_date;
         dialogRef.componentInstance.invoice.invoiceTax = element.tax;
+        dialogRef.componentInstance.invoice.jobs = element.jobs;
+        dialogRef.componentInstance.invoice.discounts = element.discounts;
 
         void dialogRef.afterClosed()
       } break;
       case 'discounts':
         { const dialogRef = this.dialog.open(EditDiscountPageComponent)
-          dialogRef.componentInstance.discount.id = element.id;
+          dialogRef.componentInstance.discount.discountID = element.id;
           dialogRef.componentInstance.discount.discountName = element.discount_name;
           dialogRef.componentInstance.discount.discountPercent = element.discount_percent;
 

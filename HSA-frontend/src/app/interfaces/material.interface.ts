@@ -3,6 +3,7 @@ export interface Material {
   organizationID: number;
   materialName: string;
   materialDescription: string;
+  defaultCost: number;
 }
 
 export interface MaterialParams {

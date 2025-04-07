@@ -1,11 +1,8 @@
-<div class="main-heading">
-    @if (discounts === null) {
+<app-page-template [title]="'Discounts'">
+    @if (loading) {
       <app-loading-fallback stringToDisplay="Loading discounts"></app-loading-fallback>
     }
     @else {
-      <h1>
-        <span>Contractors</span>
-      </h1>
       <app-table-component
         [tableModel]="'discounts'"
         [fetchedData]="discounts"
@@ -15,13 +12,6 @@
         searchHint="Search by discount name"
         [headers]="['Discount Name', 'Discount Percent', 'Phone Number']"
       ></app-table-component>
-
-
-    <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
-      <button mat-fab extended class="m-10" id="add-discount-button" (click)="navigateToPage('discounts/create')">
-        <mat-icon>note_add</mat-icon>
-        Add a Discount
-      </button>
-    </div>
     }
-</div>
+</app-page-template>
+

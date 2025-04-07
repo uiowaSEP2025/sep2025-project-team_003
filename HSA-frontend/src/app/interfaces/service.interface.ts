@@ -3,6 +3,7 @@ export interface Service {
   organizationID: number;
   serviceName: string;
   serviceDescription: string;
+  defaultHourlyRate: number;
 }
 
 export interface ServiceParams {

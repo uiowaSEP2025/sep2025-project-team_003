@@ -40,6 +40,8 @@ export class ServicesHelperComponent implements OnInit {
     @Input() service!: Service;
     serviceNameControl = new FormControl ('', Validators.required)
     serviceDescriptionControl = new FormControl ('')
+    serviceRateControl: FormControl = new FormControl('');
+    amount = '';
 
     private isFormValid() {
         return this.serviceNameControl.valid
@@ -54,22 +56,26 @@ export class ServicesHelperComponent implements OnInit {
         if (this.crudType === 'Update') {
             this.serviceNameControl = new FormControl (this.service.serviceName, Validators.required)
             this.serviceDescriptionControl = new FormControl (this.service.serviceDescription)
+            this.serviceRateControl = new FormControl(this.service.defaultHourlyRate);
         }
 
     }
 
     onSubmit() {
-        if (this.isFormValid()) {
+        if (!this.isFormValid()) {
             return
         }
-
+        const args = {
+            id: 0,
+            service_name: this.serviceNameControl.value,
+            service_description: this.serviceDescriptionControl.value,
+            default_hourly_rate: this.serviceRateControl.value,
+        }
+        if (!args.default_hourly_rate) {
+            args.default_hourly_rate = 0;
+        }
         if (this.crudType === 'Update') {
-            const args = {
-                id: this.service.serviceID,
-                service_name: this.serviceNameControl.value,
-                service_description: this.serviceDescriptionControl.value
-            }
-
+            args.id = this.service.serviceID
             this.serviceService.editService(args).subscribe(
                 {
                     next: () => {
@@ -82,11 +88,6 @@ export class ServicesHelperComponent implements OnInit {
                 }
             )
         } else {
-            const args = {
-                id: 0,
-                service_name: this.serviceNameControl.value,
-                service_description: this.serviceDescriptionControl.value
-            }
             this.serviceService.createService(args).subscribe(
                 {
                     next: () => {

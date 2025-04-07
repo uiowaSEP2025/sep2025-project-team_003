@@ -1,24 +1,19 @@
-<div class="parent">
+<app-page-template [title]="'Services'">
   <div class="main-heading">
-    @if (services === null) {
+    @if (loading) {
       <app-loading-fallback stringToDisplay="Loading services"></app-loading-fallback>
     }
-    
-    @else {<h1>
-        <span>Services</span>
-      </h1>
-      <app-table-component editRedirect="/services/edit" [fetchedData]="services"
+    @else {
+      <app-table-component
+        [fetchedData]="services"
+        [tableModel]="'services'"
         [deleteRequest]="serviceService.deleteService.bind(serviceService)"
-        [loadDataToTable]="this.loadDataToTable.bind(this)" [hideValues]="['Id']"
-        searchHint="Search by service name or description"
-        [headers]="['Service Name', 'Service Description']"></app-table-component>
-  
-      <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
-        <button mat-fab extended class="m-10" id="add-service-button" (click)="navigateToPage('services/create')">
-          <mat-icon>note_add</mat-icon>
-          Add a Service
-        </button>
-      </div>
+        [loadDataToTable]="this.loadDataToTable.bind(this)"
+        [hideValues]="['Id']"
+        [searchHint]="'Search by service name'"
+        [headers]="['Service Name', 'Service Description']"
+      ></app-table-component>
+
     }
   </div>
-</div>
+</app-page-template>

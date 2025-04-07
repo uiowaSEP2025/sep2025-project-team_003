@@ -9,12 +9,14 @@ import { TableApiResponse } from '../interfaces/api-responses/table.api.interfac
 interface ServiceCreatePostData {
   service_name: string | null
   service_description: string | null
+  default_hourly_rate: number | null
 }
 
 interface ServiceEditPostData {
   id: number | null,
   service_name: string | null
   service_description: string | null
+  default_hourly_rate: number | null
 }
 
 interface ServiceDeletePostData {
@@ -31,7 +33,7 @@ export class ServiceService {
   private apiCreateUrl = `${environment.apiUrl}/api/create/service`;
   private apiEditUrl = `${environment.apiUrl}/api/edit/service`;
   private apiDeleteUrl = `${environment.apiUrl}/api/delete/service`;
-  
+
 
   constructor(private http: HttpClient) {}
 
@@ -71,7 +73,7 @@ export class ServiceService {
 
     return this.http.get<TableApiResponse<Service>>(this.apiGetExcludedUrl, { params: httpParams });
   }
-  
+
 
   public createService(data:ServiceCreatePostData): Observable<StandardApiResponse> {
     return this.http.post<StandardApiResponse>(this.apiCreateUrl, data);

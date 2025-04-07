@@ -1,11 +1,15 @@
+import {Job} from './job.interface';
+import {Discount} from './discount.interface';
+import {Customer} from './customer.interface';
+
 export interface Invoice {
   invoiceID: number;
-  customerID: number;
-  customerName: string;
-  invoiceDate: Date;
+  customer: Customer;
+  invoiceIssueDate: Date;
   invoiceDueDate: Date;
-  invoiceStatus: string;
+  invoiceStatus: "created" | "issued" | "paid"
   invoicePrice: number;
   invoiceTax: number;
-
+  jobs: Job[];
+  discounts: Discount[];
 }
