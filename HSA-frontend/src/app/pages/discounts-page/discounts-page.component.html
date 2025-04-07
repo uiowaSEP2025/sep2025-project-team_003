@@ -1,1 +1,26 @@
-<p>discounts-page works!</p>
+<div class="main-heading">
+    @if (customers === null) {
+      <app-loading-fallback stringToDisplay="Loading contractors"></app-loading-fallback>
+    }
+    @else {
+      <h1>
+        <span>Contractors</span>
+      </h1>
+      <app-table-component 
+        editRedirect="/contractors/edit" 
+        [fetchedData]="customers"
+        [loadDataToTable]="this.loadDataToTable.bind(this)"
+        [hideValues]="['Id']"
+        searchHint="Search by contractor name"
+        [headers]="['First Name', 'Last Name', 'Phone Number', 'Email']"
+      ></app-table-component>
+        
+
+    <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">  
+      <button mat-fab extended class="m-10" id="add-contractor-button" (click)="navigateToPage('discounts/create')">
+        <mat-icon>note_add</mat-icon>
+        Add a Discount
+      </button>
+    </div>
+    }
+</div>

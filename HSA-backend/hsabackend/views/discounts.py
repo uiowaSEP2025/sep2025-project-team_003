@@ -6,6 +6,7 @@ from hsabackend.models.discount_type import DiscountType
 from django.db.models import Q
 from django.core.exceptions import ValidationError
 
+
 @api_view(["GET"])
 def get_discounts(request):
     if not request.user.is_authenticated:
@@ -24,17 +25,17 @@ def get_discounts(request):
         return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
     
     offset = offset * pagesize
-    discounts = DiscountType.objects.select_related("customer").filter(
-        customer__organization=org.pk).filter(
+    discounts = DiscountType.objects.filter(
+        organization=org.pk).filter(
         Q(discount_name__icontains=search) 
     )[offset : offset + pagesize] 
     data = []
 
     for d in discounts:
-        data.append(d.json())
+        data.append(d.json_for_discount_table())
     
-    count = DiscountType.objects.select_related("customer").filter(
-        customer__organization=org.pk).filter(
+    count = DiscountType.objects.filter(
+        organization=org.pk).filter(
         Q(discount_name__icontains=search) 
     ).count()
 
@@ -62,6 +63,8 @@ def create_discount(request):
     try:
         discount.full_clean()
         discount.save()
+        return Response({"messsage": "discount created"}, status=status.HTTP_201_CREATED)
+
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 

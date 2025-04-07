@@ -1,6 +1,7 @@
 from django.db import models
 from hsabackend.models.organization import Organization
 from hsabackend.models.model_validators import isNonEmpty, is_valid_percent
+from hsabackend.utils.string_formatters import format_percent
 
 class DiscountType(models.Model):
     """A named percentage discount to be defined by the organization"""
@@ -14,6 +15,7 @@ class DiscountType(models.Model):
 
     def json_for_discount_table(self):
         return {
+            "id": self.pk, 
             "discount_name": self.discount_name,
-            "discount_percent": self.discount_percent
+            "discount_percent": format_percent(self.discount_percent)
         }
