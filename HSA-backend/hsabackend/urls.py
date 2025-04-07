@@ -22,6 +22,7 @@ from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice,
 from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForInvoiceByInvoice
 from hsabackend.views.generate_invoice_pdf_view import generate_pdf
 from hsabackend.views.organizations import createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail
+from hsabackend.views.discounts import get_discounts, edit_discount, create_discount, delete_discount
 from django.http import HttpResponse
 
 def handle_unmatched_api(request):
@@ -134,6 +135,12 @@ urlpatterns = [
     # quotes
     path("api/get/quotesforinvoice/customer/<int:id>", getQuotesForInvoiceByCustomer),
     path("api/get/quotesforinvoice/invoice/<int:id>", getQuotesForInvoiceByInvoice),
+
+    # discounts
+    path("api/get/discounts", get_discounts),
+    path("api/edit/discount/<int:id>", edit_discount),
+    path("api/create/discount", create_discount),
+    path("api/delete/discount/<int:id>", delete_discount),
 
     # Catch-all for unmatched API requests
     re_path(r'^api/.*', handle_unmatched_api), 
