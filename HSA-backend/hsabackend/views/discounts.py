@@ -23,7 +23,6 @@ def get_discounts(request):
         offset = int(offset)
     except:
         return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
-    
     offset = offset * pagesize
     discounts = DiscountType.objects.filter(
         organization=org.pk).filter(
