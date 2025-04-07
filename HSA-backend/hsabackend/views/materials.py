@@ -90,10 +90,14 @@ def create_material(request):
     
     org = Organization.objects.get(owning_User=request.user)
     material_name = request.data.get('material_name', '')
+    material_description = request.data.get('material_description', '')
+    material_default_cost = request.data.get('default_cost', 0)
  
     material = Material(
         material_name = material_name,
-        organization = org
+        organization = org,
+        material_description = material_description,
+        default_cost = material_default_cost,
     )
  
     try:
@@ -116,10 +120,14 @@ def edit_material(request, id):
  
     if not material:
         return Response({"message": "The material does not exist"}, status=status.HTTP_404_NOT_FOUND)
-    
+
     material_name = request.data.get('material_name', '')
- 
+    material_description = request.data.get('material_description', '')
+    material_default_cost = request.data.get('default_cost', 0)
+
     material.material_name = material_name
+    material.material_description = material_description
+    material.default_cost = material_default_cost
     
     try:
         material.full_clean()  # Validate the model instance
