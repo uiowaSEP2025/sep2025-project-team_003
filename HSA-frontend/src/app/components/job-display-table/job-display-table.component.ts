@@ -6,6 +6,7 @@ import { DeleteDialogComponentComponent } from '../delete-dialog-component/delet
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorHandlerService } from '../../services/error.handler.service';
+import { JobTemplateDataInterface } from '../../interfaces/api-responses/jobTemplate.api.data.interface';
 
 interface ServiceRowItem {
   "Service ID": string,

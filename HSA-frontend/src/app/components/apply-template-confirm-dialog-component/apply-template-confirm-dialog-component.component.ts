@@ -3,18 +3,24 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { JobTemplateService } from '../../services/jobTemplate.service';
 import { ErrorHandlerService } from '../../services/error.handler.service';
+import { JobDisplayTableComponent } from "../job-display-table/job-display-table.component";
+import { JobTemplateDataInterface } from '../../interfaces/api-responses/jobTemplate.api.data.interface';
+import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.component';
 
 @Component({
   selector: 'app-apply-template-confirm-dialog-component',
   imports: [
     MatDialogModule,
-    MatButtonModule
-  ],
+    MatButtonModule,
+    JobDisplayTableComponent,
+    LoadingFallbackComponent
+],
   templateUrl: './apply-template-confirm-dialog-component.component.html',
   styleUrl: './apply-template-confirm-dialog-component.component.scss'
 })
 export class ApplyTemplateConfirmDialogComponentComponent implements OnInit {
   templateID: any
+  jobTemplateData: JobTemplateDataInterface | null = null;
     
   constructor(
     public dialogRef: MatDialogRef<ApplyTemplateConfirmDialogComponentComponent>,
@@ -25,10 +31,11 @@ export class ApplyTemplateConfirmDialogComponentComponent implements OnInit {
     this.templateID = data;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.jobTemplateService.getSpecificJobTemplateData(this.templateID).subscribe({
       next: (response) => {
-        console.log(response)
+        this.jobTemplateData = response
+        console.log(this.jobTemplateData.data['name'])
       },
       error: (error) => {
         this.errorHandler.handleError(error);
@@ -41,6 +48,10 @@ export class ApplyTemplateConfirmDialogComponentComponent implements OnInit {
   }
 
   onConfirm(): void {
-    this.dialogRef.close(true);
+    this.dialogRef.close({
+      jobDescription: this.jobTemplateData?.data.description,
+      services: this.jobTemplateData?.services,
+      materials: this.jobTemplateData?.materials
+    });
   }
 }

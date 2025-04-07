@@ -19,7 +19,7 @@
 				editRedirect="" 
 				[hideValues]="['Actions', 'Id']"
 				[fetchedData]="this.dialogData"
-				[checkbox]="this.typeOfDialog === 'customer' || 'template' ? 'single' : 'multiple'"
+				[checkbox]="this.typeOfDialog === 'customer' || this.typeOfDialog === 'template' ? 'single' : 'multiple'"
 				[unitUsedField]="this.isMaterial"
 				[pricePerUnitField]="this.isMaterial"
 				[checkedIds]="

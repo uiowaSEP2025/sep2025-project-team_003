@@ -1,6 +1,7 @@
 export interface JobTemplateDisplayInterface {
     'services': ServiceJSON[],
-    'materials': MaterialJSON[]
+    'materials': MaterialJSON[],
+    'contractors': ContractorJSON[]
 }
 
 export interface ServiceJSON{
@@ -14,4 +15,11 @@ export interface MaterialJSON{
     "materialName": string,
     "unitsUsed": string,
     "pricePerUnit": string
+}
+
+export interface ContractorJSON{
+    "contractorID": string,
+    "contractorName": string,
+    "contractorPhoneNo": string,
+    "contractorEmail": string
 }

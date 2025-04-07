@@ -22,6 +22,8 @@ import { AddSelectDialogData } from '../../interfaces/interface-helpers/addSelec
 import { AddSelectDialogComponentComponent } from '../../components/add-select-dialog-component/add-select-dialog-component.component';
 import { AddConfirmDialogComponentComponent } from '../../components/add-confirm-dialog-component/add-confirm-dialog-component.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CreateTemplateConfirmDialogComponentComponent } from '../../components/create-template-confirm-dialog-component/create-template-confirm-dialog-component.component';
+import { JobTemplateService } from '../../services/jobTemplate.service';
 
 
 
@@ -51,7 +53,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrl: './create-job-page.component.scss'
 })
 
-export class CreateJobPageComponent implements OnInit {
+export class CreateJobPageComponent {
   jobID!: number | null
   customerID: number = 0
   customers: any
@@ -76,6 +78,7 @@ export class CreateJobPageComponent implements OnInit {
   jobForm: FormGroup;
   states: any = []
   isUpdatedField: boolean = false
+  isAllowedTemplate: boolean = false
 
   constructor(
     private router: Router,
@@ -83,6 +86,7 @@ export class CreateJobPageComponent implements OnInit {
     public dialog: MatDialog,
     private errorHandler: ErrorHandlerService,
     private jobService: JobService,
+    private jobTemplateService: JobTemplateService,
     private stringFormatter: StringFormatter, 
     private jobFormBuilder: FormBuilder,
     private snackBar: MatSnackBar,
@@ -106,10 +110,6 @@ export class CreateJobPageComponent implements OnInit {
     this.services = { "services": [] };
     this.materials = { "materials": [] };
     this.contractors = { "contractors": [] };
-  }
-
-  ngOnInit(): void {
-    
   }
 
   dateValidator(formControl: AbstractControl): ValidationErrors | null {
@@ -141,13 +141,20 @@ export class CreateJobPageComponent implements OnInit {
       materialInputFields: this.materialInputFields,
     };
 
-    const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
+    const firstDialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
       width: 'auto', 
       maxWidth: '90vw', 
       height: 'auto', 
       maxHeight: '90vh', 
-      data: dialogData
+      data: dialogData,
+      disableClose: true,
     });
+
+    firstDialogRef.afterClosed().subscribe(result => {
+      if (result.length !== 0) {
+        console.log(result)
+      }
+    })
   }
 
 
@@ -241,8 +248,6 @@ export class CreateJobPageComponent implements OnInit {
         this.onChangeUpdateButton();
       }
     });
-
-    console.log(this.materials)
   }
 
   openAddContractorDialog() {
@@ -340,11 +345,14 @@ export class CreateJobPageComponent implements OnInit {
     || this.deletedJobMaterials !== 0
     || this.selectedContractors.length !== 0
     || this.deletedJobContractors !== 0
+    
+    this.isAllowedTemplate = this.isUpdatedField
 
     return this.isUpdatedField;
   }
 
-  onCreateConfirmDialog() {
+  onCreateConfirmDialog(type: string) {
+    if (type === 'job') {
       const dialogRef = this.dialog.open(AddConfirmDialogComponentComponent, {
         data: "job creation"
       });
@@ -354,7 +362,60 @@ export class CreateJobPageComponent implements OnInit {
           this.onSubmit();
         }
       });
-    }
+    } else if (type === 'template') {
+      const templateCreateDialogData = {
+        description: this.jobForm.get('jobDescription')?.value,
+        services: this.services,
+        materials: this.materials
+      }
+
+      const dialogRef = this.dialog.open(CreateTemplateConfirmDialogComponentComponent, {
+        width: 'auto', 
+        maxWidth: '90vw', 
+        height: 'auto', 
+        maxHeight: '90vh', 
+        data: templateCreateDialogData,
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result !== false) {
+
+          let serviceFields: { id: any; } [] = []
+          result.services.services.forEach((element: any) => {
+            serviceFields.push({ "id": element["serviceID"]})
+          });
+
+          let materialsField: { id: any, unitsUsed: any, pricePerUnit: any} [] = []
+          result.materials.materials.forEach((element: any) => {
+            materialsField.push({ 
+              "id": element["materialID"],
+              "unitsUsed": element["unitsUsed"],
+              "pricePerUnit": element["pricePerUnit"] 
+            })
+          })
+
+          const createTemplateRequest = {
+            description: result.description,
+            name: result.name,
+            services: serviceFields as [],
+            materials: materialsField as []
+          }
+
+          this.jobTemplateService.createJobTemplate(createTemplateRequest).subscribe({
+            next: (response) => {
+              this.snackBar.open('Job template create successfully', '', {
+                duration: 3000
+              });
+              this.isAllowedTemplate = false
+            },
+            error: (error) => {
+              this.errorHandler.handleError(error)
+            }
+          })
+        }
+      })
+    }  
+  }
 
   onSubmit() {
     if (this.jobForm.invalid) {

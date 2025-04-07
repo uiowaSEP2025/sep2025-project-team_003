@@ -5,4 +5,5 @@ export interface JobTemplateDataInterface {
     data: JobTemplateGeneralDataInterface,
     services: JobTemplateDisplayInterface,
     materials: JobTemplateDisplayInterface,
+    contractors: JobTemplateDisplayInterface,
 }

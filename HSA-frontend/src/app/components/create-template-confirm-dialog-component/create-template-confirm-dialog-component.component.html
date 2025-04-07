@@ -1,0 +1,59 @@
+@if (jobTemplateData === null) {
+  <app-loading-fallback stringToDisplay="Populate data"></app-loading-fallback>
+}
+@else {
+  <h2 mat-dialog-title>Confirm create job template</h2>
+  
+  <div style="padding-left: 20px; padding-right: 20px;" class="dialog-scroll-wrapper">
+    <mat-dialog-content>These are the list of services and materials</mat-dialog-content>
+    <app-job-display-table
+        [dataSource]="jobTemplateData.services"
+        [typeToDisplay]="'service'"
+    ></app-job-display-table>
+    <app-job-display-table
+        [dataSource]="jobTemplateData.materials"
+        [typeToDisplay]="'material'"
+    ></app-job-display-table>
+    <form class="parent" [formGroup]="jobTemplateForm" (ngSubmit)="onConfirm()">
+      <table class="info-table">
+        <tr>
+          <td>Name*</td>
+          <td>
+            <mat-form-field appearance="fill" class="full-width">
+              <input
+                formControlName = "name"
+                matInput
+                required
+              >
+              @if (jobTemplateForm.get('name')?.touched && jobTemplateForm.get('name')?.hasError('required')) {
+                <mat-error>Job template name is required</mat-error>
+              }
+            </mat-form-field>
+          </td>
+        </tr>
+        <tr>
+          <td>Description*</td>
+          <td>
+            <mat-form-field appearance="fill" class="full-width">
+              <input
+                formControlName = "description"
+                matInput
+                required
+              >
+              @if (jobTemplateForm.get('description')?.touched && jobTemplateForm.get('description')?.hasError('required')) {
+                <mat-error>Job template description is required</mat-error>
+              }
+            </mat-form-field>
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div>
+
+  <mat-dialog-actions>
+  <button mat-stroked-button (click)="onCancel()">Cancel</button>
+  <button mat-flat-button type="submit" (click)="onConfirm()">Confirm</button>
+  </mat-dialog-actions>
+}
+
+

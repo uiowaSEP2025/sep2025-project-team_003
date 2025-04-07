@@ -143,7 +143,6 @@ export class EditJobPageComponent {
         this.materials = this.jobData.materials;
         this.contractors = this.jobData.contractors;
         this.jobForm.markAllAsTouched();
-        console.log(this.services)
       },
       error: (error) => {
         this.errorHandler.handleError(error);

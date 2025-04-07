@@ -213,7 +213,8 @@
         </mat-accordion>
         <div class="spacer"></div>
         <div class="items-center">
-          <button mat-flat-button type="submit" class="mt-10 mb-5" [disabled]="!isUpdatedField" (click)="onCreateConfirmDialog()">Create</button>
+          <button mat-flat-button type="submit" class="mt-10 mb-5" [disabled]="!isUpdatedField" (click)="onCreateConfirmDialog('job')">Create</button>
+          <button mat-flat-button type="submit" class="mt-10 mb-5" [disabled]="!isAllowedTemplate" (click)="onCreateConfirmDialog('template')">Create Template</button>
           <button mat-stroked-button class="mt-10 mb-5" (click)="navigateToPage('jobs')">Cancel</button>
         </div>
       </mat-card>

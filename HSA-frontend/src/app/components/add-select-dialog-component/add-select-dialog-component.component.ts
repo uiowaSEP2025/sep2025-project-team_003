@@ -227,13 +227,23 @@ export class AddSelectDialogComponentComponent {
     let itemsInfo: any[] = [];
     this.selectedItems.forEach((element : number) => {
       if (this.typeOfDialog === 'template') {
-        const dialogRef = this.dialog.open(ApplyTemplateConfirmDialogComponentComponent, {
+        const secondDialogRef = this.dialog.open(ApplyTemplateConfirmDialogComponentComponent, {
           width: 'auto', 
           maxWidth: '90vw', 
           height: 'auto', 
           maxHeight: '90vh', 
-          data: element
+          data: element,
+          disableClose: false
         });
+
+        secondDialogRef.afterClosed().subscribe(result => {
+          if (result !== false) {
+            itemsInfo.push(result)
+            this.dialogRef.close({
+              selectedItems: itemsInfo
+            })
+          }
+        })
       }
       else if (this.typeOfDialog === 'material') {
         let materialEntry = this.allDataEntries.filter((item: { [x: string]: number; }) => item['id'] === element)[0];
@@ -251,21 +261,19 @@ export class AddSelectDialogComponentComponent {
       }
     });
 
-    this.dialogRef.close(this.typeOfDialog === 'template' 
-      ? {
-
-      } 
-      :{
+    if (this.typeOfDialog !== 'template') {
+      this.dialogRef.close({
         selectedItems: this.typeOfDialog === 'customer' 
-        ? this.selectedCustomer[0]
-        : this.typeOfDialog === 'service' 
-          ? this.selectedServices 
-          : this.typeOfDialog === 'contractor' 
-            ? this.selectedContractors 
-            : this.materialInputFields,
-        itemsInfo: itemsInfo
-      }
-    );
+          ? this.selectedCustomer[0]
+          : this.typeOfDialog === 'service' 
+            ? this.selectedServices 
+            : this.typeOfDialog === 'contractor' 
+              ? this.selectedContractors 
+              : this.materialInputFields,
+          itemsInfo: itemsInfo
+        }
+      );
+    }
   }
 
   getUnitsUsedValue(id: number): number | string {
