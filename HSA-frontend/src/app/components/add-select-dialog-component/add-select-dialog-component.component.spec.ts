@@ -35,11 +35,26 @@ describe('AddSelectDialogComponentComponent', () => {
     .compileComponents();
 
     fixture = TestBed.createComponent(AddSelectDialogComponentComponent);
+    httpMock = TestBed.inject(HttpTestingController);
+    router = TestBed.inject(Router);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should call dialogRef.close with [] when onCancel is called', () => {
+    component.onCancel();
+    expect(mockDialogRef.close).toHaveBeenCalledWith([]);
+  });
+
+  it('should call dialogRef.close with data when onConfirm is called', () => {
+    component.onConfirm();
+    expect(mockDialogRef.close).toHaveBeenCalledWith({
+      selectedItems: undefined,
+      itemsInfo: []
+    });
   });
 });

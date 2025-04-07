@@ -1,0 +1,27 @@
+<form class="flex flex-col justify-center">
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput 
+        [formControl]="nameControl" [errorStateMatcher]="matcher"
+        placeholder="Discount Name">
+        @if (nameControl.hasError('required')) {
+          <mat-error>Name is <strong>required</strong></mat-error>
+        }
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Discount Percent</mat-label>
+        <input matInput 
+          [formControl]="percentControl" [errorStateMatcher]="matcher"
+          placeholder="Discount Percent">
+          @if (percentControl.hasError('required')) {
+            <mat-error>Discount percent is <strong>required</strong></mat-error>
+          }
+          @if (percentControl.hasError('pattern')) {
+            <mat-error>Discount percent must be <strong>xx.xx</strong></mat-error>
+          }
+      </mat-form-field>
+    
+    
+</form>
+<button mat-raised-button (click)="onSubmit()">Create</button>

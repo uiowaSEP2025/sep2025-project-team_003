@@ -15,10 +15,14 @@ from hsabackend.views.jobs import get_job_table_data, get_job_individual_data, c
 from hsabackend.views.jobs_services import get_job_service_table_data, create_job_service, delete_job_service, delete_cached_job_service
 from hsabackend.views.jobs_materials import get_job_material_table_data, create_job_material, delete_job_material, delete_cached_job_material
 from hsabackend.views.jobs_contractors import get_job_contractor_table_data, create_job_contractor, delete_job_contractor, delete_cached_job_contractor
+from hsabackend.views.job_templates import get_job_template_table_data, get_job_template_individual_data, create_job_template, edit_job_template, delete_job_template
+from hsabackend.views.job_templates_services import get_job_template_service_table_data, create_job_template_service, delete_job_template_service, delete_cached_job_template_service
+from hsabackend.views.job_templates_materials import get_job_template_material_table_data, create_job_template_material, delete_job_template_material, delete_cached_job_template_material
 from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice
 from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForInvoiceByInvoice
 from hsabackend.views.generate_invoice_pdf_view import generate_pdf
 from hsabackend.views.organizations import createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail
+from hsabackend.views.discounts import get_discounts, edit_discount, create_discount, delete_discount
 from django.http import HttpResponse
 
 def handle_unmatched_api(request):
@@ -96,6 +100,25 @@ urlpatterns = [
     path("api/delete/job/<int:job_id>/contractor/<int:job_contractor_id>", delete_job_contractor),
     path("api/delete/job/<int:job_id>/contractors", delete_cached_job_contractor),
 
+    # job_templates
+    path("api/get/jobtemplates", get_job_template_table_data),
+    path("api/get/jobtemplate/<int:id>", get_job_template_individual_data),
+    path("api/create/jobtemplate", create_job_template),
+    path("api/edit/jobtemplate/<int:id>", edit_job_template),
+    path("api/delete/jobtemplate/<int:id>", delete_job_template),
+
+    # job_templates_services join
+    path("api/get/jobtemplate/<int:id>/services", get_job_template_service_table_data),
+    path("api/create/jobtemplate/<int:id>/service", create_job_template_service),
+    path("api/delete/jobtemplate/<int:job_template_id>/service/<int:job_template_service_id>", delete_job_template_service),
+    path("api/delete/jobtemplate/<int:job_template_id>/services", delete_cached_job_template_service),
+
+    # job_templates_materials join
+    path("api/get/jobtemplate/<int:id>/materials", get_job_template_material_table_data),
+    path("api/create/jobtemplate/<int:id>/material", create_job_template_material),
+    path("api/delete/jobtemplate/<int:job_template_id>/material/<int:job_template_material_id>", delete_job_template_material),
+    path("api/delete/jobtemplate/<int:job_template_id>/materials", delete_cached_job_template_material),
+
     # invoices
     path("api/create/invoice", createInvoice),
     path("api/get/invoices", getInvoices),
@@ -113,6 +136,12 @@ urlpatterns = [
     # quotes
     path("api/get/quotesforinvoice/customer/<int:id>", getQuotesForInvoiceByCustomer),
     path("api/get/quotesforinvoice/invoice/<int:id>", getQuotesForInvoiceByInvoice),
+
+    # discounts
+    path("api/get/discounts", get_discounts),
+    path("api/edit/discount/<int:id>", edit_discount),
+    path("api/create/discount", create_discount),
+    path("api/delete/discount/<int:id>", delete_discount),
 
     # Catch-all for unmatched API requests
     re_path(r'^api/.*', handle_unmatched_api), 

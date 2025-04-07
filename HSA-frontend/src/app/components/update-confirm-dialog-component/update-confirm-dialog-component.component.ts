@@ -13,18 +13,19 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class UpdateConfirmDialogComponentComponent {
   itemDescription: any
-    constructor(
-      public dialogRef: MatDialogRef<UpdateConfirmDialogComponentComponent>,
-      @Inject(MAT_DIALOG_DATA) public message: any,
-    ) {
-      this.itemDescription = message;
-    }
   
-    onCancel(): void {
-      this.dialogRef.close(false);
-    }
-  
-    onConfirm(): void {
-      this.dialogRef.close(true);
-    }
+  constructor(
+    public dialogRef: MatDialogRef<UpdateConfirmDialogComponentComponent>,
+    @Inject(MAT_DIALOG_DATA) public message: any,
+  ) {
+    this.itemDescription = message;
+  }
+
+  onCancel(): void {
+    this.dialogRef.close(false);
+  }
+
+  onConfirm(): void {
+    this.dialogRef.close(true);
+  }
 }

@@ -32,7 +32,6 @@ export class ViewInvoicePageComponent implements OnInit{
     this.invoiceService.getSpecificInvoiceData(this.invoiceID).subscribe(
       {next: (response) => {
         this.invoiceData = response
-        console.log(this.invoiceData)
       },
       error: (error) => {
         this.errorHandler.handleError(error)

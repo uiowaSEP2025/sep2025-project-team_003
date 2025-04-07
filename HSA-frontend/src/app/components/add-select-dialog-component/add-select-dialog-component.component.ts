@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { StringFormatter } from '../../utils/string-formatter';
 import { MatButtonModule } from '@angular/material/button';
 import { TableComponentComponent } from "../table-component/table-component.component";
@@ -11,6 +11,8 @@ import { ContractorService } from '../../services/contractor.service';
 import { ErrorHandlerService } from '../../services/error.handler.service';
 import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.component';
 import { CustomerService } from '../../services/customer.service';
+import { JobTemplateService } from '../../services/jobTemplate.service';
+import { ApplyTemplateConfirmDialogComponentComponent } from '../apply-template-confirm-dialog-component/apply-template-confirm-dialog-component.component';
 
 @Component({
   selector: 'app-add-select-dialog-component',
@@ -32,12 +34,15 @@ export class AddSelectDialogComponentComponent {
   allDataEntries: any[] = []
   searchHint: string = '';
   headers: string[] = []
+  templates: any
   customers: any
   services: any
   materials: any
   contractors: any
   tableItems: any
   selectedItems: any = []
+  selectedTemplate: any = []
+  selectedTemplateIsError: boolean = false
   selectedCustomer: any = []
   selectedCustomerIsError: boolean = false
   selectedServices: any = []
@@ -53,10 +58,12 @@ export class AddSelectDialogComponentComponent {
   constructor(
     public dialogRef: MatDialogRef<AddSelectDialogComponentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AddSelectDialogData,
+    public dialog: MatDialog,
     private customerService: CustomerService,
     private serviceService: ServiceService,
     private materialService: MaterialService,
     private contractorService: ContractorService,
+    private jobTemplateService: JobTemplateService,
     private errorHandler: ErrorHandlerService,
   ) {
     this.isMaterial = this.data.typeOfDialog === 'material' ? true : false;
@@ -81,6 +88,8 @@ export class AddSelectDialogComponentComponent {
       case 'contractor':
         this.loadContractorsToTable('', 5, 0);
         break;
+      case 'template':
+        this.loadJobTemplatesToTable('', 5, 0)
     }
   }
 
@@ -142,11 +151,30 @@ export class AddSelectDialogComponentComponent {
     });
   }
 
+  loadJobTemplatesToTable(searchTerm: string, pageSize: number, offSet: number) {
+    this.jobTemplateService.getJobTemplate({ search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
+      next: (response) => {
+        this.dialogData = response;
+        this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
+      },
+      error: (error) => {
+        this.errorHandler.handleError(error);
+      }
+    });
+  }
+
   setSelectedCustomer(customers: number[]) {
     this.selectedCustomer = [...customers];
     this.selectedItems = this.selectedCustomer;
     this.selectedCustomerIsError = this.selectedCustomer === null ? true : false
     this.isNotSelectedItems = this.selectedCustomer === null ? true : false
+  }
+
+  setSelectedJobTemplate(templates: number[]) {
+    this.selectedTemplate = [...templates];
+    this.selectedItems = this.selectedTemplate;
+    this.selectedTemplateIsError = this.selectedTemplate === null ? true : false
+    this.isNotSelectedItems = this.selectedTemplate === null ? true : false
   }
 
   setSelectedServices(services: number[]) {
@@ -198,7 +226,26 @@ export class AddSelectDialogComponentComponent {
   onConfirm(): void {
     let itemsInfo: any[] = [];
     this.selectedItems.forEach((element : number) => {
-      if (this.typeOfDialog === 'material') {
+      if (this.typeOfDialog === 'template') {
+        const secondDialogRef = this.dialog.open(ApplyTemplateConfirmDialogComponentComponent, {
+          width: 'auto', 
+          maxWidth: '90vw', 
+          height: 'auto', 
+          maxHeight: '90vh', 
+          data: element,
+          disableClose: false
+        });
+
+        secondDialogRef.afterClosed().subscribe(result => {
+          if (result !== false) {
+            itemsInfo.push(result)
+            this.dialogRef.close({
+              selectedItems: itemsInfo
+            })
+          }
+        })
+      }
+      else if (this.typeOfDialog === 'material') {
         let materialEntry = this.allDataEntries.filter((item: { [x: string]: number; }) => item['id'] === element)[0];
         let materialInputEntry = this.materialInputFields.filter((item) => item['id'] === element)[0];
         itemsInfo.push(
@@ -214,18 +261,19 @@ export class AddSelectDialogComponentComponent {
       }
     });
 
-    this.dialogRef.close(
-      {
+    if (this.typeOfDialog !== 'template') {
+      this.dialogRef.close({
         selectedItems: this.typeOfDialog === 'customer' 
-        ? this.selectedCustomer[0]
-        : this.typeOfDialog === 'service' 
-          ? this.selectedServices 
-          : this.typeOfDialog === 'contractor' 
-            ? this.selectedContractors 
-            : this.materialInputFields,
-        itemsInfo: itemsInfo
-      }
-    );
+          ? this.selectedCustomer[0]
+          : this.typeOfDialog === 'service' 
+            ? this.selectedServices 
+            : this.typeOfDialog === 'contractor' 
+              ? this.selectedContractors 
+              : this.materialInputFields,
+          itemsInfo: itemsInfo
+        }
+      );
+    }
   }
 
   getUnitsUsedValue(id: number): number | string {
