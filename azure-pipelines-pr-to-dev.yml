@@ -3,7 +3,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- HSA-82-site-clean-up
+- dev
 
 pr: none
 
