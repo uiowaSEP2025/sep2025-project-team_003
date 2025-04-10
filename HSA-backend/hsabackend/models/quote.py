@@ -46,5 +46,5 @@ class Quote(models.Model):
             "Job Description": self.jobID.description,
             "Address": format_address(self.jobID.requestor_address, self.jobID.requestor_city, self.jobID.requestor_state, self.jobID.requestor_zip),
             "Total Undiscounted": self.total_price,
-            "Discount Percent": self.discount_type.discount_percent if self.discount_type.discount_percent else Decimal(0)
+            "Discount Percent": self.discount_type.discount_percent if self.discount_type else Decimal(0)
         }
