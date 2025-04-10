@@ -8,7 +8,7 @@ describe('JobDisplayTableComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [JobDisplayTableComponent]
+      imports: [JobDisplayTableComponent],
     })
     .compileComponents();
 

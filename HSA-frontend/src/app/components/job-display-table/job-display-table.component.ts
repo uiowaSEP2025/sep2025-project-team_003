@@ -6,6 +6,7 @@ import { DeleteDialogComponentComponent } from '../delete-dialog-component/delet
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorHandlerService } from '../../services/error.handler.service';
+import { JobTemplateDataInterface } from '../../interfaces/api-responses/jobTemplate.api.data.interface';
 
 interface ServiceRowItem {
   "Service ID": string,
@@ -68,14 +69,14 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['dataSource']) {
-      if ('services' in changes['dataSource'].currentValue) {
-        this.updateServiceTable()
-      }
-      else if ('materials' in changes['dataSource'].currentValue) {
-        this.updateMaterialTable()
-      }
-      else if ('contractors' in changes['dataSource'].currentValue) {
-        this.updateContractorTable()
+      const newValue = changes['dataSource'].currentValue;
+      
+      if (newValue && 'services' in newValue) {
+        this.updateServiceTable();
+      } else if (newValue && 'materials' in newValue) {
+        this.updateMaterialTable();
+      } else if (newValue && 'contractors' in newValue) {
+        this.updateContractorTable();
       }
     }
   }

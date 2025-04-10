@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddSelectDialogComponentComponent } from './add-select-dialog-component.component';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient } from '@angular/common/http';
+import { AddConfirmDialogComponentComponent } from './add-confirm-dialog-component.component';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideHttpClient } from '@angular/common/http';
 
 class MockRouter {
   navigate = jasmine.createSpy('navigate');
 }
 
-describe('AddSelectDialogComponentComponent', () => {
-  let component: AddSelectDialogComponentComponent;
-  let fixture: ComponentFixture<AddSelectDialogComponentComponent>;
-  let mockDialogRef: jasmine.SpyObj<MatDialogRef<AddSelectDialogComponentComponent>>;
+describe('AddConfirmDialogComponentComponent', () => {
+  let component: AddConfirmDialogComponentComponent;
+  let fixture: ComponentFixture<AddConfirmDialogComponentComponent>;
+  let mockDialogRef: jasmine.SpyObj<MatDialogRef<AddConfirmDialogComponentComponent>>;
   let httpMock: HttpTestingController;
   let router!: Router;
 
@@ -22,7 +22,7 @@ describe('AddSelectDialogComponentComponent', () => {
     mockDialogRef = jasmine.createSpyObj('MatDialogRef', ['close']);
 
     await TestBed.configureTestingModule({
-      imports: [AddSelectDialogComponentComponent],
+      imports: [AddConfirmDialogComponentComponent],
       providers: [
         provideAnimationsAsync(),
         provideHttpClient(),
@@ -34,7 +34,7 @@ describe('AddSelectDialogComponentComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AddSelectDialogComponentComponent);
+    fixture = TestBed.createComponent(AddConfirmDialogComponentComponent);
     httpMock = TestBed.inject(HttpTestingController);
     router = TestBed.inject(Router);
     component = fixture.componentInstance;
@@ -45,16 +45,13 @@ describe('AddSelectDialogComponentComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call dialogRef.close with [] when onCancel is called', () => {
+  it('should call dialogRef.close with false when onCancel is called', () => {
     component.onCancel();
-    expect(mockDialogRef.close).toHaveBeenCalledWith([]);
+    expect(mockDialogRef.close).toHaveBeenCalledWith(false);
   });
 
-  it('should call dialogRef.close with data when onConfirm is called', () => {
+  it('should call dialogRef.close with true when onConfirm is called', () => {
     component.onConfirm();
-    expect(mockDialogRef.close).toHaveBeenCalledWith({
-      selectedItems: undefined,
-      itemsInfo: []
-    });
+    expect(mockDialogRef.close).toHaveBeenCalledWith(true);
   });
 });
