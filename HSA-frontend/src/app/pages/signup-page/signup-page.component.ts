@@ -13,7 +13,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorHandlerService } from '../../services/error.handler.service';
 import { OrganizationService } from '../../services/organization.service';
 import { RequestTrackerService } from '../../utils/request-tracker';
-import { take } from 'rxjs';
 
 @Component({
   selector: 'app-signup-page',
@@ -142,8 +141,6 @@ export class SignupPageComponent implements OnInit {
           this.stepper.selected!.completed = false;
         }
       })
-
-      
     }
   }
 

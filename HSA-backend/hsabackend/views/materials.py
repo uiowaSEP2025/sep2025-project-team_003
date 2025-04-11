@@ -99,7 +99,7 @@ def create_material(request):
     try:
         material.full_clean()
         material.save()
-        return Response({"message": "material created successfully"}, status=status.HTTP_201_CREATED)
+        return Response({"message": "Material created successfully", "data": material.json()}, status=status.HTTP_201_CREATED)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
  

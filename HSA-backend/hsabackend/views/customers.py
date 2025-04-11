@@ -103,7 +103,7 @@ def create_customer(request):
     try:
         customer.full_clean()  # Validate the model instance
         customer.save()
-        return Response({"message": "Customer created successfully"}, status=status.HTTP_201_CREATED)
+        return Response({"message": "Customer created successfully", "data": customer.json()}, status=status.HTTP_201_CREATED)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 

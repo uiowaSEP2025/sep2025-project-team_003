@@ -103,7 +103,7 @@ def create_service(request):
     try:
         service.full_clean()  # Validate the model instance
         service.save()
-        return Response({"message": "service created successfully"}, status=status.HTTP_201_CREATED)
+        return Response({"message": "Service created successfully", "data": service.json()}, status=status.HTTP_201_CREATED)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 

@@ -26,6 +26,7 @@ import { EditJobPageComponent } from './pages/edit-job-page/edit-job-page.compon
 import { DiscountsPageComponent } from './pages/discounts-page/discounts-page.component';
 import { CreateDiscountsPageComponent } from './pages/create-discounts-page/create-discounts-page.component';
 import { EditDiscountPageComponent } from './pages/edit-discount-page/edit-discount-page.component';
+import { OnboardingPageComponent } from './pages/onboarding-page/onboarding-page.component';
 
 export const routes: Routes = [
   {
@@ -39,6 +40,9 @@ export const routes: Routes = [
   },
   {
     path: 'login', component: LoginComponent
+  },
+  {
+    path: 'onboarding', component: OnboardingPageComponent
   },
   {
     path: 'services', component: ServicePageComponent

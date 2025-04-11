@@ -1,0 +1,166 @@
+<div class="parent">
+	<div class="main-heading">
+		<h1 style="margin-bottom: 40px;">
+			Welcome to Handyman Service Application
+		</h1>
+		<mat-stepper #stepper [linear]="true">
+			<mat-step [stepControl]="serviceForm">
+				<form class="parent" [formGroup]="serviceForm" (ngSubmit)="onSubmitServiceCreation()">
+					<ng-template matStepLabel>Create Service</ng-template>
+					<mat-card class="p-5 wide-card">
+						<mat-form-field class="full-width-field">
+							<mat-label>Service Name</mat-label>
+							<input
+								formControlName = "serviceName"
+								matInput
+								placeholder="Ex: Painting Ceiling"
+								required
+							>
+							@if (serviceForm.get('serviceName')?.touched && serviceForm.get('serviceName')?.hasError('required')) {
+								<mat-error>First Service is required</mat-error>
+							}
+						</mat-form-field>
+						<mat-form-field class="full-width-field">
+							<mat-label>Service Description</mat-label>
+							<input
+								formControlName = "serviceDescription"
+								matInput
+								placeholder=""
+								required
+							>
+							@if (serviceForm.get('serviceDescription')?.touched && serviceForm.get('serviceDescription')?.hasError('required')) {
+								<mat-error>First Description is required</mat-error>
+							}
+						</mat-form-field>
+						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
+							<button mat-flat-button (click)="openPrefillDialog('service')">Prefill</button>
+							<button mat-flat-button type="submit">Next</button>
+						</div>
+					</mat-card>
+				</form>
+			</mat-step>
+			<mat-step [stepControl]="customerForm">
+				<form class="parent" [formGroup]="customerForm" (ngSubmit)="onSubmitCustomerCreation()">
+					<ng-template matStepLabel>Create Customer</ng-template>
+					<mat-card class="p-5 wide-card">
+						<mat-form-field class="full-width-field">
+							<mat-label>Customer First Name</mat-label>
+							<input
+								formControlName = "firstName"
+								matInput
+								placeholder="Ex: John"
+								required
+							>
+						</mat-form-field>
+						<mat-form-field class="full-width-field">
+							<mat-label>Customer Last Name</mat-label>
+							<input
+								formControlName = "lastName"
+								matInput
+								placeholder="Ex: Doe"
+								required
+							>
+						</mat-form-field>
+						<mat-form-field class="full-width-field">
+							<mat-label>Customer Email</mat-label>
+							<input
+								formControlName = "email"
+								matInput
+								placeholder="Ex: john.doe@gmail.com"
+								required
+							>
+						</mat-form-field>
+						<mat-form-field class="full-width-field">
+							<mat-label>Customer Phone Number</mat-label>
+							<input
+								formControlName = "phone"
+								matInput
+								placeholder="000-000-0000"
+								required
+							>
+						</mat-form-field>
+						<mat-form-field class="example-full-width">
+							<mat-label>Add Notes</mat-label>
+							<textarea 
+								formControlName = "note"
+								matInput 
+								placeholder=""
+							></textarea>
+						</mat-form-field>
+						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
+							<button mat-flat-button (click)="openPrefillDialog('customer')">Prefill</button>
+							<button mat-flat-button type="submit">Next</button>
+						</div>
+					</mat-card>
+				</form>
+			</mat-step>
+			<mat-step [stepControl]="materialForm" [optional]="true">
+				<form class="parent" [formGroup]="materialForm">
+					<ng-template matStepLabel>Create Material</ng-template>
+					<mat-card class="p-5 wide-card">
+						<mat-form-field class="full-width-field">
+							<mat-label>Material Name</mat-label>
+							<input
+								formControlName = "materialName"
+								matInput
+								placeholder="Ex: Valspar White Paint"
+								required
+							>
+						</mat-form-field>
+						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
+							<button mat-flat-button (click)="openPrefillDialog('material')">Prefill</button>
+							<button mat-flat-button type="submit" (click)="onSubmitMaterialCreation()">Next</button>
+						</div>
+					</mat-card>
+				</form>
+			</mat-step>
+			<mat-step [stepControl]="contractorForm" [optional]="true">
+				<form class="parent" [formGroup]="contractorForm">
+					<ng-template matStepLabel>Create Contractor</ng-template>
+					<mat-card class="p-5 wide-card">
+						<mat-form-field class="full-width-field">
+							<mat-label>Contractor First Name</mat-label>
+							<input
+								formControlName = "firstName"
+								matInput
+								placeholder="Ex: John"
+								required
+							>
+						</mat-form-field>
+						<mat-form-field class="full-width-field">
+							<mat-label>Contractor Last Name</mat-label>
+							<input
+								formControlName = "lastName"
+								matInput
+								placeholder="Ex: Doe"
+								required
+							>
+						</mat-form-field>
+						<mat-form-field class="full-width-field">
+							<mat-label>Contractor Email</mat-label>
+							<input
+								formControlName = "email"
+								matInput
+								placeholder="Ex: john.doe@gmail.com"
+								required
+							>
+						</mat-form-field>
+						<mat-form-field class="full-width-field">
+							<mat-label>Contractor Phone Number</mat-label>
+							<input
+								formControlName = "phone"
+								matInput
+								placeholder="000-000-0000"
+								required
+							>
+						</mat-form-field>
+						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
+							<button mat-flat-button (click)="openPrefillDialog('contractor')">Prefill</button>
+							<button mat-flat-button type="submit" (click)="onSubmitContractorCreation()">Next</button>
+						</div>
+					</mat-card>
+				</form>
+			</mat-step>
+		</mat-stepper>
+	</div>
+</div>

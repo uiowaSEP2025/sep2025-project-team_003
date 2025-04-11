@@ -107,7 +107,7 @@ def create_contractor(request):
     try:
         contractor.full_clean()  # Validate the model instance
         contractor.save()
-        return Response({"message": "Contractor created successfully"}, status=status.HTTP_201_CREATED)
+        return Response({"message": "Contractor created successfully", "data": contractor.json()}, status=status.HTTP_201_CREATED)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
