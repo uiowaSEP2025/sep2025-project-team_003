@@ -56,7 +56,7 @@ export class ServicesHelperComponent implements OnInit {
         if (this.crudType === 'Update') {
             this.serviceNameControl = new FormControl (this.service.serviceName, Validators.required)
             this.serviceDescriptionControl = new FormControl (this.service.serviceDescription)
-            this.serviceRateControl = new FormControl(this.service.defaultHourlyRate);
+            this.serviceRateControl = new FormControl(this.service.defaultRate);
         }
 
     }
@@ -69,10 +69,10 @@ export class ServicesHelperComponent implements OnInit {
             id: 0,
             service_name: this.serviceNameControl.value,
             service_description: this.serviceDescriptionControl.value,
-            default_hourly_rate: this.serviceRateControl.value,
+            default_rate: this.serviceRateControl.value,
         }
-        if (!args.default_hourly_rate) {
-            args.default_hourly_rate = 0;
+        if (!args.default_rate) {
+            args.default_rate = 0;
         }
         if (this.crudType === 'Update') {
             args.id = this.service.serviceID

@@ -18,7 +18,7 @@ export class EditServicePageComponent {
     serviceID: 0,
     serviceName: '',
     serviceDescription: '',
-    defaultHourlyRate: 0,
+    defaultRate: 0,
   }
 
 }

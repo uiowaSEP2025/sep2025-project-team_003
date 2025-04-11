@@ -68,7 +68,7 @@ describe('TableComponentComponent', () => {
 
   it('should render the edit and delete icons in the row', () => {
     const compiled = fixture.debugElement.nativeElement;
-    // Have to manually trigger the event or it won't work :()
+    // Have to manually trigger the event, or it won't work :()
     const mockData = {
       data: [
         { id: 1, name: 'John Doe', email: 'john@example.com' },
@@ -172,7 +172,7 @@ describe('TableComponentComponent', () => {
 
   it('should render the header data', async () => {
     const compiled = fixture.debugElement.nativeElement;
-    // Have to manually trigger the event or it won't work :()
+    // Have to manually trigger the event, or it won't work :()
     const mockData = {
       data: [
         { id: 1, name: 'John Doe', email: 'john@example.com' },
@@ -271,7 +271,7 @@ describe('TableComponentComponent', () => {
         const c0 = checkboxes[0]
         await c0.toggle()
         fixture.detectChanges()
-        
+
         expect(setCheckedIds).toHaveBeenCalledWith([1])
         expect(await c0.isChecked()).toBe(true)
 
@@ -285,7 +285,7 @@ describe('TableComponentComponent', () => {
         expect(await c0.isChecked()).toBe(false)
       })
 
-      
+
       })
       describe('multiple select', () => {
 
@@ -306,20 +306,20 @@ describe('TableComponentComponent', () => {
           };
           component.ngOnChanges(changes);
           fixture.detectChanges(); // Trigger change detection
-  
+
         })
 
         it('should successfully select multiple rows', async () => {
           setCheckedIds = jasmine.createSpy().and.callFake((arg) => {
             checkedIds = [...arg]
           });
-  
+
           component.setCheckedIds = setCheckedIds
           const checkboxes = await loader.getAllHarnesses(MatCheckboxHarness);
           const c0 = checkboxes[0]
           await c0.toggle()
           fixture.detectChanges()
-          
+
           expect(setCheckedIds).toHaveBeenCalledWith([1])
           expect(JSON.stringify(checkedIds)).toEqual(JSON.stringify([1]))
 
@@ -329,7 +329,7 @@ describe('TableComponentComponent', () => {
           const c1 = checkboxes[1]
           await c1.toggle()
           fixture.detectChanges()
-          
+
           expect(setCheckedIds).toHaveBeenCalledWith([1,2])
           expect(JSON.stringify(checkedIds)).toEqual(JSON.stringify([1,2]))
           component.checkedIds = checkedIds
@@ -342,13 +342,13 @@ describe('TableComponentComponent', () => {
           setCheckedIds = jasmine.createSpy().and.callFake((arg) => {
             checkedIds = [...arg]
           });
-  
+
           component.setCheckedIds = setCheckedIds
           const checkboxes = await loader.getAllHarnesses(MatCheckboxHarness);
           const c0 = checkboxes[0]
           await c0.toggle()
           fixture.detectChanges()
-          
+
           expect(setCheckedIds).toHaveBeenCalledWith([1])
           expect(JSON.stringify(checkedIds)).toEqual(JSON.stringify([1]))
 
@@ -358,7 +358,7 @@ describe('TableComponentComponent', () => {
           const c1 = checkboxes[1]
           await c1.toggle()
           fixture.detectChanges()
-          
+
           expect(setCheckedIds).toHaveBeenCalledWith([1,2])
           expect(JSON.stringify(checkedIds)).toEqual(JSON.stringify([1,2]))
           component.checkedIds = checkedIds
@@ -367,7 +367,7 @@ describe('TableComponentComponent', () => {
 
           await c0.toggle()
           fixture.detectChanges()
-          
+
           expect(setCheckedIds).toHaveBeenCalledWith([1])
           expect(JSON.stringify(checkedIds)).toEqual(JSON.stringify([2]))
           component.checkedIds = checkedIds
@@ -376,7 +376,7 @@ describe('TableComponentComponent', () => {
 
           await c1.toggle()
           fixture.detectChanges()
-          
+
           expect(setCheckedIds).toHaveBeenCalledWith([2])
           expect(JSON.stringify(checkedIds)).toEqual(JSON.stringify([]))
           expect(await c0.isChecked()).toBe(false)

@@ -126,7 +126,7 @@ def edit_service(request, id):
     service.service_name = service_name
     service.service_description = service_description
     service.organization = org
-    service.default_hourly_rate = service_default_hourly_rate
+    service.default_rate = service_default_hourly_rate
     try:
         service.full_clean()  # Validate the model instance
         service.save()

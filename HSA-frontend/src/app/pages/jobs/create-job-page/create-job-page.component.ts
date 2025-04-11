@@ -19,26 +19,24 @@ import { InputFieldDictionary } from '../../../interfaces/interface-helpers/inpu
 import { DateRange } from '../../invoices/edit-invoice-page/edit-invoice-page.component';
 import { JobService } from '../../../services/job.service';
 import { StateList } from '../../../utils/states-list';
+import {JobsHelperComponent} from '../jobs-helper/jobs-helper.component';
 
 
 
 @Component({
   selector: 'app-create-job-page',
   imports: [
-    TableComponentComponent,
     CommonModule,
     MatButtonModule,
-    MatError,
     FormsModule,
     MatFormFieldModule,
-    InvoiceDatePickerComponent,
     MatSelectModule,
-    LoadingFallbackComponent,
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
-    ReactiveFormsModule
-],
+    ReactiveFormsModule,
+    JobsHelperComponent
+  ],
   templateUrl: './create-job-page.component.html',
   styleUrl: './create-job-page.component.scss'
 })

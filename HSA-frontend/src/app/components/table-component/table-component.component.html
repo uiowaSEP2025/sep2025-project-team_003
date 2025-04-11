@@ -31,7 +31,7 @@
                         (click)="openEditDialog({element : element})">
                   <mat-icon>edit</mat-icon>
                 </button>
-              <button mat-mini-fab click-stop-propagation (click)="openDeleteDialog(element)">
+              <button mat-mini-fab click-stop-propagation (click)="openDeleteDialog(element.id)">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>

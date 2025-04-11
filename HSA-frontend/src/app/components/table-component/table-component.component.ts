@@ -38,6 +38,7 @@ import {EditJobPageComponent} from '../../pages/jobs/edit-job-page/edit-job-page
 import {EditServicePageComponent} from '../../pages/services/edit-service-page/edit-service-page.component';
 import {EditInvoicePageComponent} from '../../pages/invoices/edit-invoice-page/edit-invoice-page.component';
 import {EditDiscountPageComponent} from '../../pages/discounts/edit-discount-page/edit-discount-page.component';
+import {DeleteRequest} from '../../interfaces/interface-helpers/delete.interface';
 
 interface OpenEditDialogParams {
   element: any;
@@ -165,19 +166,12 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       } break;
       case 'jobs':
       { const dialogRef = this.dialog.open(EditJobPageComponent)
-       dialogRef.componentInstance.job.id=element.id
-       dialogRef.componentInstance.job.jobStatus=element.jobStatus
-       dialogRef.componentInstance.job.startDate=element.startDate
-       dialogRef.componentInstance.job.endDate=element.endDate
-       dialogRef.componentInstance.job.services=element.services
-       dialogRef.componentInstance.job.materials=element.materials
-       dialogRef.componentInstance.job.description=element.description
-       dialogRef.componentInstance.job.customer.firstName=element.customerName
-       dialogRef.componentInstance.job.customer=element.customer
-       dialogRef.componentInstance.job.jobAddress=element.job_address
-       dialogRef.componentInstance.job.jobCity=element.job_city
-       dialogRef.componentInstance.job.jobState=element.job_state
-       dialogRef.componentInstance.job.jobZip=element.job_zip
+       dialogRef.componentInstance.jobSimple.id=element.id;
+       dialogRef.componentInstance.jobSimple.jobStatus=element.job_status;
+       dialogRef.componentInstance.jobSimple.startDate=element.start_date;
+       dialogRef.componentInstance.jobSimple.endDate=element.end_date;
+       dialogRef.componentInstance.jobSimple.description=element.description
+       dialogRef.componentInstance.jobSimple.customerName=element.customer_name
         void dialogRef.afterClosed()
       } break;
       case 'services':
@@ -185,7 +179,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
         dialogRef.componentInstance.service.serviceID = element.id;
         dialogRef.componentInstance.service.serviceName = element.service_name;
         dialogRef.componentInstance.service.serviceDescription = element.service_description;
-        dialogRef.componentInstance.service.defaultHourlyRate = element.default_hourly_rate;
+        dialogRef.componentInstance.service.defaultRate = element.default_rate;
         void dialogRef.afterClosed()
       } break;
       case 'invoices':
@@ -213,7 +207,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
 
   }
 
-  openDeleteDialog(args: any) {
+  openDeleteDialog(args: DeleteRequest) {
     const dialogRef = this.dialog.open(DeleteDialogComponentComponent, {
       width: '300px',
       data: args

@@ -6,17 +6,14 @@ import { environment } from '../../environments/environment';
 import { Service, ServiceParams } from '../interfaces/service.interface';
 import { TableApiResponse } from '../interfaces/api-responses/table.api.interface';
 
-interface ServiceCreatePostData {
+interface ServicePostData {
   service_name: string | null
   service_description: string | null
-  default_hourly_rate: number | null
+  default_rate: number | null
 }
 
-interface ServiceEditPostData {
+interface ServiceEditPostData extends ServicePostData{
   id: number | null,
-  service_name: string | null
-  service_description: string | null
-  default_hourly_rate: number | null
 }
 
 interface ServiceDeletePostData {
@@ -75,7 +72,7 @@ export class ServiceService {
   }
 
 
-  public createService(data:ServiceCreatePostData): Observable<StandardApiResponse> {
+  public createService(data:ServicePostData): Observable<StandardApiResponse> {
     return this.http.post<StandardApiResponse>(this.apiCreateUrl, data);
   }
 

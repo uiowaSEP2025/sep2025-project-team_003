@@ -1,11 +1,15 @@
-import { Component, Input, OnChanges, OnInit, SimpleChange, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
-import { ContractorJSON, JobDisplayInterface, MaterialJSON, ServiceJSON } from '../../interfaces/api-responses/job.api.display.interface';
+import { JobDisplayInterface } from '../../interfaces/api-responses/job.api.display.interface';
 import { MatIcon } from '@angular/material/icon';
 import { DeleteDialogComponentComponent } from '../delete-dialog-component/delete-dialog-component.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorHandlerService } from '../../services/error.handler.service';
+import {Service} from '../../interfaces/service.interface';
+import {Contractor} from '../../interfaces/contractor.interface';
+import {Material} from '../../interfaces/material.interface';
+import {Job} from '../../interfaces/job.interface';
 
 interface ServiceRowItem {
   "Service ID": string,
@@ -35,7 +39,7 @@ interface ContractorRowItem {
 })
 
 export class JobDisplayTableComponent  implements OnInit, OnChanges {
-  @Input({ required: true }) dataSource!: JobDisplayInterface
+  @Input({ required: true }) dataSource!: Job
   @Input({ required: true }) typeToDisplay: string = 'service'
   @Input() isEditRow: boolean = false
   @Input() popOutEntry!: (typeOfTable: string, data: any, joinRelationID: any, itemID: any) => any
@@ -45,12 +49,9 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
   displayedMaterialColumns: string[] = []
   displayedContractorColumns: string[] = []
 
-  services: ServiceJSON[] = []
-  materials: MaterialJSON[] = []
-  contractors: ContractorJSON[] = []
-  displayServices: ServiceRowItem[] = []
-  displayMaterials: MaterialRowItem[] = []
-  displayContractors: ContractorRowItem[] = []
+  services: Service[] = []
+  materials: Material[] = []
+  contractors: Contractor[] = []
 
   constructor (public dialog: MatDialog, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {}
 
@@ -90,7 +91,7 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
         })
       )
     }
-    
+
     this.displayedServiceColumns = ["Service ID", "Service Name", "Service Description"]
     this.displayedServiceColumns = this.isEditRow === true ? [...this.displayedServiceColumns, "Actions"] : this.displayedServiceColumns
   }
@@ -122,7 +123,7 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
         })
       )
     }
-    
+
     this.displayedContractorColumns = ["Contractor ID", "Contractor Name", "Contractor Phone No", "Contractor Email"]
     this.displayedContractorColumns = this.isEditRow === true ? [...this.displayedContractorColumns, "Actions"] : this.displayedContractorColumns
   }

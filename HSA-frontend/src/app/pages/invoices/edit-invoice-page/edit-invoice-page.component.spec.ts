@@ -14,20 +14,20 @@ import { InvoiceService } from '../../../services/invoice.service';
 describe('EditInvoicePageComponent', () => {
   let component: EditInvoicePageComponent;
   let fixture: ComponentFixture<EditInvoicePageComponent>;
-  let paramMapSubject: Subject<any>;
+  const paramMapSubject: Subject<any>;
   let loader: HarnessLoader;
   let invoiceService: InvoiceService;
 
   paramMapSubject = new Subject();
-      const activatedRouteMock = {
-        paramMap: paramMapSubject.asObservable(),
-        queryParams: of({ status: 'created',
-            "due_date": "N/A",
-            "issuance_date": "N/A",
-            "customer": "Alex Guo",
-            "tax":"0.06"
-         })
-      };
+  const activatedRouteMock = {
+      paramMap: paramMapSubject.asObservable(),
+      queryParams: of({ status: 'created',
+          "due_date": "N/A",
+          "issuance_date": "N/A",
+          "customer": "Alex Guo",
+          "tax":"0.06"
+       })
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -104,7 +104,6 @@ describe('EditInvoicePageComponent', () => {
     })
 
     it('should call the service when everything is valid', async () => {
-      component.selectedQuotes= [2]
       fixture.detectChanges()
 
       const filteredButtons = await Promise.all(

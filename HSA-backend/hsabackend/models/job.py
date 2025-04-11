@@ -1,3 +1,4 @@
+from django.core.serializers import serialize
 from django.db import models
 from hsabackend.models.contractor import Contractor
 from hsabackend.models.customer import Customer
@@ -37,6 +38,10 @@ class Job(models.Model):
     
 
     def json(self):
+        services_list = serialize('json', self.services.all())
+        contractors_list = serialize('json', self.contractors.all())
+        materials_list = serialize('json', self.materials.all())
+
         return {
             'id': self.pk,
             'jobStatus': self.job_status,
@@ -44,7 +49,14 @@ class Job(models.Model):
             'endDate': self.end_date,
             'description': self.description,
             'customer': self.customer.json(),
-
+            'materials': materials_list,
+            'services': services_list,
+            'contractors': contractors_list,
+            'jobCity': self.job_city,
+            'jobState': self.job_state,
+            'jobZip': self.job_zip,
+            'jobAddress': self.job_address,
+            'invoice': self.invoice,
         }
     
     def json_simplify(self):

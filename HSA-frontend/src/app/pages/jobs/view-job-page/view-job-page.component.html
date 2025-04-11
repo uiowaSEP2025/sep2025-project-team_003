@@ -1,7 +1,7 @@
 <div class="parent">
   <div class="main-heading">
-    @if (jobData === null) {
-      <app-loading-fallback stringToDisplay="Loading the job"></app-loading-fallback>
+    @if (loading) {
+      <app-loading-fallback stringToDisplay="Loading job information"></app-loading-fallback>
     }
     @else {
       <h1>
@@ -16,31 +16,31 @@
             <table class="info-table">
               <tr>
                 <td>Customer</td>
-                <td>{{jobData.data.customerName}}</td>
+                <td>{{jobData.customer.firstName}} {{jobData.customer.lastName}}</td>
               </tr>
               <tr>
                 <td>Status</td>
-                <td>{{jobData.data.jobStatus}}</td>
+                <td>{{jobData.jobStatus}}</td>
               </tr>
               <tr>
                 <td>Start Date</td>
-                <td>{{jobData.data.startDate}}</td>
+                <td>{{jobData.startDate}}</td>
               </tr>
               <tr>
                 <td>End Date</td>
-                <td>{{jobData.data.endDate}}</td>
+                <td>{{jobData.endDate}}</td>
               </tr>
               <tr>
                 <td>Description</td>
-                <td>{{jobData.data.description}}</td>
+                <td>{{jobData.description}}</td>
               </tr>
               <tr>
                 <td>Address</td>
-                <td>{{jobData.data.requestorAddress + ", " + jobData.data.requestorCity + ", " + jobData.data.requestorState + " " + jobData.data.requestorZip}}</td>
+                <td>{{jobData.jobAddress + ", " + jobData.jobCity + ", " + jobData.jobState + " " + jobData.jobZip}}</td>
               </tr>
               <tr>
                 <td>Job ID</td>
-                <td>{{jobData.data.id}}</td>
+                <td>{{jobData.id}}</td>
               </tr>
             </table>
           </mat-expansion-panel>
@@ -51,24 +51,8 @@
           <mat-expansion-panel-header>
             <mat-panel-title> Services </mat-panel-title>
           </mat-expansion-panel-header>
-          <div>
-            <app-job-display-table
-              [dataSource]="jobData.services"
-              [typeToDisplay]="'service'"
-            ></app-job-display-table>
-          </div>
-          <div>
-            <app-job-display-table
-              [dataSource]="jobData.materials"
-              [typeToDisplay]="'material'"
-            ></app-job-display-table>
-          </div>
-          <div>
-            <app-job-display-table
-              [dataSource]="jobData.contractors"
-              [typeToDisplay]="'contractor'"
-            ></app-job-display-table>
-          </div>
+
+
         </mat-expansion-panel>
       </mat-accordion>
       <div class="spacer"></div>

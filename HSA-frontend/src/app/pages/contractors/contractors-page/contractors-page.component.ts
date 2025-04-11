@@ -1,39 +1,56 @@
-import {Component, OnInit} from '@angular/core';
-import { TableComponentComponent } from '../../../components/table-component/table-component.component';
+import {Component} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import {Router} from '@angular/router';
-import { ContractorService } from '../../../services/contractor.service';
-import { ErrorHandlerService } from '../../../services/error.handler.service';
 import { CommonModule } from '@angular/common';
-import { LoadingFallbackComponent } from '../../../components/loading-fallback/loading-fallback.component';
 import {PageTemplateComponent} from '../../../components/page-template/page-template.component';
+import {DataTableComponent} from '../../../components/data-table/data-table.component';
+import {finalize} from 'rxjs';
+import {ContractorService} from '../../../services/contractor.service';
 
 @Component({
   selector: 'app-contractors-page',
-  imports: [TableComponentComponent, MatButtonModule, CommonModule, LoadingFallbackComponent, PageTemplateComponent],
+  imports: [MatButtonModule, CommonModule, PageTemplateComponent, DataTableComponent],
   templateUrl: './contractors-page.component.html',
   styleUrl: './contractors-page.component.scss'
 })
-export class ContractorsPageComponent implements OnInit  {
-  contractors: any = null
-  contractorService: ContractorService
+export class ContractorsPageComponent  {
+  isTableLoading = false;
+  private _contractorService: ContractorService;
 
-  constructor(private router: Router, contractorService: ContractorService, private errorHandler: ErrorHandlerService) {
-    this.contractorService = contractorService;
+  constructor(contractorService: ContractorService) {
+    this._contractorService = contractorService;
+
   }
 
-  ngOnInit(): void {
-    this.loadDataToTable("", 5, 0);
-  }
-
-  loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {
-    this.contractorService.getContractor({ search: searchTerm, pagesize: pageSize, offset: offSet}).subscribe({
+  onEdit(row: any) {
+    this.isTableLoading = true;
+    // Perform edit operation
+    this.dataService.editItem(row).pipe(
+      finalize(() => {
+        this.isTableLoading = false;
+      })
+    ).subscribe({
       next: (response) => {
-        this.contractors = response
+        // Handle success
       },
       error: (error) => {
-        this.errorHandler.handleError(error, 'contractors')
+        // Handle error
       }
-    })
+    });
+  }
+
+  onDelete(row: any) {
+    this.isTableLoading = true;
+    this.yourService.deleteItem(row.id).pipe(
+      finalize(() => {
+        this.isTableLoading = false;
+      })
+    ).subscribe({
+      next: () => {
+        // Refresh table or remove row
+      },
+      error: (error) => {
+        // Handle error
+      }
+    });
   }
 }

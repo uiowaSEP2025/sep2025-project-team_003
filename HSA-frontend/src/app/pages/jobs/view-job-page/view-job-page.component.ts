@@ -1,17 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import { LoadingFallbackComponent } from '../../../components/loading-fallback/loading-fallback.component';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { JobDisplayTableComponent } from '../../../components/job-display-table/job-display-table.component';
 import { JobService } from '../../../services/job.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ErrorHandlerService } from '../../../services/error.handler.service';
-import { JobDataInterface } from '../../../interfaces/api-responses/job.api.data.interface';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
+import {Job} from '../../../interfaces/job.interface';
 
 @Component({
   selector: 'app-view-job-page',
@@ -20,7 +19,6 @@ import { MatListModule } from '@angular/material/list';
     CommonModule,
     MatButtonModule,
     MatIconModule,
-    JobDisplayTableComponent,
     MatCardModule,
     MatListModule,
     MatDividerModule,
@@ -30,8 +28,31 @@ import { MatListModule } from '@angular/material/list';
   styleUrl: './view-job-page.component.scss'
 })
 export class ViewJobPageComponent  implements OnInit {
+  loading = false;
   jobID!: number
-  jobData: JobDataInterface | null = null;
+  @Input() jobData: Job = {
+    customer: {
+      customerID: 0,
+      organizationID: 0,
+      notes: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: ''
+    },
+    description: '',
+    endDate: new Date(),
+    id: 0,
+    jobAddress: '',
+    jobCity: '',
+    jobState: '',
+    jobStatus: 'created',
+    jobZip: '',
+    materials: [],
+    services: [],
+    startDate: new Date()
+
+  }
 
   constructor (private jobService: JobService, private activatedRoute:ActivatedRoute, private router: Router, private errorHandler: ErrorHandlerService) {
     this.activatedRoute.paramMap.subscribe(params => {
@@ -40,17 +61,20 @@ export class ViewJobPageComponent  implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loading = true;
     this.jobService.getSpecificJobData(this.jobID).subscribe(
       {next: (response) => {
-        this.jobData = response
+        this.jobData = response;
+        this.loading = false;
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
+        this.errorHandler.handleError(error);
+        this.loading = false;
       }}
     )
   }
 
   navigateToPage(pagePath: string) {
-    this.router.navigate([`/${pagePath}`]);
+    void this.router.navigate([`/${pagePath}`]);
   }
 }

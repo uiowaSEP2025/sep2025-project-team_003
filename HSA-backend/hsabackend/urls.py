@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.http import HttpResponseNotFound
 import hsabackend.views.index as hview
+from hsabackend.views.contractors_list import ContractorsList
 from hsabackend.views.user_auth import login_view, logout_view
 from hsabackend.views.customers import get_customer_excluded_table_data, get_customer_table_data, create_customer, edit_customer, delete_customer
 from hsabackend.views.contractors import get_contractor_excluded_table_data, get_contractor_table_data, create_contractor, edit_contractor, delete_contractor
@@ -49,7 +50,7 @@ urlpatterns = [
     path("api/delete/customer/<int:id>", delete_customer),
 
     # contractor
-    path("api/get/contractors", get_contractor_table_data),
+    path("api/get/contractors", ContractorsList.as_view(), name="get-contractors"),
     path("api/get/contractors/exclude", get_contractor_excluded_table_data),
     path("api/create/contractor", create_contractor),
     path("api/edit/contractor/<int:id>", edit_contractor),

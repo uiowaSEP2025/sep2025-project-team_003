@@ -12,7 +12,7 @@ export class ErrorHandlerService {
   }
 
   // handles api errors
-  handleError(error: HttpErrorResponse, prevPath: string = 'home'): void {
+  handleError(error: HttpErrorResponse, prevPath = 'home'): void {
     if (error.status === 401) {
       this.snackBar.open('Please login to the system', '', {
         duration: 3000

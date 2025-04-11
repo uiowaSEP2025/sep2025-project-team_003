@@ -10,7 +10,6 @@ from hsabackend.models.request import Request
 from hsabackend.models.job import Job, JobsServices, JobsMaterials
 from hsabackend.models.discount import Discount
 from hsabackend.models.job_template import JobTemplate
-from hsabackend.models.subscription import Subscription
 from django.utils import timezone
 from datetime import timedelta
 import traceback

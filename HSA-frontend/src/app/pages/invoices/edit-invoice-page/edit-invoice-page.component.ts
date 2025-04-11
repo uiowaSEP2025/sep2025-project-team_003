@@ -30,7 +30,7 @@ export interface DateRange {
 
 @Component({
   selector: 'app-edit-invoice-page',
-  imports: [TableComponentComponent, MatError, MatButtonModule, MatSelectModule,
+  imports: [MatError, MatButtonModule, MatSelectModule,
     FormsModule, MatInputModule, MatFormFieldModule, MatCardModule,
     InvoiceDatePickerComponent, ReactiveFormsModule],
   templateUrl: './edit-invoice-page.component.html',

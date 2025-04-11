@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { JobDataInterface } from '../interfaces/api-responses/job.api.data.interface';
+import {TableApiResponse} from '../interfaces/api-responses/table.api.interface';
+import {Job} from '../interfaces/job.interface';
 
 interface JobCreatePostData {
   jobStatus: string | null,
@@ -20,17 +22,9 @@ interface JobCreatePostData {
   materials: [] | null
 }
 
-interface JobEditPostData {
+interface JobEditPostData extends JobCreatePostData{
   id: number | null,
-  jobStatus: string | null,
-  startDate: string | null,
-  endDate: string | null,
-  description: string | null,
-  customerID: number | null,
-  city: string | null,
-  state: string | null,
-  zip: string | null,
-  address: string | null,
+
 }
 
 interface JobDeletePostData {
@@ -77,7 +71,7 @@ export class JobService {
 
   constructor(private http: HttpClient) {}
 
-  public getJob(params?: Record<string, string | number>): Observable<StandardApiResponse> {
+  public getJob(params?: Record<string, string | number>): Observable<TableApiResponse<Job>> {
     let httpParams = new HttpParams();
 
     // Add query parameters
@@ -87,9 +81,9 @@ export class JobService {
       })
     }
 
-    return this.http.get<StandardApiResponse>(this.apiGetUrl, { params: httpParams });
+    return this.http.get<TableApiResponse<Job>>(this.apiGetUrl, { params: httpParams });
   }
-  
+
 
   public createJob(data:JobCreatePostData): Observable<StandardApiResponse> {
     return this.http.post<StandardApiResponse>(this.apiCreateUrl, data);
@@ -103,8 +97,8 @@ export class JobService {
     return this.http.post<StandardApiResponse>(this.apiDeleteUrl + `/${data.id}`, data);
   }
 
-  public getSpecificJobData(id: number | null): Observable<JobDataInterface> {
-    return this.http.get<JobDataInterface>(this.apiGetSpecificUrl + `/${id}`);
+  public getSpecificJobData(id: number | null): Observable<Job> {
+    return this.http.get<Job>(this.apiGetSpecificUrl + `/${id}`);
   }
 
   public getJobService(id: number, params?: Record<string, string | number>): Observable<StandardApiResponse> {

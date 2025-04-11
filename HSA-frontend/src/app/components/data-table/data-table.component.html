@@ -1,0 +1,49 @@
+<mat-form-field>
+  <input matInput placeholder="Search" [ngModel]="searchTerm" (ngModelChange)="onSearch($event)">
+</mat-form-field>
+
+<mat-table [dataSource]="dataSource">
+  <!-- Dynamic columns -->
+  @for(column of displayedColumns; track $index) {
+  <ng-container [matColumnDef]="column">
+    <mat-header-cell class="capitalize" *matHeaderCellDef>
+      {{ getColumnHeader(column) }}
+    </mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      {{ formatCellValue(element[column], column) }}
+    </mat-cell>
+  </ng-container>
+  }
+  <ng-container [matColumnDef]="'Edit'">
+    <mat-header-cell class="capitalize"  *matHeaderCellDef>Edit</mat-header-cell>
+    <mat-cell *matCellDef="let element"><mat-icon>edit</mat-icon></mat-cell>
+  </ng-container>
+  <ng-container [matColumnDef]="'Delete'">
+    <mat-header-cell class="capitalize" *matHeaderCellDef>Delete</mat-header-cell>
+    <mat-cell *matCellDef="let element"><mat-icon>delete</mat-icon></mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <mat-header-cell *matHeaderCellDef class="header-cell actions-header">
+      ACTIONS
+    </mat-header-cell>
+    <mat-cell *matCellDef="let row" class="actions-cell">
+      <button mat-icon-button [color]="'primary'" (click)="onEdit(row)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button [color]="'warn'" (click)="onDelete(row)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumnsWithActions"></mat-header-row>
+  <mat-row class="hover:bg-sky-200 cursor-pointer" *matRowDef="let row; columns: displayedColumnsWithActions;"></mat-row>
+</mat-table>
+
+<mat-paginator
+  [length]="totalItems"
+  [pageSize]="pageSize"
+  [pageSizeOptions]="[5, 10, 25, 100]"
+  (page)="onPageChange($event)">
+</mat-paginator>

@@ -7,11 +7,10 @@
 			<h1>
 				<span>Invoices</span>
 			</h1>
-			<app-table-component 
-					[loadDataToTable]="this.loadDataToTable.bind(this)" 
-					editRedirect="/edit/invoice"
+			<app-table-component
+					[loadDataToTable]="this.loadDataToTable.bind(this)"
 					[deleteRequest]="invoiceService.deleteInvoice.bind(invoiceService)"
-					searchHint="search by customer name" 
+					searchHint="search by customer name"
 					[fetchedData]="invoices"
 					[headers]="['Status', 'Due Date', 'Customer']"
 					[hideValues]="['Id', 'Tax']"
@@ -23,5 +22,5 @@
 					Add a Invoice
 			</button>
 		}
-  </div>  
+  </div>
 </div>

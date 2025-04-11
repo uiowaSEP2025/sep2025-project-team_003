@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 import { Customer, CustomerParams } from '../interfaces/customer.interface';
 import { TableApiResponse } from '../interfaces/api-responses/table.api.interface';
 
-interface CustomerCreatePostData {
+interface CustomerPostData {
   first_name: string | null
   last_name: string | null
   email: string | null
@@ -14,13 +14,8 @@ interface CustomerCreatePostData {
   notes: string | null
 }
 
-interface CustomerEditPostData {
+interface CustomerEditPostData extends CustomerPostData {
   id: number | null,
-  first_name: string | null
-  last_name: string | null
-  email: string | null
-  phone: string | null
-  notes: string | null
 }
 
 interface CustomerDeletePostData {
@@ -80,7 +75,7 @@ export class CustomerService {
     }
 
 
-  public createCustomer(data:CustomerCreatePostData): Observable<StandardApiResponse> {
+  public createCustomer(data:CustomerPostData): Observable<StandardApiResponse> {
     return this.http.post<StandardApiResponse>(this.apiCreateUrl, data);
   }
 

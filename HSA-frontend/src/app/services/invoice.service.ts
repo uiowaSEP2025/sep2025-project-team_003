@@ -10,18 +10,9 @@ import { InvoiceDataInterface } from "../interfaces/api-responses/invoice.api.da
 import {Job} from '../interfaces/job.interface';
 import {Customer} from '../interfaces/customer.interface';
 import {Discount} from '../interfaces/discount.interface';
+import {DeleteRequest} from '../interfaces/interface-helpers/delete.interface';
 
-interface CreateInvoiceInterface {
-  customer: Customer,
-  status: "created" | "issued" | "paid"
-  issuance_date: Date,
-  due_date: Date,
-  tax: number
-  jobs: Job[]
-  discounts: Discount[]
-}
-
-interface UpdateInvoiceInterface {
+interface InvoicePostData {
   customer: Customer,
   status: "created" | "issued" | "paid"
   issuance_date: Date,
@@ -64,15 +55,15 @@ export class InvoiceService {
         return this.http.get<TableApiResponse<Invoice>>(this.apiGetUrl, { params: httpParams });
     }
 
-    public createInvoice(json: CreateInvoiceInterface): Observable<StandardApiResponse> {
+    public createInvoice(json: InvoicePostData): Observable<StandardApiResponse> {
         return this.http.post<StandardApiResponse>(this.createUrl, json);
     }
 
-    public updateInvoice(id: number, data: UpdateInvoiceInterface) {
+    public updateInvoice(id: number, data: InvoicePostData) {
         return this.http.post<StandardApiResponse>(`${this.editUrl}/${id}`, data);
     }
 
-    public deleteInvoice(row: any): Observable<StandardApiResponse> {
+    public deleteInvoice(row: DeleteRequest): Observable<StandardApiResponse> {
         const id = row.id
         return this.http.post<StandardApiResponse>(`${this.deleteUrl}/${id}`, null);
     }

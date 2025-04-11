@@ -1,6 +1,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+
+from hsabackend.controller.job_serializer import JobSerializer
 from hsabackend.models.organization import Organization
 from hsabackend.models.customer import Customer
 from hsabackend.models.job import Job, JobsServices, JobsMaterials
@@ -72,32 +74,11 @@ def get_job_individual_data(request, id):
  
     if not job:
         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
-    
-    
-    job_services = job.services.all()
-    job_materials = job.materials.all()
-    job_contractors = job.contractors.all()
 
-    job_services_data = []
-    for service in job_services:
-        job_services_data.append(service.json())
-    
-    job_materials_data = []
-    for material in job_materials:
-        job_materials_data.append(material.json())
-    
-    job_contractors_data = []
-    for contractor in job_contractors:
-        job_contractors_data.append(contractor.json())
+    serializer = JobSerializer(job)
 
-    res = {
-        'data': job.json(),
-        'services': {'services': job_services_data},
-        'materials': {'materials': job_materials_data},
-        'contractors': {'contractors': job_contractors_data}
-    }    
 
-    return Response(res, status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 def create_job(request):

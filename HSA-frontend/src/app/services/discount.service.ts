@@ -6,14 +6,12 @@ import { environment } from '../../environments/environment';
 import { TableApiResponse } from '../interfaces/api-responses/table.api.interface';
 import {Discount} from '../interfaces/discount.interface';
 
-interface createDiscountInterface {
+interface DiscountPostData {
   discount_name:  string | null,
   discount_percent: number | null
 }
 
-interface editDiscountInterface {
-  discount_name:  string | null,
-  discount_percent: number | null,
+interface DiscountEditPostData extends DiscountPostData {
   id: number | null
 }
 
@@ -41,17 +39,16 @@ export class DiscountsService {
     return this.http.get<TableApiResponse<Discount>>(this.apiGetUrl, { params: httpParams });
   }
 
-  public createDiscount(data: createDiscountInterface): Observable<StandardApiResponse> {
+  public createDiscount(data: DiscountPostData): Observable<StandardApiResponse> {
     return this.http.post<StandardApiResponse>(this.apiCreateUrl, data);
   }
 
-  public deleteDiscount(id: any) {
-    id = id.id
-    return this.http.post<StandardApiResponse>(`${this.apiDeleteUrl}/${id}`, null);
+  public deleteDiscount(data: DiscountEditPostData) {
+        return this.http.post<StandardApiResponse>(`${this.apiDeleteUrl}/${data.id}`, null);
 
   }
 
-  public editDiscount(data: editDiscountInterface) {
+  public editDiscount(data: DiscountEditPostData) {
     return this.http.post<StandardApiResponse>(`${this.apiEditUrl}/${data.id}`, data);
   }
 

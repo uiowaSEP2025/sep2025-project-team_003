@@ -1,19 +1,5 @@
 <app-page-template [title]="'Contractors'">
-  <div class="main-heading">
-    @if (contractors === null) {
-      <app-loading-fallback stringToDisplay="Loading contractors"></app-loading-fallback>
-    }
-    @else {
-      <app-table-component
-        [fetchedData]="contractors"
-        [tableModel]="'contractors'"
-        [deleteRequest]="contractorService.deleteContractor.bind(contractorService)"
-        [loadDataToTable]="this.loadDataToTable.bind(this)"
-        [hideValues]="['Id']"
-        [searchHint]="'Search by contractor name'"
-        [headers]="['First Name', 'Last Name', 'Phone Number', 'Email']"
-      ></app-table-component>
+      <app-data-table [excludeColumns]="['organization', 'id']" [lookupTable]="'contractor'">
 
-    }
-  </div>
+      </app-data-table>
 </app-page-template>

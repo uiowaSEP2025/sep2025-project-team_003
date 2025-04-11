@@ -1,9 +1,9 @@
 from django.db import models
 
-from hsabackend.models.job import Job
+from hsabackend.models.model_validators import isNonEmpty, validate_state, isValidPhone
 from hsabackend.models.organization import Organization
 from hsabackend.models.service import Service
-from hsabackend.models.model_validators import isNonEmpty, validate_state, isValidPhone
+
 
 class Request(models.Model):
     """A request for service that a potential customer creates"""

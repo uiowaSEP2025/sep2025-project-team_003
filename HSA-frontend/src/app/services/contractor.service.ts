@@ -5,13 +5,11 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Contractor, ContractorParams } from '../interfaces/contractor.interface';
 import { environment } from '../../environments/environment';
-interface ContractorEditPostData {
+
+interface ContractorPostData {
   id: number | null,
 }
 
-interface ContractorDeletePostData {
-  id: number | null,
-}
 
 @Injectable({
   providedIn: 'root'
@@ -71,11 +69,11 @@ export class ContractorService {
     return this.http.post<StandardApiResponse>(this.apiCreateUrl, data);
   }
 
-  public editContractor(data:ContractorEditPostData): Observable<StandardApiResponse> {
+  public editContractor(data:ContractorPostData): Observable<StandardApiResponse> {
     return this.http.post<StandardApiResponse>(this.apiEditUrl + `/${data.id}`, data);
   }
 
-  public deleteContractor(data:ContractorDeletePostData): Observable<StandardApiResponse> {
+  public deleteContractor(data:ContractorPostData): Observable<StandardApiResponse> {
     return this.http.post<StandardApiResponse>(this.apiDeleteUrl + `/${data.id}`, data);
   }
 }
