@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.http import HttpResponseNotFound
 import hsabackend.views.index as hview
-from hsabackend.views.user_auth import check_view, login_view, logout_view
+from hsabackend.views.user_auth import check_view, login_view, logout_view, user_create, user_exist
 from hsabackend.views.customers import get_customer_excluded_table_data, get_customer_table_data, create_customer, edit_customer, delete_customer
 from hsabackend.views.contractors import get_contractor_excluded_table_data, get_contractor_table_data, create_contractor, edit_contractor, delete_contractor
 from hsabackend.views.requests import get_org_request_data, delete_request,approve_request
@@ -41,6 +41,8 @@ urlpatterns = [
     path("api/login", login_view),
     path("api/logout", logout_view),
     path("api/usercheck", check_view),
+    path("api/create/user", user_create),
+    path("api/userexist", user_exist),
 
     # customer
     path("api/get/customers", get_customer_table_data),

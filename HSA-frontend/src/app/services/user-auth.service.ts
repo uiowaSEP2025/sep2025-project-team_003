@@ -9,6 +9,13 @@ interface LoginPostData {
   password: string | null
 }
 
+interface CreateUserPostData {
+  firstName: string | null
+  lastName: string | null
+  email: string | null
+  username: string | null
+  password: string | null
+}
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +24,8 @@ export class UserAuthService {
   private apiLoginUrl = `${environment.apiUrl}/api/login`;
   private apiLogoutUrl = `${environment.apiUrl}/api/logout`;
   private apiUserCheckUrl = `${environment.apiUrl}/api/usercheck`;
+  private apiUserCreateUrl = `${environment.apiUrl}/api/create/user`;
+  private apiUserExistUrl = `${environment.apiUrl}/api/userexist`;
 
   constructor(private http: HttpClient) {}
 
@@ -30,5 +39,13 @@ export class UserAuthService {
 
   checkUserAuth() {
     return this.http.post<StandardApiResponse>(this.apiUserCheckUrl, null);
+  }
+
+  createUser(data: CreateUserPostData): Observable<StandardApiResponse> {
+    return this.http.post<StandardApiResponse>(this.apiUserCreateUrl, data);
+  }
+
+  public checkUserExist(data: LoginPostData) {
+    return this.http.post<StandardApiResponse>(this.apiUserExistUrl, data)
   }
 }

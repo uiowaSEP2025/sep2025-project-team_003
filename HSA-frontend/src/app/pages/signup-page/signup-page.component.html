@@ -59,22 +59,54 @@
             <mat-label>Password</mat-label>
             <input
               formControlName = "password"
+              type="password"
               matInput
               placeholder="8-16 characters"
               required
             >
-            @if (userAccountForm.get('password')?.touched && userAccountForm.get('password')?.hasError('required')) {
-              <mat-error>Last Name is required</mat-error>
+            @if (userAccountForm.get('password')?.hasError('required')) {
+              <mat-error>Password is required</mat-error>
+            }
+            
+            @if (userAccountForm.get('password')?.hasError('minlength')) {
+              <mat-error>Minimum 8 characters required</mat-error>
+            }
+
+            @if (userAccountForm.get('password')?.hasError('maxlength')) {
+              <mat-error>Maximum 16 characters required</mat-error>
+            }
+            
+            @if (userAccountForm.get('password')?.hasError('passwordStrength')) {
+              <mat-error>
+                {{ userAccountForm.get('password')?.errors?.['passwordStrength'] }}
+              </mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Confirm Password</mat-label>
+            <input
+              formControlName = "confirmPassword"
+              type="password"
+              matInput
+              placeholder=""
+              required
+            >
+            @if (userAccountForm.get('confirmPassword')?.touched && userAccountForm.get('confirmPassword')?.hasError('required')) {
+              <mat-error>Password is required</mat-error>
+            }
+            
+            @if (userAccountForm.get('confirmPassword')?.hasError('mismatch')) {
+              <mat-error>Password do not match</mat-error>
             }
           </mat-form-field>
           <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
             <button mat-stroked-button (click)="navigateToPage('login')">Cancel</button>
-            <button mat-flat-button matStepperNext type="submit">Next</button>
+            <button mat-flat-button type="submit">Next</button>
           </div>
         </form>
       </mat-step>
       <mat-step [stepControl]="registrationForm">
-        <form class="parent" [formGroup]="registrationForm" (ngSubmit)="onSubmitRegistration()">
+        <form class="parent" [formGroup]="registrationForm">
           <ng-template matStepLabel>Organization details</ng-template>
           <mat-form-field>
             <mat-label>Organization Name</mat-label>
@@ -103,48 +135,21 @@
               <mat-error>Email format is invalid</mat-error>
             }
           </mat-form-field>
-      
           <mat-form-field>
-            <mat-label>Address 1</mat-label>
-            <input
-              formControlName = "addressOne"
-              matInput
+            <mat-label>Primary phone</mat-label>
+            <input 
+              formControlName="organizationPhone"
+              matInput 
+              placeholder="Phone Number"
+              pattern="(\(\d{3}\)\s?|\d{3}[-.\s])\d{3}[-.\s]?\d{4}"
               required
             >
-            @if (registrationForm.get('addressOne')?.touched && registrationForm.get('addressOne')?.hasError('required')) {
-              <mat-error>Primary Address is required</mat-error>
+            @if (registrationForm.get('organizationPhone')?.touched && registrationForm.get('organizationPhone')?.hasError('required')) {
+              <mat-error>Primary phone is required</mat-error>
             }
-          </mat-form-field>
-      
-          <mat-form-field>
-            <mat-label>Address 2</mat-label>
-            <input
-              matInput
-            >
-          </mat-form-field>
-      
-          <mat-form-field>
-            <mat-label>City</mat-label>
-            <input
-              matInput
-            >
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>State</mat-label>
-            <mat-select formControlName="stateSelect">
-              @for (state of states; track state) {
-                <mat-option [value]="state.name">{{state.name}} - {{state.code}}</mat-option>
-              }
-            </mat-select>
-            @if (registrationForm.get('stateSelect')?.touched && registrationForm.get('stateSelect')?.hasError('required')) {
-              <mat-error>State is required</mat-error>
+            @if (registrationForm.get('organizationPhone')?.hasError('pattern')) {
+              <mat-error>Format is <strong>xxx-xxx-xxxx</strong></mat-error>
             }
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Zip Code</mat-label>
-            <input
-              matInput
-            >
           </mat-form-field>
           <mat-form-field>
             <mat-label>Owner Name</mat-label>
@@ -158,6 +163,60 @@
               <mat-error>Valid Owner is required</mat-error>
             }
           </mat-form-field>
+          <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
+            <button mat-stroked-button matStepperPrevious>Back</button>
+            <button mat-flat-button matStepperNext type="submit">Next</button>
+          </div>
+        </form>
+      </mat-step>
+      <mat-step [stepControl]="organizationLocationForm">
+        <ng-template matStepLabel>Organization location</ng-template>
+        <form class="parent" [formGroup]="organizationLocationForm" (ngSubmit)="onSubmitRegistration()">
+          <mat-form-field>
+            <mat-label>Address</mat-label>
+            <input
+              formControlName = "addressOne"
+              matInput
+              required
+            >
+            @if (organizationLocationForm.get('addressOne')?.touched && organizationLocationForm.get('addressOne')?.hasError('required')) {
+              <mat-error>Primary Address is required</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>City</mat-label>
+            <input
+              formControlName="city"
+              matInput
+              required
+            >
+            @if (organizationLocationForm.get('city')?.touched && organizationLocationForm.get('city')?.hasError('required')) {
+              <mat-error>City is required</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>State</mat-label>
+            <mat-select formControlName="stateSelect">
+              @for (state of states; track state) {
+                <mat-option [value]="state.name">{{state.name}} - {{state.code}}</mat-option>
+              }
+            </mat-select>
+            @if (organizationLocationForm.get('stateSelect')?.touched && organizationLocationForm.get('stateSelect')?.hasError('required')) {
+              <mat-error>State is required</mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Zip Code</mat-label>
+            <input
+              formControlName="zipCode"
+              matInput
+              required
+            >
+            @if (organizationLocationForm.get('zipCode')?.touched && organizationLocationForm.get('zipCode')?.hasError('required')) {
+              <mat-error>Zip code is required</mat-error>
+            }
+          </mat-form-field>
+          
           <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
             <button mat-stroked-button matStepperPrevious>Back</button>
             <button mat-flat-button type="submit">Create</button>
