@@ -25,7 +25,8 @@ def send_password_reset(reset_token: str, username: str, email: str):
         This link will expire in 30 minutes.
         """)
 
-    # HTML email
+    # the three weird classes after the .btn attempt to force mail clients to display
+    # the links we embedd as the correct color
     html_template = Template("""
         <!DOCTYPE html>
         <html>
@@ -40,15 +41,32 @@ def send_password_reset(reset_token: str, username: str, email: str):
                     text-decoration: none;
                     border-radius: 5px;
                 }
+                a[x-apple-data-detectors] {
+                    color: white !important;
+                    font-size: inherit !important;
+                    font-family: inherit !important;
+                    font-weight: inherit !important;
+                    line-height: inherit !important;
+                }
+                u + #body a {
+                    color: white !important;
+                    font-size: inherit !important;
+                    font-family: inherit !important;
+                    font-weight: inherit !important;
+                    line-height: inherit !important;
+                }
+                #MessageViewBody a {
+                    color: white !important;
+                    font-size: inherit !important;
+                    font-family: inherit !important;
+                    font-weight: inherit !important;
+                    line-height: inherit !important;
+                }
                 .container {
                     font-family: Arial, sans-serif;
                     max-width: 600px;
                     margin: 0 auto;
                     padding: 20px;
-                }
-                             
-                a {
-                    color: black;
                 }
                 </style>
         </head>
