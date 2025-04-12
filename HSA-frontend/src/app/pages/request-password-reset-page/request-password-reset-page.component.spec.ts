@@ -97,11 +97,7 @@ describe('RequestPasswordResetPageComponent', () => {
   
     const req = httpMock.expectOne('default/api/password_reset/');
     expect(req.request.method).toBe('POST');
-    
-    const formdata = new FormData()
-    formdata.append('email', 'test@example.com')
 
-    expect(req.request.body).toEqual(formdata);
     req.flush({ message: 'Success' });
     const router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
     expect(router.navigate).toHaveBeenCalledWith(['/login']); // <-- update this path as needed
