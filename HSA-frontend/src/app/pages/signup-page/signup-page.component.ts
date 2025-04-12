@@ -13,6 +13,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorHandlerService } from '../../services/error.handler.service';
 import { OrganizationService } from '../../services/organization.service';
 import { RequestTrackerService } from '../../utils/request-tracker';
+import { MatCardModule } from '@angular/material/card';
+import { passwordStrengthValidator, validateConfirmMatchesAndNotNull } from '../../utils/password-validators';
 
 @Component({
   selector: 'app-signup-page',
@@ -20,6 +22,7 @@ import { RequestTrackerService } from '../../utils/request-tracker';
     MatFormFieldModule,
     MatInputModule,
     MatStepperModule,
+    MatCardModule,
     FormsModule,
     ReactiveFormsModule,
     MatButton,
@@ -31,7 +34,7 @@ import { RequestTrackerService } from '../../utils/request-tracker';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
-export class SignupPageComponent implements OnInit {
+export class SignupPageComponent {
   userAccountForm: FormGroup;
   registrationForm: FormGroup;
   organizationLocationForm: FormGroup;
@@ -55,9 +58,9 @@ export class SignupPageComponent implements OnInit {
       userLastName: ['', Validators.required],
       userEmail: ['', [Validators.required, Validators.email]],
       username: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(16), this.passwordStrengthValidator]],
+      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(16), passwordStrengthValidator]],
       confirmPassword: ['', Validators.required],
-    }, {validator: this.passwordMatchValidator});
+    }, {validators: validateConfirmMatchesAndNotNull});
 
     this.registrationForm = this.registrationFormBuilder.group({
       organizationName: ['', Validators.required],
@@ -76,46 +79,6 @@ export class SignupPageComponent implements OnInit {
     this.states = StateList.getStates()
   }
 
-  ngOnInit() {
-  }
-
-  private passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
-    const value = control.value;
-
-    if (!value) {
-      return null;
-    }
-
-    const hasUpperCase = /[A-Z]/.test(value);
-    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value);
-
-    if (!hasUpperCase) {
-      return { passwordStrength: 'Must have 1 uppercase letter' } 
-    }
-
-    if (!hasSpecialChar) {
-      return { passwordStrength: 'Must have 1 special character' } 
-    }
-
-    return null
-  }
-
-  private passwordMatchValidator(form: AbstractControl): ValidationErrors | null {
-    const password = form.get('password')?.value;
-    const confirmPassword = form.get('confirmPassword')?.value;
-  
-    if (password && confirmPassword && password !== confirmPassword) {
-      form.get('confirmPassword')?.setErrors({ mismatch: true });
-
-      return { mismatch: true };
-    } else {
-      form.get('confirmPassword')?.setErrors(null);
-
-      return null;
-    }
-  }
-
-
   onSubmitUserCreation() {
     if (this.userAccountForm.invalid) {
       this.userAccountForm.markAllAsTouched();
@@ -131,8 +94,9 @@ export class SignupPageComponent implements OnInit {
           this.stepper.next();
 
           this.registrationForm.patchValue({
+            organizationEmail: this.userAccountForm.get('userEmail')?.value,
             ownerName: this.userAccountForm.get('userFirstName')?.value + ' ' + this.userAccountForm.get('userLastName')?.value
-          })
+          });
         },
         error: (error) => {
           this.snackBar.open('Username is already registered, please change username or login', '', {
@@ -180,7 +144,8 @@ export class SignupPageComponent implements OnInit {
                 requestorZip: this.organizationLocationForm.get('zipCode')?.value,
                 requestorAddress: this.organizationLocationForm.get('addressOne')?.value,
                 ownerFn: this.registrationForm.get('ownerName')?.value.split(' ')[0],
-                ownerLn: this.registrationForm.get('ownerName')?.value.split(' ').slice(1).join(' ')
+                ownerLn: this.registrationForm.get('ownerName')?.value.split(' ').slice(1).join(' '),
+                isOnboarding: true,
               }
 
               this.organizationService.createOrganization(organizationCreateRequest).subscribe({
@@ -188,25 +153,23 @@ export class SignupPageComponent implements OnInit {
                   this.snackBar.open('Organization created successfully', '', {
                     duration: 3000
                   });
-                  this.navigateToPage('login')
+                  this.navigateToPage('onboarding')
                 },
                 error: (error) => {
                   this.errorHandler.handleError(error);
                 }
-              })
+              });
             },
             error: (error) => {
               this.errorHandler.handleError(error);
             }
-          })
+          });
         },
         error: (error) => {
           this.errorHandler.handleError(error);
           this.tracker.endRequest();
         }
-      })
-
-      
+      });
     }
   }
 

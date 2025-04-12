@@ -7,6 +7,8 @@ import { UserAuthService } from '../../services/user-auth.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltip } from '@angular/material/tooltip';
+import { OrganizationService } from '../../services/organization.service';
+import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-header',
@@ -24,7 +26,7 @@ export class HeaderComponent implements OnInit {
   sidebarExpanded = false;
   isLoggout = true
 
-  constructor(private userAuth: UserAuthService, private router: Router, private snackBar: MatSnackBar) {}
+  constructor(private userAuth: UserAuthService, private organizationService: OrganizationService, private router: Router, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {}
 
   toggleSidebar() {
     this.sidebarExpanded = !this.sidebarExpanded

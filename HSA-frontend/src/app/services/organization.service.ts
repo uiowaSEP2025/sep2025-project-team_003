@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { StandardApiResponse } from '../interfaces/api-responses/standard-api-response.interface';
 
-interface CreateOrgnaizationPostData {
+interface CreateOrganizationPostData {
   name: string | null
 	email: string | null
 	city: string | null
@@ -14,6 +14,7 @@ interface CreateOrgnaizationPostData {
 	requestorAddress: string | null
 	ownerFn: string | null
 	ownerLn: string | null
+	isOnboarding: boolean | null
 }
 
 @Injectable({
@@ -28,7 +29,15 @@ export class OrganizationService {
 
   constructor(private http: HttpClient) {}
 
-	public createOrganization(data: CreateOrgnaizationPostData): Observable<StandardApiResponse> {
-		return this.http.post<StandardApiResponse>(this.apiCreateUrl, data)
+	public createOrganization(data: CreateOrganizationPostData): Observable<StandardApiResponse> {
+		return this.http.post<StandardApiResponse>(this.apiCreateUrl, data);
+	}
+
+	public getOrganization(): Observable<StandardApiResponse> {
+		return this.http.get<StandardApiResponse>(this.apiGetUrl);
+	}
+
+	public editOrganization(data: CreateOrganizationPostData): Observable<StandardApiResponse> {
+		return this.http.post<StandardApiResponse>(this.apiEditUrl, data);
 	}
 }
