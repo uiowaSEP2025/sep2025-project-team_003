@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
+
 
 @Component({
   selector: 'app-password-reset-page',
@@ -6,6 +9,16 @@ import { Component } from '@angular/core';
   templateUrl: './password-reset-page.component.html',
   styleUrl: './password-reset-page.component.scss'
 })
-export class PasswordResetPageComponent {
+export class PasswordResetPageComponent implements OnInit{
+
+  private token!:string
+
+  constructor(private activatedRoute: ActivatedRoute) {}
+
+  ngOnInit(): void {
+    this.activatedRoute.queryParams.subscribe(params => {
+      const token = params['token'];
+    });
+  }
 
 }

@@ -4,7 +4,7 @@ import os
 from hsabackend.utils.env_utils import get_url
 
 def send_password_reset(reset_token: str, username: str, email: str):
-    link = f"{get_url()}/reset-password?token={reset_token}"
+    link = f"{get_url()}/password/reset/confirmation?token={reset_token}"
 
     context = Context({
         'username': username,
@@ -31,22 +31,22 @@ def send_password_reset(reset_token: str, username: str, email: str):
         <html>
         <head>
             <style>
-            .btn {
-                display: inline-block;
-                padding: 10px 20px;
-                margin-top: 20px;
-                background-color: #007bff;
-                color: white;
-                text-decoration: none;
-                border-radius: 5px;
-            }
-            .container {
-                font-family: Arial, sans-serif;
-                max-width: 600px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-            </style>
+                .btn {
+                    display: inline-block;
+                    padding: 10px 20px;
+                    margin-top: 20px;
+                    background-color: #28a745;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 5px;
+                }
+                .container {
+                    font-family: Arial, sans-serif;
+                    max-width: 600px;
+                    margin: 0 auto;
+                    padding: 20px;
+                }
+                </style>
         </head>
         <body>
             <div class="container">
@@ -63,7 +63,7 @@ def send_password_reset(reset_token: str, username: str, email: str):
 
     subject = 'Password reset'
     from_email = os.environ.get('EMAIL_HOST_USER', None)
-    to = [email]  # or dynamically passed in
+    to = [email]
 
     text_content = text_template.render(context)
     html_content = html_template.render(context)
@@ -71,3 +71,4 @@ def send_password_reset(reset_token: str, username: str, email: str):
     msg = EmailMultiAlternatives(subject, text_content, from_email, to)
     msg.attach_alternative(html_content, "text/html")
     msg.send()
+    print(f"Sent a reset email to {username[:4]}******, email {email[:4]}******")

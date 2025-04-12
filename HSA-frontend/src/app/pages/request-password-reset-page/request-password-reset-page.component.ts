@@ -36,7 +36,7 @@ export class RequestPasswordResetPageComponent {
 
     this.resetService.requestPasswordReset(this.email.value!).subscribe({
         next: () => {
-          this.snackBar.open('Create material successfully', '', {
+          this.snackBar.open('If your email exists, an email will be sent', '', {
             duration: 3000
           });
           this.navigateToPage('login');

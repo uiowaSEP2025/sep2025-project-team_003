@@ -27,6 +27,7 @@ import { DiscountsPageComponent } from './pages/discounts-page/discounts-page.co
 import { CreateDiscountsPageComponent } from './pages/create-discounts-page/create-discounts-page.component';
 import { EditDiscountPageComponent } from './pages/edit-discount-page/edit-discount-page.component';
 import { RequestPasswordResetPageComponent } from './pages/request-password-reset-page/request-password-reset-page.component';
+import { PasswordResetPageComponent } from './pages/password-reset-page/password-reset-page.component';
 
 
 export const routes: Routes = [
@@ -113,6 +114,12 @@ export const routes: Routes = [
   },
   {
     path: 'password/reset', component: RequestPasswordResetPageComponent
+  },
+  {
+    path: 'password/reset', component: RequestPasswordResetPageComponent
+  },
+  {
+    path: 'password/reset/confirmation', component: PasswordResetPageComponent
   },
   {
     path: '404',
