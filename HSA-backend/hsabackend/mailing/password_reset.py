@@ -46,6 +46,10 @@ def send_password_reset(reset_token: str, username: str, email: str):
                     margin: 0 auto;
                     padding: 20px;
                 }
+                             
+                a {
+                    color: black;
+                }
                 </style>
         </head>
         <body>

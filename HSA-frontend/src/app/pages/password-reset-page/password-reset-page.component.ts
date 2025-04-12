@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, Validators, FormGroup, FormControl } from '@angular/forms';
 import { MatInputModule, MatError } from '@angular/material/input';
 import { passwordStrengthValidator, validateConfirmMatchesAndNotNull } from '../../utils/password-validators';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
+import { ConfirmPasswordResetServiceService } from '../../services/confirm-password-reset.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-password-reset-page',
@@ -28,7 +30,8 @@ export class PasswordResetPageComponent implements OnInit {
     confirmPassword: new FormControl('',)
   }, validateConfirmMatchesAndNotNull);
 
-  constructor(private activatedRoute: ActivatedRoute) { }
+  constructor(private activatedRoute: ActivatedRoute, private passwordReset: ConfirmPasswordResetServiceService, 
+    private router: Router, private snackBar: MatSnackBar) { }
 
 
 
@@ -42,7 +45,26 @@ export class PasswordResetPageComponent implements OnInit {
     console.log(this.userAccountForm.controls.confirmPassword.value)
     if (!this.userAccountForm.valid) {
       this.userAccountForm.markAllAsTouched()
+      return
     }
+
+    this.passwordReset.confirmPasswordReset(this.userAccountForm.controls.password.value!, this.token).subscribe({
+      next: (response) => {
+        this.snackBar.open('Your password was reset successfully', '', {
+          duration: 3000
+        });
+        this.router.navigate(['/login']);
+      },
+      error: (error) => {
+        if (error.status === 404) {
+          this.snackBar.open('Your token was invalid or expired, please try again later', '', {
+            duration: 3000
+          });
+
+        }
+      }
+    })
+
 
   }
 
