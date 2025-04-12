@@ -67,12 +67,37 @@ fdescribe('PasswordResetPageComponent', () => {
     expect(passInput).toBeTruthy()
     expect(passConfirmInput).toBeTruthy()
     expect(submitButton).toBeTruthy()
+  })
+
+  it('should require the first password', async () => {
+    const submitButton = await loader.getHarness(MatButtonHarness)
+    await submitButton.click()
+    const compiled = fixture.debugElement.nativeElement;
+    
+    const errors = Array.from(compiled.querySelectorAll('mat-error'));
+
+    const requiredFirstPassError = (errors as HTMLElement[]).filter(
+      (error) => error.textContent === "Password is required"
+    );
+
+    expect(requiredFirstPassError[0]).toBeTruthy()    
 
   })
 
-  it('should require the first password', () => { })
-
-  it('should require the second password', () => { })
+  it('should require the second password', async () => { 
+      const submitButton = await loader.getHarness(MatButtonHarness)
+      await submitButton.click()
+      const compiled = fixture.debugElement.nativeElement;
+      
+      const errors = Array.from(compiled.querySelectorAll('mat-error'));
+  
+      const requiredFirstPassError = (errors as HTMLElement[]).filter(
+        (error) => error.textContent === "Password is required"
+      );
+  
+      expect(requiredFirstPassError[1]).toBeTruthy()    
+  
+  })
 
   describe('password strength checks', () => {
 
