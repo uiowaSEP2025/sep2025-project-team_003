@@ -38,26 +38,33 @@ def send_password_reset(reset_token: str, username: str, email: str):
                     margin-top: 20px;
                     background-color: #28a745;
                     color: white;
+                    text-decoration: none !important;
                     text-decoration: none;
                     border-radius: 5px;
                 }
-                a[x-apple-data-detectors] {
+                a[x-apple-data-detectors]
+                a[x-apple-data-detectors]:visited  {
                     color: white !important;
                     font-size: inherit !important;
+                    text-decoration: none !important;
                     font-family: inherit !important;
                     font-weight: inherit !important;
                     line-height: inherit !important;
                 }
-                u + #body a {
+                u + #body a
+                u + #body a:visited {
                     color: white !important;
                     font-size: inherit !important;
                     font-family: inherit !important;
+                    text-decoration: none !important;
                     font-weight: inherit !important;
                     line-height: inherit !important;
                 }
-                #MessageViewBody a {
+                #MessageViewBody a
+                #MessageViewBody a:visited  {
                     color: white !important;
                     font-size: inherit !important;
+                    text-decoration: none !important
                     font-family: inherit !important;
                     font-weight: inherit !important;
                     line-height: inherit !important;
