@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'hsabackend', 
     'behave_django',
-    'django_extensions'
+    'django_extensions',
+    'django_rest_passwordreset'
 ]
 
 MIDDLEWARE = [
@@ -95,6 +96,10 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+
+DJANGO_REST_PASSWORDRESET_NO_INFORMATION_LEAKAGE = True
+
+DJANGO_REST_MULTITOKENAUTH_RESET_TOKEN_EXPIRY_TIME = 0.5
 
 
 

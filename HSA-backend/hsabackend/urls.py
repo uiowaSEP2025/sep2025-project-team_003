@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.http import HttpResponseNotFound
@@ -141,6 +141,9 @@ urlpatterns = [
     path("api/edit/discount/<int:id>", edit_discount),
     path("api/create/discount", create_discount),
     path("api/delete/discount/<int:id>", delete_discount),
+
+    # password reset
+    re_path(r'^api/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
 
     # Catch-all for unmatched API requests
     re_path(r'^api/.*', handle_unmatched_api), 
