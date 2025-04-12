@@ -46,6 +46,9 @@
               @if (userAccountForm.get('userEmail')?.touched && userAccountForm.get('userEmail')?.hasError('required')) {
                 <mat-error>Email is required</mat-error>
               }
+              @if (userAccountForm.get('userEmail')?.touched && userAccountForm.get('userEmail')?.hasError('email')) {
+                <mat-error>Email format is invalid</mat-error>
+              }
             </mat-form-field>
             <mat-form-field class="full-width-field">
               <mat-label>Username</mat-label>

@@ -41,7 +41,6 @@ describe('CreateMaterialPageComponent', () => {
     const compiled = fixture.debugElement.nativeElement;
     const materialFields = compiled.querySelectorAll('mat-form-field');
     expect(materialFields[0].querySelector('mat-label').textContent).toEqual('Material Name');
-    expect(materialFields[1].querySelector('mat-label').textContent).toEqual('Description');
   })
 
   it('should display error when material name is missing', () => {
@@ -59,9 +58,6 @@ describe('CreateMaterialPageComponent', () => {
     const materialNameField = compiled.querySelectorAll('mat-form-field')[0].querySelector('input');
     materialNameField.value = 'alex';
     materialNameField.dispatchEvent(new Event('input'));
-    const descriptionField = compiled.querySelectorAll('mat-form-field')[1].querySelector('textarea');
-    descriptionField.value = 'guo';
-    descriptionField.dispatchEvent(new Event('input'));
     createButton.click();
     fixture.detectChanges();
 
@@ -72,17 +68,12 @@ describe('CreateMaterialPageComponent', () => {
   describe('observables', () => {
     beforeEach(() => {
       const compiled = fixture.debugElement.nativeElement;
-    const createButton = compiled.querySelector('button');
-    const materialNameField = compiled.querySelectorAll('mat-form-field')[0].querySelector('input');
-    materialNameField.value = 'alex';
-    materialNameField.dispatchEvent(new Event('input'));
-    const descriptionField = compiled.querySelectorAll('mat-form-field')[1].querySelector('textarea');
-    descriptionField.value = 'guo';
-    descriptionField.dispatchEvent(new Event('input'));
-    createButton.click();
-    fixture.detectChanges();
-
-
+      const createButton = compiled.querySelector('button');
+      const materialNameField = compiled.querySelectorAll('mat-form-field')[0].querySelector('input');
+      materialNameField.value = 'alex';
+      materialNameField.dispatchEvent(new Event('input'));
+      createButton.click();
+      fixture.detectChanges();
     })
 
     it('should navigate to login page on 401 unauthorized response', () => {

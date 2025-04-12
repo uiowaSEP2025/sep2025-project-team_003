@@ -20,7 +20,7 @@
 								required
 							>
 							@if (serviceForm.get('serviceName')?.touched && serviceForm.get('serviceName')?.hasError('required')) {
-								<mat-error>First Service is required</mat-error>
+								<mat-error>Service Name is required</mat-error>
 							}
 						</mat-form-field>
 						<mat-form-field class="full-width-field">
@@ -32,7 +32,7 @@
 								required
 							>
 							@if (serviceForm.get('serviceDescription')?.touched && serviceForm.get('serviceDescription')?.hasError('required')) {
-								<mat-error>First Description is required</mat-error>
+								<mat-error>Service Description is required</mat-error>
 							}
 						</mat-form-field>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
@@ -81,6 +81,9 @@
 							@if (customerForm.get('email')?.touched && customerForm.get('email')?.hasError('required')) {
 								<mat-error>Email is required</mat-error>
 							}
+              @if (customerForm.get('email')?.touched && customerForm.get('email')?.hasError('email')) {
+                <mat-error>Email format is invalid</mat-error>
+              }
 						</mat-form-field>
 						<mat-form-field class="full-width-field">
 							<mat-label>Customer Phone Number</mat-label>
@@ -89,10 +92,14 @@
 								matInput
 								placeholder="000-000-0000"
 								required
+                pattern="(\(\d{3}\)\s?|\d{3}[-.\s])\d{3}[-.\s]?\d{4}"
 							>
 							@if (customerForm.get('phone')?.touched && customerForm.get('phone')?.hasError('required')) {
 								<mat-error>Phone is required</mat-error>
 							}
+              @if (customerForm.get('phone')?.hasError('pattern')) {
+                <mat-error>Format is <strong>xxx-xxx-xxxx</strong></mat-error>
+              }
 						</mat-form-field>
 						<mat-form-field class="example-full-width">
 							<mat-label>Add Notes</mat-label>
@@ -155,6 +162,9 @@
 								matInput
 								placeholder="Ex: john.doe@gmail.com"
 							>
+              @if (contractorForm.get('email')?.touched && contractorForm.get('email')?.hasError('email')) {
+                <mat-error>Email format is invalid</mat-error>
+              }
 						</mat-form-field>
 						<mat-form-field class="full-width-field">
 							<mat-label>Contractor Phone Number</mat-label>
@@ -162,7 +172,11 @@
 								formControlName = "phone"
 								matInput
 								placeholder="000-000-0000"
+                pattern="(\(\d{3}\)\s?|\d{3}[-.\s])\d{3}[-.\s]?\d{4}"
 							>
+							@if (contractorForm.get('phone')?.hasError('pattern')) {
+								<mat-error>Format is <strong>xxx-xxx-xxxx</strong></mat-error>
+							  }
 						</mat-form-field>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
 							<button mat-flat-button (click)="openPrefillDialog('contractor')" [disabled]="isContractorPrefilled">Prefill</button>
@@ -188,8 +202,8 @@
 											</span>
 										}
 										<button type="button" mat-flat-button (click)="this.openAddCustomerDialog()">
-											@if (this.jobGeneralForm.get('customerName')?.value !== "") { Change } @else { Select }
-											customer</button>
+											@if (this.jobGeneralForm.get('customerName')?.value !== "") {Change} @else {Select} customer
+										</button>
 									</div>
 									@if (jobGeneralForm.get('customerName')?.touched && jobGeneralForm.get('customerName')?.hasError('required')) {
 										<mat-error>Customer is required</mat-error>

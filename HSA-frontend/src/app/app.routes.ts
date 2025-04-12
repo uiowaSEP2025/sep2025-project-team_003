@@ -37,6 +37,9 @@ export const routes: Routes = [
     resolve: { headerData: HeaderResolver },
     children: [
       {
+        path: '', component: HomePageComponent,
+      },
+      {
         path: 'onboarding', component: OnboardingPageComponent
       },
       {
@@ -110,9 +113,7 @@ export const routes: Routes = [
       },
     ]
   },
-  {
-    path: '', component: HomePageComponent,
-  },
+  
   {
     path: 'home', component: HomePageComponent,
   },

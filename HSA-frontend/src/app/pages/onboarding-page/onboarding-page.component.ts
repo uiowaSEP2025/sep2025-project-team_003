@@ -117,7 +117,7 @@ export class OnboardingPageComponent implements OnInit {
     this.customerForm = this.customerFormBuilder.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
-      email: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
       phone: ['', Validators.required],
       note: ['']
     })
@@ -125,7 +125,7 @@ export class OnboardingPageComponent implements OnInit {
     this.contractorForm = this.contractorFormBuilder.group({
       firstName: [''],
       lastName: [''],
-      email: [''],
+      email: ['', Validators.email],
       phone: [''],
     })
 
@@ -664,7 +664,7 @@ export class OnboardingPageComponent implements OnInit {
 
     this.organizationService.editOrganization(organizationUpdateData).subscribe({
       next: (response) => {
-        this.snackBar.open('Onboarding completed! Please enjoy the application!', '', {
+        this.snackBar.open('Onboarding completed!', '', {
           duration: 3000
         });
       },
