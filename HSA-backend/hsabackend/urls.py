@@ -132,7 +132,6 @@ urlpatterns = [
     path("api/create/organization", createOrganization),
     path("api/get/organization", getOrganizationDetail),
     path("api/edit/organization", editOrganizationDetail),
-    path("api/delete/organization", deleteOrganization),
 
     # quotes
     path("api/get/quotesforinvoice/customer/<int:id>", getQuotesForInvoiceByCustomer),

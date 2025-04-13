@@ -12,7 +12,7 @@ def getOrganizationDetail(request):
     # single get instead of list (as users only get 1 org)
 
     try:
-        org = Organization.objects.get(owning_User=request.user.pk)
+        org = request.org
         return Response(org.json(), status=status.HTTP_200_OK)
 
     except Exception as e:
@@ -21,9 +21,8 @@ def getOrganizationDetail(request):
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
 def editOrganizationDetail(request):
-
     try:
-        org = Organization.objects.get(owning_User=request.user.pk)
+        org = request.org
     except Organization.DoesNotExist:
         return Response({"error": "Organization not found."}, status=status.HTTP_404_NOT_FOUND)
     
@@ -62,6 +61,7 @@ def editOrganizationDetail(request):
 def createOrganization(request):
     # users can only have a single organization
     org_count = Organization.objects.filter(owning_User=request.user.pk).count()
+    print(Organization.objects)
     if org_count > 0:
         return Response({"errors": "This user already has an organization"}, status=status.HTTP_400_BAD_REQUEST)
 
