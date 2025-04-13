@@ -161,9 +161,8 @@ class orgViewTests(APITestCase):
         assert response.data.get('errors', '') == {'email': ['This field is required.']}
 
 
-    @patch('hsabackend.views.organizations.Organization.objects.get')
-    @patch('hsabackend.views.organizations.Organization')
-    def test_edit_org_succeeds(self, org, get):
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_edit_org_succeeds(self, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
 
@@ -171,7 +170,6 @@ class orgViewTests(APITestCase):
 
         org_object = MagicMock(spec=Organization)
         org.return_value = org_object
-        get.return_value = org_object
 
         mock_data = {
             "name": "Superman HQ",
