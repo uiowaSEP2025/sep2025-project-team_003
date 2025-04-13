@@ -39,6 +39,17 @@ def step_user_logged_in(context):
     element = wait.until(EC.visibility_of_element_located((By.TAG_NAME, "simple-snack-bar")))
     assert text in element.text, f"Snack bar doesn't contain '{text}'"
 
+@given('I have finished the onboarding process')
+def finish_onboarding(context):
+    context.execute_steps(f'''
+        Given I am on the onboarding page
+        Then I expect the input field "Service Name" show up 
+        When I click the "Prefill" button
+        When I click the "Confirm" button
+        When I click the "Next" button
+        Then I expect the input field "Customer First Name" show up                
+    ''')
+
 @then('I {should_or_not} see a table row with the following elements')
 def find_rows(context, should_or_not):
     should_or_not = should_or_not == 'should'

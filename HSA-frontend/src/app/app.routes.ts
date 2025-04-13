@@ -27,9 +27,7 @@ import { DiscountsPageComponent } from './pages/discounts-page/discounts-page.co
 import { CreateDiscountsPageComponent } from './pages/create-discounts-page/create-discounts-page.component';
 import { EditDiscountPageComponent } from './pages/edit-discount-page/edit-discount-page.component';
 import { OnboardingPageComponent } from './pages/onboarding-page/onboarding-page.component';
-import { AppComponent } from './app.component';
 import { HeaderResolver } from './utils/header-resolver';
-import { HeaderComponent } from './layout/header/header.component';
 
 export const routes: Routes = [
   {
@@ -37,7 +35,7 @@ export const routes: Routes = [
     resolve: { headerData: HeaderResolver },
     children: [
       {
-        path: '', component: HomePageComponent,
+        path: 'home', component: HomePageComponent,
       },
       {
         path: 'onboarding', component: OnboardingPageComponent
@@ -114,9 +112,7 @@ export const routes: Routes = [
     ]
   },
   
-  {
-    path: 'home', component: HomePageComponent,
-  },
+  
   {
     path: 'signup', component: SignupPageComponent,
   },

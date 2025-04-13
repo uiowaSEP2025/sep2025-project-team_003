@@ -13,10 +13,12 @@ import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.c
 import { CustomerService } from '../../services/customer.service';
 import { JobTemplateService } from '../../services/jobTemplate.service';
 import { ApplyTemplateConfirmDialogComponentComponent } from '../apply-template-confirm-dialog-component/apply-template-confirm-dialog-component.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-add-select-dialog-component',
   imports: [
+    CommonModule,
     MatDialogModule,
     MatButtonModule,
     TableComponentComponent,
@@ -284,5 +286,15 @@ export class AddSelectDialogComponentComponent {
   getPricePerUnitValue(id: number): number | string {
     const entry = this.materialInputFields.find(item => item.id === id);
     return entry?.['pricePerUnit'] ?? ''; 
+  }
+
+  getButtonAction(): string {
+    if (this.typeOfDialog === 'template') {
+      return 'apply';
+    }
+    if (this.typeOfDialog === 'customer') {
+      return this.data.dialogData === 0 ? 'select' : 'change';
+    }
+    return 'add';
   }
 }

@@ -4,10 +4,10 @@ import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { UserAuthService } from '../../services/user-auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltip } from '@angular/material/tooltip';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -26,15 +26,30 @@ export class HeaderComponent implements OnInit {
   isLoggedIn: boolean = false;
   private loginStatusSubscription: Subscription = new Subscription();
 
-
-  constructor(private userAuth: UserAuthService, private router: Router, private snackBar: MatSnackBar) { }
+  constructor(private route: ActivatedRoute, private userAuth: UserAuthService, private router: Router, private snackBar: MatSnackBar) { }
 
   toggleSidebar() {
     this.sidebarExpanded = !this.sidebarExpanded
   }
+
   ngOnInit() {
     this.loginStatusSubscription = this.userAuth.isLoggedIn$.subscribe((status) => {
       this.isLoggedIn = status; // Update local status when the login status changes
+    });
+
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+      const rootData = this.route.root.firstChild?.snapshot.data!['headerData'];
+      
+      try {
+        if (rootData["org_name"]) {
+          this.isLoggedIn = true
+        } else {
+          this.isLoggedIn = false
+        }
+      }
+      catch {
+        this.isLoggedIn = false
+      }
     });
   }
 
@@ -52,11 +67,9 @@ export class HeaderComponent implements OnInit {
         this.snackBar.open('You are already logout!', '', {
           duration: 3000
         });
-
       }
     })
   }
-
 
   ngOnDestroy() {
     // Unsubscribe from observable to avoid memory leaks

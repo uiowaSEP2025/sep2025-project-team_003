@@ -597,6 +597,20 @@ export class OnboardingPageComponent implements OnInit {
     }
   }
 
+  onCancelOnboaring() {
+    const dialogRef = this.dialog.open(AddConfirmDialogComponentComponent, {
+      width: '500px',
+      data: "cancel of the onboaring process? (All steps will be lost)"
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.deleteAllPrefilledEntries();
+        this.navigateToPage('home');
+      }
+    });
+  }
+
   deleteAllPrefilledEntries() {
     let serviveID = this.firstService.data["id"]
     let materialID = this.materialForm.get("materialName")?.value !== "" ? this.firstMaterial.data["id"] : 0

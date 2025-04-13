@@ -14,6 +14,7 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Service Name</mat-label>
 							<input
+								data-testid="service-name"
 								formControlName = "serviceName"
 								matInput
 								placeholder="Ex: Painting Ceiling"
@@ -26,6 +27,7 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Service Description</mat-label>
 							<input
+							  data-testid="service-description"
 								formControlName = "serviceDescription"
 								matInput
 								placeholder=""
@@ -36,8 +38,8 @@
 							}
 						</mat-form-field>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
-							<button mat-flat-button (click)="openPrefillDialog('service')" [disabled]="isServicePrefilled">Prefill</button>
-							<button mat-flat-button type="submit">Next</button>
+							<button data-testid="prefill-button" mat-flat-button (click)="openPrefillDialog('service')" [disabled]="isServicePrefilled">Prefill</button>
+							<button data-testid="next-button" mat-flat-button type="submit">Next</button>
 						</div>
 					</mat-card>
 				</form>
@@ -49,6 +51,7 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Customer First Name</mat-label>
 							<input
+							  data-testid="customer-first-name"
 								formControlName = "firstName"
 								matInput
 								placeholder="Ex: John"
@@ -61,6 +64,7 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Customer Last Name</mat-label>
 							<input
+							  data-testid="customer-last-name"
 								formControlName = "lastName"
 								matInput
 								placeholder="Ex: Doe"
@@ -73,6 +77,7 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Customer Email</mat-label>
 							<input
+							  data-testid="customer-email"
 								formControlName = "email"
 								matInput
 								placeholder="Ex: john.doe@gmail.com"
@@ -88,6 +93,7 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Customer Phone Number</mat-label>
 							<input
+							  data-testid="customer-phone-number"
 								formControlName = "phone"
 								matInput
 								placeholder="000-000-0000"
@@ -104,14 +110,15 @@
 						<mat-form-field class="example-full-width">
 							<mat-label>Add Notes</mat-label>
 							<textarea 
+							  data-testid="add-notes"
 								formControlName = "note"
 								matInput 
 								placeholder=""
 							></textarea>
 						</mat-form-field>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
-							<button mat-flat-button (click)="openPrefillDialog('customer')" [disabled]="isCustomerPrefilled">Prefill</button>
-							<button mat-flat-button type="submit">Next</button>
+							<button data-testid="prefill-button" mat-flat-button (click)="openPrefillDialog('customer')" [disabled]="isCustomerPrefilled">Prefill</button>
+							<button data-testid="next-button" mat-flat-button type="submit">Next</button>
 						</div>
 					</mat-card>
 				</form>
@@ -123,14 +130,15 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Material Name</mat-label>
 							<input
+							  data-testid="material-name"
 								formControlName = "materialName"
 								matInput
 								placeholder="Ex: Valspar White Paint"
 							>
 						</mat-form-field>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
-							<button mat-flat-button (click)="openPrefillDialog('material')" [disabled]="isMaterialPrefilled">Prefill</button>
-							<button mat-flat-button type="submit" (click)="onSubmitMaterialCreation()">Next</button>
+							<button data-testid="prefill-button" mat-flat-button (click)="openPrefillDialog('material')" [disabled]="isMaterialPrefilled">Prefill</button>
+							<button data-testid="next-button" mat-flat-button type="submit" (click)="onSubmitMaterialCreation()">Next</button>
 						</div>
 					</mat-card>
 				</form>
@@ -142,6 +150,7 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Contractor First Name</mat-label>
 							<input
+								data-testid="contractor-first-name"
 								formControlName = "firstName"
 								matInput
 								placeholder="Ex: John"
@@ -150,6 +159,7 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Contractor Last Name</mat-label>
 							<input
+							  data-testid="contractor-last-name"
 								formControlName = "lastName"
 								matInput
 								placeholder="Ex: Doe"
@@ -158,6 +168,7 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Contractor Email</mat-label>
 							<input
+							  data-testid="contractor-email"
 								formControlName = "email"
 								matInput
 								placeholder="Ex: john.doe@gmail.com"
@@ -169,6 +180,7 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Contractor Phone Number</mat-label>
 							<input
+							  data-testid="contractor-phone-number"
 								formControlName = "phone"
 								matInput
 								placeholder="000-000-0000"
@@ -179,8 +191,8 @@
 							  }
 						</mat-form-field>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
-							<button mat-flat-button (click)="openPrefillDialog('contractor')" [disabled]="isContractorPrefilled">Prefill</button>
-							<button mat-flat-button type="submit" (click)="onSubmitContractorCreation()">Next</button>
+							<button data-testid="prefill-button" mat-flat-button (click)="openPrefillDialog('contractor')" [disabled]="isContractorPrefilled">Prefill</button>
+							<button data-testid="next-button" mat-flat-button type="submit" (click)="onSubmitContractorCreation()">Next</button>
 						</div>
 					</mat-card>
 				</form>
@@ -201,7 +213,7 @@
 												{{this.jobGeneralForm.get('customerName')?.value}} 
 											</span>
 										}
-										<button type="button" mat-flat-button (click)="this.openAddCustomerDialog()">
+										<button data-testid="select-customer-button" type="button" mat-flat-button (click)="this.openAddCustomerDialog()">
 											@if (this.jobGeneralForm.get('customerName')?.value !== "") {Change} @else {Select} customer
 										</button>
 									</div>
@@ -214,7 +226,8 @@
 								<td>Start Date*</td>
 								<td>
 									<mat-form-field appearance="fill" class="full-width">
-										<input 
+										<input
+										  data-testid="start-date"
 											matInput 
 											[matDatepicker]="startDatePicker" 
 											formControlName="startDate" 
@@ -234,6 +247,7 @@
 								<td>
 									<mat-form-field appearance="fill" class="full-width">
 										<input 
+											data-testid="end-date"
 											matInput 
 											[matDatepicker]="endDatePicker" 
 											formControlName="endDate" 
@@ -256,6 +270,7 @@
 								<td>
 									<mat-form-field appearance="fill" class="full-width">
 										<input
+											data-testid="description"
 											formControlName = "jobDescription"
 											matInput
 											required
@@ -271,6 +286,7 @@
 								<td>
 									<mat-form-field appearance="fill" class="full-width">
 										<input
+											data-testid="address"
 											formControlName = "requestorAddress"
 											matInput
 										>
@@ -285,6 +301,7 @@
 								<td>
 									<mat-form-field appearance="fill" class="full-width">
 										<input
+											data-testid="city"
 											formControlName = "requestorCity"
 											matInput
 										>
@@ -298,11 +315,12 @@
 								<td>State*</td>
 								<td>
 									<mat-form-field appearance="fill" class="full-width">
-										<mat-select 
+										<mat-select
+											data-testid="state-button"
 											formControlName="requestorStateSelect"
 										>
 											@for (state of states; track state) {
-												<mat-option [value]="state.name">{{state.name}} - {{state.code}}</mat-option>
+												<mat-option data-testid="option" [value]="state.name">{{state.name}} - {{state.code}}</mat-option>
 											}
 										</mat-select>
 										@if (jobGeneralForm.get('requestorStateSelect')?.touched && jobGeneralForm.get('requestorStateSelect')?.hasError('required')) {
@@ -316,6 +334,7 @@
 								<td>
 									<mat-form-field appearance="fill" class="full-width">
 										<input
+											data-testid="zip-code"
 											formControlName = "requestorZip"
 											matInput
 										>
@@ -327,8 +346,8 @@
 							</tr>
 						</table>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
-							<button mat-flat-button (click)="openPrefillDialog('job')" [disabled]="isJobPrefilled">Prefill</button>
-							<button mat-flat-button type="submit" (click)="onSubmitJobGeneral()">Next</button>
+							<button data-testid="prefill-button" mat-flat-button (click)="openPrefillDialog('job')" [disabled]="isJobPrefilled">Prefill</button>
+							<button data-testid="next-button" mat-flat-button type="submit" (click)="onSubmitJobGeneral()">Next</button>
 						</div>
 					</form>
 				</mat-card>
@@ -346,7 +365,7 @@
 						></app-job-display-table>
 					</div>
 					<div class="button-container">
-						<button mat-flat-button type="submit" class="mt-10 mb-5" (click)="this.openAddServiceDialog()">Add service</button>
+						<button data-testid="add-service-button" mat-flat-button type="submit" class="mt-10 mb-5" (click)="this.openAddServiceDialog()">Add service</button>
 					</div>
 					<div>
 						<app-job-display-table
@@ -358,7 +377,7 @@
 						></app-job-display-table>
 					</div>
 					<div class="button-container">
-						<button mat-flat-button type="submit" class="mt-10 mb-5" (click)="openAddMaterialDialog()">Add material</button>
+						<button data-testid="add-material-button" mat-flat-button type="submit" class="mt-10 mb-5" (click)="openAddMaterialDialog()">Add material</button>
 					</div>
 					<div>
 						<app-job-display-table
@@ -370,12 +389,12 @@
 						></app-job-display-table>
 					</div>
 					<div class="button-container">
-						<button mat-flat-button type="submit" class="mt-10 mb-5" (click)="openAddContractorDialog()">Add Contractor</button>
+						<button data-testid="add-contractor-button" mat-flat-button type="submit" class="mt-10 mb-5" (click)="openAddContractorDialog()">Add Contractor</button>
 					</div>
 					<div class="spacer"></div>
 					<div class="items-center">
-						<button mat-flat-button type="submit" class="mt-10 mb-5" (click)="onCreateConfirmDialog('job')">Create</button>
-						<button mat-stroked-button class="mt-10 mb-5" (click)="navigateToPage('jobs')">Cancel</button>
+						<button data-testid="create-button" mat-flat-button type="submit" class="mt-10 mb-5" (click)="onCreateConfirmDialog('job')">Create</button>
+						<button data-testid="cancel-button" mat-stroked-button class="mt-10 mb-5" (click)="onCancelOnboaring()">Cancel</button>
 					</div>
 				</mat-card>
 			</mat-step>

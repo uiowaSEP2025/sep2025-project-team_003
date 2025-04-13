@@ -10,13 +10,13 @@ export class HeaderResolver implements Resolve<any> {
     private router: Router
   ) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<{ organization?: any }> {
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
     return this.organizationService.getOrganization().pipe(
       map((organization: any) => {
         if (organization["is_onboarding"] && !state.url.includes('onboarding')) {
           this.router.navigate(['/onboarding']);
         }
-        return { organization };
+        return organization;
       }),
       catchError(error => {
         return of({ organization: null });
