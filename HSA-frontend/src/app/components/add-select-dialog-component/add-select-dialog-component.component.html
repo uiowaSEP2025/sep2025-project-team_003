@@ -50,9 +50,9 @@
 		}
 	</mat-dialog-content>
 	<mat-dialog-actions>
-		<button data-testid="cancel-button" mat-stroked-button (click)="onCancel()">Cancel</button>
+		<button data-testid="cancel" mat-stroked-button (click)="onCancel()">Cancel</button>
 		<button 
-			[attr.data-testid]="getButtonAction() + '-button'"
+			[attr.data-testid]="getButtonAction()"
 			mat-flat-button 
 			type="submit" 
 			[disabled]="isNotSelectedItems" 

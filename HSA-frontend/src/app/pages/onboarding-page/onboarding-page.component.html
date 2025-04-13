@@ -38,8 +38,8 @@
 							}
 						</mat-form-field>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
-							<button data-testid="prefill-button" mat-flat-button (click)="openPrefillDialog('service')" [disabled]="isServicePrefilled">Prefill</button>
-							<button data-testid="next-button" mat-flat-button type="submit">Next</button>
+							<button data-testid="prefill-1" mat-flat-button (click)="openPrefillDialog('service')" [disabled]="isServicePrefilled">Prefill</button>
+							<button data-testid="next-1" mat-flat-button type="submit">Next</button>
 						</div>
 					</mat-card>
 				</form>
@@ -117,8 +117,8 @@
 							></textarea>
 						</mat-form-field>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
-							<button data-testid="prefill-button" mat-flat-button (click)="openPrefillDialog('customer')" [disabled]="isCustomerPrefilled">Prefill</button>
-							<button data-testid="next-button" mat-flat-button type="submit">Next</button>
+							<button data-testid="prefill-2" mat-flat-button (click)="openPrefillDialog('customer')" [disabled]="isCustomerPrefilled">Prefill</button>
+							<button data-testid="next-2" mat-flat-button type="submit">Next</button>
 						</div>
 					</mat-card>
 				</form>
@@ -137,8 +137,8 @@
 							>
 						</mat-form-field>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
-							<button data-testid="prefill-button" mat-flat-button (click)="openPrefillDialog('material')" [disabled]="isMaterialPrefilled">Prefill</button>
-							<button data-testid="next-button" mat-flat-button type="submit" (click)="onSubmitMaterialCreation()">Next</button>
+							<button data-testid="prefill-3" mat-flat-button (click)="openPrefillDialog('material')" [disabled]="isMaterialPrefilled">Prefill</button>
+							<button data-testid="next-3" mat-flat-button type="submit" (click)="onSubmitMaterialCreation()">Next</button>
 						</div>
 					</mat-card>
 				</form>
@@ -191,8 +191,8 @@
 							  }
 						</mat-form-field>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
-							<button data-testid="prefill-button" mat-flat-button (click)="openPrefillDialog('contractor')" [disabled]="isContractorPrefilled">Prefill</button>
-							<button data-testid="next-button" mat-flat-button type="submit" (click)="onSubmitContractorCreation()">Next</button>
+							<button data-testid="prefill-4" mat-flat-button (click)="openPrefillDialog('contractor')" [disabled]="isContractorPrefilled">Prefill</button>
+							<button data-testid="next-4" mat-flat-button type="submit" (click)="onSubmitContractorCreation()">Next</button>
 						</div>
 					</mat-card>
 				</form>
@@ -213,7 +213,7 @@
 												{{this.jobGeneralForm.get('customerName')?.value}} 
 											</span>
 										}
-										<button data-testid="select-customer-button" type="button" mat-flat-button (click)="this.openAddCustomerDialog()">
+										<button data-testid="select-customer" type="button" mat-flat-button (click)="this.openAddCustomerDialog()">
 											@if (this.jobGeneralForm.get('customerName')?.value !== "") {Change} @else {Select} customer
 										</button>
 									</div>
@@ -346,8 +346,8 @@
 							</tr>
 						</table>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
-							<button data-testid="prefill-button" mat-flat-button (click)="openPrefillDialog('job')" [disabled]="isJobPrefilled">Prefill</button>
-							<button data-testid="next-button" mat-flat-button type="submit" (click)="onSubmitJobGeneral()">Next</button>
+							<button data-testid="prefill-5" mat-flat-button (click)="openPrefillDialog('job')" [disabled]="isJobPrefilled">Prefill</button>
+							<button data-testid="next-5" mat-flat-button type="submit" (click)="onSubmitJobGeneral()">Next</button>
 						</div>
 					</form>
 				</mat-card>
@@ -365,7 +365,7 @@
 						></app-job-display-table>
 					</div>
 					<div class="button-container">
-						<button data-testid="add-service-button" mat-flat-button type="submit" class="mt-10 mb-5" (click)="this.openAddServiceDialog()">Add service</button>
+						<button data-testid="add-service" mat-flat-button type="submit" class="mt-10 mb-5" (click)="this.openAddServiceDialog()">Add service</button>
 					</div>
 					<div>
 						<app-job-display-table
@@ -377,7 +377,7 @@
 						></app-job-display-table>
 					</div>
 					<div class="button-container">
-						<button data-testid="add-material-button" mat-flat-button type="submit" class="mt-10 mb-5" (click)="openAddMaterialDialog()">Add material</button>
+						<button data-testid="add-material" mat-flat-button type="submit" class="mt-10 mb-5" (click)="openAddMaterialDialog()">Add material</button>
 					</div>
 					<div>
 						<app-job-display-table
@@ -389,12 +389,12 @@
 						></app-job-display-table>
 					</div>
 					<div class="button-container">
-						<button data-testid="add-contractor-button" mat-flat-button type="submit" class="mt-10 mb-5" (click)="openAddContractorDialog()">Add Contractor</button>
+						<button data-testid="add-contractor" mat-flat-button type="submit" class="mt-10 mb-5" (click)="openAddContractorDialog()">Add Contractor</button>
 					</div>
 					<div class="spacer"></div>
 					<div class="items-center">
-						<button data-testid="create-button" mat-flat-button type="submit" class="mt-10 mb-5" (click)="onCreateConfirmDialog('job')">Create</button>
-						<button data-testid="cancel-button" mat-stroked-button class="mt-10 mb-5" (click)="onCancelOnboaring()">Cancel</button>
+						<button data-testid="create" mat-flat-button type="submit" class="mt-10 mb-5" (click)="onCreateConfirmDialog('job')">Create</button>
+						<button data-testid="cancel" mat-stroked-button class="mt-10 mb-5" (click)="onCancelOnboaring()">Cancel</button>
 					</div>
 				</mat-card>
 			</mat-step>
