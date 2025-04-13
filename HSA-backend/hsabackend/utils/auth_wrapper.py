@@ -16,10 +16,7 @@ def check_authenticated_and_onboarded(require_onboarding=True):
             try:
                 org = Organization.objects.get(owning_User=request.user)
             except Organization.DoesNotExist:
-                return Response(
-                    {"message": "Organization not found"},
-                    status=status.HTTP_404_NOT_FOUND
-                )
+                raise RuntimeError('No Organization found for the current user')
             
             if require_onboarding and org.is_onboarding:
                 return Response(
