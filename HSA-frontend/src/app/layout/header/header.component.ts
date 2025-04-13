@@ -26,21 +26,14 @@ export class HeaderComponent implements OnInit {
   sidebarExpanded = false;
   isLoggout = true
 
-  constructor(private userAuth: UserAuthService, private router: Router, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {}
+  constructor(private userAuth: UserAuthService, private router: Router, private snackBar: MatSnackBar) {}
 
   toggleSidebar() {
     this.sidebarExpanded = !this.sidebarExpanded
   }
 
   ngOnInit() {
-    this.userAuth.checkUserAuth().subscribe({
-      next: (response) => {
-        this.isLoggout = false;
-      },
-      error: (error) => {
-        this.isLoggout = true;
-      }
-    });
+    
   }
 
   onLogout() {
@@ -49,7 +42,6 @@ export class HeaderComponent implements OnInit {
         this.snackBar.open('Logout successfully!', '', {
           duration: 3000
         });
-        this.isLoggout = false;
         this.navigateToPage('login')
       },
       error: (error) => {

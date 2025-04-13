@@ -23,7 +23,6 @@ interface CreateUserPostData {
 export class UserAuthService {
   private apiLoginUrl = `${environment.apiUrl}/api/login`;
   private apiLogoutUrl = `${environment.apiUrl}/api/logout`;
-  private apiUserCheckUrl = `${environment.apiUrl}/api/usercheck`;
   private apiUserCreateUrl = `${environment.apiUrl}/api/create/user`;
   private apiUserExistUrl = `${environment.apiUrl}/api/userexist`;
 
@@ -35,10 +34,6 @@ export class UserAuthService {
 
   logout() {
     return this.http.post<StandardApiResponse>(this.apiLogoutUrl, null);
-  }
-
-  checkUserAuth() {
-    return this.http.post<StandardApiResponse>(this.apiUserCheckUrl, null);
   }
 
   createUser(data: CreateUserPostData): Observable<StandardApiResponse> {

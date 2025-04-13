@@ -78,10 +78,3 @@ def logout_view(request):
     else:
         return Response({"message": "You are not logged in."}, status=status.HTTP_400_BAD_REQUEST)
     
-
-@api_view(["POST"])
-def check_view(request):
-    if request.user.is_authenticated:
-        return Response({"message": "You are logged in."}, status=status.HTTP_200_OK)
-    else:
-        return Response({"message": "You are not logged in."}, status=status.HTTP_401_UNAUTHORIZED)
