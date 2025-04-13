@@ -9,7 +9,6 @@ from django.db.models import QuerySet
 from django.db.models import Q
 from unittest.mock import call
 from django.core.exceptions import ValidationError
-
 from hsabackend.views.organizations import createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail
 from hsabackend.models.organization import Organization
 
@@ -64,22 +63,23 @@ class orgViewTests(APITestCase):
         
         assert response.status_code == status.HTTP_200_OK
 
-
-
-    @patch('hsabackend.views.organizations.Organization.objects.filter')
-    @patch('hsabackend.views.organizations.Organization.objects.get')
-    def test_create_org_if_auth_and_valid(self, org, filter):
+    @patch('hsabackend.views.organizations.Organization')
+    @patch('hsabackend.utils.auth_wrapper.Organization')
+    def test_create_org_if_auth_and_valid(self, auth_org, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
 
         factory = APIRequestFactory()
 
-        org_object = MagicMock(spec=Organization)
-        org.return_value = org_object
-
         qs = MagicMock(spec=QuerySet)
+        manager = MagicMock()
+        org.objects = manager
         qs.count.return_value = 0 # no prev account
-        filter.return_value = qs
+        manager.filter.return_value = qs
+
+        org_object = MagicMock(spec=Organization)
+
+        org.return_value = org_object
 
         mock_data = {
             "name": "Superman HQ",
@@ -161,86 +161,83 @@ class orgViewTests(APITestCase):
         assert response.data.get('errors', '') == {'email': ['This field is required.']}
 
 
-    # @patch('hsabackend.views.organizations.Organization.objects.get')
-    # @patch('hsabackend.views.organizations.Organization')
-    # def test_edit_org_succeeds(self, org, get):
-    #     mock_user = Mock(spec=User)
-    #     mock_user.is_authenticated = True
+    @patch('hsabackend.views.organizations.Organization.objects.get')
+    @patch('hsabackend.views.organizations.Organization')
+    def test_edit_org_succeeds(self, org, get):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
 
-    #     factory = APIRequestFactory()
+        factory = APIRequestFactory()
 
-    #     org_object = MagicMock(spec=Organization)
-    #     org.return_value = org_object
-    #     get.return_value = org_object
+        org_object = MagicMock(spec=Organization)
+        org.return_value = org_object
+        get.return_value = org_object
 
-    #     mock_data = {
-    #         "name": "Superman HQ",
-    #         "email": "supermanHQ@supermanHQ.co",
-    #         "city": "BobTown",
-    #         "requestor_address": "222 Box",
-    #         "ownerFn": "Dov",
-    #         "ownerLn": "Sob"
-    #     }
+        mock_data = {
+            "name": "Superman HQ",
+            "email": "supermanHQ@supermanHQ.co",
+            "city": "BobTown",
+            "requestor_address": "222 Box",
+            "ownerFn": "Dov",
+            "ownerLn": "Sob"
+        }
 
-    #     request = factory.post('api/edit/organization', data=mock_data, format='json')
-    #     request.user = mock_user
-    #     response = editOrganizationDetail(request)
+        request = factory.post('api/edit/organization', data=mock_data, format='json')
+        request.user = mock_user
+        response = editOrganizationDetail(request)
 
-    #     org_object.save.assert_called_once()
+        org_object.save.assert_called_once()
         
-    #     assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK
 
 
-    # @patch('hsabackend.views.organizations.Organization.objects.get')
-    # @patch('hsabackend.views.organizations.Organization')
-    # def test_edit_org_fail_if_bogus_param(self, org, get):
-    #     mock_user = Mock(spec=User)
-    #     mock_user.is_authenticated = True
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_edit_org_fail_if_bogus_param(self, org):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
 
-    #     factory = APIRequestFactory()
+        factory = APIRequestFactory()
 
-    #     org_object = MagicMock(spec=Organization)
-    #     org.return_value = org_object
-    #     get.return_value = org_object
+        org_object = MagicMock(spec=Organization, name="Org")
+        org.return_value = org_object
+        org_object.full_clean.side_effect = ValidationError({'email': ['Invalid Email']})
 
-    #     org_object.full_clean.side_effect = ValidationError({'email': ['Invalid Email']})
+        mock_data = {
+            "name": "Superman HQ",
+            "email": "oofemail",
+            "city": "BobTown",
+            "requestor_address": "222 Box",
+            "ownerFn": "Dov",
+            "ownerLn": "Sob"
+        }
 
-    #     mock_data = {
-    #         "name": "Superman HQ",
-    #         "email": "oofemail",
-    #         "city": "BobTown",
-    #         "requestor_address": "222 Box",
-    #         "ownerFn": "Dov",
-    #         "ownerLn": "Sob"
-    #     }
-
-    #     request = factory.post('api/edit/organization', data=mock_data, format='json')
-    #     request.user = mock_user
-    #     response = editOrganizationDetail(request)
+        request = factory.post('api/edit/organization', data=mock_data, format='json')
+        request.user = mock_user
+        response = editOrganizationDetail(request)
         
-    #     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    #     assert response.data.get("errors", "") == {'email': ['Invalid Email']}
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data.get("errors", "") == {'email': ['Invalid Email']}
 
 
-    # @patch('hsabackend.views.organizations.Organization.objects.filter')
-    # @patch('hsabackend.views.organizations.Organization')
-    # def test_delete_org_fails(self, org, filter):
-    #     mock_user = Mock(spec=User)
-    #     mock_user.is_authenticated = True
+    @patch('hsabackend.views.organizations.Organization.objects.filter')
+    @patch('hsabackend.views.organizations.Organization')
+    def test_delete_org_fails(self, org, filter):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
 
-    #     factory = APIRequestFactory()
+        factory = APIRequestFactory()
 
-    #     org_object = MagicMock(spec=Organization)
-    #     org.return_value = org_object
+        org_object = MagicMock(spec=Organization)
+        org.return_value = org_object
 
-    #     qs = MagicMock(spec=QuerySet)
-    #     qs.count.return_value = 0 # no prev account
-    #     filter.return_value = qs
+        qs = MagicMock(spec=QuerySet)
+        qs.count.return_value = 0 # no prev account
+        filter.return_value = qs
 
-    #     request = factory.post('api/delete/organization', format='json')
-    #     request.user = mock_user
-    #     response = deleteOrganization(request)
+        request = factory.post('api/delete/organization', format='json')
+        request.user = mock_user
+        response = deleteOrganization(request)
         
-    #     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    #     assert response.data.get('errors', '') == "All users must have at least 1 org; You only have 1 or less orgs, cannot delete."
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data.get('errors', '') == "All users must have at least 1 org; You only have 1 or less orgs, cannot delete."
 

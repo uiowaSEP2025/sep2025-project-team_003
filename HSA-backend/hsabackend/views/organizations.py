@@ -21,11 +21,7 @@ def getOrganizationDetail(request):
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
 def editOrganizationDetail(request):
-    try:
-        org = request.org
-    except Organization.DoesNotExist:
-        return Response({"error": "Organization not found."}, status=status.HTTP_404_NOT_FOUND)
-    
+    org = request.org
     name = request.data.get('name', org.org_name)
     email = request.data.get('email', org.org_email)
     city = request.data.get('city', org.org_city)
@@ -35,7 +31,6 @@ def editOrganizationDetail(request):
     requestor_address = request.data.get('requestorAddress', org.org_requestor_address)
     ownerFn = request.data.get('ownerFn', org.org_owner_first_name)
     ownerLn = request.data.get('ownerLn', org.org_owner_last_name)
-    is_onboarding = request.data.get('isOnboarding', org.is_onboarding)
     
     org.org_name = name
     org.org_email = email
@@ -46,7 +41,6 @@ def editOrganizationDetail(request):
     org.org_phone = phone
     org.org_owner_first_name = ownerFn
     org.org_owner_last_name = ownerLn
-    org.is_onboarding = is_onboarding
     
     try:
         org.full_clean()
@@ -61,7 +55,6 @@ def editOrganizationDetail(request):
 def createOrganization(request):
     # users can only have a single organization
     org_count = Organization.objects.filter(owning_User=request.user.pk).count()
-    print(Organization.objects)
     if org_count > 0:
         return Response({"errors": "This user already has an organization"}, status=status.HTTP_400_BAD_REQUEST)
 
