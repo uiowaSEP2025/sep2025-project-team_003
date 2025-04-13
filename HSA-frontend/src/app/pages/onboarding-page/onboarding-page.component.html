@@ -7,6 +7,20 @@
 			Please follow this guide steps to utilize this application
 		</h2>
 		<mat-vertical-stepper #stepper [linear]="true">
+      <mat-step [stepControl]="buttonForm">
+        <form [formGroup]="buttonForm">
+          <ng-template matStepLabel>Example</ng-template>
+          <div style="max-width: 800px; display: flex; justify-content: space-between;">
+            <h2 style="margin-bottom: 20px; word-wrap: break-word;">
+              Do you want to proceed with example data? (All steps will not be saved)
+            </h2>
+            <div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
+              <button data-testid="yes" mat-flat-button (click)="onYesNoConfirm('yes')">Yes</button>
+              <button data-testid="no" mat-flat-button (click)="onYesNoConfirm('no')">No</button>
+            </div>
+          </div>
+        </form>
+      </mat-step>
 			<mat-step [stepControl]="serviceForm">
 				<form class="parent" [formGroup]="serviceForm" (ngSubmit)="onSubmitServiceCreation()">
 					<ng-template matStepLabel>Create Service</ng-template>
@@ -38,7 +52,6 @@
 							}
 						</mat-form-field>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
-							<button data-testid="prefill-1" mat-flat-button (click)="openPrefillDialog('service')" [disabled]="isServicePrefilled">Prefill</button>
 							<button data-testid="next-1" mat-flat-button type="submit">Next</button>
 						</div>
 					</mat-card>
@@ -117,7 +130,6 @@
 							></textarea>
 						</mat-form-field>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
-							<button data-testid="prefill-2" mat-flat-button (click)="openPrefillDialog('customer')" [disabled]="isCustomerPrefilled">Prefill</button>
 							<button data-testid="next-2" mat-flat-button type="submit">Next</button>
 						</div>
 					</mat-card>
@@ -137,7 +149,6 @@
 							>
 						</mat-form-field>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
-							<button data-testid="prefill-3" mat-flat-button (click)="openPrefillDialog('material')" [disabled]="isMaterialPrefilled">Prefill</button>
 							<button data-testid="next-3" mat-flat-button type="submit" (click)="onSubmitMaterialCreation()">Next</button>
 						</div>
 					</mat-card>
@@ -191,7 +202,6 @@
 							  }
 						</mat-form-field>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
-							<button data-testid="prefill-4" mat-flat-button (click)="openPrefillDialog('contractor')" [disabled]="isContractorPrefilled">Prefill</button>
 							<button data-testid="next-4" mat-flat-button type="submit" (click)="onSubmitContractorCreation()">Next</button>
 						</div>
 					</mat-card>
@@ -346,7 +356,6 @@
 							</tr>
 						</table>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
-							<button data-testid="prefill-5" mat-flat-button (click)="openPrefillDialog('job')" [disabled]="isJobPrefilled">Prefill</button>
 							<button data-testid="next-5" mat-flat-button type="submit" (click)="onSubmitJobGeneral()">Next</button>
 						</div>
 					</form>

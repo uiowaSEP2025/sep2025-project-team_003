@@ -234,7 +234,7 @@ export class CreateJobPageComponent {
           info['serviceDescription'] = element['service_description'];
           this.services = { services: [...this.services.services, info] };
         });
-      
+
         this.selectedServices = result.selectedItems;
         this.onChangeUpdateButton()
       }

@@ -107,10 +107,19 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   ngOnInit(): void {
+    
     this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
       return !this.hideValues.includes(header)
     }) // this has to be here to allow default headers change. On init is ran
     // when inputs are recieved
+
+    if (this.checkbox !== 'none') {
+      this.headersWithActions = ['Checkbox', ...this.headersWithActions]
+    }
+
+    if (this.unitUsedField === true) {
+      this.headersWithActions = [...this.headersWithActions, 'Unit Used', 'Price Per Unit']
+    }
   }
 
   redirectEdit(id: number, args: any) {

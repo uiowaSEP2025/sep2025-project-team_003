@@ -46,7 +46,11 @@ export class LoginComponent {
           this.snackBar.open('Login Successful', '', {
             duration: 3000
           });
-          console.log(this.previousUrlPath)
+
+          if (this.previousUrlPath === 'login') {
+            this.previousUrlPath = 'home'
+          }
+          
           this.navigateToPage(`/${this.previousUrlPath}`)
         },
         error: (error) => {

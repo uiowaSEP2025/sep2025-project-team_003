@@ -16,10 +16,8 @@ import { OrganizationService } from '../../services/organization.service';
 import { Router } from '@angular/router';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { JobDisplayTableComponent } from '../../components/job-display-table/job-display-table.component';
-import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSelectModule } from '@angular/material/select';
-import { JobTemplateService } from '../../services/jobTemplate.service';
 import { StringFormatter } from '../../utils/string-formatter';
 import { InputFieldDictionary } from '../../interfaces/interface-helpers/inputField-row-helper.interface';
 import { AddSelectDialogData } from '../../interfaces/interface-helpers/addSelectDialog-helper.interface';
@@ -27,6 +25,7 @@ import { AddSelectDialogComponentComponent } from '../../components/add-select-d
 import { StateList } from '../../utils/states-list';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { OnboardingSelectDialogComponentComponent } from '../../components/onboarding-select-dialog-component/onboarding-select-dialog-component.component';
 
 @Component({
   selector: 'app-onboarding-page',
@@ -51,6 +50,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrl: './onboarding-page.component.scss'
 })
 export class OnboardingPageComponent implements OnInit {
+  buttonForm: FormGroup;
   serviceForm: FormGroup;
   materialForm: FormGroup;
   customerForm: FormGroup;
@@ -79,15 +79,12 @@ export class OnboardingPageComponent implements OnInit {
   deletedJobContractors: any = []
   status: string = 'created'
   states: any = []
-  isServicePrefilled: boolean = false
-  isMaterialPrefilled: boolean = false
-  isCustomerPrefilled: boolean = false
-  isContractorPrefilled: boolean = false
-  isJobPrefilled: boolean = false
+  isExamplePrefilled: boolean = false
   @ViewChild('stepper') stepper!: MatStepper;
 
   constructor(
     private router: Router, 
+    private buttonFormBuilder: FormBuilder,
     private serviceFormBuilder: FormBuilder,
     private materialFormBuilder: FormBuilder,
     private customerFormBuilder: FormBuilder,
@@ -103,6 +100,10 @@ export class OnboardingPageComponent implements OnInit {
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
   ) {
+    this.buttonForm = this.buttonFormBuilder.group({
+      exampleConfirmation: ['', Validators.required]
+    })
+
     this.serviceForm = this.serviceFormBuilder.group({
       serviceName: ['', Validators.required],
       serviceDescription: ['', Validators.required]
@@ -159,22 +160,46 @@ export class OnboardingPageComponent implements OnInit {
     })
   }
 
+  onYesNoConfirm(isYes: string) {
+    if (isYes === "yes") {
+      const dialogRef = this.dialog.open(AddConfirmDialogComponentComponent, {
+        data: "with prefilled data? (All steps will not be saved)"
+      });
+
+      dialogRef.afterClosed().subscribe((result:any) => {
+        if (result) {
+          this.buttonForm.patchValue({
+            exampleConfirmation: isYes
+          })
+      
+          this.buttonForm.markAsTouched();
+          this.stepper.next()
+      
+          this.isExamplePrefilled = true
+          this.prefillInfo()
+        }
+      });
+    } else {
+      this.buttonForm.patchValue({
+        exampleConfirmation: isYes
+      })
+      
+      this.buttonForm.markAsTouched();
+      this.stepper.next()
+    }
+  }
+
   onSubmitServiceCreation() {
     if (this.serviceForm.invalid) {
       this.serviceForm.markAllAsTouched()
     } else {
-      const serviceCreateRequest = {
+      const serviceCreateResponse = {
+        id: 1,
         service_name: this.serviceForm.get("serviceName")?.value,
         service_description: this.serviceForm.get("serviceDescription")?.value
       }
 
-      this.serviceService.createService(serviceCreateRequest).subscribe({
-        next: (response) => {
-          this.firstService = response
-        },
-        error: (error) => {
-        }
-      })
+      this.firstService = serviceCreateResponse
 
       this.stepper.selected!.completed = true;
       this.stepper.next();
@@ -183,17 +208,12 @@ export class OnboardingPageComponent implements OnInit {
 
   onSubmitMaterialCreation() {
     if (this.materialForm.get("materialName")?.value !== "") {
-      const materialCreateRequest = {
+      const materialCreateResponse = {
+        id: 1,
         material_name: this.materialForm.get("materialName")?.value,
       }
 
-      this.materialService.createMaterial(materialCreateRequest).subscribe({
-        next: (response) => {
-          this.firstMaterial = response
-        },
-        error: (error) => {
-        }
-      })
+      this.firstMaterial = materialCreateResponse
     }
 
     this.stepper.selected!.completed = true;
@@ -204,22 +224,17 @@ export class OnboardingPageComponent implements OnInit {
     if (this.customerForm.invalid) {
       this.customerForm.markAllAsTouched()
     } else {
-      const customerCreateRequest = {
-        firstn: this.customerForm.get('firstName')?.value,
-        lastn: this.customerForm.get('lastName')?.value,
+      const customerCreateResponse = {
+        id: 1,
+        first_name: this.customerForm.get('firstName')?.value,
+        last_name: this.customerForm.get('lastName')?.value,
         email: this.customerForm.get('email')?.value,
-        phoneno: this.customerForm.get('phone')?.value,
-        notes: this.customerForm.get('note')?.value,
+        phone_no: this.customerForm.get('phone')?.value,
       }
 
-      this.customerService.createCustomer(customerCreateRequest).subscribe({
-        next: (response) => {
-          this.firstCustomer = response
-        },
-        error: (error) => {
-        }
-      });
-
+      this.firstCustomer = customerCreateResponse
+      this.customerID = this.firstCustomer["id"];
+      this.selectedCustomer = this.firstCustomer["id"]
       this.stepper.selected!.completed = true;
       this.stepper.next();
     }
@@ -231,20 +246,15 @@ export class OnboardingPageComponent implements OnInit {
     && this.contractorForm.get('email')?.value !== ""
     && this.contractorForm.get('phone')?.value !== ""
   ) {
-      const contractorCreateRequest = {
-        firstName: this.contractorForm.get('firstName')?.value,
-        lastName: this.contractorForm.get('lastName')?.value,
+      const contractorCreateResponse = {
+        id: 1,
+        first_name: this.contractorForm.get('firstName')?.value,
+        last_name: this.contractorForm.get('lastName')?.value,
         email: this.contractorForm.get('email')?.value,
         phone: this.contractorForm.get('phone')?.value,
       }
 
-      this.contractorService.createContractor(contractorCreateRequest).subscribe({
-        next: (response) => {
-          this.firstContractor = response
-        },
-        error: (error) => {
-        }
-      });
+      this.firstContractor = contractorCreateResponse
     }
 
     this.stepper.selected!.completed = true;
@@ -262,66 +272,41 @@ export class OnboardingPageComponent implements OnInit {
     }
   }
 
-  openPrefillDialog(type: string) {
-    const dialogRef = this.dialog.open(AddConfirmDialogComponentComponent, {
-      width: '300px',
-      data: "prefill data? (All prefill data will not be saved)"
+  prefillInfo() {
+    this.serviceForm.setValue({
+      serviceName: "Example Service",
+      serviceDescription: "Example Service Description"
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        switch (type) {
-          case "service":
-            this.serviceForm.setValue({
-              serviceName: "Example Service",
-              serviceDescription: "Example Service Description"
-            });
-            this.isServicePrefilled = true;
-            break;
-          case "customer":
-            this.customerForm.setValue({
-              firstName: "First",
-              lastName: "Last",
-              email: "first.last@example.com",
-              phone: "000-000-0000",
-              note: "Example Note"
-            });
-            this.isCustomerPrefilled = true;
-            break;
-          case "material":
-            this.materialForm.setValue({
-              materialName: "Example Material"
-            });
-            this.isMaterialPrefilled = true;
-            break;
-          case "contractor":
-            this.contractorForm.setValue({
-              firstName: "FirstCon",
-              lastName: "LastCon",
-              email: "firstCon.lastCon@example.com",
-              phone: "000-000-0000",
-            });
-            this.isContractorPrefilled = true
-            break;
-          case "job":
-            this.jobGeneralForm.setValue({
-              customerName: this.firstCustomer.data["first_name"] + " " + this.firstCustomer.data["last_name"],
-              startDate: new Date("01/01/1999"),
-              endDate: new Date("01/02/1999"),
-              requestorAddress: "9999 Example Address",
-              requestorCity: "Example City",
-              requestorZip: "99999",
-              requestorStateSelect: this.organization["org_requestor_state"],
-              jobDescription: "Example Job Description"
-            });
+    this.customerForm.setValue({
+      firstName: "First",
+      lastName: "Last",
+      email: "first.last@example.com",
+      phone: "000-000-0000",
+      note: "Example Note"
+    });
 
-            this.customerID = this.firstCustomer.data["id"];
-            this.selectedCustomer = this.firstCustomer.data["id"]
-            this.isJobPrefilled = true;
-            break;
-        }
-      }
-    })
+    this.materialForm.setValue({
+      materialName: "Example Material"
+    });
+
+    this.contractorForm.setValue({
+      firstName: "FirstCon",
+      lastName: "LastCon",
+      email: "firstCon.lastCon@example.com",
+      phone: "000-000-0000",
+    });
+
+    this.jobGeneralForm.setValue({
+      customerName: "First Last",
+      startDate: new Date("01/01/1999"),
+      endDate: new Date("01/02/1999"),
+      requestorAddress: "9999 Example Address",
+      requestorCity: "Example City",
+      requestorZip: "99999",
+      requestorStateSelect: this.organization["org_requestor_state"],
+      jobDescription: "Example Job Description"
+    });
   }
 
   navigateToPage(pagePath: string) {
@@ -345,15 +330,19 @@ export class OnboardingPageComponent implements OnInit {
   }
   
   openAddCustomerDialog() {
+    this.customers = {
+      customers: [this.firstCustomer]
+    }
+
     const dialogData: AddSelectDialogData = {
       typeOfDialog: 'customer',
-      dialogData: this.customerID,
+      dialogData: this.customers,
       searchHint: 'Search by customer name',
       headers: ['First Name','Last Name', 'Email', 'Phone No'],
       materialInputFields: this.materialInputFields,
     };
 
-    const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
+    const dialogRef = this.dialog.open(OnboardingSelectDialogComponentComponent, {
       width: 'auto', 
       maxWidth: '90vw', 
       height: 'auto', 
@@ -372,6 +361,10 @@ export class OnboardingPageComponent implements OnInit {
   }
 
   openAddServiceDialog() {
+    this.services = {
+      services: [this.firstService]
+    }
+
     const dialogData: AddSelectDialogData = {
       typeOfDialog: 'service',
       dialogData: this.services,
@@ -380,7 +373,7 @@ export class OnboardingPageComponent implements OnInit {
       materialInputFields: this.materialInputFields,
     };
 
-    const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
+    const dialogRef = this.dialog.open(OnboardingSelectDialogComponentComponent, {
       width: 'auto', 
       maxWidth: '90vw', 
       height: 'auto', 
@@ -396,15 +389,19 @@ export class OnboardingPageComponent implements OnInit {
           info['serviceID'] = element['id'];
           info['serviceName'] = element['service_name'];
           info['serviceDescription'] = element['service_description'];
-          this.services = { services: [...this.services.services, info] };
+          this.services = { services: [info] };
         });
-      
+        
         this.selectedServices = result.selectedItems;
       }
     });
   }
 
   openAddMaterialDialog() {
+    this.materials = {
+      materials: [this.firstMaterial]
+    }
+
     const dialogData: AddSelectDialogData = {
       typeOfDialog: 'material',
       dialogData: this.materials,
@@ -413,7 +410,7 @@ export class OnboardingPageComponent implements OnInit {
       materialInputFields: this.materialInputFields,
     }
 
-    const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
+    const dialogRef = this.dialog.open(OnboardingSelectDialogComponentComponent, {
       width: 'auto', 
       maxWidth: '90vw', 
       height: 'auto', 
@@ -424,7 +421,7 @@ export class OnboardingPageComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result:any) => {
       if (result.length !== 0) {
         result.itemsInfo.forEach((element: any) => {
-          this.materials = { materials: [...this.materials.materials, element] };
+          this.materials = { materials: [element] };
         });
 
         this.selectedMaterials = result.selectedItems;
@@ -433,6 +430,10 @@ export class OnboardingPageComponent implements OnInit {
   }
 
   openAddContractorDialog() {
+    this.contractors = {
+      contractors: [this.firstContractor]
+    }
+
     const dialogData: AddSelectDialogData = {
       typeOfDialog: 'contractor',
       dialogData: this.contractors,
@@ -441,7 +442,7 @@ export class OnboardingPageComponent implements OnInit {
       materialInputFields: this.materialInputFields,
     }
 
-    const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
+    const dialogRef = this.dialog.open(OnboardingSelectDialogComponentComponent, {
       width: 'auto', 
       maxWidth: '90vw', 
       height: 'auto', 
@@ -458,7 +459,7 @@ export class OnboardingPageComponent implements OnInit {
           info['contractorName'] = element['first_name'] + " " + element['last_name'];
           info['contractorPhoneNo'] = element['phone'];
           info['contractorEmail'] = element['email'];
-          this.contractors = { contractors: [...this.contractors.contractors, info] };
+          this.contractors = { contractors: [info] };
         });
 
         this.selectedContractors = result.selectedItems;
@@ -530,8 +531,7 @@ export class OnboardingPageComponent implements OnInit {
       });
     }
 
-    if (this.isJobPrefilled || this.isCustomerPrefilled || this.isCustomerPrefilled || this.isMaterialPrefilled || this.isServicePrefilled) {
-      this.deleteAllPrefilledEntries();
+    if (this.isExamplePrefilled) {
       this.updateOnboardingField();
       this.navigateToPage('home');
       return;
@@ -576,8 +576,7 @@ export class OnboardingPageComponent implements OnInit {
             this.snackBar.open('Job create successfully', '', {
               duration: 3000
             });
-  
-            this.deleteAllPrefilledEntries();
+
             this.updateOnboardingField();
             this.navigateToPage('home');
           },
@@ -597,57 +596,9 @@ export class OnboardingPageComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.deleteAllPrefilledEntries();
         this.navigateToPage('home');
       }
     });
-  }
-
-  deleteAllPrefilledEntries() {
-    let serviveID = this.firstService.data["id"]
-    let materialID = this.materialForm.get("materialName")?.value !== "" ? this.firstMaterial.data["id"] : 0
-    let customerID = this.firstCustomer.data["id"]
-    let contractorID = this.contractorForm.get("firstName")?.value !== "" ? this.firstContractor.data["id"] : 0
-
-    if (this.isServicePrefilled) {
-      this.serviceService.deleteService({ id: serviveID, service_name: this.firstService["service_name"] }).subscribe({
-        next: (response) => {
-
-        },
-        error: (error) => {
-        }
-      })
-    }
-
-    if (this.isMaterialPrefilled) {
-      this.materialService.deleteMaterial({ id: materialID, material_name: this.firstMaterial["material_name"] }).subscribe({
-        next: (response) => {
-
-        },
-        error: (error) => {
-        }
-      })
-    }
-
-    if (this.isCustomerPrefilled) {
-      this.customerService.deleteCustomer({ id: customerID, firstn: this.firstCustomer["first_name"], lastn: this.firstCustomer["last_name"] }).subscribe({
-        next: (response) => {
-
-        },
-        error: (error) => {
-        }
-      })
-    }
-
-    if (this.isContractorPrefilled) {
-      this.contractorService.deleteContractor({ id: contractorID }).subscribe({
-        next: (response) => {
-
-        },
-        error: (error) => {
-        }
-      })
-    }
   }
 
   updateOnboardingField() {
