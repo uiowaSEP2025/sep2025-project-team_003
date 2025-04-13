@@ -7,7 +7,7 @@ import { UserAuthService } from "../services/user-auth.service";
 export function RedirectAndAuthInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
     const router = inject(Router);
     const userAuth = inject(UserAuthService)
-
+    
     return next(req).pipe(
         tap(event => {
             if (event instanceof HttpResponse) {
@@ -28,9 +28,10 @@ export function RedirectAndAuthInterceptor(req: HttpRequest<unknown>, next: Http
             console.error(`Calling to endpoint ${url} failed with status code ${err.status}, message: ${err.message}`);
 
             if (err.status === 401) {
+                const prevpath = router.url.slice(1)
                 router.navigate(['/login'], {
                     queryParams: {
-                      prevpath: 'value1',
+                        prevPath: prevpath,
                     }
                   });
             } else if (err.status === 403) {
@@ -47,7 +48,6 @@ export function RedirectAndAuthInterceptor(req: HttpRequest<unknown>, next: Http
             } else if (err.status >= 500) {
                 router.navigateByUrl("/500");
             }
-
             return throwError(() => err);
         })
     );

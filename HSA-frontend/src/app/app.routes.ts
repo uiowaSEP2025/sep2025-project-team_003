@@ -27,8 +27,6 @@ import { DiscountsPageComponent } from './pages/discounts-page/discounts-page.co
 import { CreateDiscountsPageComponent } from './pages/create-discounts-page/create-discounts-page.component';
 import { EditDiscountPageComponent } from './pages/edit-discount-page/edit-discount-page.component';
 import { OnboardingPageComponent } from './pages/onboarding-page/onboarding-page.component';
-import { AppComponent } from './app.component';
-import { HeaderComponent } from './layout/header/header.component';
 import { Error500PageComponent } from './pages/error-500-page/error-500-page.component';
 
 export const routes: Routes = [
