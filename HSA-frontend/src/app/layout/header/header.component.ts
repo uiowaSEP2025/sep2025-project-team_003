@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
@@ -23,11 +23,11 @@ import { Subscription } from 'rxjs';
 })
 export class HeaderComponent implements OnInit {
   sidebarExpanded = false;
-  isLoggedIn: boolean = false; 
+  isLoggedIn: boolean = false;
   private loginStatusSubscription: Subscription = new Subscription();
 
 
-  constructor(private userAuth: UserAuthService, private router: Router, private snackBar: MatSnackBar) {}
+  constructor(private userAuth: UserAuthService, private router: Router, private snackBar: MatSnackBar) { }
 
   toggleSidebar() {
     this.sidebarExpanded = !this.sidebarExpanded
@@ -52,7 +52,7 @@ export class HeaderComponent implements OnInit {
         this.snackBar.open('You are already logout!', '', {
           duration: 3000
         });
-        
+
       }
     })
   }
@@ -67,5 +67,16 @@ export class HeaderComponent implements OnInit {
 
   navigateToPage(pagePath: string) {
     this.router.navigate([`/${pagePath}`])
+  }
+
+  // Close sidebar if clicked outside
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarButton = document.querySelector('.example-icon');
+
+    if (this.sidebarExpanded && sidebar && !sidebar.contains(event.target as Node) && !sidebarButton?.contains(event.target as Node)) {
+      this.sidebarExpanded = false;
+    }
   }
 }
