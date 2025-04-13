@@ -14,7 +14,6 @@ interface CreateOrganizationPostData {
 	requestorAddress: string | null
 	ownerFn: string | null
 	ownerLn: string | null
-	isOnboarding: boolean | null
 }
 
 @Injectable({

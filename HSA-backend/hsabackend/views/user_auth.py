@@ -56,31 +56,26 @@ def user_create(request):
     if is_existed:
         return Response({"message": "User existed"}, status=status.HTTP_409_CONFLICT)
     
-    new_user = User(request.data.get('email'),request.data.get('username'), email, request.data.get('password'))
-
-    new_org = Organization(
-        org_name = organization_info.get("name"),
-        org_email = organization_info.get("email"),
-        org_city = organization_info.get("city"),
-        org_requestor_state = organization_info.get("requestorState"),
-        org_requestor_zip = organization_info.get("requestorZip"),
-        org_requestor_address = organization_info.get("requestorAddress"),
-        org_phone = organization_info.get("phone"),
-        org_owner_first_name = organization_info.get("ownerFn"),
-        org_owner_last_name = organization_info.get("ownerLn"),
-        owning_User = new_user
-    )
-    
+    new_user = User(email=request.data.get('email'),username=request.data.get('username'), password=request.data.get('password'))
     try:
-         # Validate both models
         new_user.full_clean()
-        new_org.full_clean()
 
-        # Save both atomically
         with transaction.atomic():
             new_user.save()
+            new_org = Organization(
+                org_name = organization_info.get("name"),
+                org_email = organization_info.get("email"),
+                org_city = organization_info.get("city"),
+                org_requestor_state = organization_info.get("requestorState"),
+                org_requestor_zip = organization_info.get("requestorZip"),
+                org_requestor_address = organization_info.get("requestorAddress"),
+                org_phone = organization_info.get("phone", "").replace("-", ""),
+                org_owner_first_name = organization_info.get("ownerFn"),
+                org_owner_last_name = organization_info.get("ownerLn"),
+                owning_User = new_user
+            )
+            new_org.full_clean()
             new_org.save()
-
 
     except ValueError as e:
         return Response({"message": "Invalid values from user inputs"}, status=status.HTTP_400_BAD_REQUEST)

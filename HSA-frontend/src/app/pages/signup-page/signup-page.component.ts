@@ -111,17 +111,10 @@ export class SignupPageComponent {
       this.registrationForm.markAllAsTouched();
       return;
     } else {
-      const userCreateRequest = {
-        firstName: this.userAccountForm.get('userFirstName')?.value,
-        lastName: this.userAccountForm.get('userLastName')?.value,
-        email: this.userAccountForm.get('userEmail')?.value,
-        username: this.userAccountForm.get('username')?.value,
-        password: this.userAccountForm.get('password')?.value
-      }
-
       this.tracker.startRequest();
+     
+     
       const organizationCreateRequest = {
-        userCreationInfo: userCreateRequest,
         name: this.registrationForm.get('organizationName')?.value,
         email: this.registrationForm.get('organizationEmail')?.value,
         city: this.organizationLocationForm.get('city')?.value,
@@ -133,18 +126,27 @@ export class SignupPageComponent {
         ownerLn: this.registrationForm.get('ownerName')?.value.split(' ').slice(1).join(' '),
         isOnboarding: true,
       }
-
-      this.organizationService.createOrganization(organizationCreateRequest).subscribe({
+ 
+      const userCreateRequest = {
+        organizationInfo: organizationCreateRequest,
+        firstName: this.userAccountForm.get('userFirstName')?.value,
+        lastName: this.userAccountForm.get('userLastName')?.value,
+        email: this.userAccountForm.get('userEmail')?.value,
+        username: this.userAccountForm.get('username')?.value,
+        password: this.userAccountForm.get('password')?.value
+      }
+ 
+      this.authService.createUser(userCreateRequest).subscribe({
         next: (response) => {
-          this.snackBar.open('Organization created successfully', '', {
+          this.snackBar.open('Organization Created!', '', {
             duration: 3000
           });
-          this.navigateToPage('onboarding')
+          this.router.navigate(["login"])
         },
         error: (error) => {
-          this.tracker.endRequest();
+ 
         }
-      });
+      })
     }
   }
 
