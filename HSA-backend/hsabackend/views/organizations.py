@@ -89,20 +89,20 @@ def createOrganization(request):
 
     owning_User = request.user
 
-    the_organization = Organization(
-        org_name = name,
-        org_email = email,
-        org_city = city,
-        org_requestor_state = requestor_state,
-        org_requestor_zip = requestor_zip,
-        org_phone=phone,
-        org_requestor_address = requestor_address,
-        org_owner_first_name = ownerFn,
-        org_owner_last_name = ownerLn,
-        owning_User = owning_User,
-    )
-
     try:
+        the_organization = Organization(
+            org_name = name,
+            org_email = email,
+            org_city = city,
+            org_requestor_state = requestor_state,
+            org_requestor_zip = requestor_zip,
+            org_phone=phone,
+            org_requestor_address = requestor_address,
+            org_owner_first_name = ownerFn,
+            org_owner_last_name = ownerLn,
+            owning_User = owning_User,
+        )
+
         the_organization.full_clean()
         the_organization.save()
 
