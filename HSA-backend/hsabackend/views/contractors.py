@@ -5,13 +5,12 @@ from hsabackend.models.organization import Organization
 from hsabackend.models.contractor import Contractor
 from django.db.models import Q
 from django.core.exceptions import ValidationError
+from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded
 def get_contractor_table_data(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset',0)
@@ -45,11 +44,9 @@ def get_contractor_table_data(request):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def get_contractor_excluded_table_data(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset',0)
@@ -85,11 +82,9 @@ def get_contractor_excluded_table_data(request):
     return Response(res, status=status.HTTP_200_OK)
     
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def create_contractor(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user)
+    org = request.org
 
     first_name = request.data.get('firstName', '')
     last_name = request.data.get('lastName', '')
@@ -112,11 +107,9 @@ def create_contractor(request):
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def edit_contractor(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user)
+    org = request.org
     contractor_qs = Contractor.objects.filter(pk=id, organization=org)
 
     if not contractor_qs.exists():
@@ -142,11 +135,9 @@ def edit_contractor(request, id):
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded
 def delete_contractor(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     cust = Contractor.objects.filter(pk=id, organization=org)
 
     if not cust.exists():

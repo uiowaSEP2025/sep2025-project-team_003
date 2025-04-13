@@ -5,13 +5,12 @@ from hsabackend.models.organization import Organization
 from hsabackend.models.material import Material
 from django.db.models import Q
 from django.core.exceptions import ValidationError
- 
+from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded 
+
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def get_material_table_data(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset', 0)
@@ -44,11 +43,9 @@ def get_material_table_data(request):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def get_material_excluded_table_data(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset', 0)
@@ -84,11 +81,9 @@ def get_material_excluded_table_data(request):
     return Response(res, status=status.HTTP_200_OK)
  
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def create_material(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user)
+    org = request.org
     material_name = request.data.get('material_name', '')
  
     material = Material(
@@ -104,11 +99,9 @@ def create_material(request):
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
  
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def edit_material(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user)
+    org = request.org
     try:
         material = Material.objects.get(pk=id, organization=org)
     except Material.DoesNotExist:
@@ -130,11 +123,9 @@ def edit_material(request, id):
     
  
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def delete_material(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user)
+    org = request.org
     material = Material.objects.filter(pk=id, organization=org)
  
     if not material.exists():

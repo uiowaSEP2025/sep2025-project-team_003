@@ -6,7 +6,6 @@ import { FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angu
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
 import { UserAuthService } from '../../services/user-auth.service';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -29,7 +28,7 @@ export class LoginComponent {
   usernameFormControl = new FormControl('', [Validators.required]);
   passwordFormControl = new FormControl('', [Validators.required]);
 
-  constructor(private router: Router, private route: ActivatedRoute, private authService: UserAuthService, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {
+  constructor(private router: Router, private route: ActivatedRoute, private authService: UserAuthService, private snackBar: MatSnackBar) {
     this.route.queryParams.subscribe(params => {
       if (params['prevPath'] !== undefined) {
         this.previousUrlPath = params['prevPath']
@@ -47,6 +46,7 @@ export class LoginComponent {
           this.snackBar.open('Login Successful', '', {
             duration: 3000
           });
+          console.log(this.previousUrlPath)
           this.navigateToPage(`/${this.previousUrlPath}`)
         },
         error: (error) => {
@@ -55,7 +55,6 @@ export class LoginComponent {
               duration: 3000
             });
           } else {
-            this.errorHandler.handleError(error)
           }
         }
       });

@@ -7,7 +7,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
 import { MatCardModule } from '@angular/material/card';
 import { ContractorService } from '../../services/contractor.service';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-edit-contractors-page',
@@ -29,7 +28,7 @@ export class EditContractorsPageComponent implements OnInit {
   phoneNo!: string
   custId: number | null = null
 
-  constructor(private activatedRoute: ActivatedRoute, private router: Router, private contractorService: ContractorService, private errorHandler: ErrorHandlerService) { }
+  constructor(private activatedRoute: ActivatedRoute, private router: Router, private contractorService: ContractorService) { }
   firstNameControl = new FormControl('', Validators.required)
   lastNameControl = new FormControl('', Validators.required)
   emailControl = new FormControl('', [Validators.email, Validators.required])
@@ -84,7 +83,6 @@ export class EditContractorsPageComponent implements OnInit {
           this.router.navigate(['/contractors']);
         },
         error: (error) => {
-          this.errorHandler.handleError(error)
         }
       }
     )

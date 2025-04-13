@@ -261,8 +261,9 @@ class ServiceViewTest(APITestCase):
         
         assert response.status_code == status.HTTP_200_OK
         service_mock.delete.assert_called_once
-
-    def test_delete_cached_invalid(self):
+    
+    @patch('hsabackend.utils.auth_wrapper.Organization')
+    def test_delete_cached_invalid(self, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
 
@@ -285,7 +286,8 @@ class ServiceViewTest(APITestCase):
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     @patch('hsabackend.views.jobs_services.JobService.objects.get')
-    def test_delete_cached_valid(self, job_service):
+    @patch('hsabackend.utils.auth_wrapper.Organization')
+    def test_delete_cached_valid(self, auth_org, job_service):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         

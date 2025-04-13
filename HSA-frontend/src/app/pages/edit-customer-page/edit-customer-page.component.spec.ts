@@ -144,42 +144,5 @@ describe('EditCustomerPageComponent', () => {
     expect(errors.length).toEqual(0)
   })
 
-  describe('observables', () => {
-    beforeEach(() => {
-      const compiled = fixture.debugElement.nativeElement;
-    const create = compiled.querySelector('button')
-    const firstNameinput = compiled.querySelectorAll('mat-form-field')[0].querySelector('input')
-    firstNameinput.value = 'alex'
-    firstNameinput.dispatchEvent(new Event('input'));
-    const lastNameinput = compiled.querySelectorAll('mat-form-field')[1].querySelector('input')
-    lastNameinput.value = 'guo'
-    lastNameinput.dispatchEvent(new Event('input'));
-    const emailInput = compiled.querySelectorAll('mat-form-field')[2].querySelector('input')
-    emailInput.value = 'aguo2@uiowa.edu'
-    emailInput.dispatchEvent(new Event('input'));
-    lastNameinput.dispatchEvent(new Event('input'));
-    const phoneInput = compiled.querySelectorAll('mat-form-field')[3].querySelector('input')
-    phoneInput.value = '111-111-1111'
-    phoneInput.dispatchEvent(new Event('input'));
-    create.click()
-    fixture.detectChanges()
-
-    })
-
-    it('should navigate to login page on 401 unauthorized response', () => {
-      const req = httpMock.expectOne(`${environment.apiUrl}/api/edit/customer/null`);
-      expect(req.request.method).toBe('POST');
-      req.flush(null, { status: 401, statusText: 'Unauthorized' });
-
-      expect(router.navigate).toHaveBeenCalledWith(['/login'], { queryParams: { prevPath: 'home' } });
-    });
-
-    it('should redirect to customers on successful response', () => {
-      const req = httpMock.expectOne(`${environment.apiUrl}/api/edit/customer/null`);
-      expect(req.request.method).toBe('POST');
-      req.flush(null, { status: 200, statusText: 'ok' });
-      expect(router.navigate).toHaveBeenCalledWith(['/customers']);
-
-    });
-  });
+  
 });

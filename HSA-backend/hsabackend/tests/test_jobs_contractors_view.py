@@ -8,7 +8,6 @@ from hsabackend.views.jobs_contractors import delete_cached_job_contractor, get_
 from rest_framework.test import APITestCase
 from hsabackend.models.organization import Organization
 from django.db.models import QuerySet
-from django.db.models import Q
 from hsabackend.models.contractor import Contractor
 from hsabackend.models.job import Job
 from hsabackend.models.job_contractor import JobContractor
@@ -260,7 +259,8 @@ class contractorViewTest(APITestCase):
         assert response.status_code == status.HTTP_200_OK
         contractor_mock.delete.assert_called_once
 
-    def test_delete_cached_invalid(self):
+    @patch('hsabackend.utils.auth_wrapper.Organization')
+    def test_delete_cached_invalid(self,auth_org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
 
@@ -283,7 +283,8 @@ class contractorViewTest(APITestCase):
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     @patch('hsabackend.views.jobs_contractors.JobContractor.objects.get')
-    def test_delete_cached_valid(self, job_contractor):
+    @patch('hsabackend.utils.auth_wrapper.Organization')
+    def test_delete_cached_valid(self, auth_org, job_contractor):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         

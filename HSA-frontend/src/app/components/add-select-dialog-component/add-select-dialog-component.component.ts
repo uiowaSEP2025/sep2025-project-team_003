@@ -8,7 +8,6 @@ import { AddSelectDialogData } from '../../interfaces/interface-helpers/addSelec
 import { ServiceService } from '../../services/service.service';
 import { MaterialService } from '../../services/material.service';
 import { ContractorService } from '../../services/contractor.service';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.component';
 import { CustomerService } from '../../services/customer.service';
 import { JobTemplateService } from '../../services/jobTemplate.service';
@@ -66,7 +65,6 @@ export class AddSelectDialogComponentComponent {
     private materialService: MaterialService,
     private contractorService: ContractorService,
     private jobTemplateService: JobTemplateService,
-    private errorHandler: ErrorHandlerService,
   ) {
     this.isMaterial = this.data.typeOfDialog === 'material' ? true : false;
     this.typeOfDialog = this.data.typeOfDialog;
@@ -111,7 +109,6 @@ export class AddSelectDialogComponentComponent {
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
       },
       error: (error) => {
-        this.errorHandler.handleError(error);
       }
     });
   }
@@ -124,7 +121,6 @@ export class AddSelectDialogComponentComponent {
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
       },
       error: (error) => {
-        this.errorHandler.handleError(error);
       }
     });
   }
@@ -136,7 +132,6 @@ export class AddSelectDialogComponentComponent {
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
       },
       error: (error) => {
-        this.errorHandler.handleError(error);
       }
     });
   }
@@ -148,7 +143,6 @@ export class AddSelectDialogComponentComponent {
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
       },
       error: (error) => {
-        this.errorHandler.handleError(error);
       }
     });
   }
@@ -160,7 +154,6 @@ export class AddSelectDialogComponentComponent {
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
       },
       error: (error) => {
-        this.errorHandler.handleError(error);
       }
     });
   }

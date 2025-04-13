@@ -6,13 +6,12 @@ from hsabackend.models.job_material import JobMaterial
 from hsabackend.models.job import Job
 from hsabackend.models.material import Material
 from django.core.exceptions import ValidationError
+from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def get_job_material_table_data(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
 
     try:
         job = Job.objects.get(organization=org.pk, id=id)
@@ -46,11 +45,9 @@ def get_job_material_table_data(request, id):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def create_job_material(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user)
+    org = request.org
 
     try:
         job_object = Job.objects.get(organization=org.pk, id=id)
@@ -88,15 +85,10 @@ def create_job_material(request, id):
         return Response({"message": "Materials added to job successfully"}, status=status.HTTP_201_CREATED)
     else:
         return Response({"message": "There is no material to add"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-    
     
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def delete_job_material(request, job_id, job_material_id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
     job_material = JobMaterial.objects.filter(pk=job_material_id, job=job_id)
 
     if not job_material.exists():
@@ -106,10 +98,8 @@ def delete_job_material(request, job_id, job_material_id):
     return Response({"message": "The material in this job deleted sucessfully"}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def delete_cached_job_material(request, job_id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
     job_materials_list = request.data.get('jobMaterials', '')      # dataform: jobMaterials: [{"id": int}, {"id": int}, ...]
 
     if (len(job_materials_list) != 0):
