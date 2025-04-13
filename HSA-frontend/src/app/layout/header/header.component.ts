@@ -26,7 +26,7 @@ export class HeaderComponent implements OnInit {
   sidebarExpanded = false;
   isLoggout = true
 
-  constructor(private userAuth: UserAuthService, private organizationService: OrganizationService, private router: Router, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {}
+  constructor(private userAuth: UserAuthService, private router: Router, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {}
 
   toggleSidebar() {
     this.sidebarExpanded = !this.sidebarExpanded
