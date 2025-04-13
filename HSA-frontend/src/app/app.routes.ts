@@ -30,6 +30,7 @@ import { OnboardingPageComponent } from './pages/onboarding-page/onboarding-page
 import { AppComponent } from './app.component';
 import { HeaderResolver } from './utils/header-resolver';
 import { HeaderComponent } from './layout/header/header.component';
+import { Error500PageComponent } from './pages/error-500-page/error-500-page.component';
 
 export const routes: Routes = [
   {
@@ -126,6 +127,10 @@ export const routes: Routes = [
   {
     path: '404',
     component: NotFoundPageComponent
+  },
+  {
+    path: '500',
+    component: Error500PageComponent
   },
   {
     path: '**',
