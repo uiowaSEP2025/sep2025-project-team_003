@@ -4,7 +4,7 @@ import { inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { UserAuthService } from "../services/user-auth.service";
 
-export function RedirectInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
+export function RedirectAndAuthInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
     const router = inject(Router);
     const userAuth = inject(UserAuthService)
 
@@ -25,10 +25,14 @@ export function RedirectInterceptor(req: HttpRequest<unknown>, next: HttpHandler
         catchError((err: HttpErrorResponse) => {
             const url = req.url;
 
-            console.error(`HTTP ${err.status}: ${err.message}`);
+            console.error(`Calling to endpoint ${url} failed with status code ${err.status}, message: ${err.message}`);
 
             if (err.status === 401) {
-                router.navigateByUrl("/login");
+                router.navigate(['/login'], {
+                    queryParams: {
+                      prevpath: 'value1',
+                    }
+                  });
             } else if (err.status === 403) {
                 
             } else if (err.status === 404) {
