@@ -4,8 +4,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.models import User
+from hsabackend.models.organization import Organization
 from django.db.models import Q
-from hsabackend.views.organizations import createOrganization
+from django.db import transaction
+
 
 
 @api_view(["POST"])
@@ -38,6 +40,9 @@ def user_create(request):
     username = request.data.get('username')
     email = request.data.get('email')
 
+    if not organization_info:
+        return Response({"message": "Missing organization info"}, status=status.HTTP_400_BAD_REQUEST)
+
     User = get_user_model()
     query = Q()
 
@@ -51,13 +56,32 @@ def user_create(request):
     if is_existed:
         return Response({"message": "User existed"}, status=status.HTTP_409_CONFLICT)
     
-    try:
-        new_user = User.objects.create_user(request.data.get('username'), request.data.get('email'), request.data.get('password'))
-        new_user.first_name = request.data.get("firstName")
-        new_user.last_name = request.data.get("lastName")
-        new_user.save()
+    new_user = User(request.data.get('email'),request.data.get('username'), email, request.data.get('password'))
 
-        createOrganization(organization_info)
+    new_org = Organization(
+        org_name = organization_info.get("name"),
+        org_email = organization_info.get("email"),
+        org_city = organization_info.get("city"),
+        org_requestor_state = organization_info.get("requestorState"),
+        org_requestor_zip = organization_info.get("requestorZip"),
+        org_requestor_address = organization_info.get("requestorAddress"),
+        org_phone = organization_info.get("phone"),
+        org_owner_first_name = organization_info.get("ownerFn"),
+        org_owner_last_name = organization_info.get("ownerLn"),
+        owning_User = new_user
+    )
+    
+    try:
+         # Validate both models
+        new_user.full_clean()
+        new_org.full_clean()
+
+        # Save both atomically
+        with transaction.atomic():
+            new_user.save()
+            new_org.save()
+
+
     except ValueError as e:
         return Response({"message": "Invalid values from user inputs"}, status=status.HTTP_400_BAD_REQUEST)
     
