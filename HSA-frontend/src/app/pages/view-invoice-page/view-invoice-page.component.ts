@@ -9,8 +9,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { InvoiceQuotesDisplayTableComponent } from '../../components/invoice-quotes-display-table/invoice-quotes-display-table.component';
 import { MatCardModule } from '@angular/material/card';
-import { ErrorHandlerService } from '../../services/error.handler.service';
-
 
 @Component({
   selector: 'app-view-invoice-page',
@@ -22,7 +20,7 @@ export class ViewInvoicePageComponent implements OnInit{
   invoiceID!: number
   invoiceData: InvoiceDataInterface | null = null;
 
-  constructor (private router: Router, private invoiceService: InvoiceService, private activatedRoute:ActivatedRoute, private errorHandler: ErrorHandlerService) {
+  constructor (private router: Router, private invoiceService: InvoiceService, private activatedRoute:ActivatedRoute) {
     this.activatedRoute.paramMap.subscribe(params => {
       this.invoiceID = Number(params.get('id'));
     })
@@ -34,7 +32,6 @@ export class ViewInvoicePageComponent implements OnInit{
         this.invoiceData = response
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
       }}
     )
     

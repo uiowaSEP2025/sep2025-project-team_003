@@ -4,7 +4,6 @@ import {MatFabButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {TableComponentComponent} from '../../components/table-component/table-component.component';
 import { MaterialService } from '../../services/material.service';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { CommonModule } from '@angular/common';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 
@@ -25,7 +24,7 @@ export class MaterialsPageComponent implements OnInit {
   materialService: MaterialService
   @ViewChild(TableComponentComponent) tableComponent!: TableComponentComponent 
 
-  constructor(private router: Router, materialService: MaterialService, private errorHandler: ErrorHandlerService) {
+  constructor(private router: Router, materialService: MaterialService) {
     this.materialService = materialService
   }
 
@@ -39,7 +38,6 @@ export class MaterialsPageComponent implements OnInit {
         this.materials = response
       },
       error: (error) => {
-        this.errorHandler.handleError(error, 'materials')
       }
     })
   }

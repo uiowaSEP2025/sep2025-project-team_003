@@ -27,7 +27,6 @@ import { AddSelectDialogComponentComponent } from '../../components/add-select-d
 import { StateList } from '../../utils/states-list';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-onboarding-page',
@@ -103,7 +102,6 @@ export class OnboardingPageComponent implements OnInit {
     private jobFormBuilder: FormBuilder,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private errorHandler: ErrorHandlerService
   ) {
     this.serviceForm = this.serviceFormBuilder.group({
       serviceName: ['', Validators.required],
@@ -157,7 +155,6 @@ export class OnboardingPageComponent implements OnInit {
         }
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
       }
     })
   }
@@ -176,7 +173,6 @@ export class OnboardingPageComponent implements OnInit {
           this.firstService = response
         },
         error: (error) => {
-          this.errorHandler.handleError(error)
         }
       })
 
@@ -196,7 +192,6 @@ export class OnboardingPageComponent implements OnInit {
           this.firstMaterial = response
         },
         error: (error) => {
-          this.errorHandler.handleError(error)
         }
       })
     }
@@ -222,7 +217,6 @@ export class OnboardingPageComponent implements OnInit {
           this.firstCustomer = response
         },
         error: (error) => {
-          this.errorHandler.handleError(error)
         }
       });
 
@@ -249,7 +243,6 @@ export class OnboardingPageComponent implements OnInit {
           this.firstContractor = response
         },
         error: (error) => {
-          this.errorHandler.handleError(error)
         }
       });
     }
@@ -589,7 +582,6 @@ export class OnboardingPageComponent implements OnInit {
             this.navigateToPage('home');
           },
           error: (error) => {
-            this.errorHandler.handleError(error);
           }
         }
       )
@@ -609,7 +601,6 @@ export class OnboardingPageComponent implements OnInit {
 
         },
         error: (error) => {
-          this.errorHandler.handleError(error);
         }
       })
     }
@@ -620,7 +611,6 @@ export class OnboardingPageComponent implements OnInit {
 
         },
         error: (error) => {
-          this.errorHandler.handleError(error);
         }
       })
     }
@@ -631,7 +621,6 @@ export class OnboardingPageComponent implements OnInit {
 
         },
         error: (error) => {
-          this.errorHandler.handleError(error);
         }
       })
     }
@@ -642,7 +631,6 @@ export class OnboardingPageComponent implements OnInit {
 
         },
         error: (error) => {
-          this.errorHandler.handleError(error);
         }
       })
     }
@@ -669,7 +657,6 @@ export class OnboardingPageComponent implements OnInit {
         });
       },
       error: (error) => {
-        this.errorHandler.handleError(error);
       }
     });
   }

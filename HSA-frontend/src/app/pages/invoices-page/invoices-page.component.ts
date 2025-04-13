@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { InvoiceService } from '../../services/invoice.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 
 @Component({
@@ -22,7 +21,7 @@ export class InvoicesPageComponent implements OnInit{
   invoiceService: InvoiceService
   
 
-  constructor (private router: Router, invoiceService: InvoiceService, private errorHandler: ErrorHandlerService) {
+  constructor (private router: Router, invoiceService: InvoiceService) {
     this.invoiceService = invoiceService
   }
 
@@ -38,7 +37,6 @@ export class InvoicesPageComponent implements OnInit{
         this.invoices = response
       },
       error: (error) => {
-        this.errorHandler.handleError(error, 'invoices')
       }
     })
   }

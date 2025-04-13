@@ -6,7 +6,6 @@ import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import { MaterialService } from '../../services/material.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-edit-material-page',
@@ -26,7 +25,7 @@ export class EditMaterialPageComponent implements OnInit {
   public currentMaterialName: string;
   private materialID: number | null = null;
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute, private materialFormBuilder: FormBuilder, private materialService: MaterialService, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {
+  constructor(private router: Router, private activatedRoute: ActivatedRoute, private materialFormBuilder: FormBuilder, private materialService: MaterialService, private snackBar: MatSnackBar) {
     this.materialForm = this.materialFormBuilder.group({
       materialName: ['', Validators.required],
       materialDescription: [''],
@@ -61,7 +60,6 @@ export class EditMaterialPageComponent implements OnInit {
           this.navigateToPage('materials')
         },
         error: (error) => {
-          this.errorHandler.handleError(error)
         }
       });
     }

@@ -10,7 +10,6 @@ import { HttpClient} from '@angular/common/http';
 import { StateList } from '../../utils/states-list';
 import { UserAuthService } from '../../services/user-auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { OrganizationService } from '../../services/organization.service';
 import { RequestTrackerService } from '../../utils/request-tracker';
 import { MatCardModule } from '@angular/material/card';
@@ -51,7 +50,6 @@ export class SignupPageComponent {
     private tracker: RequestTrackerService,
     private snackBar: MatSnackBar,
     private http: HttpClient,
-    private errorHandler: ErrorHandlerService
   ) {
     this.userAccountForm = this.userAccountFormBuilder.group({
       userFirstName: ['', Validators.required],
@@ -156,17 +154,14 @@ export class SignupPageComponent {
                   this.navigateToPage('onboarding')
                 },
                 error: (error) => {
-                  this.errorHandler.handleError(error);
                 }
               });
             },
             error: (error) => {
-              this.errorHandler.handleError(error);
             }
           });
         },
         error: (error) => {
-          this.errorHandler.handleError(error);
           this.tracker.endRequest();
         }
       });

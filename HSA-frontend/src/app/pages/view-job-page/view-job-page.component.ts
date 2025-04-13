@@ -7,7 +7,6 @@ import { MatCardModule } from '@angular/material/card';
 import { JobDisplayTableComponent } from '../../components/job-display-table/job-display-table.component';
 import { JobService } from '../../services/job.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { JobDataInterface } from '../../interfaces/api-responses/job.api.data.interface';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDividerModule } from '@angular/material/divider';
@@ -33,7 +32,7 @@ export class ViewJobPageComponent  implements OnInit {
   jobID!: number
   jobData: JobDataInterface | null = null;
 
-  constructor (private jobService: JobService, private activatedRoute:ActivatedRoute, private router: Router, private errorHandler: ErrorHandlerService) {
+  constructor (private jobService: JobService, private activatedRoute:ActivatedRoute, private router: Router) {
     this.activatedRoute.paramMap.subscribe(params => {
       this.jobID = Number(params.get('id'));
     })
@@ -45,7 +44,6 @@ export class ViewJobPageComponent  implements OnInit {
         this.jobData = response
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
       }}
     )
   }

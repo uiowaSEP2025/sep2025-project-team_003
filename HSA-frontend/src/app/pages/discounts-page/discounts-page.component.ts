@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 import { DiscountsService } from '../../services/discount.service';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
@@ -18,7 +17,7 @@ export class DiscountsPageComponent implements OnInit{
   discountService: DiscountsService
 
 
-  constructor (private router: Router, discountService: DiscountsService, private errorHandler: ErrorHandlerService) {
+  constructor (private router: Router, discountService: DiscountsService) {
     this.discountService = discountService
   }
 
@@ -32,7 +31,6 @@ export class DiscountsPageComponent implements OnInit{
         this.discounts = response
       },
       error: (error) => {
-          this.errorHandler.handleError(error, 'discounts')
       }
     })
   }

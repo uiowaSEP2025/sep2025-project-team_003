@@ -7,7 +7,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CustomerService } from '../../services/customer.service';
 import { Router } from '@angular/router';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { MatCardModule } from '@angular/material/card';
 
 @Component({
@@ -30,8 +29,7 @@ export class EditCustomerPageComponent implements OnInit {
   phoneNo!: string
   custId: number | null = null
 
-
-  constructor(private activatedRoute: ActivatedRoute, private customerService: CustomerService, private router: Router, private errorHandler: ErrorHandlerService) { }
+  constructor(private activatedRoute: ActivatedRoute, private customerService: CustomerService, private router: Router) { }
 
   firstNameControl = new FormControl('', Validators.required)
   lastNameControl = new FormControl('', Validators.required)
@@ -87,7 +85,6 @@ export class EditCustomerPageComponent implements OnInit {
           this.router.navigate(['/customers']);
         },
         error: (error) => {
-          this.errorHandler.handleError(error)
         }
       }
     )

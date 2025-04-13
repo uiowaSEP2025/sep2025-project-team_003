@@ -5,7 +5,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { ContractorService } from '../../services/contractor.service';
 import { Router } from '@angular/router';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-create-contractors-page',
@@ -14,7 +13,7 @@ import { ErrorHandlerService } from '../../services/error.handler.service';
   styleUrl: './create-contractors-page.component.scss'
 })
 export class CreateContractorsPageComponent {
-  constructor(private contractorService: ContractorService, private router: Router, private errorHandler: ErrorHandlerService) { }
+  constructor(private contractorService: ContractorService, private router: Router) { }
 
   firstNameControl = new FormControl('', Validators.required)
   lastNameControl = new FormControl('', Validators.required)
@@ -49,7 +48,6 @@ export class CreateContractorsPageComponent {
         this.router.navigate(['/contractors']);
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
       }}
     )
   }
