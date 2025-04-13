@@ -4,12 +4,12 @@ from rest_framework import status
 from hsabackend.models.organization import Organization
 from django.db.models import Q
 from django.core.exceptions import ValidationError
+from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded(require_onboarding=False)
 def getOrganizationDetail(request):
     # single get instead of list (as users only get 1 org)
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
     try:
         org = Organization.objects.get(owning_User=request.user.pk)
@@ -19,9 +19,8 @@ def getOrganizationDetail(request):
         return Response({"error":"An error occured trying to get organization. Please make sure you have created an organization."}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def editOrganizationDetail(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
     try:
         org = Organization.objects.get(owning_User=request.user.pk)
@@ -59,10 +58,8 @@ def editOrganizationDetail(request):
     return Response({"message": "Organization details updated successfully."}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded(require_onboarding=False)
 def createOrganization(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-
     # users can only have a single organization
     org_count = Organization.objects.filter(owning_User=request.user.pk).count()
     if org_count > 0:
@@ -105,9 +102,7 @@ def createOrganization(request):
 
 @api_view(["POST"])
 def deleteOrganization(request):
-    # This API seems unusable... likely.
-    # due to the fact that users cannot have more than 1 org, but yet have to have 1 org
-    # the deletion feature might never be used.
+    # This API is unreachable due to the fact that one login must have exactly one org, may be used in the future
 
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
