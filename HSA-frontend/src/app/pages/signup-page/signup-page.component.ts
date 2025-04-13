@@ -120,46 +120,26 @@ export class SignupPageComponent {
       }
 
       this.tracker.startRequest();
-      this.authService.createUser(userCreateRequest).subscribe({
+      const organizationCreateRequest = {
+        userCreationInfo: userCreateRequest,
+        name: this.registrationForm.get('organizationName')?.value,
+        email: this.registrationForm.get('organizationEmail')?.value,
+        city: this.organizationLocationForm.get('city')?.value,
+        phone: this.registrationForm.get('organizationPhone')?.value,
+        requestorState: this.organizationLocationForm.get('stateSelect')?.value,
+        requestorZip: this.organizationLocationForm.get('zipCode')?.value,
+        requestorAddress: this.organizationLocationForm.get('addressOne')?.value,
+        ownerFn: this.registrationForm.get('ownerName')?.value.split(' ')[0],
+        ownerLn: this.registrationForm.get('ownerName')?.value.split(' ').slice(1).join(' '),
+        isOnboarding: true,
+      }
+
+      this.organizationService.createOrganization(organizationCreateRequest).subscribe({
         next: (response) => {
-          this.snackBar.open('User Account created Successful', '', {
+          this.snackBar.open('Organization created successfully', '', {
             duration: 3000
           });
-          
-          const loginRequest = {
-            username: this.userAccountForm.get('username')?.value,
-            password: this.userAccountForm.get('password')?.value
-          }
-
-          this.authService.login(loginRequest).subscribe({
-            next: (response) => {
-              const organizationCreateRequest = {
-                name: this.registrationForm.get('organizationName')?.value,
-                email: this.registrationForm.get('organizationEmail')?.value,
-                city: this.organizationLocationForm.get('city')?.value,
-                phone: this.registrationForm.get('organizationPhone')?.value,
-                requestorState: this.organizationLocationForm.get('stateSelect')?.value,
-                requestorZip: this.organizationLocationForm.get('zipCode')?.value,
-                requestorAddress: this.organizationLocationForm.get('addressOne')?.value,
-                ownerFn: this.registrationForm.get('ownerName')?.value.split(' ')[0],
-                ownerLn: this.registrationForm.get('ownerName')?.value.split(' ').slice(1).join(' '),
-                isOnboarding: true,
-              }
-
-              this.organizationService.createOrganization(organizationCreateRequest).subscribe({
-                next: (response) => {
-                  this.snackBar.open('Organization created successfully', '', {
-                    duration: 3000
-                  });
-                  this.navigateToPage('onboarding')
-                },
-                error: (error) => {
-                }
-              });
-            },
-            error: (error) => {
-            }
-          });
+          this.navigateToPage('onboarding')
         },
         error: (error) => {
           this.tracker.endRequest();

@@ -43,7 +43,7 @@ def get_customer_table_data(request):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
-@check_authenticated_and_onboarded()
+@check_authenticated_and_onboarded(require_onboarding=False)
 def get_customer_excluded_table_data(request):
     org = request.org
     search = request.query_params.get('search', '')
@@ -81,7 +81,7 @@ def get_customer_excluded_table_data(request):
     return Response(res, status=status.HTTP_200_OK)
     
 @api_view(["POST"])
-@check_authenticated_and_onboarded()
+@check_authenticated_and_onboarded(require_onboarding=False)
 def create_customer(request):
     org = request.org
     first_name = request.data.get('firstn', '')
@@ -131,7 +131,7 @@ def edit_customer(request, id):
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
-@check_authenticated_and_onboarded()
+@check_authenticated_and_onboarded(require_onboarding=False)
 def delete_customer(request, id):
     org = request.org
     cust = Customer.objects.filter(pk=id, organization=org)

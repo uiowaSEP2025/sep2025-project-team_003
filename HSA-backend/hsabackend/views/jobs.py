@@ -100,7 +100,7 @@ def get_job_individual_data(request, id):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
-@check_authenticated_and_onboarded()
+@check_authenticated_and_onboarded(require_onboarding=False)
 def create_job(request):
     org = request.org
     job_description = request.data.get('description', '')

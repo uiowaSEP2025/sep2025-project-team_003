@@ -530,7 +530,7 @@ export class OnboardingPageComponent implements OnInit {
       });
     }
 
-    if (this.isJobPrefilled) {
+    if (this.isJobPrefilled || this.isCustomerPrefilled || this.isCustomerPrefilled || this.isMaterialPrefilled || this.isServicePrefilled) {
       this.deleteAllPrefilledEntries();
       this.updateOnboardingField();
       this.navigateToPage('home');
@@ -651,27 +651,27 @@ export class OnboardingPageComponent implements OnInit {
   }
 
   updateOnboardingField() {
-    const organizationUpdateData = {
-      name: this.organization["org_name"],
-      email: this.organization["org_email"],
-      city: this.organization["org_city"],
-      phone: this.organization["org_phone"],
-      requestorState: this.organization["org_requestor_state"],
-      requestorZip: this.organization["org_requestor_zip"],
-      requestorAddress: this.organization["org_requestor_address"],
-      ownerFn: this.organization["org_owner_first_name"],
-      ownerLn: this.organization["org_owner_last_name"],
-      isOnboarding: false
-    }
+    // const organizationUpdateData = {
+    //   name: this.organization["org_name"],
+    //   email: this.organization["org_email"],
+    //   city: this.organization["org_city"],
+    //   phone: this.organization["org_phone"],
+    //   requestorState: this.organization["org_requestor_state"],
+    //   requestorZip: this.organization["org_requestor_zip"],
+    //   requestorAddress: this.organization["org_requestor_address"],
+    //   ownerFn: this.organization["org_owner_first_name"],
+    //   ownerLn: this.organization["org_owner_last_name"],
+    //   isOnboarding: false
+    // }
 
-    this.organizationService.editOrganization(organizationUpdateData).subscribe({
-      next: (response) => {
-        this.snackBar.open('Onboarding completed!', '', {
-          duration: 3000
-        });
-      },
-      error: (error) => {
-      }
-    });
+    // this.organizationService.editOrganization(organizationUpdateData).subscribe({
+    //   next: (response) => {
+    //     this.snackBar.open('Onboarding completed!', '', {
+    //       duration: 3000
+    //     });
+    //   },
+    //   error: (error) => {
+    //   }
+    // });
   }
 }

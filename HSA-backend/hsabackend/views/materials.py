@@ -43,7 +43,7 @@ def get_material_table_data(request):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
-@check_authenticated_and_onboarded()
+@check_authenticated_and_onboarded(require_onboarding=False)
 def get_material_excluded_table_data(request):
     org = request.org
     search = request.query_params.get('search', '')
@@ -81,7 +81,7 @@ def get_material_excluded_table_data(request):
     return Response(res, status=status.HTTP_200_OK)
  
 @api_view(["POST"])
-@check_authenticated_and_onboarded()
+@check_authenticated_and_onboarded(require_onboarding=False)
 def create_material(request):
     org = request.org
     material_name = request.data.get('material_name', '')
@@ -123,7 +123,7 @@ def edit_material(request, id):
     
  
 @api_view(["POST"])
-@check_authenticated_and_onboarded()
+@check_authenticated_and_onboarded(require_onboarding=False)
 def delete_material(request, id):
     org = request.org
     material = Material.objects.filter(pk=id, organization=org)

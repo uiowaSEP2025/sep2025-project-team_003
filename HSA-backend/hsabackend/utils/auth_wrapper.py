@@ -20,7 +20,7 @@ def check_authenticated_and_onboarded(require_onboarding=True):
                     {"message": "Organization not found"},
                     status=status.HTTP_404_NOT_FOUND
                 )
-            print(org.is_onboarding)
+            
             if require_onboarding and org.is_onboarding:
                 return Response(
                     {"reason": "onboarding"},

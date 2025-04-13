@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 @api_view(["GET"])
-@check_authenticated_and_onboarded
+@check_authenticated_and_onboarded()
 def get_contractor_table_data(request):
     org = request.org
     search = request.query_params.get('search', '')
@@ -44,7 +44,7 @@ def get_contractor_table_data(request):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
-@check_authenticated_and_onboarded()
+@check_authenticated_and_onboarded(require_onboarding=False)
 def get_contractor_excluded_table_data(request):
     org = request.org
     search = request.query_params.get('search', '')
@@ -82,7 +82,7 @@ def get_contractor_excluded_table_data(request):
     return Response(res, status=status.HTTP_200_OK)
     
 @api_view(["POST"])
-@check_authenticated_and_onboarded()
+@check_authenticated_and_onboarded(require_onboarding=False)
 def create_contractor(request):
     org = request.org
 
@@ -135,7 +135,7 @@ def edit_contractor(request, id):
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
-@check_authenticated_and_onboarded
+@check_authenticated_and_onboarded(require_onboarding=False)
 def delete_contractor(request, id):
     org = request.org
     cust = Contractor.objects.filter(pk=id, organization=org)

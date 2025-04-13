@@ -52,6 +52,24 @@ def editOrganizationDetail(request):
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded(require_onboarding=False)
+def complete_onboarding(request):
+    org = request.org
+
+    if not org.is_onboarding:
+        return Response({"message": "Already onboarded"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+
+    try:
+        org.fullclean()
+        org.save()
+    except ValidationError as e:
+        return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response({"message": "Onboarding complete"}, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@check_authenticated_and_onboarded(require_onboarding=False)
 def createOrganization(request):
     # users can only have a single organization
     org_count = Organization.objects.filter(owning_User=request.user.pk).count()

@@ -44,7 +44,7 @@ def get_service_table_data(request):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
-@check_authenticated_and_onboarded()
+@check_authenticated_and_onboarded(require_onboarding=False)
 def get_service_excluded_table_data(request):
     org = request.org
     search = request.query_params.get('search', '')
@@ -83,7 +83,7 @@ def get_service_excluded_table_data(request):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
-@check_authenticated_and_onboarded()
+@check_authenticated_and_onboarded(require_onboarding=False)
 def create_service(request):
     org = request.org
     service_name = request.data.get('service_name', '')
@@ -125,7 +125,7 @@ def edit_service(request, id):
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(["POST"])
-@check_authenticated_and_onboarded()
+@check_authenticated_and_onboarded(require_onboarding=False)
 def delete_service(request, id):
     org = request.org
     service = Service.objects.filter(pk=id, organization=org)

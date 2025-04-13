@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import { StandardApiResponse } from '../interfaces/api-responses/standard-api-response.interface';
 
 interface CreateOrganizationPostData {
+	userCreationInfo: any | null
   name: string | null
 	email: string | null
 	city: string | null
