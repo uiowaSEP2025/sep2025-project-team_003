@@ -2,13 +2,13 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from hsabackend.models.organization import Organization
 from django.db.models import Q
 from django.db import transaction
-
-
+from django.contrib.auth.hashers import make_password
+from hsabackend.utils.api_validators import password_strength_validator
 
 @api_view(["POST"])
 def user_exist(request):
@@ -18,7 +18,6 @@ def user_exist(request):
     if not username and not email:
         return Response({"message": "At least one of username or email must be provided."}, status=status.HTTP_400_BAD_REQUEST)
 
-    User = get_user_model()
     query = Q()
     
     if username:
@@ -43,7 +42,6 @@ def user_create(request):
     if not organization_info:
         return Response({"message": "Missing organization info"}, status=status.HTTP_400_BAD_REQUEST)
 
-    User = get_user_model()
     query = Q()
 
     if username:
@@ -56,7 +54,14 @@ def user_create(request):
     if is_existed:
         return Response({"message": "User existed"}, status=status.HTTP_409_CONFLICT)
     
-    new_user = User(email=request.data.get('email'),username=request.data.get('username'), password=request.data.get('password'))
+    req_password = request.data.get('password')
+
+    if not password_strength_validator(req_password):
+        return Response({"message": "Password is not strong enough"}, status=status.HTTP_400_BAD_REQUEST)
+
+    hashed_password = make_password(req_password)
+
+    new_user = User(email=request.data.get('email'),username=request.data.get('username'), password=hashed_password)
     try:
         new_user.full_clean()
 

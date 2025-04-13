@@ -12,3 +12,21 @@ def parse_and_return_decimal(s: str):
         return decimal.Decimal(s)
     except:
         return None
+    
+import re
+
+def password_strength_validator(password: str) -> dict | None:
+    if len(password) <= 8 or len(password) >= 16:
+        return None
+
+    has_upper_case = bool(re.search(r'[A-Z]', password))
+    has_special_char = bool(re.search(r'[!@#$%^&*()_+\-=\[\]{};\'":\\|,.<>\/?]', password))
+    has_number = bool(re.search(r'\d', password))
+    if not has_upper_case:
+        return None
+    if not has_special_char:
+        return None
+    if not has_number:
+        return None
+    
+    return password
