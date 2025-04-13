@@ -34,7 +34,14 @@ export function RedirectAndAuthInterceptor(req: HttpRequest<unknown>, next: Http
                     }
                   });
             } else if (err.status === 403) {
-                
+                switch (err.error.reason) {
+                case "onboarding":
+                    router.navigateByUrl("/onboarding");
+                    break;
+                default:
+                    console.log("Unknown fruit");
+                    break;
+                }
             } else if (err.status === 404) {
                 router.navigateByUrl("/404");
             } else if (err.status >= 500) {
