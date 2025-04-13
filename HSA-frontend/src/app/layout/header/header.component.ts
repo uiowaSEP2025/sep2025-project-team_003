@@ -7,8 +7,7 @@ import { UserAuthService } from '../../services/user-auth.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltip } from '@angular/material/tooltip';
-import { OrganizationService } from '../../services/organization.service';
-import { ErrorHandlerService } from '../../services/error.handler.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -24,16 +23,19 @@ import { ErrorHandlerService } from '../../services/error.handler.service';
 })
 export class HeaderComponent implements OnInit {
   sidebarExpanded = false;
-  isLoggout = true
+  isLoggedIn: boolean = false; 
+  private loginStatusSubscription: Subscription = new Subscription();
+
 
   constructor(private userAuth: UserAuthService, private router: Router, private snackBar: MatSnackBar) {}
 
   toggleSidebar() {
     this.sidebarExpanded = !this.sidebarExpanded
   }
-
   ngOnInit() {
-    
+    this.loginStatusSubscription = this.userAuth.isLoggedIn$.subscribe((status) => {
+      this.isLoggedIn = status; // Update local status when the login status changes
+    });
   }
 
   onLogout() {
@@ -42,20 +44,28 @@ export class HeaderComponent implements OnInit {
         this.snackBar.open('Logout successfully!', '', {
           duration: 3000
         });
+        this.isLoggedIn = false
+        this.userAuth.setLoginStatus(false)
         this.navigateToPage('login')
       },
       error: (error) => {
         this.snackBar.open('You are already logout!', '', {
           duration: 3000
         });
-        this.isLoggout = true;
+        
       }
     })
   }
 
+
+  ngOnDestroy() {
+    // Unsubscribe from observable to avoid memory leaks
+    if (this.loginStatusSubscription) {
+      this.loginStatusSubscription.unsubscribe();
+    }
+  }
+
   navigateToPage(pagePath: string) {
-    this.router.navigate([`/${pagePath}`]).then(() => {
-      window.location.reload();
-    });
+    this.router.navigate([`/${pagePath}`])
   }
 }
