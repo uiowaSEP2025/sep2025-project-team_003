@@ -7,13 +7,12 @@ from hsabackend.models.job import Job
 from hsabackend.models.service import Service
 from django.db.models import Q
 from django.core.exceptions import ValidationError
+from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def get_job_service_table_data(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
 
     try:
         job = Job.objects.get(organization=org.pk, id=id)
@@ -47,11 +46,9 @@ def get_job_service_table_data(request, id):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def create_job_service(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user)
+    org = request.org
 
     try:
         job_object = Job.objects.get(organization=org.pk, id=id)
@@ -87,13 +84,9 @@ def create_job_service(request, id):
     else:
         return Response({"message": "There is no service to add"}, status=status.HTTP_400_BAD_REQUEST)
     
-    
-    
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def delete_job_service(request, job_id, job_service_id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
     job_service = JobService.objects.filter(pk=job_service_id, job=job_id)
 
     if not job_service.exists():
@@ -103,10 +96,8 @@ def delete_job_service(request, job_id, job_service_id):
     return Response({"message": "The service in this job deleted sucessfully"}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def delete_cached_job_service(request, job_id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
     job_services_list = request.data.get('jobServices', '')      # dataform: jobServices: [{"id": int}, {"id": int}, ...]
 
     if (len(job_services_list) != 0):
