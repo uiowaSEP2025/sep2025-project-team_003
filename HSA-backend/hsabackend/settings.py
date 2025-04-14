@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'hsabackend', 
     'behave_django',
-    'django_extensions'
+    'django_extensions',
+    'django_rest_passwordreset'
 ]
 
 MIDDLEWARE = [
@@ -95,6 +96,10 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+
+DJANGO_REST_PASSWORDRESET_NO_INFORMATION_LEAKAGE = True
+
+DJANGO_REST_MULTITOKENAUTH_RESET_TOKEN_EXPIRY_TIME = 0.5
 
 
 
@@ -195,3 +200,11 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # Host for sending e-mail.
+EMAIL_HOST = os.environ.get('EMAIL_HOST',None)
+EMAIL_PORT = 465 
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER',None)
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
+EMAIL_USE_TLS = False  
+EMAIL_USE_SSL = True  

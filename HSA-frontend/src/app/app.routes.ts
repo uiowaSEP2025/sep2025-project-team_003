@@ -26,6 +26,8 @@ import { EditJobPageComponent } from './pages/jobs/edit-job-page/edit-job-page.c
 import { DiscountsPageComponent } from './pages/discounts/discounts-page/discounts-page.component';
 import { CreateDiscountsPageComponent } from './pages/discounts/create-discounts-page/create-discounts-page.component';
 import { EditDiscountPageComponent } from './pages/discounts/edit-discount-page/edit-discount-page.component';
+import { RequestPasswordResetPageComponent } from './pages/request-password-reset-page/request-password-reset-page.component';
+import { PasswordResetPageComponent } from './pages/password-reset-page/password-reset-page.component';
 
 export const routes: Routes = [
   {
@@ -108,6 +110,15 @@ export const routes: Routes = [
   },
   {
     path: 'discounts/edit/:id', component: EditDiscountPageComponent
+  },
+  {
+    path: 'password/reset', component: RequestPasswordResetPageComponent
+  },
+  {
+    path: 'password/reset', component: RequestPasswordResetPageComponent
+  },
+  {
+    path: 'password/reset/confirmation', component: PasswordResetPageComponent
   },
   {
     path: '404',
