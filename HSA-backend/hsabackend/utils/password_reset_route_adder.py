@@ -1,4 +1,10 @@
-""" URL Configuration for core auth """
+""" This file is ripped from the core logic from the password reset module with the following changes
+1. I removed the API to validate if a given token is valid. We do not use that API.
+2. I added the rate limitting decorator so that sending emails is rate limited.
+
+WARNING: Rate limiting is configured to use an in memory cache and will not work if we scaled this
+past 1 application instance serving trafic at a time.
+"""
 from django.urls import path
 from django_rest_passwordreset.views import reset_password_confirm, reset_password_request_token
 from rest_framework.generics import GenericAPIView
@@ -12,7 +18,7 @@ from django_rest_passwordreset.signals import reset_password_token_created, pre_
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password, get_password_validators
-
+from django_ratelimit.decorators import ratelimit
 
 app_name = 'password_reset'
 
@@ -28,6 +34,7 @@ class ResetPasswordConfirm(GenericAPIView):
     serializer_class = PasswordTokenSerializer
     authentication_classes = ()
 
+    @ratelimit(key='ip', rate='3/m')
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -81,6 +88,7 @@ class ResetPasswordRequestToken(GenericAPIView):
     serializer_class = EmailSerializer
     authentication_classes = ()
 
+    @ratelimit(key='ip', rate='3/m')
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
