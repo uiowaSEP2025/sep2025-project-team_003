@@ -143,7 +143,7 @@ urlpatterns = [
     path("api/delete/discount/<int:id>", delete_discount),
 
     # password reset
-    re_path(r'^api/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
+    re_path(r'^api/password_reset/', include('hsabackend.utils.password_reset_route_adder', namespace='password_reset')),
 
     # Catch-all for unmatched API requests
     re_path(r'^api/.*', handle_unmatched_api), 
