@@ -6,12 +6,12 @@ from hsabackend.models.request import Request
 from hsabackend.models.job import Job
 from django.db.models import Q
 from hsabackend.models.customer import Customer
+from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def get_org_request_data(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset',0)
@@ -43,10 +43,9 @@ def get_org_request_data(request):
     return Response(res, status=status.HTTP_200_OK)
     
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def delete_request(request,id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     req = Request.objects.filter(pk=id, organization=org)
     if not req.exists():
         return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
@@ -54,10 +53,9 @@ def delete_request(request,id):
     return Response({"message": "Request Deleted successfully"}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def approve_request(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     req = Request.objects.filter(pk=id, organization=org)
     if not req.exists():
         return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)

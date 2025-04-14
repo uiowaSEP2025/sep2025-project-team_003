@@ -39,7 +39,12 @@ def django_server(context):
     path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../HSA-backend'))
     os.chdir(path)
     os.environ["DATABASE_NAME"] = "hsaint"
-    context.django = subprocess.Popen(["python", "manage.py", "runserver", "8000"])
+
+    if os.name == 'nt':
+        context.django = subprocess.Popen("python manage.py runserver 8000", shell=True)
+    else:
+        context.django = subprocess.Popen(["python", "manage.py", "runserver", "8000"])
+    
     block_for_server("http://localhost:8000/api/healthcheck")
     yield
     # Stop server after tests
@@ -77,7 +82,11 @@ def before_all(context):
             context.url = "http://localhost:4200"
             path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../HSA-frontend'))
             os.chdir(path)
-            context.angular = subprocess.Popen(["ng", "serve"])
+            if os.name == 'nt':
+                context.angular = subprocess.Popen("ng serve", shell=True)
+            else:
+                context.angular = subprocess.Popen(["ng", "serve"])
+            
             block_for_server("http://localhost:4200")
             context.browser = webdriver.Chrome()
         use_fixture(django_server, context)  # Start server before all scenarios

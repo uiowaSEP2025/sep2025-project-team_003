@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
-import { ErrorHandlerService } from '../../services/error.handler.service';
+import { UserAuthService } from '../../services/user-auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
 import {UserAuthService} from '../../services/user-auth.service';
@@ -32,7 +32,7 @@ export class LoginComponent {
   resetLink = `${environment.apiUrl}/password/reset`;
 
 
-  constructor(private router: Router, private route: ActivatedRoute, private authService: UserAuthService, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {
+  constructor(private router: Router, private route: ActivatedRoute, private authService: UserAuthService, private snackBar: MatSnackBar) {
     this.route.queryParams.subscribe(params => {
       if (params['prevPath'] !== undefined) {
         this.previousUrlPath = params['prevPath']
@@ -50,6 +50,11 @@ export class LoginComponent {
           this.snackBar.open('Login Successful', '', {
             duration: 3000
           });
+
+          if (this.previousUrlPath === 'login') {
+            this.previousUrlPath = 'home'
+          }
+
           this.navigateToPage(`/${this.previousUrlPath}`)
         },
         error: (error) => {
@@ -58,7 +63,6 @@ export class LoginComponent {
               duration: 3000
             });
           } else {
-            this.errorHandler.handleError(error)
           }
         }
       });
@@ -66,6 +70,6 @@ export class LoginComponent {
   }
 
   navigateToPage(pagePath: string) {
-    void this.router.navigate([`/${pagePath}`]);
+    void this.router.navigate([`/${pagePath}`])
   }
 }

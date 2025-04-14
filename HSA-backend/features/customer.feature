@@ -5,6 +5,7 @@ Feature: Customer CRUDS
 
     Scenario: View Customers page
         Given I am logged in
+        Given I have finished the onboarding process
         Given I am on the customers page
         When I don't see the loading spinner
         Then I should see a table row with the following elements
@@ -21,23 +22,25 @@ Feature: Customer CRUDS
     
     Scenario: Delete customer
         Given I am logged in
+        Given I have finished the onboarding process
         And I am on the customers page
         When I don't see the loading spinner
-        When  I click the delete button
+        When  I click the delete button specifically
         When I confirm the delete dialog
         Then I wait for 0.5 seconds 
         Then I should see "Nothing to show here" in the table
 
     Scenario: Edit customer
         Given I am logged in
+        Given I have finished the onboarding process
         And I am on the customers page
         When I don't see the loading spinner
-        And I click the edit button
+        And I click the edit button specifically
         And I fill in first name with "Alex"
         And I fill in last name with "Guo"
         And I fill in email with "aguo2@uiowa.edu"
         And I fill in phone with "321-654-0987"
-        And I click the submit button
+        And I click the submit button specifically
         When I don't see the loading spinner
         Then I should not see a table row with the following elements
             | Firstorg1              |

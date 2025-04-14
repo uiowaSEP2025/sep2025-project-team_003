@@ -5,7 +5,6 @@ import { MatIcon } from '@angular/material/icon';
 import { DeleteDialogComponentComponent } from '../delete-dialog-component/delete-dialog-component.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { JobTemplateDataInterface } from '../../interfaces/api-responses/jobTemplate.api.data.interface';
 import {Service} from '../../interfaces/service.interface';
 import {Contractor} from '../../interfaces/contractor.interface';
@@ -54,7 +53,7 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
   materials: Material[] = []
   contractors: Contractor[] = []
 
-  constructor (public dialog: MatDialog, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {}
+  constructor (public dialog: MatDialog, private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     if (this.typeToDisplay === "service") {

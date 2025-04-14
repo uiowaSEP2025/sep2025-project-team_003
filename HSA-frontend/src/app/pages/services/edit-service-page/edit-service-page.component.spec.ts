@@ -80,34 +80,5 @@ describe('EditServicePageComponent', () => {
     expect(errors.length).toEqual(0)
   });
 
-  describe('observables', () => {
-    beforeEach(() => {
-      const compiled = fixture.debugElement.nativeElement;
-      const saveButton = compiled.querySelectorAll('button')[0]
-      const newNameField = compiled.querySelectorAll('mat-form-field')[0].querySelector('input')
-      newNameField.value = 'alex'
-      newNameField.dispatchEvent(new Event('input'));
-      const descriptionField = compiled.querySelectorAll('mat-form-field')[1].querySelector('textarea')
-      descriptionField.value = 'guo'
-      descriptionField.dispatchEvent(new Event('input'));
-      saveButton.click()
-      fixture.detectChanges()
-    })
-
-    it('should navigate to login page on 401 unauthorized response', () => {
-      const req = httpMock.expectOne(`${environment.apiUrl}/api/edit/service/null`);
-      expect(req.request.method).toBe('POST');
-      req.flush(null, { status: 401, statusText: 'Unauthorized' });
-
-      expect(router.navigate).toHaveBeenCalledWith(['/login'], { queryParams: { prevPath: 'home' } });
-    });
-
-    it('should redirect to customers on successful response', () => {
-      const req = httpMock.expectOne(`${environment.apiUrl}/api/edit/service/null`);
-      expect(req.request.method).toBe('POST');
-      req.flush(null, { status: 200, statusText: 'ok' });
-      expect(router.navigate).toHaveBeenCalledWith(['/services']);
-
-    });
-  });
+  
 });

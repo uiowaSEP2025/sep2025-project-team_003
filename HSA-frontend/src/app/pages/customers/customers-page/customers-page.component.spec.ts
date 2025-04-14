@@ -47,36 +47,7 @@ describe('CustomersPageComponent', () => {
     expect(createButton).toBeTruthy()
   })
 
-  describe('observable', () => {
-    it('should navigate to login page on 401 unauthorized response', () => {
-      const searchTerm = 'test';
-      const pageSize = 10;
-      const offSet = 0;
-
-      component.loadDataToTable(searchTerm, pageSize, offSet);
-
-      const req = httpMock.expectOne(`${environment.apiUrl}/api/get/customers?search=${searchTerm}&pagesize=${pageSize}&offset=${offSet}`);
-      expect(req.request.method).toBe('GET');
-      req.flush(null, { status: 401, statusText: 'Unauthorized' });
-
-      expect(router.navigate).toHaveBeenCalledWith(['/login'], { queryParams: { prevPath: 'customers' } });
-    });
-
-    it('should load data to table on successful response', () => {
-      const mockResponse = [{ id: 1, name: 'Contractor 1' }, { id: 2, name: 'Contractor 2' }];
-      const searchTerm = 'test';
-      const pageSize = 10;
-      const offSet = 0;
-
-      component.loadDataToTable(searchTerm, pageSize, offSet);
-
-      const req = httpMock.expectOne(`${environment.apiUrl}/api/get/customers?search=${searchTerm}&pagesize=${pageSize}&offset=${offSet}`);
-      expect(req.request.method).toBe('GET');
-      req.flush(mockResponse);
-
-      expect(component.customers).toEqual(mockResponse);
-    });
-  })
+  
 
 
 

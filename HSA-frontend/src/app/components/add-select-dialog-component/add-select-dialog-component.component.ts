@@ -7,15 +7,16 @@ import { AddSelectDialogData } from '../../interfaces/interface-helpers/addSelec
 import { ServiceService } from '../../services/service.service';
 import { MaterialService } from '../../services/material.service';
 import { ContractorService } from '../../services/contractor.service';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.component';
 import { CustomerService } from '../../services/customer.service';
 import { JobTemplateService } from '../../services/jobTemplate.service';
 import { ApplyTemplateConfirmDialogComponentComponent } from '../apply-template-confirm-dialog-component/apply-template-confirm-dialog-component.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-add-select-dialog-component',
   imports: [
+    CommonModule,
     MatDialogModule,
     MatButtonModule,
     TableComponentComponent,
@@ -63,7 +64,6 @@ export class AddSelectDialogComponentComponent {
     private materialService: MaterialService,
     private contractorService: ContractorService,
     private jobTemplateService: JobTemplateService,
-    private errorHandler: ErrorHandlerService,
   ) {
     this.isMaterial = this.data.typeOfDialog === 'material';
     this.typeOfDialog = this.data.typeOfDialog;
@@ -108,7 +108,6 @@ export class AddSelectDialogComponentComponent {
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
       },
       error: (error) => {
-        this.errorHandler.handleError(error);
       }
     });
   }
@@ -121,7 +120,6 @@ export class AddSelectDialogComponentComponent {
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
       },
       error: (error) => {
-        this.errorHandler.handleError(error);
       }
     });
   }
@@ -133,7 +131,6 @@ export class AddSelectDialogComponentComponent {
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
       },
       error: (error) => {
-        this.errorHandler.handleError(error);
       }
     });
   }
@@ -145,7 +142,6 @@ export class AddSelectDialogComponentComponent {
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
       },
       error: (error) => {
-        this.errorHandler.handleError(error);
       }
     });
   }
@@ -157,7 +153,6 @@ export class AddSelectDialogComponentComponent {
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
       },
       error: (error) => {
-        this.errorHandler.handleError(error);
       }
     });
   }
@@ -283,5 +278,15 @@ export class AddSelectDialogComponentComponent {
   getPricePerUnitValue(id: number): number | string {
     const entry = this.materialInputFields.find(item => item.id === id);
     return entry?.['pricePerUnit'] ?? '';
+  }
+
+  getButtonAction(): string {
+    if (this.typeOfDialog === 'template') {
+      return 'apply';
+    }
+    if (this.typeOfDialog === 'customer') {
+      return this.data.dialogData === 0 ? 'select' : 'change';
+    }
+    return 'add';
   }
 }

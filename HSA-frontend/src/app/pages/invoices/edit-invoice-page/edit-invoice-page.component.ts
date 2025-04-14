@@ -81,8 +81,8 @@ export class EditInvoicePageComponent implements OnInit {
 
 
   constructor(private activatedRoute: ActivatedRoute,
-    private errorHandler: ErrorHandlerService, private invoiceService: InvoiceService,
-    private stringFormatter: StringFormatter, private router: Router) { }
+    private invoiceService: InvoiceService, private stringFormatter: StringFormatter,
+    private router: Router) { }
 
     private fixBackendTaxPercentage(tax: string): string {
       if (tax === "1.00") {
@@ -154,8 +154,18 @@ export class EditInvoicePageComponent implements OnInit {
             void this.router.navigate(['/invoices']);
           },
           error: (error) => {
-            this.errorHandler.handleError(error)
           }})
+      }
+    });
+  }
+
+
+  loadQuotesToTable(searchTerm: string, pageSize: number, offSet: number) {
+    this.quoteService.getQuotesByInvoice(this.invoiceID, { search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
+      next: (response) => {
+        this.quotes = response
+      },
+      error: (error) => {
       }
     });
   }
@@ -188,7 +198,6 @@ export class EditInvoicePageComponent implements OnInit {
         void this.router.navigate(['/invoices']);
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
       }})
       return;
   }

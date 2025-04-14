@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-//Thanks ChatGPT!
+
 export class RequestTrackerService {
   private activeRequests = 0;
   private allRequestsCompleted$ = new Subject<void>();

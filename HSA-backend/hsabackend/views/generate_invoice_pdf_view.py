@@ -11,7 +11,8 @@ from hsabackend.models.invoice import Invoice
 from hsabackend.models.job import Job, JobsServices, JobsMaterials
 from hsabackend.utils.string_formatters import format_title_case, format_phone_number_with_parens, format_maybe_null_date, format_currency, format_percent, format_tax_percent
 from decimal import Decimal
-
+from hsabackend.models.job_service import JobService
+from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 def generate_pdf_customer_org_header(pdf: FPDF, org: Organization, invoice: Invoice):
     pdf.set_auto_page_break(auto=True, margin=15)
@@ -195,11 +196,9 @@ def generate_table_for_specific_job(pdf: FPDF, jobid: int, num_jobs: int, idx: i
 
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def generate_pdf(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
 
     invoice_qs = Invoice.objects.select_related("customer").filter(
         customer__organization=org.pk,

@@ -9,14 +9,13 @@ from django.db.models import Q
 from django.db.models import Sum
 from hsabackend.utils.api_validators import parseAndReturnDate, parse_and_return_decimal
 from decimal import Decimal
+from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def createInvoice(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
     json = request.data  
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
 
     customer_id = json.get("customerID", None)
     if not isinstance(customer_id, int):
@@ -67,10 +66,9 @@ def createInvoice(request):
 
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def getInvoices(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset',0)
@@ -107,10 +105,9 @@ def getInvoices(request):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def updateInvoice(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     json = request.data  
 
     quote_ids = json.get("quoteIDs",[])
@@ -163,10 +160,9 @@ def updateInvoice(request, id):
     return Response({"message": "Invoice updated successfully"}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def deleteInvoice(request,id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     invoice_qs = Invoice.objects.filter(
         customer__organization=org.pk,
         pk = id
@@ -177,11 +173,10 @@ def deleteInvoice(request,id):
     return Response({"message": "Invoice Deleted successfully"}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def get_data_for_invoice(request, id):
     """gets all the data for invoice detailed view"""
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     invoice_qs = Invoice.objects.filter(
         customer__organization=org.pk,
         pk = id

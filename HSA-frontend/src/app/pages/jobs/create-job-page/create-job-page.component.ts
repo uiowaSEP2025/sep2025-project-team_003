@@ -9,7 +9,6 @@ import { TableComponentComponent } from '../../../components/table-component/tab
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StringFormatter } from '../../utils/string-formatter';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -101,7 +100,6 @@ export class CreateJobPageComponent {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     public dialog: MatDialog,
-    private errorHandler: ErrorHandlerService,
     private jobService: JobService,
     private jobTemplateService: JobTemplateService,
     private stringFormatter: StringFormatter,
@@ -450,7 +448,6 @@ export class CreateJobPageComponent {
               this.isAllowedTemplate = false
             },
             error: (error) => {
-              this.errorHandler.handleError(error)
             }
           })
         }
@@ -512,7 +509,6 @@ export class CreateJobPageComponent {
           this.router.navigate(['/jobs']);
         },
         error: (error) => {
-          this.errorHandler.handleError(error)
         }
       }
     )

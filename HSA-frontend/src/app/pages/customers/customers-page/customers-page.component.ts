@@ -20,7 +20,7 @@ export class CustomersPageComponent implements OnInit {
   customers: any = null
   customerService: CustomerService
 
-  constructor(private router: Router, customerService: CustomerService, private errorHandler: ErrorHandlerService) {
+  constructor(private router: Router, customerService: CustomerService) {
     this.customerService = customerService
   }
 
@@ -34,7 +34,6 @@ export class CustomersPageComponent implements OnInit {
         this.customers = response
       },
       error: (error) => {
-          this.errorHandler.handleError(error, 'customers')
       }
     })
   }

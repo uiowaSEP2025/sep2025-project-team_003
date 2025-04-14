@@ -22,7 +22,7 @@ export class InvoicesPageComponent implements OnInit{
   invoiceService: InvoiceService
 
 
-  constructor (private router: Router, invoiceService: InvoiceService, private errorHandler: ErrorHandlerService) {
+  constructor (private router: Router, invoiceService: InvoiceService) {
     this.invoiceService = invoiceService
   }
 
@@ -38,7 +38,6 @@ export class InvoicesPageComponent implements OnInit{
         this.invoices = response
       },
       error: (error) => {
-        this.errorHandler.handleError(error, 'invoices')
       }
     })
   }

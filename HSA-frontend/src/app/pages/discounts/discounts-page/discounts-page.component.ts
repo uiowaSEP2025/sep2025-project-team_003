@@ -25,7 +25,7 @@ export class DiscountsPageComponent implements OnInit{
   loading = false;
 
 
-  constructor (private router: Router, discountService: DiscountsService, private errorHandler: ErrorHandlerService) {
+  constructor (private router: Router, discountService: DiscountsService) {
     this.discountService = discountService
   }
 

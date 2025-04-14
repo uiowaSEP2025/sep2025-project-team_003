@@ -6,13 +6,12 @@ from hsabackend.models.job import Job
 from hsabackend.models.contractor import Contractor
 from django.db.models import Q
 from django.core.exceptions import ValidationError
+from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 @api_view(["GET"])
-def get_job_contractor_table_data(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user.pk)
+@check_authenticated_and_onboarded()
+def get_job_contractor_table_data(request, id):    
+    org = request.org
 
     try:
         job = Job.objects.get(organization=org.pk, id=id)
@@ -46,11 +45,9 @@ def get_job_contractor_table_data(request, id):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def create_job_contractor(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user)
+    org = request.org
 
     try:
         job_object = Job.objects.get(organization=org.pk, id=id)
@@ -87,10 +84,8 @@ def create_job_contractor(request, id):
         return Response({"message": "There is no contractor to add"}, status=status.HTTP_400_BAD_REQUEST)
             
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def delete_job_contractor(request, job_id, job_contractor_id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
     job_contractor = JobContractor.objects.filter(pk=job_contractor_id, job=job_id)
 
     if not job_contractor.exists():
@@ -100,10 +95,8 @@ def delete_job_contractor(request, job_id, job_contractor_id):
     return Response({"message": "The contractor in this job deleted sucessfully"}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def delete_cached_job_contractor(request, job_id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
     job_contractors_list = request.data.get('jobContractors', '')      # dataform: jobContractors: [{"id": int}, {"id": int}, ...]
 
     if (len(job_contractors_list) != 0):
