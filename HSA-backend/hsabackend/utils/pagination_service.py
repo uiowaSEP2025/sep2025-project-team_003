@@ -1,7 +1,7 @@
-from django.core.paginator import Paginator
-from django.apps import apps
-from django.db.models import Model, QuerySet, Q
 from typing import Type, Optional, List
+
+from django.core.paginator import Paginator
+from django.db.models import Model, QuerySet, Q
 from django.db.models.fields import CharField, TextField
 
 
@@ -26,6 +26,7 @@ class PaginationService:
 
         return q_objects
 
+    
     def get_paginated_data(
             self,
             model: Type[Model],

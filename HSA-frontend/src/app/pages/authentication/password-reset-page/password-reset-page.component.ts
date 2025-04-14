@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, Validators, FormGroup, FormControl } from '@angular/forms';
 import { MatInputModule, MatError } from '@angular/material/input';
-import { passwordStrengthValidator, validateConfirmMatchesAndNotNull } from '../../utils/password-validators';
+import { passwordStrengthValidator, validateConfirmMatchesAndNotNull } from '../../../utils/password-validators';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
-import { ConfirmPasswordResetServiceService } from '../../services/confirm-password-reset.service';
+import { GenericFormErrorStateMatcher } from '../../../utils/generic-form-error-state-matcher';
+import { ConfirmPasswordResetServiceService } from '../../../services/confirm-password-reset.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -30,7 +30,7 @@ export class PasswordResetPageComponent implements OnInit {
     confirmPassword: new FormControl('',)
   }, validateConfirmMatchesAndNotNull);
 
-  constructor(private activatedRoute: ActivatedRoute, private passwordReset: ConfirmPasswordResetServiceService, 
+  constructor(private activatedRoute: ActivatedRoute, private passwordReset: ConfirmPasswordResetServiceService,
     private router: Router, private snackBar: MatSnackBar) { }
 
 

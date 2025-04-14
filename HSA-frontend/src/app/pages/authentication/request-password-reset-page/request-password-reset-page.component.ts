@@ -4,9 +4,9 @@ import { MatError } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
+import { GenericFormErrorStateMatcher } from '../../../utils/generic-form-error-state-matcher';
 import { CommonModule } from '@angular/common';
-import { RequestPasswordResetService } from '../../services/request-password-reset.service';
+import { RequestPasswordResetService } from '../../../services/request-password-reset.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 

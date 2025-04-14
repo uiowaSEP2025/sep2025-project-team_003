@@ -1,31 +1,31 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
-import { ServiceService } from '../../services/service.service';
-import { MaterialService } from '../../services/material.service';
-import { CustomerService } from '../../services/customer.service';
-import { JobService } from '../../services/job.service';
+import { ServiceService } from '../../../services/service.service';
+import { MaterialService } from '../../../services/material.service';
+import { CustomerService } from '../../../services/customer.service';
+import { JobService } from '../../../services/job.service';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatError, MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { AddConfirmDialogComponentComponent } from '../../components/add-confirm-dialog-component/add-confirm-dialog-component.component';
-import { ContractorService } from '../../services/contractor.service';
-import { OrganizationService } from '../../services/organization.service';
+import { AddConfirmDialogComponentComponent } from '../../../components/add-confirm-dialog-component/add-confirm-dialog-component.component';
+import { ContractorService } from '../../../services/contractor.service';
+import { OrganizationService } from '../../../services/organization.service';
 import { Router } from '@angular/router';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { JobDisplayTableComponent } from '../../components/job-display-table/job-display-table.component';
+import { JobDisplayTableComponent } from '../../../components/job-display-table/job-display-table.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSelectModule } from '@angular/material/select';
-import { StringFormatter } from '../../utils/string-formatter';
-import { InputFieldDictionary } from '../../interfaces/interface-helpers/inputField-row-helper.interface';
-import { AddSelectDialogData } from '../../interfaces/interface-helpers/addSelectDialog-helper.interface';
-import { AddSelectDialogComponentComponent } from '../../components/add-select-dialog-component/add-select-dialog-component.component';
-import { StateList } from '../../utils/states-list';
+import { StringFormatter } from '../../../utils/string-formatter';
+import { InputFieldDictionary } from '../../../interfaces/interface-helpers/inputField-row-helper.interface';
+import { AddSelectDialogData } from '../../../interfaces/interface-helpers/addSelectDialog-helper.interface';
+import { AddSelectDialogComponentComponent } from '../../../components/add-select-dialog-component/add-select-dialog-component.component';
+import { StateList } from '../../../utils/states-list';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { OnboardingSelectDialogComponentComponent } from '../../components/onboarding-select-dialog-component/onboarding-select-dialog-component.component';
+import { OnboardingSelectDialogComponentComponent } from '../../../components/onboarding-select-dialog-component/onboarding-select-dialog-component.component';
 
 @Component({
   selector: 'app-onboarding-page',
@@ -83,7 +83,7 @@ export class OnboardingPageComponent implements OnInit {
   @ViewChild('stepper') stepper!: MatStepper;
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private buttonFormBuilder: FormBuilder,
     private serviceFormBuilder: FormBuilder,
     private materialFormBuilder: FormBuilder,
@@ -95,7 +95,7 @@ export class OnboardingPageComponent implements OnInit {
     private customerService: CustomerService,
     private contractorService: ContractorService,
     private jobService: JobService,
-    private stringFormatter: StringFormatter, 
+    private stringFormatter: StringFormatter,
     private jobFormBuilder: FormBuilder,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
@@ -129,7 +129,7 @@ export class OnboardingPageComponent implements OnInit {
     })
 
     this.states = StateList.getStates()
-    
+
     this.jobGeneralForm = this.jobFormBuilder.group({
       customerName: ['', Validators.required],
       startDate: ['', Validators.required],
@@ -171,10 +171,10 @@ export class OnboardingPageComponent implements OnInit {
           this.buttonForm.patchValue({
             exampleConfirmation: isYes
           })
-      
+
           this.buttonForm.markAsTouched();
           this.stepper.next()
-      
+
           this.isExamplePrefilled = true
           this.prefillInfo()
         }
@@ -183,7 +183,7 @@ export class OnboardingPageComponent implements OnInit {
       this.buttonForm.patchValue({
         exampleConfirmation: isYes
       })
-      
+
       this.buttonForm.markAsTouched();
       this.stepper.next()
     }
@@ -241,7 +241,7 @@ export class OnboardingPageComponent implements OnInit {
   }
 
   onSubmitContractorCreation() {
-    if (this.contractorForm.get('firstName')?.value !== "" 
+    if (this.contractorForm.get('firstName')?.value !== ""
     && this.contractorForm.get('lastName')?.value !== ""
     && this.contractorForm.get('email')?.value !== ""
     && this.contractorForm.get('phone')?.value !== ""
@@ -261,7 +261,7 @@ export class OnboardingPageComponent implements OnInit {
     this.stepper.next();
   }
 
-  
+
   onSubmitJobGeneral() {
     if (this.jobGeneralForm.invalid) {
       this.jobGeneralForm.markAllAsTouched();
@@ -320,7 +320,7 @@ export class OnboardingPageComponent implements OnInit {
 
     if (!startDate) {
       return { noStartDate: true };
-    } 
+    }
 
     if (!endDate) {
       return { noEndDate: true };
@@ -328,7 +328,7 @@ export class OnboardingPageComponent implements OnInit {
 
     return endDate >= startDate ? null : { endDateBefore: true };
   }
-  
+
   openAddCustomerDialog() {
     this.customers = {
       customers: [this.firstCustomer]
@@ -343,10 +343,10 @@ export class OnboardingPageComponent implements OnInit {
     };
 
     const dialogRef = this.dialog.open(OnboardingSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -374,10 +374,10 @@ export class OnboardingPageComponent implements OnInit {
     };
 
     const dialogRef = this.dialog.open(OnboardingSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -391,7 +391,7 @@ export class OnboardingPageComponent implements OnInit {
           info['serviceDescription'] = element['service_description'];
           this.services = { services: [info] };
         });
-        
+
         this.selectedServices = result.selectedItems;
       }
     });
@@ -411,10 +411,10 @@ export class OnboardingPageComponent implements OnInit {
     }
 
     const dialogRef = this.dialog.open(OnboardingSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -443,10 +443,10 @@ export class OnboardingPageComponent implements OnInit {
     }
 
     const dialogRef = this.dialog.open(OnboardingSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -495,7 +495,7 @@ export class OnboardingPageComponent implements OnInit {
       }
       case 'contractor': {
         let popOutID = data["Contractor ID"];
-        
+
         if (joinRelationID !== 0) {
           this.deletedJobContractors.push(joinRelationID);
         } else {
@@ -504,9 +504,9 @@ export class OnboardingPageComponent implements OnInit {
 
         this.contractors.contractors = this.contractors.contractors.filter((item: { contractorID: any; }) => item.contractorID !== popOutID);
         return this.contractors;
-      }  
+      }
     };
-    
+
   }
 
   onCreateConfirmDialog(type: string) {
@@ -514,13 +514,13 @@ export class OnboardingPageComponent implements OnInit {
       const dialogRef = this.dialog.open(AddConfirmDialogComponentComponent, {
         data: "job creation"
       });
-  
+
       dialogRef.afterClosed().subscribe((result:any) => {
         if (result) {
           this.onSubmit();
         }
       });
-    }  
+    }
   }
 
   onSubmit() {
@@ -540,21 +540,21 @@ export class OnboardingPageComponent implements OnInit {
       this.services.services.forEach((element: any) => {
         servicesField.push({ "id": element["serviceID"] })
       })
-  
+
       let materialsField: { id: any, unitsUsed: any, pricePerUnit: any} [] = []
       this.materials.materials.forEach((element: any) => {
-        materialsField.push({ 
+        materialsField.push({
           "id": element["materialID"],
           "unitsUsed": element["unitsUsed"],
-          "pricePerUnit": element["pricePerUnit"] 
+          "pricePerUnit": element["pricePerUnit"]
         });
       });
-  
+
       let contractorsField: { id: any; } [] = []
       this.contractors.contractors.forEach((element: any) => {
         contractorsField.push({ "id": element["contractorID"] })
       });
-      
+
       const requestJson = {
         jobStatus: this.status,
         startDate: this.stringFormatter.dateFormatter(this.jobGeneralForm.get('startDate')?.value),
@@ -569,7 +569,7 @@ export class OnboardingPageComponent implements OnInit {
         services: servicesField as [],
         materials: materialsField as []
       }
-  
+
       this.jobService.createJob(requestJson).subscribe(
         {
           next: (response) => {

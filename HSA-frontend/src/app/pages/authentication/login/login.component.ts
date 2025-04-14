@@ -4,12 +4,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
-import { UserAuthService } from '../../services/user-auth.service';
+import { GenericFormErrorStateMatcher } from '../../../utils/generic-form-error-state-matcher';
+import { UserAuthService } from '../../../services/user-auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
-import {UserAuthService} from '../../services/user-auth.service';
-import { environment } from '../../../environments/environment';
+import {UserAuthService} from '../../../services/user-auth.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-login',
