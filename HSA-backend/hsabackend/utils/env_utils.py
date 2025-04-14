@@ -8,4 +8,4 @@ def get_url():
     if os.environ["ENV"] == "PROD":
         return "https://hsa-app.starlitex.com"
     else:
-        raise RuntimeError("The envirnment for the backend was not set correctly")
+        raise RuntimeError("The enviornment for the backend was not set correctly")
