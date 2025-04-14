@@ -6,7 +6,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
 
-fdescribe('DiscountsPageComponent', () => {
+describe('DiscountsPageComponent', () => {
   let component: DiscountsPageComponent;
   let fixture: ComponentFixture<DiscountsPageComponent>;
   let httpMock: HttpTestingController;

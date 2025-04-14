@@ -32,7 +32,6 @@ class Job(models.Model):
     job_zip = models.CharField(max_length=10, validators=[isNonEmpty])
     job_address = models.CharField(max_length=100, validators=[isNonEmpty])
 
-
     def __str__(self):
         return f"<Job, organization: {self.organization}, description: {self.description}>"
     

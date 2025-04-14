@@ -8,6 +8,8 @@ import {MenuInterface} from './interfaces/menu.interface';
 import {RouterLink, RouterLinkActive} from '@angular/router';
 import {MatIcon} from '@angular/material/icon';
 import {MatLabel} from '@angular/material/form-field';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -30,4 +32,12 @@ export class AppComponent {
     {name: 'Invoices', route: '/invoices'},
     {name: 'Discounts', route: '/discounts'},
   ]
+
+  constructor(private router: Router) {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
 }
