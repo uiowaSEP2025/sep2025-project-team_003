@@ -208,7 +208,6 @@ def createOrganization(request):
             org_owner_last_name = ownerLn,
             owning_User = owning_User,
         )
-        print(the_organization)
         the_organization.full_clean()
         the_organization.save()
 
