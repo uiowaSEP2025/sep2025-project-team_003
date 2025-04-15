@@ -115,6 +115,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
 
     if (this.checkbox !== 'none') {
       if (!this.headersWithActions.includes('Checkbox')) {
+        
         this.headersWithActions = ['Checkbox', ...this.headersWithActions]
       }
     }
@@ -124,8 +125,12 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
         this.headersWithActions = [...this.headersWithActions, 'Unit Used', 'Price Per Unit']
       }
     }
-    
-    this.isDataNotAvailable = this.fetchedData.data.length === 0
+  
+    if (this.fetchedData !== undefined) {
+      if (this.fetchedData.length !== 0) {
+        this.isDataNotAvailable = this.fetchedData.data.length === 0
+      }  
+    }
   }
 
   redirectEdit(id: number, args: any) {
