@@ -5,7 +5,6 @@ Feature: Invoice CRUDS
 
 Scenario: View Invoice page
     Given I am logged in
-    Given I have finished the onboarding process
     Given I am on the invoices page
     When I don't see the loading spinner
     Then I should see a table row with the following elements
@@ -16,7 +15,6 @@ Scenario: View Invoice page
 
 Scenario: View detailed invoice
     Given I am logged in
-    Given I have finished the onboarding process
     Given I am on the invoices page
     When I don't see the loading spinner
     And I click the first table row
@@ -38,7 +36,6 @@ Scenario: View detailed invoice
 
 Scenario: Delete Invoice
     Given I am logged in
-    Given I have finished the onboarding process
     And I am on the invoices page
     When I don't see the loading spinner
     When  I click the delete button specifically
@@ -48,7 +45,6 @@ Scenario: Delete Invoice
 
 Scenario: Edit Invoice
     Given I am logged in
-    Given I have finished the onboarding process
     And I am on the invoices page
     When I don't see the loading spinner
     Then I wait for 1 seconds
@@ -78,7 +74,6 @@ Scenario: Edit Invoice
 
 Scenario: Create Invocice
     Given I am logged in
-    Given I have finished the onboarding process
     And I am on the invoices page
     When I don't see the loading spinner
     When  I click the delete button specifically

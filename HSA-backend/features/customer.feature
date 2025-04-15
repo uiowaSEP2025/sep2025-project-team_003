@@ -5,7 +5,6 @@ Feature: Customer CRUDS
 
     Scenario: View Customers page
         Given I am logged in
-        Given I have finished the onboarding process
         Given I am on the customers page
         When I don't see the loading spinner
         Then I should see a table row with the following elements
@@ -22,7 +21,6 @@ Feature: Customer CRUDS
     
     Scenario: Delete customer
         Given I am logged in
-        Given I have finished the onboarding process
         And I am on the customers page
         When I don't see the loading spinner
         When  I click the delete button specifically
@@ -32,7 +30,6 @@ Feature: Customer CRUDS
 
     Scenario: Edit customer
         Given I am logged in
-        Given I have finished the onboarding process
         And I am on the customers page
         When I don't see the loading spinner
         And I click the edit button specifically

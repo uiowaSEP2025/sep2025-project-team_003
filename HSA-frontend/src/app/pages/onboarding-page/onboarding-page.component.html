@@ -41,7 +41,7 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Service Description</mat-label>
 							<input
-							  data-testid="service-description"
+							  	data-testid="service-description"
 								formControlName = "serviceDescription"
 								matInput
 								placeholder=""
@@ -64,7 +64,7 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Customer First Name</mat-label>
 							<input
-							  data-testid="customer-first-name"
+							  	data-testid="customer-first-name"
 								formControlName = "firstName"
 								matInput
 								placeholder="Ex: John"
@@ -77,7 +77,7 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Customer Last Name</mat-label>
 							<input
-							  data-testid="customer-last-name"
+							  	data-testid="customer-last-name"
 								formControlName = "lastName"
 								matInput
 								placeholder="Ex: Doe"
@@ -90,7 +90,7 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Customer Email</mat-label>
 							<input
-							  data-testid="customer-email"
+							  	data-testid="customer-email"
 								formControlName = "email"
 								matInput
 								placeholder="Ex: john.doe@gmail.com"
@@ -99,19 +99,19 @@
 							@if (customerForm.get('email')?.touched && customerForm.get('email')?.hasError('required')) {
 								<mat-error>Email is required</mat-error>
 							}
-              @if (customerForm.get('email')?.touched && customerForm.get('email')?.hasError('email')) {
-                <mat-error>Email format is invalid</mat-error>
-              }
+							@if (customerForm.get('email')?.touched && customerForm.get('email')?.hasError('email')) {
+								<mat-error>Email format is invalid</mat-error>
+							}
 						</mat-form-field>
 						<mat-form-field class="full-width-field">
 							<mat-label>Customer Phone Number</mat-label>
 							<input
-							  data-testid="customer-phone-number"
+							 	data-testid="customer-phone-number"
 								formControlName = "phone"
 								matInput
 								placeholder="000-000-0000"
 								required
-                pattern="(\(\d{3}\)\s?|\d{3}[-.\s])\d{3}[-.\s]?\d{4}"
+                				pattern="(\(\d{3}\)\s?|\d{3}[-.\s])\d{3}[-.\s]?\d{4}"
 							>
 							@if (customerForm.get('phone')?.touched && customerForm.get('phone')?.hasError('required')) {
 								<mat-error>Phone is required</mat-error>
@@ -123,7 +123,7 @@
 						<mat-form-field class="example-full-width">
 							<mat-label>Add Notes</mat-label>
 							<textarea 
-							  data-testid="add-notes"
+							  	data-testid="add-notes"
 								formControlName = "note"
 								matInput 
 								placeholder=""
@@ -142,7 +142,7 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Material Name</mat-label>
 							<input
-							  data-testid="material-name"
+							  	data-testid="material-name"
 								formControlName = "materialName"
 								matInput
 								placeholder="Ex: Valspar White Paint"
@@ -170,7 +170,7 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Contractor Last Name</mat-label>
 							<input
-							  data-testid="contractor-last-name"
+							  	data-testid="contractor-last-name"
 								formControlName = "lastName"
 								matInput
 								placeholder="Ex: Doe"
@@ -179,7 +179,7 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Contractor Email</mat-label>
 							<input
-							  data-testid="contractor-email"
+							  	data-testid="contractor-email"
 								formControlName = "email"
 								matInput
 								placeholder="Ex: john.doe@gmail.com"
@@ -191,7 +191,7 @@
 						<mat-form-field class="full-width-field">
 							<mat-label>Contractor Phone Number</mat-label>
 							<input
-							  data-testid="contractor-phone-number"
+							  	data-testid="contractor-phone-number"
 								formControlName = "phone"
 								matInput
 								placeholder="000-000-0000"
@@ -218,6 +218,7 @@
 									<div class="customer-box-container">
 										@if (this.jobGeneralForm.get('customerName')?.value !== "") {
 											<span 
+												data-testid="customer"
 												class="customer-name-span"
 											>
 												{{this.jobGeneralForm.get('customerName')?.value}} 
@@ -326,7 +327,7 @@
 								<td>
 									<mat-form-field appearance="fill" class="full-width">
 										<mat-select
-											data-testid="state-button"
+											data-testid="state"
 											formControlName="requestorStateSelect"
 										>
 											@for (state of states; track state) {

@@ -14,6 +14,8 @@ import { OrganizationService } from '../../services/organization.service';
 import { RequestTrackerService } from '../../utils/request-tracker';
 import { MatCardModule } from '@angular/material/card';
 import { passwordStrengthValidator, validateConfirmMatchesAndNotNull } from '../../utils/password-validators';
+import { AddConfirmDialogComponentComponent } from '../../components/add-confirm-dialog-component/add-confirm-dialog-component.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-signup-page',
@@ -46,10 +48,10 @@ export class SignupPageComponent {
     private registrationFormBuilder: FormBuilder, 
     private organizationLocationFormBuilder: FormBuilder,
     private authService: UserAuthService, 
-    private organizationService: OrganizationService,
     private tracker: RequestTrackerService,
     private snackBar: MatSnackBar,
     private http: HttpClient,
+    public dialog: MatDialog,
   ) {
     this.userAccountForm = this.userAccountFormBuilder.group({
       userFirstName: ['', Validators.required],
@@ -106,14 +108,25 @@ export class SignupPageComponent {
     }
   }
 
+  onCreateConfirmDialog() {
+    const dialogRef = this.dialog.open(AddConfirmDialogComponentComponent, {
+      width: "400px",
+      data: "user account and organization (All information will be recorded)"
+    });
+
+    dialogRef.afterClosed().subscribe((result:any) => {
+      if (result) {
+        this.onSubmitRegistration();
+      }
+    });
+  }
+
   onSubmitRegistration() {
     if (this.registrationForm.invalid) {
       this.registrationForm.markAllAsTouched();
       return;
     } else {
       this.tracker.startRequest();
-     
-     
       const organizationCreateRequest = {
         name: this.registrationForm.get('organizationName')?.value,
         email: this.registrationForm.get('organizationEmail')?.value,

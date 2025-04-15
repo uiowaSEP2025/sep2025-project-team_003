@@ -20,6 +20,12 @@ def step_check_snackbar_text(context, text):
     element = wait.until(EC.visibility_of_element_located((By.TAG_NAME, "simple-snack-bar")))
     assert text in element.text, f"Snack bar doesn't contain '{text}'"
 
+@then(u'I expect the element "{element}" show up')
+def expect_input_field(context, element):
+    wait = WebDriverWait(context.browser, 10)
+    element = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, f'[data-testid="{"-".join(element.replace("*", "").lower().split(" "))}"]')))
+    element.location_once_scrolled_into_view
+
 @given('I am logged in')
 def step_user_logged_in(context):
     context.browser.get(f"{context.url}/login")
@@ -186,3 +192,19 @@ def step_impl(context, expected_url):
 
     assert parsed_path.rstrip('/') == expected_url.rstrip('/'), \
         f"Expected '{expected_url}' in '{parsed_path}'"
+    
+@then(u'I expect the element "{element}" has text "{expected_text}"')
+def expect_element_text(context, element, expected_text):
+    wait = WebDriverWait(context.browser, 10)
+    element = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, f'[data-testid="{"-".join(element.replace("*", "").lower().split(" "))}"]')))
+    element.location_once_scrolled_into_view
+    actual_text = element.text.strip()
+    assert actual_text == expected_text, f"Expected '{expected_text}' but got '{actual_text}'"
+
+@then(u'I expect the input field "{input_field}" has value "{expected_text}"')
+def expect_element_text(context, input_field, expected_text):
+    wait = WebDriverWait(context.browser, 10)
+    input_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, f'[data-testid="{"-".join(input_field.replace("*", "").lower().split(" "))}"]')))
+    input_field.location_once_scrolled_into_view
+    actual_text = input_field.get_attribute("value")
+    assert actual_text == expected_text, f"Expected '{expected_text}' but got '{actual_text}'"
