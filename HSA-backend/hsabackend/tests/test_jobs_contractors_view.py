@@ -33,7 +33,9 @@ class contractorViewTest(APITestCase):
         mock_user.is_authenticated = True
         job.return_value = Job()
         contractor.return_value = Contractor()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         factory = APIRequestFactory()
         request = factory.get('/api/get/job/1/contractors?pagesize')
         request.user = mock_user  
@@ -46,7 +48,9 @@ class contractorViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         contractor.return_value = Contractor()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         factory = APIRequestFactory()
         request = factory.get('/api/get/job/1/contractors?pagesize=100&offset=10')
@@ -61,7 +65,9 @@ class contractorViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         
         factory = APIRequestFactory()
         request = factory.get('/api/get/job/1/contractors?pagesize=10&offset=10')
@@ -94,7 +100,9 @@ class contractorViewTest(APITestCase):
 
         contractor.return_value = Contractor()
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         mockdata = {
             "contractors": [
@@ -126,7 +134,9 @@ class contractorViewTest(APITestCase):
 
         contractor.return_value = Contractor()
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         mockdata = {
             "contractors": []
@@ -151,7 +161,9 @@ class contractorViewTest(APITestCase):
         job_serivce_qs.exists.return_value = True
 
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         contractor.return_value = Contractor()
         job_contractor_obj = MagicMock(spec=JobContractor)
         job_contractor.return_value = job_contractor_obj
@@ -187,7 +199,9 @@ class contractorViewTest(APITestCase):
         job_serivce_qs.exists.return_value = False
 
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         contractor.return_value = Contractor()
         job_contractor_obj = MagicMock(spec=JobContractor)
         job_contractor.return_value = job_contractor_obj
@@ -227,7 +241,9 @@ class contractorViewTest(APITestCase):
     def test_job_delete_not_found(self, org, job_contractor_filter):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         job_serivce_qs = MagicMock(spec=QuerySet)
         job_contractor_filter.return_value = job_serivce_qs
         job_serivce_qs.exists.return_value = False 
@@ -244,7 +260,9 @@ class contractorViewTest(APITestCase):
     def test_delete_valid(self, org, job_contractor_filter):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         job_serivce_qs = MagicMock(spec=QuerySet)
         job_contractor_filter.return_value = job_serivce_qs
         job_serivce_qs.exists.return_value = True 

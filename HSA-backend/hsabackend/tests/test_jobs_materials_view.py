@@ -34,7 +34,9 @@ class materialViewTest(APITestCase):
         mock_user.is_authenticated = True
         job.return_value = Job()
         material.return_value = Material()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         factory = APIRequestFactory()
         request = factory.get('/api/get/job/1/materials?pagesize')
         request.user = mock_user  
@@ -47,7 +49,9 @@ class materialViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         material.return_value = Material()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         factory = APIRequestFactory()
         request = factory.get('/api/get/job/1/materials?pagesize=100&offset=10')
@@ -62,7 +66,9 @@ class materialViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         
         factory = APIRequestFactory()
         request = factory.get('/api/get/job/1/materials?pagesize=10&offset=10')
@@ -95,7 +101,9 @@ class materialViewTest(APITestCase):
 
         material.return_value = Material()
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         mockdata = {
             "materials": [
@@ -131,7 +139,9 @@ class materialViewTest(APITestCase):
 
         material.return_value = Material()
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         mockdata = {
             "materials": []
@@ -156,7 +166,9 @@ class materialViewTest(APITestCase):
         job_serivce_qs.exists.return_value = True
 
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         material.return_value = Material()
         job_material_obj = MagicMock(spec=JobMaterial)
         job_material.return_value = job_material_obj
@@ -196,7 +208,9 @@ class materialViewTest(APITestCase):
         job_serivce_qs.exists.return_value = False
 
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         material.return_value = Material()
         job_material_obj = MagicMock(spec=JobMaterial)
         job_material.return_value = job_material_obj
@@ -240,7 +254,9 @@ class materialViewTest(APITestCase):
     def test_job_delete_not_found(self, org, job_material_filter):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         job_serivce_qs = MagicMock(spec=QuerySet)
         job_material_filter.return_value = job_serivce_qs
         job_serivce_qs.exists.return_value = False 
@@ -257,7 +273,9 @@ class materialViewTest(APITestCase):
     def test_delete_valid(self, org, job_material_filter):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         job_serivce_qs = MagicMock(spec=QuerySet)
         job_material_filter.return_value = job_serivce_qs
         job_serivce_qs.exists.return_value = True 

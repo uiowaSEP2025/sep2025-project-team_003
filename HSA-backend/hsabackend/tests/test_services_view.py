@@ -29,7 +29,9 @@ class ServiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        get.return_value = Organization()
+        org = Organization()
+        org.is_onboarding = False
+        get.return_value = org
         factory = APIRequestFactory()
         request = factory.get('/api/get/services?search')
         request.user = mock_user  
@@ -43,7 +45,9 @@ class ServiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        get.return_value = Organization()
+        org = Organization()
+        org.is_onboarding = False
+        get.return_value = org
         qs = MagicMock(spec=QuerySet) # needed because it's sliced in the code
         filter.return_value = qs
         
@@ -64,6 +68,7 @@ class ServiceViewTest(APITestCase):
         
         org = Mock(spec=Organization)
         org.pk = 1
+        org.is_onboarding = False
         get.return_value = org
         filter.return_value = MagicMock(spec=QuerySet)
         
@@ -91,7 +96,9 @@ class ServiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        get.return_value = Organization()
+        org = Organization()
+        org.is_onboarding = False
+        get.return_value = org
         factory = APIRequestFactory()
         request = factory.get('/api/get/services/exclude?excludeIDs=1&search')
         request.user = mock_user  
@@ -106,7 +113,9 @@ class ServiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        get.return_value = Organization()
+        org = Organization()
+        org.is_onboarding = False
+        get.return_value = org
         qs = MagicMock(spec=QuerySet) # needed because it's sliced in the code
         filter.return_value = qs
         exclude.return_value = qs
@@ -128,6 +137,7 @@ class ServiceViewTest(APITestCase):
         
         org = Mock(spec=Organization)
         org.pk = 1
+        org.is_onboarding = False
         get.return_value = org
         filter.return_value = MagicMock(spec=QuerySet)
         
@@ -154,7 +164,9 @@ class ServiceViewTest(APITestCase):
     def test_create_service_auth_invalid(self, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         
         factory = APIRequestFactory()
         request = factory.post('api/create/service',
@@ -171,7 +183,9 @@ class ServiceViewTest(APITestCase):
     def test_calls_save_if_valid(self, service_name, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         service_name_obj = MagicMock(spec=Service)
         service_name.return_value = service_name_obj
         
@@ -205,7 +219,9 @@ class ServiceViewTest(APITestCase):
         queryset = MagicMock()
         service_name.return_value = queryset
         queryset.exists.return_value = False
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         
         factory = APIRequestFactory()
         request = factory.post('/api/edit/service/0')
@@ -223,7 +239,9 @@ class ServiceViewTest(APITestCase):
 
         service_name.return_value = qs
         qs.exists.return_value = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         service_mock = MagicMock(name = 'serviceobj')
         qs.__getitem__.side_effect = lambda x: service_mock
         
@@ -249,7 +267,9 @@ class ServiceViewTest(APITestCase):
 
         service_name.return_value = qs
         qs.exists.return_value = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         service_mock = MagicMock(name = 'serviceobj')
         qs.__getitem__.side_effect = lambda x: service_mock
         
@@ -280,7 +300,9 @@ class ServiceViewTest(APITestCase):
     def test_delete_not_found(self, org, service_filter):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         serivce_qs = MagicMock(spec=QuerySet)
         service_filter.return_value = serivce_qs
         serivce_qs.exists.return_value = False 
@@ -297,7 +319,9 @@ class ServiceViewTest(APITestCase):
     def test_delete_valid(self, org, service_filter):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         serivce_qs = MagicMock(spec=QuerySet)
         service_filter.return_value = serivce_qs
         serivce_qs.exists.return_value = True 
