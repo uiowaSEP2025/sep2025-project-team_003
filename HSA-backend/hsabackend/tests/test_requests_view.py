@@ -64,7 +64,7 @@ class RequestView(APITestCase):
     def test_get_request_table_data_valid_query_empty(self,get, filter):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org = Mock(spec=Organization)
+        org = Organization()
         org.pk = 1
         org.is_onboarding = False
         get.return_value = org
@@ -94,7 +94,7 @@ class RequestView(APITestCase):
     def test_delete_not_found(self, req, get):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org = Mock(spec=Organization)
+        org = Organization()
         org.pk = 1
         org.is_onboarding = False
         get.return_value = org
@@ -115,7 +115,7 @@ class RequestView(APITestCase):
     def test_delete_success(self, req,get):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org = Mock(spec=Organization)
+        org = Organization()
         org.pk = 1
         org.is_onboarding = False
         get.return_value = org

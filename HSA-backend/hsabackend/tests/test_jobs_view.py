@@ -74,7 +74,7 @@ class jobViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        org = Mock(spec=Organization)
+        org = Organization()
         org.pk = 1
         org.is_onboarding = False
         get.return_value = org
@@ -123,9 +123,9 @@ class jobViewTest(APITestCase):
     def test_get_job_individual_data_valid(self, get_org, get_job):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org = Mock(spec=Organization)
+        org = Organization()
         org.pk = 1
-        org.is_onboaring = False
+        org.is_onboarding = False
         get_org.return_value = org
 
         mock_response = {

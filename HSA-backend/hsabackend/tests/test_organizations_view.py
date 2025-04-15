@@ -63,23 +63,20 @@ class orgViewTests(APITestCase):
         
         assert response.status_code == status.HTTP_200_OK
 
+    @patch('hsabackend.views.organizations.Organization.objects.filter')
     @patch('hsabackend.views.organizations.Organization')
-    @patch('hsabackend.utils.auth_wrapper.Organization')
-    def test_create_org_if_auth_and_valid(self, auth_org, org):
+    def test_create_org_if_auth_and_valid(self, org, filter):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
 
         factory = APIRequestFactory()
 
-        qs = MagicMock(spec=QuerySet)
-        manager = MagicMock()
-        org.objects = manager
-        qs.count.return_value = 0 # no prev account
-        manager.filter.return_value = qs
-
         org_object = MagicMock(spec=Organization)
-
         org.return_value = org_object
+
+        qs = MagicMock(spec=QuerySet)
+        qs.count.return_value = 0 # no prev account
+        filter.return_value = qs
 
         mock_data = {
             "name": "Superman HQ",
@@ -124,11 +121,15 @@ class orgViewTests(APITestCase):
         assert response.data.get('errors', '') == "This user already has an organization"
 
 
-    @patch('hsabackend.utils.auth_wrapper.Organization')
+    @patch('hsabackend.views.organizations.Organization.objects.get')
     @patch('hsabackend.views.organizations.Organization')
-    def test_create_org_fail_if_missing_data(self,org_construct, auth_org):
+    def test_create_org_fail_if_missing_data(self, org_construct, auth_org):
         mock_user = MagicMock(spec=User)
         mock_user.is_authenticated = True
+
+        org = Organization()
+        org.is_onboarding = False
+        auth_org.return_value = org
 
         factory = APIRequestFactory()
 
@@ -177,7 +178,8 @@ class orgViewTests(APITestCase):
             "city": "BobTown",
             "requestor_address": "222 Box",
             "ownerFn": "Dov",
-            "ownerLn": "Sob"
+            "ownerLn": "Sob",
+            "is_onboarding": False,
         }
 
         request = factory.post('api/edit/organization', data=mock_data, format='json')
@@ -197,6 +199,7 @@ class orgViewTests(APITestCase):
         factory = APIRequestFactory()
 
         org_object = MagicMock(spec=Organization, name="Org")
+        org_object.is_onboarding = False
         org.return_value = org_object
         org_object.full_clean.side_effect = ValidationError({'email': ['Invalid Email']})
 

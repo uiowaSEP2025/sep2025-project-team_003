@@ -5,6 +5,7 @@ from rest_framework.test import APIRequestFactory
 from hsabackend.views.invoices import getInvoices, createInvoice, updateInvoice, deleteInvoice, get_data_for_invoice
 from rest_framework import status
 from django.core.exceptions import ValidationError
+from hsabackend.models.organization import Organization
 
 class InvoiceViewTest(APITestCase):
     def test_get_invoice_table_unauth(self):
@@ -26,7 +27,8 @@ class InvoiceViewTest(APITestCase):
         factory = APIRequestFactory()
         request = factory.get('/api/get/materials?search&&offset=0')
         request.user = mock_user  
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
         response = getInvoices(request)
         
@@ -40,7 +42,8 @@ class InvoiceViewTest(APITestCase):
         factory = APIRequestFactory()
         request = factory.get('/api/get/materials?search&&offset=0&pagesize=ae')
         request.user = mock_user  
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
         response = getInvoices(request)
         
@@ -55,7 +58,8 @@ class InvoiceViewTest(APITestCase):
         factory = APIRequestFactory()
         request = factory.get('/api/get/materials?search&&offset=0&pagesize=2')
         request.user = mock_user  
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
 
         mock_select = Mock()
@@ -82,7 +86,8 @@ class InvoiceViewTest(APITestCase):
     def test_create_customer_isnt_int(self, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
         
         factory = APIRequestFactory()
@@ -99,7 +104,8 @@ class InvoiceViewTest(APITestCase):
     def test_create_quotes_isnt_list(self, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
         
         factory = APIRequestFactory()
@@ -116,7 +122,8 @@ class InvoiceViewTest(APITestCase):
     def test_create_quotes_is_empty(self, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
         
         factory = APIRequestFactory()
@@ -133,7 +140,8 @@ class InvoiceViewTest(APITestCase):
     def test_create_bad_status(self, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
         
         factory = APIRequestFactory()
@@ -152,7 +160,8 @@ class InvoiceViewTest(APITestCase):
     def test_create_invalid_date(self, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
         
         factory = APIRequestFactory()
@@ -175,7 +184,8 @@ class InvoiceViewTest(APITestCase):
     def test_create_customer_dosent_exist(self, org, get_cust):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
 
         cust_qs = MagicMock()
@@ -200,7 +210,8 @@ class InvoiceViewTest(APITestCase):
     def test_create_invoice_validation_fail(self, org, get_cust, invoice):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
 
         cust_qs = MagicMock()
@@ -233,7 +244,8 @@ class InvoiceViewTest(APITestCase):
     def test_create_invoice_success(self, org, get_cust, invoice, quote_filter):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
 
         cust_qs = MagicMock()
@@ -280,7 +292,8 @@ class InvoiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
         
         factory = APIRequestFactory()
@@ -297,7 +310,8 @@ class InvoiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
         
         factory = APIRequestFactory()
@@ -314,7 +328,8 @@ class InvoiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
         
         factory = APIRequestFactory()
@@ -332,7 +347,8 @@ class InvoiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
         
         factory = APIRequestFactory()
@@ -349,7 +365,8 @@ class InvoiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
         
         factory = APIRequestFactory()
@@ -368,7 +385,8 @@ class InvoiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
         
         factory = APIRequestFactory()
@@ -388,7 +406,8 @@ class InvoiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
 
         invoice_qs = Mock()
@@ -415,7 +434,8 @@ class InvoiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
 
         invoice_qs = MagicMock()
@@ -448,7 +468,8 @@ class InvoiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
 
         invoice_qs = MagicMock()
@@ -480,7 +501,8 @@ class InvoiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
 
         invoice_qs = MagicMock()
@@ -519,7 +541,8 @@ class InvoiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
 
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
 
         mock_invoice_qs = Mock()
@@ -539,7 +562,8 @@ class InvoiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
 
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
 
         mock_invoice_qs = MagicMock()
@@ -575,7 +599,8 @@ class InvoiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
 
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
 
         mock_invoice_qs = Mock()
@@ -596,7 +621,8 @@ class InvoiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
 
-        mock_org = Mock()
+        mock_org = Organization()
+        mock_org.is_onboarding = False
         org.return_value = mock_org
 
         mock_invoice_qs = MagicMock()

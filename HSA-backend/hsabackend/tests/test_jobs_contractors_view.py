@@ -277,10 +277,14 @@ class contractorViewTest(APITestCase):
         assert response.status_code == status.HTTP_200_OK
         contractor_mock.delete.assert_called_once
 
-    @patch('hsabackend.utils.auth_wrapper.Organization')
+    @patch('hsabackend.views.jobs_contractors.Organization.objects.get')
     def test_delete_cached_invalid(self,auth_org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
+
+        org = Organization()
+        org.is_onboarding = False
+        auth_org.return_value = org
 
         mockdata = {
             "jobContractors": [
@@ -301,10 +305,14 @@ class contractorViewTest(APITestCase):
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     @patch('hsabackend.views.jobs_contractors.JobContractor.objects.get')
-    @patch('hsabackend.utils.auth_wrapper.Organization')
+    @patch('hsabackend.views.jobs_contractors.Organization.objects.get')
     def test_delete_cached_valid(self, auth_org, job_contractor):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
+
+        org = Organization()
+        org.is_onboarding = False
+        auth_org.return_value = org
         
         job_contractor_obj = MagicMock(spec=JobContractor)
         job_contractor.return_value = job_contractor_obj

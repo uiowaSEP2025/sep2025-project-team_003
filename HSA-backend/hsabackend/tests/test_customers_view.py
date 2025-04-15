@@ -66,7 +66,7 @@ class CustomerViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        org = Mock(spec=Organization)
+        org = Organization()
         org.pk = 1
         org.is_onboarding = False
         get.return_value = org
@@ -135,7 +135,7 @@ class CustomerViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        org = Mock(spec=Organization)
+        org = Organization()
         org.pk = 1
         org.is_onboarding = False
         get.return_value = org

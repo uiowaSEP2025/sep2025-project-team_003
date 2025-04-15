@@ -290,10 +290,14 @@ class materialViewTest(APITestCase):
         assert response.status_code == status.HTTP_200_OK
         material_mock.delete.assert_called_once
 
-    @patch('hsabackend.utils.auth_wrapper.Organization')
+    @patch('hsabackend.views.job_templates_materials.Organization.objects.get')
     def test_delete_cached_invalid(self, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
+
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         mockdata = {
             "jobTemplateMaterials": [
@@ -314,10 +318,14 @@ class materialViewTest(APITestCase):
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     @patch('hsabackend.views.job_templates_materials.JobTemplateMaterial.objects.get')
-    @patch('hsabackend.utils.auth_wrapper.Organization')
+    @patch('hsabackend.views.job_templates_materials.Organization.objects.get')
     def test_delete_cached_valid(self, auth_org, job_material):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
+
+        org = Organization()
+        org.is_onboarding = False
+        auth_org.return_value = org
         
         job_material_obj = MagicMock(spec=JobTemplateMaterial)
         job_material.return_value = job_material_obj
