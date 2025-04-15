@@ -93,6 +93,7 @@ Feature: New User Onboardin
     When I type on the "Address*" with "9999 Test Job Address"
     When I type on the "City*" with "Test City"
     When I click the "State" button
+    Then I wait for 0.5 seconds
     When I select any option
     When I type on the "Zip code*" with "99999"
     When I click the "Next 5" button
