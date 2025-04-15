@@ -76,11 +76,14 @@ class orgViewTests(APITestCase):
         org1.objects = manager
         manager.get.return_value = org_object
 
+        obj = MagicMock(name='obj')
+        org1.return_value = obj
+
         manager1 = MagicMock()
         org2.objects = manager1
 
 
-        qs = MagicMock(spec=QuerySet, name="shit")
+        qs = MagicMock(spec=QuerySet)
         manager.filter.return_value = qs
         qs.count.return_value = 0
 
@@ -99,7 +102,9 @@ class orgViewTests(APITestCase):
         request.user = mock_user
         response = createOrganization(request)
 
-        org_object.save.assert_called_once()
+        
+
+        obj.save.assert_called_once()
         
         assert response.status_code == status.HTTP_201_CREATED
 
