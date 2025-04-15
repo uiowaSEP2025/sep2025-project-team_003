@@ -74,6 +74,9 @@ def complete_onboarding(request):
     contractor_request = request.data.get("contractorRequest")
     job_request = request.data.get("jobRequest")
 
+    if not customer_request or not service_request or not job_request:
+        return Response({"message": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
+
     try:
         with transaction.atomic():
             org.full_clean()
@@ -99,7 +102,7 @@ def complete_onboarding(request):
                 new_service.full_clean()
                 new_service.save()
             
-            if material_request or len(material_request) != 0:
+            if material_request:
                 new_material = Material(
                     material_name = material_request.get('material_name'),
                     organization = org
@@ -107,7 +110,7 @@ def complete_onboarding(request):
                 new_material.full_clean()
                 new_material.save()
 
-            if contractor_request or len(contractor_request) != 0:
+            if contractor_request:
                 new_contractor = Contractor(
                     first_name = contractor_request.get('firstName'),
                     last_name = contractor_request.get('lastName'),
@@ -135,7 +138,7 @@ def complete_onboarding(request):
                 new_job.save()
 
                 # Add service and job join entry
-                service_list = job_request.get("services")
+                service_list = job_request.get("services") or []
                 for service in service_list:
                     new_job_service = JobService(
                         job = new_job,
@@ -145,7 +148,7 @@ def complete_onboarding(request):
                     new_job_service.save()
                 
                 # Add material and job join entry
-                material_list = job_request.get("materials")
+                material_list = job_request.get("materials") or []
                 for material in material_list:
                     new_material_job = JobMaterial(
                         material = new_material,
@@ -157,7 +160,7 @@ def complete_onboarding(request):
                     new_material_job.save()
                 
                 # Add contractor and job join entry
-                contractor_list = job_request.get("contractors")
+                contractor_list = job_request.get("contractors") or []
                 for contractor in contractor_list:
                     new_job_contractor = JobContractor(
                         job = new_job,
