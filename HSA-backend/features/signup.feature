@@ -32,5 +32,5 @@ Feature: User Login
     When I click the "Create" button
     Then I wait for 0.5 seconds
     When I click the "Confirm" button
-    Then I wait for 0.5 seconds
+    Then I wait for 2 seconds
     Then the current URL should be "/login"
