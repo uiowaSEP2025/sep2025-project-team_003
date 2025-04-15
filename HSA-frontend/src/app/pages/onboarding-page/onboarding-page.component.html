@@ -12,7 +12,7 @@
           <ng-template matStepLabel>Example</ng-template>
           <div style="max-width: 800px; display: flex; justify-content: space-between;">
             <h2 style="margin-bottom: 20px; word-wrap: break-word;">
-              Do you want to proceed with example data? (All steps will not be saved)
+              Do you want to proceed with example data?
             </h2>
             <div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
               <button data-testid="yes" mat-flat-button (click)="onYesNoConfirm('yes')">Yes</button>
@@ -21,7 +21,7 @@
           </div>
         </form>
       </mat-step>
-			<mat-step [stepControl]="serviceForm">
+			<mat-step [editable]="!isLockedServiceStep" [stepControl]="serviceForm">
 				<form class="parent" [formGroup]="serviceForm" (ngSubmit)="onSubmitServiceCreation()">
 					<ng-template matStepLabel>Create Service</ng-template>
 					<mat-card class="p-5 wide-card">
@@ -57,7 +57,7 @@
 					</mat-card>
 				</form>
 			</mat-step>
-			<mat-step [stepControl]="customerForm">
+			<mat-step [editable]="!isLockedCustomerStep" [stepControl]="customerForm">
 				<form class="parent" [formGroup]="customerForm" (ngSubmit)="onSubmitCustomerCreation()">
 					<ng-template matStepLabel>Create Customer</ng-template>
 					<mat-card class="p-5 wide-card">
@@ -116,9 +116,9 @@
 							@if (customerForm.get('phone')?.touched && customerForm.get('phone')?.hasError('required')) {
 								<mat-error>Phone is required</mat-error>
 							}
-              @if (customerForm.get('phone')?.hasError('pattern')) {
-                <mat-error>Format is <strong>xxx-xxx-xxxx</strong></mat-error>
-              }
+							@if (customerForm.get('phone')?.hasError('pattern')) {
+								<mat-error>Format is <strong>xxx-xxx-xxxx</strong></mat-error>
+							}
 						</mat-form-field>
 						<mat-form-field class="example-full-width">
 							<mat-label>Add Notes</mat-label>
@@ -135,7 +135,7 @@
 					</mat-card>
 				</form>
 			</mat-step>
-			<mat-step [stepControl]="materialForm" [optional]="true">
+			<mat-step [editable]="!isLockedMaterialStep" [stepControl]="materialForm" [optional]="true">
 				<form class="parent" [formGroup]="materialForm">
 					<ng-template matStepLabel>Create Material</ng-template>
 					<mat-card class="p-5 wide-card">
@@ -154,7 +154,7 @@
 					</mat-card>
 				</form>
 			</mat-step>
-			<mat-step [stepControl]="contractorForm" [optional]="true">
+			<mat-step [editable]="!isLockedContractorStep" [stepControl]="contractorForm" [optional]="true">
 				<form class="parent" [formGroup]="contractorForm">
 					<ng-template matStepLabel>Create Contractor</ng-template>
 					<mat-card class="p-5 wide-card">
@@ -184,9 +184,9 @@
 								matInput
 								placeholder="Ex: john.doe@gmail.com"
 							>
-              @if (contractorForm.get('email')?.touched && contractorForm.get('email')?.hasError('email')) {
-                <mat-error>Email format is invalid</mat-error>
-              }
+							@if (contractorForm.get('email')?.touched && contractorForm.get('email')?.hasError('email')) {
+								<mat-error>Email format is invalid</mat-error>
+							}
 						</mat-form-field>
 						<mat-form-field class="full-width-field">
 							<mat-label>Contractor Phone Number</mat-label>
@@ -195,11 +195,11 @@
 								formControlName = "phone"
 								matInput
 								placeholder="000-000-0000"
-                pattern="(\(\d{3}\)\s?|\d{3}[-.\s])\d{3}[-.\s]?\d{4}"
+                				pattern="(\(\d{3}\)\s?|\d{3}[-.\s])\d{3}[-.\s]?\d{4}"
 							>
 							@if (contractorForm.get('phone')?.hasError('pattern')) {
 								<mat-error>Format is <strong>xxx-xxx-xxxx</strong></mat-error>
-							  }
+							}
 						</mat-form-field>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
 							<button data-testid="next-4" mat-flat-button type="submit" (click)="onSubmitContractorCreation()">Next</button>

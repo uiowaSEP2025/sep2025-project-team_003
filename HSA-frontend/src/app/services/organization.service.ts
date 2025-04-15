@@ -16,6 +16,14 @@ interface CreateOrganizationPostData {
 	ownerLn: string | null
 }
 
+interface OnboardingUpdatePostData {
+	customerRequest: any | null
+	serviceRequest: any | null
+	materialrRequest: any | null
+	contractorRequest: any | null
+	isOnboarding: boolean | null
+}
+
 @Injectable({
 	providedIn: 'root'
 })
@@ -24,6 +32,7 @@ export class OrganizationService {
 	private apiGetUrl = `${environment.apiUrl}/api/get/organization`;
 	private apiCreateUrl = `${environment.apiUrl}/api/create/organization`;
 	private apiEditUrl = `${environment.apiUrl}/api/edit/organization`;
+	private apiOnboardingUpdateUrl = `${environment.apiUrl}/api/edit/organization/onboarding`;
 	private apiDeleteUrl = `${environment.apiUrl}/api/delete/organization`
 
 	constructor(private http: HttpClient) { }
@@ -39,4 +48,9 @@ export class OrganizationService {
 	public editOrganization(data: CreateOrganizationPostData): Observable<StandardApiResponse> {
 		return this.http.post<StandardApiResponse>(this.apiEditUrl, data);
 	}
+
+	public updateOnboardingProcess(data: OnboardingUpdatePostData): Observable<StandardApiResponse> {
+		return this.http.post<StandardApiResponse>(this.apiOnboardingUpdateUrl, data);
+	}
+
 }

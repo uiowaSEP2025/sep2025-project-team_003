@@ -4,7 +4,16 @@ from rest_framework import status
 from hsabackend.models.organization import Organization
 from django.db.models import Q
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+from hsabackend.models.customer import Customer
+from hsabackend.models.service import Service
+from hsabackend.models.material import Material
+from hsabackend.models.contractor import Contractor
+from hsabackend.models.job import Job
+from hsabackend.models.job_service import JobService
+from hsabackend.models.job_material import JobMaterial
+from hsabackend.models.job_contractor import JobContractor
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded(require_onboarding=False)
@@ -58,11 +67,108 @@ def complete_onboarding(request):
     if not org.is_onboarding:
         return Response({"message": "Already onboarded"}, status=status.HTTP_400_BAD_REQUEST)
     
-    
+    is_onboarding = request.data.get("isOnboarding")
+    customer_request = request.data.get("customerRequest")
+    service_request = request.data.get("serviceRequest")
+    material_request = request.data.get("materialRequest")
+    contractor_request = request.data.get("contractorRequest")
+    job_request = request.data.get("jobRequest")
 
     try:
-        org.fullclean()
-        org.save()
+        with transaction.atomic():
+            org.full_clean()
+
+            if customer_request:
+                new_customer = Customer(
+                    first_name = customer_request.get('firstn'),
+                    last_name = customer_request.get('lastn'),
+                    email = customer_request.get('email'),
+                    phone_no = customer_request.get('phoneno').replace("-", ""),
+                    notes = customer_request.get('notes'),
+                    organization = org
+                )
+                new_customer.full_clean()
+                new_customer.save()
+            
+            if service_request:
+                new_service = Service(
+                    service_name = service_request.get('service_name'),
+                    service_description = service_request.get('service_description'),
+                    organization = org
+                )
+                new_service.full_clean()
+                new_service.save()
+            
+            if material_request or len(material_request) != 0:
+                new_material = Material(
+                    material_name = material_request.get('material_name'),
+                    organization = org
+                )
+                new_material.full_clean()
+                new_material.save()
+
+            if contractor_request or len(contractor_request) != 0:
+                new_contractor = Contractor(
+                    first_name = contractor_request.get('firstName'),
+                    last_name = contractor_request.get('lastName'),
+                    email = contractor_request.get('email'),
+                    phone = contractor_request.get('phone').replace("-", ""),
+                    organization = org
+                )
+                new_contractor.full_clean()
+                new_contractor.save()
+
+            if job_request:
+                new_job = Job(
+                    job_status = "created",
+                    start_date = job_request.get("startDate"),
+                    end_date = job_request.get("endDate"),
+                    description = job_request.get("description"),
+                    organization = org,
+                    customer = new_customer,
+                    requestor_address = job_request.get("address"),
+                    requestor_city = job_request.get("city"),
+                    requestor_state = job_request.get("state"),
+                    requestor_zip = job_request.get("zip")
+                )
+                new_job.full_clean()
+                new_job.save()
+
+                # Add service and job join entry
+                service_list = job_request.get("services")
+                for service in service_list:
+                    new_job_service = JobService(
+                        job = new_job,
+                        service = new_service
+                    )
+                    new_job_service.full_clean()
+                    new_job_service.save()
+                
+                # Add material and job join entry
+                material_list = job_request.get("materials")
+                for material in material_list:
+                    new_material_job = JobMaterial(
+                        material = new_material,
+                        job = new_job,
+                        units_used = material["unitsUsed"],
+                        price_per_unit = material["pricePerUnit"]
+                    )
+                    new_material_job.full_clean()
+                    new_material_job.save()
+                
+                # Add contractor and job join entry
+                contractor_list = job_request.get("contractors")
+                for contractor in contractor_list:
+                    new_job_contractor = JobContractor(
+                        job = new_job,
+                        contractor = new_contractor
+                    )
+
+                    new_job_contractor.full_clean()
+                    new_job_contractor.save()  
+
+            org.is_onboarding = is_onboarding
+            org.save()
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 

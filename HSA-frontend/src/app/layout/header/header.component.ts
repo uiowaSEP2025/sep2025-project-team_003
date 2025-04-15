@@ -36,21 +36,6 @@ export class HeaderComponent implements OnInit {
     this.loginStatusSubscription = this.userAuth.isLoggedIn$.subscribe((status) => {
       this.isLoggedIn = status; // Update local status when the login status changes
     });
-
-    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
-      const rootData = this.route.root.firstChild?.snapshot.data!['headerData'];
-      
-      try {
-        if (rootData["org_name"]) {
-          this.isLoggedIn = true
-        } else {
-          this.isLoggedIn = false
-        }
-      }
-      catch {
-        this.isLoggedIn = false
-      }
-    });
   }
 
   onLogout() {

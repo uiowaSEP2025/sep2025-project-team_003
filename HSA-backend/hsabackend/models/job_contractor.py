@@ -1,6 +1,7 @@
 from django.db import models
 from hsabackend.models.contractor import Contractor
 from hsabackend.models.job import Job
+from hsabackend.utils.string_formatters import format_phone_number
 
 class JobContractor(models.Model):
     """A preset template that can be used by other entities to create a join entity"""
@@ -15,6 +16,6 @@ class JobContractor(models.Model):
             'id': self.pk,
             'contractorID': self.contractor.pk,
             'contractorName': self.contractor.first_name + " " + self.contractor.last_name,
-            'contractorPhoneNo': self.contractor.phone,
+            'contractorPhoneNo': format_phone_number(self.contractor.phone),
             'contractorEmail': self.contractor.email
         }

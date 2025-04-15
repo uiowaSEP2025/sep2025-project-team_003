@@ -114,12 +114,18 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
     // when inputs are recieved
 
     if (this.checkbox !== 'none') {
-      this.headersWithActions = ['Checkbox', ...this.headersWithActions]
+      if (!this.headersWithActions.includes('Checkbox')) {
+        this.headersWithActions = ['Checkbox', ...this.headersWithActions]
+      }
     }
 
     if (this.unitUsedField === true) {
-      this.headersWithActions = [...this.headersWithActions, 'Unit Used', 'Price Per Unit']
+      if (!this.headersWithActions.includes('Unit Used')) {
+        this.headersWithActions = [...this.headersWithActions, 'Unit Used', 'Price Per Unit']
+      }
     }
+    
+    this.isDataNotAvailable = this.fetchedData.data.length === 0
   }
 
   redirectEdit(id: number, args: any) {

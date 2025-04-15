@@ -21,7 +21,7 @@ from hsabackend.views.job_templates_materials import get_job_template_material_t
 from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice
 from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForInvoiceByInvoice
 from hsabackend.views.generate_invoice_pdf_view import generate_pdf
-from hsabackend.views.organizations import createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail
+from hsabackend.views.organizations import complete_onboarding, createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail
 from hsabackend.views.discounts import get_discounts, edit_discount, create_discount, delete_discount
 from django.http import HttpResponse
 
@@ -132,6 +132,7 @@ urlpatterns = [
     path("api/create/organization", createOrganization),
     path("api/get/organization", getOrganizationDetail),
     path("api/edit/organization", editOrganizationDetail),
+    path("api/edit/organization/onboarding", complete_onboarding),
 
     # quotes
     path("api/get/quotesforinvoice/customer/<int:id>", getQuotesForInvoiceByCustomer),

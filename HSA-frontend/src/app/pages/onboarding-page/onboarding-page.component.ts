@@ -1,9 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
-import { ServiceService } from '../../services/service.service';
-import { MaterialService } from '../../services/material.service';
-import { CustomerService } from '../../services/customer.service';
-import { JobService } from '../../services/job.service';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatError, MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,7 +7,6 @@ import { MatButton } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { AddConfirmDialogComponentComponent } from '../../components/add-confirm-dialog-component/add-confirm-dialog-component.component';
-import { ContractorService } from '../../services/contractor.service';
 import { OrganizationService } from '../../services/organization.service';
 import { Router } from '@angular/router';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -21,7 +16,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { StringFormatter } from '../../utils/string-formatter';
 import { InputFieldDictionary } from '../../interfaces/interface-helpers/inputField-row-helper.interface';
 import { AddSelectDialogData } from '../../interfaces/interface-helpers/addSelectDialog-helper.interface';
-import { AddSelectDialogComponentComponent } from '../../components/add-select-dialog-component/add-select-dialog-component.component';
 import { StateList } from '../../utils/states-list';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -80,6 +74,11 @@ export class OnboardingPageComponent implements OnInit {
   status: string = 'created'
   states: any = []
   isExamplePrefilled: boolean = false
+  isLockedServiceStep: boolean = false
+  isLockedCustomerStep: boolean = false
+  isLockedMaterialStep: boolean = false
+  isLockedContractorStep: boolean = false
+  phonePattern: RegExp = /^\d{3}-\d{3}-\d{4}$/;
   @ViewChild('stepper') stepper!: MatStepper;
 
   constructor(
@@ -90,11 +89,6 @@ export class OnboardingPageComponent implements OnInit {
     private customerFormBuilder: FormBuilder,
     private contractorFormBuilder: FormBuilder,
     private organizationService: OrganizationService,
-    private serviceService: ServiceService,
-    private materialService: MaterialService,
-    private customerService: CustomerService,
-    private contractorService: ContractorService,
-    private jobService: JobService,
     private stringFormatter: StringFormatter, 
     private jobFormBuilder: FormBuilder,
     public dialog: MatDialog,
@@ -137,7 +131,7 @@ export class OnboardingPageComponent implements OnInit {
       requestorAddress: ['', Validators.required],
       requestorCity: ['', Validators.required],
       requestorZip: ['', Validators.required],
-      requestorStateSelect: ['', Validators.required],
+      requestorStateSelect: [, Validators.required],
       jobDescription: ['', Validators.required]
     }, { validators: this.dateValidator });
 
@@ -150,6 +144,9 @@ export class OnboardingPageComponent implements OnInit {
     this.organizationService.getOrganization().subscribe({
       next: (response) => {
         this.organization = response
+        this.jobGeneralForm.patchValue({
+          requestorStateSelect: this.organization["org_requestor_state"]
+        })
 
         if (this.organization["is_onboarding"] === false) {
           this.navigateToPage('home')
@@ -163,7 +160,8 @@ export class OnboardingPageComponent implements OnInit {
   onYesNoConfirm(isYes: string) {
     if (isYes === "yes") {
       const dialogRef = this.dialog.open(AddConfirmDialogComponentComponent, {
-        data: "with prefilled data? (All steps will not be saved)"
+        width: "400px",
+        data: "with prefilled data (All steps will not be saved)"
       });
 
       dialogRef.afterClosed().subscribe((result:any) => {
@@ -184,6 +182,7 @@ export class OnboardingPageComponent implements OnInit {
         exampleConfirmation: isYes
       })
       
+      this.isExamplePrefilled = false
       this.buttonForm.markAsTouched();
       this.stepper.next()
     }
@@ -214,6 +213,8 @@ export class OnboardingPageComponent implements OnInit {
       }
 
       this.firstMaterial = materialCreateResponse
+    } else {
+      this.materials.materials = []
     }
 
     this.stepper.selected!.completed = true;
@@ -235,6 +236,7 @@ export class OnboardingPageComponent implements OnInit {
       this.firstCustomer = customerCreateResponse
       this.customerID = this.firstCustomer["id"];
       this.selectedCustomer = this.firstCustomer["id"]
+      this.isLockedCustomerStep = true
       this.stepper.selected!.completed = true;
       this.stepper.next();
     }
@@ -245,26 +247,49 @@ export class OnboardingPageComponent implements OnInit {
     && this.contractorForm.get('lastName')?.value !== ""
     && this.contractorForm.get('email')?.value !== ""
     && this.contractorForm.get('phone')?.value !== ""
+    && this.phonePattern.test(this.contractorForm.get('phone')?.value || '')
   ) {
-      const contractorCreateResponse = {
-        id: 1,
-        first_name: this.contractorForm.get('firstName')?.value,
-        last_name: this.contractorForm.get('lastName')?.value,
-        email: this.contractorForm.get('email')?.value,
-        phone: this.contractorForm.get('phone')?.value,
-      }
-
-      this.firstContractor = contractorCreateResponse
+    const contractorCreateResponse = {
+      id: 1,
+      first_name: this.contractorForm.get('firstName')?.value,
+      last_name: this.contractorForm.get('lastName')?.value,
+      email: this.contractorForm.get('email')?.value,
+      phone: this.contractorForm.get('phone')?.value,
     }
 
-    this.stepper.selected!.completed = true;
-    this.stepper.next();
+      this.firstContractor = contractorCreateResponse
+      this.stepper.selected!.completed = true;
+      this.stepper.next();
+    } else {
+      this.firstContractor = null
+      this.contractors.contractors = []
+      
+
+      if (this.contractorForm.get('firstName')?.value === "" 
+      && this.contractorForm.get('lastName')?.value === ""
+      && this.contractorForm.get('email')?.value === ""
+      && (this.contractorForm.get('phone')?.value === ""
+      || this.phonePattern.test(this.contractorForm.get('phone')?.value || ''))) {
+        this.stepper.selected!.completed = true;
+        this.stepper.next();
+      } else {
+        this.snackBar.open('Cannot proceed with any invalid field, please clear or fill up all fields!', '', {
+          duration: 3000
+        });
+        this.contractorForm.markAllAsTouched();
+        this.stepper.selected!.completed = false;
+      }
+    }
   }
 
   
   onSubmitJobGeneral() {
     if (this.jobGeneralForm.invalid) {
       this.jobGeneralForm.markAllAsTouched();
+      this.snackBar.open('Invalid fields, please revise the form and resubmit', '', {
+        duration: 3000
+      });
+
       this.stepper.selected!.completed = false;
     } else {
       this.stepper.selected!.completed = true;
@@ -361,13 +386,11 @@ export class OnboardingPageComponent implements OnInit {
   }
 
   openAddServiceDialog() {
-    this.services = {
-      services: [this.firstService]
-    }
-
     const dialogData: AddSelectDialogData = {
       typeOfDialog: 'service',
-      dialogData: this.services,
+      dialogData: {
+        services: [this.firstService]
+      },
       searchHint: 'Search by material name',
       headers: ['Service Name', 'Service Description'],
       materialInputFields: this.materialInputFields,
@@ -392,19 +415,16 @@ export class OnboardingPageComponent implements OnInit {
           this.services = { services: [info] };
         });
         
+        this.isLockedServiceStep = true;
         this.selectedServices = result.selectedItems;
       }
     });
   }
 
   openAddMaterialDialog() {
-    this.materials = {
-      materials: [this.firstMaterial]
-    }
-
     const dialogData: AddSelectDialogData = {
       typeOfDialog: 'material',
-      dialogData: this.materials,
+      dialogData: this.firstMaterial ? { materials: [this.firstMaterial] }: { materials: [] },
       searchHint: 'Search by material name or description',
       headers: ['Checkbox', 'Material Name', 'Material Description'],
       materialInputFields: this.materialInputFields,
@@ -424,19 +444,20 @@ export class OnboardingPageComponent implements OnInit {
           this.materials = { materials: [element] };
         });
 
+        this.isLockedMaterialStep = true;
         this.selectedMaterials = result.selectedItems;
+      } else {
+        this.materials.materials = []
       }
     });
   }
 
   openAddContractorDialog() {
-    this.contractors = {
-      contractors: [this.firstContractor]
-    }
-
     const dialogData: AddSelectDialogData = {
       typeOfDialog: 'contractor',
-      dialogData: this.contractors,
+      dialogData: this.firstContractor ? {
+        contractors: [this.firstContractor]
+      } : { contractors: [] },
       searchHint: 'Search by contractor name or description',
       headers: ['Checkbox', 'Contractor Name', 'Phone Number', 'Email'],
       materialInputFields: this.materialInputFields,
@@ -462,7 +483,10 @@ export class OnboardingPageComponent implements OnInit {
           this.contractors = { contractors: [info] };
         });
 
+        this.isLockedContractorStep = true;
         this.selectedContractors = result.selectedItems;
+      } else {
+        this.contractors.contractors = []
       }
     });
   }
@@ -479,6 +503,7 @@ export class OnboardingPageComponent implements OnInit {
         }
 
         this.services.services = this.services.services.filter((item: { serviceID: any; }) => item.serviceID !== popOutID);
+        this.isLockedServiceStep = this.services.services.length !== 0
         return this.services;
       }
       case 'material': {
@@ -491,6 +516,7 @@ export class OnboardingPageComponent implements OnInit {
         }
 
         this.materials.materials = this.materials.materials.filter((item: { materialID: any; }) => item.materialID !== popOutID);
+        this.isLockedMaterialStep = this.materials.materials.length !== 0
         return this.materials;
       }
       case 'contractor': {
@@ -503,6 +529,7 @@ export class OnboardingPageComponent implements OnInit {
         }
 
         this.contractors.contractors = this.contractors.contractors.filter((item: { contractorID: any; }) => item.contractorID !== popOutID);
+        this.isLockedContractorStep = this.contractors.contractors.length !== 0
         return this.contractors;
       }  
     };
@@ -512,7 +539,8 @@ export class OnboardingPageComponent implements OnInit {
   onCreateConfirmDialog(type: string) {
     if (type === 'job') {
       const dialogRef = this.dialog.open(AddConfirmDialogComponentComponent, {
-        data: "job creation"
+        width: "400px",
+        data: `job creation. ${this.isExamplePrefilled ? "(Example data will not be saved)" : ""}`
       });
   
       dialogRef.afterClosed().subscribe((result:any) => {
@@ -524,38 +552,68 @@ export class OnboardingPageComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.jobGeneralForm.invalid) {
-      this.jobGeneralForm.markAllAsTouched();
-      this.snackBar.open('Invalid fields, please revise the form and resubmit', '', {
-        duration: 3000
-      });
-    }
+    const customerCreateRequest = !this.isExamplePrefilled ? {
+      firstn: this.customerForm.get('firstName')?.value,
+      lastn: this.customerForm.get('lastName')?.value,
+      email: this.customerForm.get('email')?.value,
+      phoneno: this.customerForm.get('phone')?.value,
+      notes: this.customerForm.get('note')?.value,
+    } : false
+
+    const serviceCreateRequest = !this.isExamplePrefilled ? {
+      service_name: this.serviceForm.get('serviceName')?.value,
+      service_description: this.serviceForm.get('serviceDescription')?.value
+    } : false
+
+    const materialCreateRequest = !this.isExamplePrefilled ? this.materials.materials.length !== 0 ? {
+      material_name: this.materialForm.get('materialName')?.value
+    } : [] : false
+
+    const contractorCreateRequest = !this.isExamplePrefilled ? this.contractors.contractors.length !== 0 ? {
+      firstName: this.contractorForm.get('firstName')?.value,
+      lastName: this.contractorForm.get('lastName')?.value,
+      email: this.contractorForm.get('email')?.value,
+      phone: this.contractorForm.get('phone')?.value,
+    } : [] : false
+
+    let jobCreateRequest = {}
 
     if (this.isExamplePrefilled) {
-      this.updateOnboardingField();
-      this.navigateToPage('home');
-      return;
+      jobCreateRequest = false
     } else {
+      if (this.jobGeneralForm.invalid) {
+        this.jobGeneralForm.markAllAsTouched();
+        this.snackBar.open('Invalid fields, please revise the form and resubmit', '', {
+          duration: 3000
+        });
+      }
+
       let servicesField: { id: any; } [] = []
-      this.services.services.forEach((element: any) => {
-        servicesField.push({ "id": element["serviceID"] })
-      })
+      if (this.services.services.length !== 0) {  
+        this.services.services.forEach((element: any) => {
+          servicesField.push({ "id": element["serviceID"] })
+        })
+      }
   
       let materialsField: { id: any, unitsUsed: any, pricePerUnit: any} [] = []
-      this.materials.materials.forEach((element: any) => {
-        materialsField.push({ 
-          "id": element["materialID"],
-          "unitsUsed": element["unitsUsed"],
-          "pricePerUnit": element["pricePerUnit"] 
+      if (this.materials.materials.length !== 0) {
+        this.materials.materials.forEach((element: any) => {
+          materialsField.push({ 
+            "id": element["materialID"],
+            "unitsUsed": element["unitsUsed"],
+            "pricePerUnit": element["pricePerUnit"] 
+          });
         });
-      });
+      }
   
       let contractorsField: { id: any; } [] = []
-      this.contractors.contractors.forEach((element: any) => {
-        contractorsField.push({ "id": element["contractorID"] })
-      });
+      if (this.contractors.contractors.length !== 0) {
+        this.contractors.contractors.forEach((element: any) => {
+          contractorsField.push({ "id": element["contractorID"] })
+        });
+      }
       
-      const requestJson = {
+      jobCreateRequest = {
         jobStatus: this.status,
         startDate: this.stringFormatter.dateFormatter(this.jobGeneralForm.get('startDate')?.value),
         endDate: this.stringFormatter.dateFormatter(this.jobGeneralForm.get('endDate')?.value),
@@ -569,23 +627,18 @@ export class OnboardingPageComponent implements OnInit {
         services: servicesField as [],
         materials: materialsField as []
       }
-  
-      this.jobService.createJob(requestJson).subscribe(
-        {
-          next: (response) => {
-            this.snackBar.open('Job create successfully', '', {
-              duration: 3000
-            });
-
-            this.updateOnboardingField();
-            this.navigateToPage('home');
-          },
-          error: (error) => {
-          }
-        }
-      )
-      return;
     }
+
+    const onboardingUpdateRequest = {
+      customerRequest: customerCreateRequest,
+      serviceRequest: serviceCreateRequest,
+      materialRequest: materialCreateRequest,
+      contractorRequest: contractorCreateRequest,
+      isOnboarding: false,
+      jobRequest: jobCreateRequest
+    }
+
+    this.updateOnboardingField(onboardingUpdateRequest)
   }
 
   onCancelOnboaring() {
@@ -601,28 +654,16 @@ export class OnboardingPageComponent implements OnInit {
     });
   }
 
-  updateOnboardingField() {
-    // const organizationUpdateData = {
-    //   name: this.organization["org_name"],
-    //   email: this.organization["org_email"],
-    //   city: this.organization["org_city"],
-    //   phone: this.organization["org_phone"],
-    //   requestorState: this.organization["org_requestor_state"],
-    //   requestorZip: this.organization["org_requestor_zip"],
-    //   requestorAddress: this.organization["org_requestor_address"],
-    //   ownerFn: this.organization["org_owner_first_name"],
-    //   ownerLn: this.organization["org_owner_last_name"],
-    //   isOnboarding: false
-    // }
-
-    // this.organizationService.editOrganization(organizationUpdateData).subscribe({
-    //   next: (response) => {
-    //     this.snackBar.open('Onboarding completed!', '', {
-    //       duration: 3000
-    //     });
-    //   },
-    //   error: (error) => {
-    //   }
-    // });
+  updateOnboardingField(request: any) {
+    this.organizationService.updateOnboardingProcess(request).subscribe({
+      next: (response) => {
+        this.snackBar.open('Onboarding completed!', '', {
+          duration: 3000
+        });
+        this.navigateToPage('home');
+      },
+      error: (error) => {
+      }
+    });
   }
 }
