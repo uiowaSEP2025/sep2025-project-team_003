@@ -178,6 +178,7 @@ def complete_onboarding(request):
 @check_authenticated_and_onboarded(require_onboarding=False)
 def createOrganization(request):
     # users can only have a single organization
+    print(Organization.objects.filter(owning_User=request.user.pk))
     org_count = Organization.objects.filter(owning_User=request.user.pk).count()
     if org_count > 0:
         return Response({"errors": "This user already has an organization"}, status=status.HTTP_400_BAD_REQUEST)
