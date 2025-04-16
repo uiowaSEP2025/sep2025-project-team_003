@@ -2,7 +2,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from hsabackend.models.customer import Customer 
-from hsabackend.models.quote import Quote
 from hsabackend.models.invoice import Invoice
 from hsabackend.models.organization import Organization
 from django.core.exceptions import ValidationError
