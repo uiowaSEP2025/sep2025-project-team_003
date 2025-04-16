@@ -74,7 +74,7 @@ def complete_onboarding(request):
     contractor_request = request.data.get("contractorRequest")
     job_request = request.data.get("jobRequest")
 
-    if not customer_request or not service_request or not job_request:
+    if customer_request is None or service_request is None or job_request is None:
         return Response({"message": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
     try:

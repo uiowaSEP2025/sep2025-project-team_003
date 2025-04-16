@@ -21,7 +21,8 @@ describe('RequestPasswordResetPageComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [RequestPasswordResetPageComponent],
-      providers: [provideHttpClient(),
+      providers: [
+        provideHttpClient(),
         provideHttpClientTesting(),
         provideAnimationsAsync(),
         { provide: Router, useClass: MockRouter }

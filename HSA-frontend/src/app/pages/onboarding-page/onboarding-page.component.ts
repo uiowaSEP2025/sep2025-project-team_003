@@ -655,19 +655,15 @@ export class OnboardingPageComponent implements OnInit {
   }
 
   updateOnboardingField(request: any) {
-    if (this.isExamplePrefilled) {
-      this.navigateToPage('home')
-    } else {
-      this.organizationService.updateOnboardingProcess(request).subscribe({
-        next: (response) => {
-          this.snackBar.open('Onboarding completed!', '', {
-            duration: 3000
-          });
-          this.navigateToPage('home');
-        },
-        error: (error) => {
-        }
-      });
-    }
+    this.organizationService.updateOnboardingProcess(request).subscribe({
+      next: (response) => {
+        this.snackBar.open('Onboarding completed!', '', {
+          duration: 3000
+        });
+        this.navigateToPage('home');
+      },
+      error: (error) => {
+      }
+    });
   }
 }

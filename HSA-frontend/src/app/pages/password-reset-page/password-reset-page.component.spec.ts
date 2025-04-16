@@ -15,7 +15,7 @@ class MockRouter {
   navigate = jasmine.createSpy('navigate');
 }
 
-fdescribe('PasswordResetPageComponent', () => {
+describe('PasswordResetPageComponent', () => {
   let component: PasswordResetPageComponent;
   let fixture: ComponentFixture<PasswordResetPageComponent>;
   let loader: HarnessLoader;
