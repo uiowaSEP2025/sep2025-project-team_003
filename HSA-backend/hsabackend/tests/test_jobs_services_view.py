@@ -34,7 +34,9 @@ class ServiceViewTest(APITestCase):
         mock_user.is_authenticated = True
         job.return_value = Job()
         service.return_value = Service()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         factory = APIRequestFactory()
         request = factory.get('/api/get/job/1/services?pagesize')
         request.user = mock_user  
@@ -47,7 +49,9 @@ class ServiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         service.return_value = Service()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         factory = APIRequestFactory()
         request = factory.get('/api/get/job/1/services?pagesize=100&offset=10')
@@ -62,7 +66,9 @@ class ServiceViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         
         factory = APIRequestFactory()
         request = factory.get('/api/get/job/1/services?pagesize=10&offset=10')
@@ -95,7 +101,9 @@ class ServiceViewTest(APITestCase):
 
         service.return_value = Service()
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         mockdata = {
             "services": [
@@ -128,7 +136,9 @@ class ServiceViewTest(APITestCase):
 
         service.return_value = Service()
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         mockdata = {
             "services": []
@@ -154,7 +164,9 @@ class ServiceViewTest(APITestCase):
         job_service_qs.exists.return_value = True
 
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         service.return_value = Service()
         job_service_obj = MagicMock(spec=JobService)
         job_service.return_value = job_service_obj
@@ -190,7 +202,9 @@ class ServiceViewTest(APITestCase):
         job_service_qs.exists.return_value = False
 
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         service.return_value = Service()
         job_service_obj = MagicMock(spec=JobService)
         job_service.return_value = job_service_obj
@@ -230,7 +244,9 @@ class ServiceViewTest(APITestCase):
     def test_job_delete_not_found(self, org, job_service_filter):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         job_service_qs = MagicMock(spec=QuerySet)
         job_service_filter.return_value = job_service_qs
         job_service_qs.exists.return_value = False 
@@ -247,7 +263,9 @@ class ServiceViewTest(APITestCase):
     def test_delete_valid(self, org, job_service_filter):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         job_service_qs = MagicMock(spec=QuerySet)
         job_service_filter.return_value = job_service_qs
         job_service_qs.exists.return_value = True 
@@ -261,10 +279,15 @@ class ServiceViewTest(APITestCase):
         
         assert response.status_code == status.HTTP_200_OK
         service_mock.delete.assert_called_once
-
-    def test_delete_cached_invalid(self):
+    
+    @patch('hsabackend.views.jobs_services.Organization.objects.get')
+    def test_delete_cached_invalid(self, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
+
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         mockdata = {
             "jobServices": [
@@ -285,9 +308,14 @@ class ServiceViewTest(APITestCase):
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     @patch('hsabackend.views.jobs_services.JobService.objects.get')
-    def test_delete_cached_valid(self, job_service):
+    @patch('hsabackend.views.jobs_services.Organization.objects.get')
+    def test_delete_cached_valid(self, auth_org, job_service):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
+
+        org = Organization()
+        org.is_onboarding = False
+        auth_org.return_value = org
         
         job_service_obj = MagicMock(spec=JobService)
         job_service.return_value = job_service_obj

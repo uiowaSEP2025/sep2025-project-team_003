@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { JobDataInterface } from '../../interfaces/api-responses/job.api.data.interface';
 import { JobService } from '../../services/job.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -95,7 +94,6 @@ export class EditJobPageComponent {
     private stringFormatter: StringFormatter,
     private activatedRoute:ActivatedRoute, 
     private router: Router, 
-    private errorHandler: ErrorHandlerService,
     private tracker: RequestTrackerService,
     private jobFormBuilder: FormBuilder,
     private http: HttpClient,
@@ -145,7 +143,6 @@ export class EditJobPageComponent {
         this.jobForm.markAllAsTouched();
       },
       error: (error) => {
-        this.errorHandler.handleError(error);
       }}
     );
   }

@@ -59,7 +59,8 @@ class Command(BaseCommand):
                 org_owner_first_name = "Dev",
                 org_owner_last_name = "User",
                 owning_User = usr,
-                org_phone = "1234567890"
+                org_phone = "1234567890",
+                is_onboarding = False,
                 )
             org.save()
             org1 = Organization.objects.create(

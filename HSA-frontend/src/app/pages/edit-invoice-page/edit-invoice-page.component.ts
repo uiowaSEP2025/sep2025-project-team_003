@@ -5,7 +5,6 @@ import { ActivatedRoute } from '@angular/router';
 import { OnInit } from '@angular/core';
 import { MatError } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -64,8 +63,8 @@ export class EditInvoicePageComponent implements OnInit {
   
   
   constructor(private quoteService: QuoteService, private activatedRoute: ActivatedRoute, 
-    private errorHandler: ErrorHandlerService, private invoiceService: InvoiceService,
-    private stringFormatter: StringFormatter, private router: Router) { }
+    private invoiceService: InvoiceService, private stringFormatter: StringFormatter, 
+    private router: Router) { }
 
     private fixBackendTaxPercentage(tax: string): string {
       if (tax === "1.00") {
@@ -139,7 +138,6 @@ export class EditInvoicePageComponent implements OnInit {
             this.router.navigate(['/invoices']);
           },
           error: (error) => {
-            this.errorHandler.handleError(error)
           }})
       }
     });
@@ -152,7 +150,6 @@ export class EditInvoicePageComponent implements OnInit {
         this.quotes = response
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
       }
     })
   }
@@ -188,7 +185,6 @@ export class EditInvoicePageComponent implements OnInit {
         this.router.navigate(['/invoices']);
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
       }})
       return;
   }

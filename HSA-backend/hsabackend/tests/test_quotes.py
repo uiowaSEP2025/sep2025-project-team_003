@@ -23,7 +23,9 @@ class testQuotesView(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         factory = APIRequestFactory()
         
         request = factory.get('api/get/quotesforinvoice/customer/1?search&offset=0')
@@ -37,7 +39,9 @@ class testQuotesView(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         factory = APIRequestFactory()
         
         request = factory.get('api/get/quotesforinvoice/customer/1?search&pagesize=a&offset=0')
@@ -52,7 +56,9 @@ class testQuotesView(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         factory = APIRequestFactory()
 
         custqs = Mock()
@@ -72,7 +78,9 @@ class testQuotesView(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         factory = APIRequestFactory()
 
         custqs = Mock()
@@ -111,7 +119,9 @@ class testQuotesView(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
 
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         
         factory = APIRequestFactory()
         request = factory.get('api/get/quotesforinvoice/invoice/1?search&offset=0')
@@ -125,7 +135,9 @@ class testQuotesView(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
 
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         
         factory = APIRequestFactory()
         request = factory.get('api/get/quotesforinvoice/invoice/1?search&pagesize=s&offset=0')
@@ -140,7 +152,9 @@ class testQuotesView(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
 
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         invoice_qs = Mock()
         invoice_qs.exists.return_value = False
@@ -161,7 +175,9 @@ class testQuotesView(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
 
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         invoice_qs = MagicMock()
         invoice_qs.exists.return_value = True

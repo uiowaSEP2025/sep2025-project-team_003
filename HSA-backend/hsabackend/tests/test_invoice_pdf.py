@@ -26,7 +26,9 @@ class PdfAPITest(APITestCase):
     @patch('hsabackend.views.generate_invoice_pdf_view.Organization.objects.get')
     @patch('hsabackend.views.generate_invoice_pdf_view.Invoice.objects.select_related')
     def test_api_not_found(self, filter, org):
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         select_related = Mock()
         filter.return_value = select_related
         filter_mock = Mock()
@@ -50,7 +52,9 @@ class PdfAPITest(APITestCase):
     @patch('hsabackend.views.generate_invoice_pdf_view.Organization.objects.get')
     @patch('hsabackend.views.generate_invoice_pdf_view.Invoice.objects.select_related')
     def test_ok(self, filter, org, specific_jobs, total_disclaimer, global_jobs_table, org_header):
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         select_related = Mock()
         filter.return_value = select_related
         filter_mock = MagicMock()

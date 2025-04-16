@@ -5,13 +5,12 @@ from hsabackend.models.organization import Organization
 from hsabackend.models.discount_type import DiscountType
 from django.db.models import Q
 from django.core.exceptions import ValidationError
-
+from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def get_discounts(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset',0)
@@ -45,11 +44,9 @@ def get_discounts(request):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def create_discount(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user)
+    org = request.org
     name = request.data.get('name', '')
     percent = request.data.get('percent', '')
 
@@ -67,14 +64,10 @@ def create_discount(request):
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
-
-
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def edit_discount(request,id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-
-    org = Organization.objects.get(owning_User=request.user)
+    org = request.org
     name = request.data.get('name', '')
     percent = request.data.get('percent', '')
 
@@ -96,11 +89,9 @@ def edit_discount(request,id):
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def delete_discount(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-
-    org = Organization.objects.get(owning_User=request.user)
+    org = request.org
 
     discount = DiscountType.objects.filter(
         pk=id,

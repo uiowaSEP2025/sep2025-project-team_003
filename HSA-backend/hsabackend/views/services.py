@@ -5,13 +5,12 @@ from hsabackend.models.organization import Organization
 from hsabackend.models.service import Service
 from django.db.models import Q
 from django.core.exceptions import ValidationError
+from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def get_service_table_data(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset', 0)
@@ -45,11 +44,9 @@ def get_service_table_data(request):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded(require_onboarding=False)
 def get_service_excluded_table_data(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset', 0)
@@ -86,11 +83,9 @@ def get_service_excluded_table_data(request):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded(require_onboarding=False)
 def create_service(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user)
+    org = request.org
     service_name = request.data.get('service_name', '')
     service_description = request.data.get('service_description', '')
 
@@ -103,16 +98,14 @@ def create_service(request):
     try:
         service.full_clean()  # Validate the model instance
         service.save()
-        return Response({"message": "service created successfully"}, status=status.HTTP_201_CREATED)
+        return Response({"message": "Service created successfully", "data": service.json()}, status=status.HTTP_201_CREATED)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def edit_service(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user)
+    org = request.org
     service = Service.objects.filter(pk=id, organization=org)
 
     if not service.exists():
@@ -132,11 +125,9 @@ def edit_service(request, id):
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(["POST"])
+@check_authenticated_and_onboarded(require_onboarding=False)
 def delete_service(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user)
+    org = request.org
     service = Service.objects.filter(pk=id, organization=org)
 
     if not service.exists():

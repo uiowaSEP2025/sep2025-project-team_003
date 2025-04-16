@@ -8,7 +8,6 @@ from hsabackend.views.jobs_contractors import delete_cached_job_contractor, get_
 from rest_framework.test import APITestCase
 from hsabackend.models.organization import Organization
 from django.db.models import QuerySet
-from django.db.models import Q
 from hsabackend.models.contractor import Contractor
 from hsabackend.models.job import Job
 from hsabackend.models.job_contractor import JobContractor
@@ -34,7 +33,9 @@ class contractorViewTest(APITestCase):
         mock_user.is_authenticated = True
         job.return_value = Job()
         contractor.return_value = Contractor()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         factory = APIRequestFactory()
         request = factory.get('/api/get/job/1/contractors?pagesize')
         request.user = mock_user  
@@ -47,7 +48,9 @@ class contractorViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         contractor.return_value = Contractor()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         factory = APIRequestFactory()
         request = factory.get('/api/get/job/1/contractors?pagesize=100&offset=10')
@@ -62,7 +65,9 @@ class contractorViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         
         factory = APIRequestFactory()
         request = factory.get('/api/get/job/1/contractors?pagesize=10&offset=10')
@@ -95,7 +100,9 @@ class contractorViewTest(APITestCase):
 
         contractor.return_value = Contractor()
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         mockdata = {
             "contractors": [
@@ -127,7 +134,9 @@ class contractorViewTest(APITestCase):
 
         contractor.return_value = Contractor()
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         mockdata = {
             "contractors": []
@@ -152,7 +161,9 @@ class contractorViewTest(APITestCase):
         job_serivce_qs.exists.return_value = True
 
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         contractor.return_value = Contractor()
         job_contractor_obj = MagicMock(spec=JobContractor)
         job_contractor.return_value = job_contractor_obj
@@ -188,7 +199,9 @@ class contractorViewTest(APITestCase):
         job_serivce_qs.exists.return_value = False
 
         job.return_value = Job()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         contractor.return_value = Contractor()
         job_contractor_obj = MagicMock(spec=JobContractor)
         job_contractor.return_value = job_contractor_obj
@@ -228,7 +241,9 @@ class contractorViewTest(APITestCase):
     def test_job_delete_not_found(self, org, job_contractor_filter):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         job_serivce_qs = MagicMock(spec=QuerySet)
         job_contractor_filter.return_value = job_serivce_qs
         job_serivce_qs.exists.return_value = False 
@@ -245,7 +260,9 @@ class contractorViewTest(APITestCase):
     def test_delete_valid(self, org, job_contractor_filter):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         job_serivce_qs = MagicMock(spec=QuerySet)
         job_contractor_filter.return_value = job_serivce_qs
         job_serivce_qs.exists.return_value = True 
@@ -260,9 +277,14 @@ class contractorViewTest(APITestCase):
         assert response.status_code == status.HTTP_200_OK
         contractor_mock.delete.assert_called_once
 
-    def test_delete_cached_invalid(self):
+    @patch('hsabackend.views.jobs_contractors.Organization.objects.get')
+    def test_delete_cached_invalid(self,auth_org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
+
+        org = Organization()
+        org.is_onboarding = False
+        auth_org.return_value = org
 
         mockdata = {
             "jobContractors": [
@@ -283,9 +305,14 @@ class contractorViewTest(APITestCase):
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     @patch('hsabackend.views.jobs_contractors.JobContractor.objects.get')
-    def test_delete_cached_valid(self, job_contractor):
+    @patch('hsabackend.views.jobs_contractors.Organization.objects.get')
+    def test_delete_cached_valid(self, auth_org, job_contractor):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
+
+        org = Organization()
+        org.is_onboarding = False
+        auth_org.return_value = org
         
         job_contractor_obj = MagicMock(spec=JobContractor)
         job_contractor.return_value = job_contractor_obj

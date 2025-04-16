@@ -29,7 +29,8 @@ def add_orgs(u1,u2):
         org_owner_first_name = "Dev",
         org_owner_last_name = "User",
         owning_User = u1,
-        org_phone = "1234567890"
+        org_phone = "1234567890",
+        is_onboarding = False
         )
     org1 = Organization.objects.create(
         org_name = "testorg",

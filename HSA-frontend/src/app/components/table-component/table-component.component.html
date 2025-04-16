@@ -35,7 +35,7 @@
             </div>
             } 
             @else if (header === "Checkbox") {
-              <mat-checkbox 
+              <mat-checkbox [attr.data-testid]="'checkbox-' + element.id"
                 [checked]="shouldCheckCheckbox(element.id)" 
                 (change)="handleCheckBoxClick(element.id)" 
                 (change)="handleCheckedRowIndex(element.id)"

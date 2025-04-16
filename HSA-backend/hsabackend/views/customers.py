@@ -5,12 +5,12 @@ from hsabackend.models.organization import Organization
 from hsabackend.models.customer import Customer
 from django.db.models import Q
 from django.core.exceptions import ValidationError
+from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def get_customer_table_data(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset',0)
@@ -43,11 +43,9 @@ def get_customer_table_data(request):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded(require_onboarding=False)
 def get_customer_excluded_table_data(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset',0)
@@ -83,10 +81,9 @@ def get_customer_excluded_table_data(request):
     return Response(res, status=status.HTTP_200_OK)
     
 @api_view(["POST"])
+@check_authenticated_and_onboarded(require_onboarding=False)
 def create_customer(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user)
+    org = request.org
     first_name = request.data.get('firstn', '')
     last_name = request.data.get('lastn', '')
     email = request.data.get('email', '')
@@ -103,15 +100,14 @@ def create_customer(request):
     try:
         customer.full_clean()  # Validate the model instance
         customer.save()
-        return Response({"message": "Customer created successfully"}, status=status.HTTP_201_CREATED)
+        return Response({"message": "Customer created successfully", "data": customer.json()}, status=status.HTTP_201_CREATED)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def edit_customer(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user)
+    org = request.org
     customer_qs = Customer.objects.filter(pk=id, organization=org)
     if not customer_qs.exists():
         return Response({"message": "The customer does not exist"}, status=status.HTTP_404_NOT_FOUND)
@@ -135,10 +131,9 @@ def edit_customer(request, id):
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded(require_onboarding=False)
 def delete_customer(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     cust = Customer.objects.filter(pk=id, organization=org)
     if not cust.exists():
         return Response({"message": "The cutomer does not exist"}, status=status.HTTP_404_NOT_FOUND)

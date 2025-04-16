@@ -8,7 +8,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatError } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { InvoiceService } from '../../services/invoice.service';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { InvoiceDatePickerComponent } from '../../components/invoice-date-picker/invoice-date-picker.component';
@@ -53,8 +52,7 @@ export class CreateInvoicePageComponent implements OnInit {
   ])
 
   constructor(private customerService: CustomerService, private router: Router, private quoteService: QuoteService,
-    private invoiceService: InvoiceService, private errorHandler: ErrorHandlerService,
-    private stringFormatter: StringFormatter) { }
+    private invoiceService: InvoiceService, private stringFormatter: StringFormatter) { }
 
   ngOnInit(): void {
     this.loadCustomersToTable("", 5, 0);
@@ -68,7 +66,6 @@ export class CreateInvoicePageComponent implements OnInit {
         this.customers = response
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
       }
     })
   }
@@ -79,7 +76,6 @@ export class CreateInvoicePageComponent implements OnInit {
         this.quotes = response
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
       }
     })
   }
@@ -140,7 +136,6 @@ export class CreateInvoicePageComponent implements OnInit {
           this.router.navigate(['/invoices']);
         },
         error: (error) => {
-          this.errorHandler.handleError(error)
         }
       }
     )

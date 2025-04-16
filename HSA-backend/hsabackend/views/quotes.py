@@ -6,12 +6,12 @@ from hsabackend.models.customer import Customer
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q
+from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def getQuotesForInvoiceByCustomer(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset',0)
     if not pagesize or not offset:
@@ -58,10 +58,9 @@ def getQuotesForInvoiceByCustomer(request, id):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def getQuotesForInvoiceByInvoice(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset',0)
     if not pagesize or not offset:

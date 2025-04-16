@@ -38,22 +38,22 @@ Scenario: Delete Invoice
     Given I am logged in
     And I am on the invoices page
     When I don't see the loading spinner
-    When  I click the delete button
+    When  I click the delete button specifically
     When I confirm the delete dialog
     Then I wait for 0.5 seconds 
     Then I should see "Nothing to show here" in the table
 
-Scenario: Edit Inovoice
+Scenario: Edit Invoice
     Given I am logged in
     And I am on the invoices page
     When I don't see the loading spinner
     Then I wait for 1 seconds
-    When I click the edit button
+    When I click the edit button specifically
     And I select a status with "issued"
     And I fill in the dates with "02/01/2025" and "02/08/2025"
     And I click the first checkbox in the invoice quotes table
     And I fill in the tax rate with "5"
-    And I click the submit button
+    And I click the submit button specifically
     And I confirm the edit
     When I don't see the loading spinner
     Then I wait for 0.5 seconds
@@ -76,7 +76,7 @@ Scenario: Create Invocice
     Given I am logged in
     And I am on the invoices page
     When I don't see the loading spinner
-    When  I click the delete button
+    When  I click the delete button specifically
     When I confirm the delete dialog
     Then I wait for 0.5 seconds 
     Then I should see "Nothing to show here" in the table
@@ -88,7 +88,7 @@ Scenario: Create Invocice
     When I click the first checkbox in the invoice quotes table
     Then I wait for 0.5 seconds
     When I fill in the tax rate with "5"
-    And I click the submit button
+    And I click the submit button specifically
     When I don't see the loading spinner
     Then I wait for 0.5 seconds
     When I click the first table row

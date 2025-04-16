@@ -29,7 +29,9 @@ class materialViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        get.return_value = Organization()
+        org = Organization()
+        org.is_onboarding = False
+        get.return_value = org
         factory = APIRequestFactory()
         request = factory.get('/api/get/materials?search')
         request.user = mock_user  
@@ -43,7 +45,9 @@ class materialViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        get.return_value = Organization()
+        org = Organization()
+        org.is_onboarding = False
+        get.return_value = org
         qs = MagicMock(spec=QuerySet)
         filter.return_value = qs
         
@@ -62,8 +66,9 @@ class materialViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        org = Mock(spec=Organization)
+        org = Organization()
         org.pk = 1
+        org.is_onboarding = False
         get.return_value = org
         filter.return_value = MagicMock(spec=QuerySet)
         
@@ -91,7 +96,9 @@ class materialViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        get.return_value = Organization()
+        org = Organization()
+        org.is_onboarding = False
+        get.return_value = org
         factory = APIRequestFactory()
         request = factory.get('/api/get/materials/exclude?excludeIDs=1&search')
         request.user = mock_user  
@@ -106,7 +113,9 @@ class materialViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        get.return_value = Organization()
+        org = Organization()
+        org.is_onboarding = False
+        get.return_value = org
         qs = MagicMock(spec=QuerySet) # needed because it's sliced in the code
         filter.return_value = qs
         exclude.return_value = qs
@@ -126,8 +135,9 @@ class materialViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        org = Mock(spec=Organization)
+        org = Organization()
         org.pk = 1
+        org.is_onboarding = False
         get.return_value = org
         filter.return_value = MagicMock(spec=QuerySet)
         
@@ -154,7 +164,9 @@ class materialViewTest(APITestCase):
     def test_create_material_auth_invalid(self, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         
         factory = APIRequestFactory()
         request = factory.post('api/create/material',
@@ -170,7 +182,9 @@ class materialViewTest(APITestCase):
     def test_calls_save_if_valid(self, material_name, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         material_name_obj = MagicMock(spec=Material)
         material_name.return_value = material_name_obj
         
@@ -201,7 +215,9 @@ class materialViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         material_name.return_value = None
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         
         factory = APIRequestFactory()
         request = factory.post('/api/edit/material/0')
@@ -217,7 +233,9 @@ class materialViewTest(APITestCase):
         mock_user.is_authenticated = True
         mock_material_name = MagicMock(spec=Material)
         material_name.return_value = mock_material_name
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         mock_material_name.full_clean.side_effect = ValidationError({'material_name': ['This field is required.']})
 
         factory = APIRequestFactory()
@@ -237,7 +255,9 @@ class materialViewTest(APITestCase):
         mock_user.is_authenticated = True
         mock_material_name = MagicMock(spec=Material)
         material_name.return_value = mock_material_name
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         factory = APIRequestFactory()
         request = factory.post('/api/edit/materials/1',

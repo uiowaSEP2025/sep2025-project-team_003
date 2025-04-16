@@ -50,9 +50,15 @@
 		}
 	</mat-dialog-content>
 	<mat-dialog-actions>
-		<button mat-stroked-button (click)="onCancel()">Cancel</button>
-		<button mat-flat-button type="submit" [disabled]="this.isNotSelectedItems" (click)="onConfirm()">
-			{{this.typeOfDialog === 'template' ? 'Apply' : this.typeOfDialog === 'customer' ? this.data.dialogData === 0 ? 'Select' : 'Change' : 'Add' }}
+		<button data-testid="cancel" mat-stroked-button (click)="onCancel()">Cancel</button>
+		<button 
+			[attr.data-testid]="getButtonAction()"
+			mat-flat-button 
+			type="submit" 
+			[disabled]="isNotSelectedItems" 
+			(click)="onConfirm()"
+			>
+			{{ getButtonAction() | titlecase }}
 		</button>
 	</mat-dialog-actions>
 </div>

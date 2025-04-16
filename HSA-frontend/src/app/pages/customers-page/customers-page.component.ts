@@ -4,7 +4,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { CustomerService } from '../../services/customer.service';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { CommonModule } from '@angular/common';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 
@@ -19,7 +18,7 @@ export class CustomersPageComponent implements OnInit {
   customers: any = null
   customerService: CustomerService
 
-  constructor(private router: Router, customerService: CustomerService, private errorHandler: ErrorHandlerService) {
+  constructor(private router: Router, customerService: CustomerService) {
     this.customerService = customerService
   }
 
@@ -33,7 +32,6 @@ export class CustomersPageComponent implements OnInit {
         this.customers = response
       },
       error: (error) => {
-          this.errorHandler.handleError(error, 'customers')
       }
     })
   }
