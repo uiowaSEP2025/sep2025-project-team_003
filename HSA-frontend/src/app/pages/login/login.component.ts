@@ -9,6 +9,7 @@ import { UserAuthService } from '../../services/user-auth.service';
 import { ErrorHandlerService } from '../../services/error.handler.service';
 import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -28,6 +29,8 @@ export class LoginComponent {
   matcher = new GenericFormErrorStateMatcher();
   usernameFormControl = new FormControl('', [Validators.required]);
   passwordFormControl = new FormControl('', [Validators.required]);
+  resetLink = `${environment.apiUrl}/password/reset`;
+
 
   constructor(private router: Router, private route: ActivatedRoute, private authService: UserAuthService, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {
     this.route.queryParams.subscribe(params => {
