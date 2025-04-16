@@ -8,8 +8,8 @@ class Customer(models.Model):
     first_name = models.CharField(max_length=50, validators=[isNonEmpty])
     last_name = models.CharField(max_length=50, validators=[isNonEmpty])
     email = models.EmailField(max_length=100)
-    phone_no = models.CharField(max_length=10, validators=[isValidPhone])
-    notes = models.CharField(max_length=200, blank=True)
+    phone = models.CharField(max_length=10, validators=[isValidPhone])
+    notes = models.CharField(max_length=200, blank=True, null=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -21,5 +21,6 @@ class Customer(models.Model):
             'first_name': self.first_name,
             'last_name': self.last_name,
             'email': self.email,
-            'phone_no': format_phone_number(self.phone_no),
+            'phone': format_phone_number(self.phone),
+            'notes': self.notes,
         }
