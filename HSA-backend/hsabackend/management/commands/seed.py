@@ -7,15 +7,11 @@ from hsabackend.models.contractor import Contractor
 from hsabackend.models.material import Material
 from django.contrib.auth.models import User
 from hsabackend.models.request import Request
-from hsabackend.models.job_service import JobService
 from hsabackend.models.job import Job
-from hsabackend.models.quote import Quote
-from hsabackend.models.discount_type import DiscountType
 from hsabackend.models.job_template import JobTemplate
-from hsabackend.models.subscription import Subscription
+from hsabackend.models.discount import Discount
 from django.utils import timezone
 import traceback
-from hsabackend.models.job_material import JobMaterial
 
 import random
 
@@ -311,14 +307,14 @@ class Command(BaseCommand):
             discount_names = ["Summer Sale", "Black Friday", "Holiday Special", "New Year Discount", "Clearance Sale"]
 
             for i in range(5):
-                d = DiscountType.objects.create(
+                d = Dicount.objects.create(
                     discount_name=random.choice(discount_names),
                     discount_percent=round(random.uniform(5.0, 50.0)),
                     organization=org
                 )
                 d.save()
 
-                d = DiscountType.objects.create(
+                d = Dicount.objects.create(
                     discount_name=random.choice(discount_names) + " test",
                     discount_percent=round(random.uniform(5.0, 50.0)),
                     organization=org1
@@ -327,8 +323,8 @@ class Command(BaseCommand):
 
             jobs_org_1 = Job.objects.filter(organization__pk=org1.pk)[:5]
             jobs_org = Job.objects.filter(organization__pk=org.pk)[:5]
-            discounts_1 = DiscountType.objects.filter(organization__pk=org1.pk)[:5]
-            discounts = DiscountType.objects.filter(organization__pk=org.pk)[:5]
+            discounts_1 = Dicount.objects.filter(organization__pk=org1.pk)[:5]
+            discounts = Dicount.objects.filter(organization__pk=org.pk)[:5]
 
             for i in range(5):
                 issuance_date = timezone.now().date()

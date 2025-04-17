@@ -61,7 +61,7 @@ class Job(models.Model):
     def json_simplify(self):
         return {
             'id': self.pk,
-            # cap at 50 so table doesn't stretch
+            # cap at 50 so the table doesn't stretch
         
             'description': self.description[:50] + ("..." if len(self.description) > 50 else ""),
             'job_status': self.job_status,

@@ -38,3 +38,27 @@ class JobSerializer(serializers.ModelSerializer):
                 representation['description_display'] = description
 
         return representation
+
+    def create(self, validated_data):
+        """
+        Create and return a new Job instance, given the validated data.
+        """
+        return Job.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        """
+        Update and return an existing Job instance, given the validated data.
+        """
+        instance.job_status = validated_data.get('job_status', instance.job_status)
+        instance.start_date = validated_data.get('start_date', instance.start_date)
+        instance.end_date = validated_data.get('end_date', instance.end_date)
+        instance.description = validated_data.get('description', instance.description)
+        instance.organization = validated_data.get('organization', instance.organization)
+        instance.invoice = validated_data.get('invoice', instance.invoice)
+        instance.customer = validated_data.get('customer', instance.customer)
+        instance.job_city = validated_data.get('job_city', instance.job_city)
+        instance.job_state = validated_data.get('job_state', instance.job_state)
+        instance.job_zip = validated_data.get('job_zip', instance.job_zip)
+        instance.job_address = validated_data.get('job_address', instance.job_address)
+        instance.save()
+        return instance
