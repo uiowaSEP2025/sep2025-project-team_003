@@ -33,13 +33,13 @@ class Request(models.Model):
     def json(self):
         return {
             'id': self.id,
-            'requestor_first_name': self.requester_first_name,
-            'requestor_last_name': self.requester_last_name,
-            'requestor_email': self.requester_email,
-            'requestor_city': self.requester_city,
-            'requestor_state': self.requester_state,
-            'requestor_zip': self.requester_zip,
-            'requestor_address': self.requester_address,
+            'requester_first_name': self.requester_first_name,
+            'requester_last_name': self.requester_last_name,
+            'requester_email': self.requester_email,
+            'requester_city': self.requester_city,
+            'requester_state': self.requester_state,
+            'requester_zip': self.requester_zip,
+            'requester_address': self.requester_address,
             'description': self.description,
             'status': self.request_status
         }
