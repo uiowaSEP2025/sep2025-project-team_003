@@ -74,10 +74,6 @@ def complete_onboarding(request):
     job_request = request.data.get("jobRequest")
 
     if customer_request is None or service_request is None or job_request is None:
-        print("checks")        
-        print(customer_request)
-        print(service_request)
-        print(job_request)
         return Response({"message": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
