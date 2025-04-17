@@ -5,8 +5,6 @@ from hsabackend.models.organization import Organization
 from django.db.models import Q
 from django.core.exceptions import ValidationError
 from hsabackend.models.job_template import JobTemplate
-from hsabackend.models.job_template_service import JobTemplateService
-from hsabackend.models.job_template_material import JobTemplateMaterial
 from hsabackend.models.service import Service
 from hsabackend.models.material import Material
 

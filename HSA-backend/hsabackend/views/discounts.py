@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from hsabackend.models.organization import Organization
-from hsabackend.models.discount_type import DiscountType
+from hsabackend.models.discount import Discount
 from django.db.models import Q
 from django.core.exceptions import ValidationError
 
@@ -24,7 +24,7 @@ def get_discounts(request):
     except:
         return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
     offset = offset * pagesize
-    discounts = DiscountType.objects.filter(
+    discounts = Discount.objects.filter(
         organization=org.pk).filter(
         Q(discount_name__icontains=search) 
     )[offset : offset + pagesize] 
@@ -33,7 +33,7 @@ def get_discounts(request):
     for d in discounts:
         data.append(d.json_for_discount_table())
     
-    count = DiscountType.objects.filter(
+    count = Discount.objects.filter(
         organization=org.pk).filter(
         Q(discount_name__icontains=search) 
     ).count()
@@ -54,7 +54,7 @@ def create_discount(request):
     percent = request.data.get('percent', '')
 
     
-    discount = DiscountType(
+    discount = Discount(
         discount_name = name,
         discount_percent = percent,
         organization = org
@@ -78,7 +78,7 @@ def edit_discount(request,id):
     name = request.data.get('name', '')
     percent = request.data.get('percent', '')
 
-    discount = DiscountType.objects.filter(
+    discount = Discount.objects.filter(
         pk=id,
         organization = org
     )
@@ -102,7 +102,7 @@ def delete_discount(request, id):
 
     org = Organization.objects.get(owning_User=request.user)
 
-    discount = DiscountType.objects.filter(
+    discount = Discount.objects.filter(
         pk=id,
         organization = org
     )

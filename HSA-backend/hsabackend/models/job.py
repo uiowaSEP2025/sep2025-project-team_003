@@ -4,7 +4,6 @@ from django.core.serializers import serialize
 from django.db import models
 from hsabackend.models.contractor import Contractor
 from hsabackend.models.customer import Customer
-from hsabackend.models.invoice import Invoice
 from hsabackend.models.material import Material
 from hsabackend.models.model_validators import isNonEmpty, validate_state
 from hsabackend.models.organization import Organization
@@ -24,7 +23,7 @@ class Job(models.Model):
     end_date = models.DateField(null=True)
     description = models.CharField(max_length=200, blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    invoice = models.ForeignKey(Invoice, null=True, on_delete=models.SET_NULL)
+    invoice = models.ForeignKey('hsabackend.Invoice', null=True, on_delete=models.SET_NULL)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     services = models.ManyToManyField(Service, blank=True, through='JobsServices')
     materials = models.ManyToManyField(Material, blank=True, through='JobsMaterials')
@@ -35,10 +34,13 @@ class Job(models.Model):
     job_address = models.CharField(max_length=100, validators=[isNonEmpty])
     use_hourly_rate = models.BooleanField(default=False)
     minutes_worked = models.IntegerField(default=0)
-    hourly_rate = models.DecimalField(max_digits=10, decimal_places=2, default=organization.default_labor_rate, blank=True)
+    hourly_rate = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
 
     def __str__(self):
         return f"<Job, organization: {self.organization}, description: {self.description}>"
+
+    def get_default_labor_rate(self):
+        return self.organization.default_labor_rate
 
     @property
     def subtotal(self):
@@ -74,12 +76,12 @@ class Job(models.Model):
             'jobAddress': self.job_address,
             'invoice': self.invoice,
         }
-    
+
     def json_simplify(self):
         return {
             'id': self.pk,
             # cap at 50 so the table doesn't stretch
-        
+
             'description': self.description[:50] + ("..." if len(self.description) > 50 else ""),
             'job_status': self.job_status,
             'start_date': self.start_date,
@@ -127,7 +129,7 @@ class JobsServices(models.Model):
 
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
-    fee = models.DecimalField(decimal_places=4, max_digits=2)
+    fee = models.DecimalField(decimal_places=2, max_digits=10)
 
     class Meta:
         db_table = 'hsabackend_job_services'

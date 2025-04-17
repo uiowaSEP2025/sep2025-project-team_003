@@ -6,11 +6,8 @@ from rest_framework.decorators import api_view
 from hsabackend.models.organization import Organization
 from rest_framework import status   
 from hsabackend.models.invoice import Invoice
-from hsabackend.models.job_material import JobMaterial
-from hsabackend.models.quote import Quote
 from hsabackend.utils.string_formatters import format_title_case, format_phone_number_with_parens, format_maybe_null_date, format_currency, format_percent, format_tax_percent
 from decimal import Decimal
-from hsabackend.models.job_service import JobService
 
 def generate_pdf_customer_org_header(pdf: FPDF, org: Organization, invoice: Invoice):
     pdf.set_auto_page_break(auto=True, margin=15)
