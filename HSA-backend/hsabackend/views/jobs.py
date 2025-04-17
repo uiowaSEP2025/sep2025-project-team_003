@@ -1,18 +1,18 @@
+from django.db.models import Q
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
-from hsabackend.models.organization import Organization
-from hsabackend.models.customer import Customer
-from hsabackend.models.job import Job
-from hsabackend.models.service import Service
-from hsabackend.models.material import Material
+
 from hsabackend.models.contractor import Contractor
+from hsabackend.models.job import Job
+from hsabackend.models.material import Material
+from hsabackend.models.organization import Organization
+from hsabackend.models.service import Service
+from hsabackend.serializers.job_contractor_serializer import JobContractorSerializer
+from hsabackend.serializers.job_material_serializer import JobMaterialSerializer
 from hsabackend.serializers.job_serializer import JobSerializer
 from hsabackend.serializers.job_service_serializer import JobServiceSerializer
-from hsabackend.serializers.job_material_serializer import JobMaterialSerializer
-from hsabackend.serializers.job_contractor_serializer import JobContractorSerializer
-from django.db.models import Q
-from django.core.exceptions import ValidationError
+
 
 @api_view(["GET"])
 def get_job_table_data(request):

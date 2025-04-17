@@ -1,29 +1,42 @@
-from django.contrib import admin
-from django.urls import path, re_path
-from django.conf.urls.static import static
 from django.conf import settings
-from django.http import HttpResponseNotFound
-import hsabackend.views.index as hview
-from hsabackend.views.user_auth import login_view, logout_view
-from hsabackend.views.customers import get_customer_excluded_table_data, get_customer_table_data, create_customer, edit_customer, delete_customer
-from hsabackend.views.contractors import get_contractor_excluded_table_data, get_contractor_table_data, create_contractor, edit_contractor, delete_contractor
-from hsabackend.views.requests import get_org_request_data, delete_request,approve_request
-from hsabackend.views.services import get_service_table_data, get_service_excluded_table_data, create_service, edit_service, delete_service
-from hsabackend.views.materials import get_material_excluded_table_data, get_material_table_data, create_material, edit_material, delete_material
-from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice, get_data_for_invoice
-from hsabackend.views.jobs import get_job_table_data, get_job_individual_data, create_job, edit_job, delete_job
-from hsabackend.views.jobs_services import get_job_service_table_data, create_job_service, delete_job_service, delete_cached_job_service
-from hsabackend.views.jobs_materials import get_job_material_table_data, create_job_material, delete_job_material, delete_cached_job_material
-from hsabackend.views.jobs_contractors import get_job_contractor_table_data, create_job_contractor, delete_job_contractor, delete_cached_job_contractor
-from hsabackend.views.job_templates import get_job_template_table_data, get_job_template_individual_data, create_job_template, edit_job_template, delete_job_template
-from hsabackend.views.job_templates_services import get_job_template_service_table_data, create_job_template_service, delete_job_template_service, delete_cached_job_template_service
-from hsabackend.views.job_templates_materials import get_job_template_material_table_data, create_job_template_material, delete_job_template_material, delete_cached_job_template_material
-from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice
-from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForInvoiceByInvoice
-from hsabackend.views.generate_invoice_pdf_view import generate_pdf
-from hsabackend.views.organizations import createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail
-from hsabackend.views.discounts import get_discounts, edit_discount, create_discount, delete_discount
+from django.conf.urls.static import static
+from django.contrib import admin
 from django.http import HttpResponse
+from django.http import HttpResponseNotFound
+from django.urls import path, re_path
+
+import hsabackend.views.index as hview
+from hsabackend.views.contractors import get_contractor_excluded_table_data, get_contractor_table_data, \
+    create_contractor, edit_contractor, delete_contractor
+from hsabackend.views.customers import get_customer_excluded_table_data, get_customer_table_data, create_customer, \
+    edit_customer, delete_customer
+from hsabackend.views.discounts import get_discounts, edit_discount, create_discount, delete_discount
+from hsabackend.views.generate_invoice_pdf_view import generate_pdf
+from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice
+from hsabackend.views.invoices import get_data_for_invoice
+from hsabackend.views.job_templates import get_job_template_table_data, get_job_template_individual_data, \
+    create_job_template, edit_job_template, delete_job_template
+from hsabackend.views.job_templates_materials import get_job_template_material_table_data, create_job_template_material, \
+    delete_job_template_material, delete_cached_job_template_material
+from hsabackend.views.job_templates_services import get_job_template_service_table_data, create_job_template_service, \
+    delete_job_template_service, delete_cached_job_template_service
+from hsabackend.views.jobs import get_job_table_data, get_job_individual_data, create_job, edit_job, delete_job
+from hsabackend.views.jobs_contractors import get_job_contractor_table_data, create_job_contractor, \
+    delete_job_contractor, delete_cached_job_contractor
+from hsabackend.views.jobs_materials import get_job_material_table_data, create_job_material, delete_job_material, \
+    delete_cached_job_material
+from hsabackend.views.jobs_services import get_job_service_table_data, create_job_service, delete_job_service, \
+    delete_cached_job_service
+from hsabackend.views.materials import get_material_excluded_table_data, get_material_table_data, create_material, \
+    edit_material, delete_material
+from hsabackend.views.organizations import createOrganization, deleteOrganization, getOrganizationDetail, \
+    editOrganizationDetail
+from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForInvoiceByInvoice
+from hsabackend.views.requests import get_org_request_data, delete_request, approve_request
+from hsabackend.views.services import get_service_table_data, get_service_excluded_table_data, create_service, \
+    edit_service, delete_service
+from hsabackend.views.user_auth import login_view, logout_view
+
 
 def handle_unmatched_api(request):
     return HttpResponseNotFound("404 Not Found")
@@ -132,10 +145,6 @@ urlpatterns = [
     path("api/edit/organization", editOrganizationDetail),
     path("api/delete/organization", deleteOrganization),
 
-    # quotes
-    path("api/get/quotesforinvoice/customer/<int:id>", getQuotesForInvoiceByCustomer),
-    path("api/get/quotesforinvoice/invoice/<int:id>", getQuotesForInvoiceByInvoice),
-
     # discounts
     path("api/get/discounts", get_discounts),
     path("api/edit/discount/<int:id>", edit_discount),
@@ -145,7 +154,7 @@ urlpatterns = [
     # Catch-all for unmatched API requests
     re_path(r'^api/.*', handle_unmatched_api), 
 
-    # all non API routes should redirect to angular
+    # all non-API routes should redirect to angular
     # must be at the bottom!!!
     re_path(r'.*', hview.main_view)   
 ]
