@@ -13,7 +13,7 @@ class Organization(models.Model):
     org_phone = models.CharField(max_length=10, validators=[model_validators.isValidPhone])
     org_owner_first_name = models.CharField(max_length=100, validators=[model_validators.isNonEmpty])
     org_owner_last_name = models.CharField(max_length=100, validators=[model_validators.isNonEmpty])
-    owning_User = models.ForeignKey(User, on_delete=models.CASCADE)
+    owning_user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_onboarding = models.BooleanField(default=True)
     default_labor_rate = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=False)
 
@@ -31,7 +31,7 @@ class Organization(models.Model):
             'org_address': self.org_address,
             'org_owner_first_name': self.org_owner_first_name,
             'org_owner_last_name': self.org_owner_last_name,
-            'owning_User': self.owning_User.id if self.owning_User else None,
+            'owning_user': self.owning_user.id if self.owning_user else None,
             'is_onboarding': self.is_onboarding,
             'default_labor_rate': self.default_labor_rate
         }

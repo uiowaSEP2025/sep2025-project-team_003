@@ -25,7 +25,7 @@ class RequestSerializer(serializers.ModelSerializer):
         """
         Update and return an existing Request instance, given the validated data.
         """
-        services = validated_data.pop('service', None)
+        services = validated_data.pop('services', None)
 
         # Update request fields
         instance.requester_first_name = validated_data.get('requester_first_name', instance.requester_first_name)
@@ -37,12 +37,14 @@ class RequestSerializer(serializers.ModelSerializer):
         instance.requester_address = validated_data.get('requester_address', instance.requester_address)
         instance.requester_phone = validated_data.get('requester_phone', instance.requester_phone)
         instance.description = validated_data.get('description', instance.description)
+        instance.availability = validated_data.get('availability', instance.availability)
         instance.request_status = validated_data.get('request_status', instance.request_status)
         instance.organization = validated_data.get('organization', instance.organization)
+        instance.job = validated_data.get('job', instance.job)
 
         # Update services if provided
         if services is not None:
-            instance.service.set(services)
+            instance.services.set(services)
 
         instance.save()
         return instance

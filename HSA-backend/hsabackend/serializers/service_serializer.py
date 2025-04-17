@@ -21,6 +21,6 @@ class ServiceSerializer(serializers.ModelSerializer):
         instance.service_name = validated_data.get('service_name', instance.service_name)
         instance.service_description = validated_data.get('service_description', instance.service_description)
         instance.organization = validated_data.get('organization', instance.organization)
-        instance.default_rate = validated_data.get('default_rate', instance.default_rate)
+        instance.default_fee = validated_data.get('default_fee', instance.default_fee)
         instance.save()
         return instance

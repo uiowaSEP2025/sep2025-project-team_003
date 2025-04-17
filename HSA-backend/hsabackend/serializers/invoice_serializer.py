@@ -20,10 +20,10 @@ class InvoiceSerializer(serializers.ModelSerializer):
         """
         Update and return an existing Invoice instance, given the validated data.
         """
-        instance.issuance_date = validated_data.get('issuance_date', instance.issuance_date)
-        instance.due_date = validated_data.get('due_date', instance.due_date)
+        instance.date_issued = validated_data.get('date_issued', instance.date_issued)
+        instance.date_due = validated_data.get('date_due', instance.date_due)
         instance.status = validated_data.get('status', instance.status)
-        instance.tax = validated_data.get('tax', instance.tax)
+        instance.sales_tax_percent = validated_data.get('sales_tax_percent', instance.sales_tax_percent)
         instance.customer = validated_data.get('customer', instance.customer)
         instance.save()
         return instance

@@ -17,7 +17,7 @@ class JobContractorSerializer(serializers.ModelSerializer):
 
         # Include contractor details if available
         if hasattr(instance, 'contractor') and instance.contractor:
-            representation['contractor_name'] = instance.contractor.name
+            representation['contractor_name'] = instance.contractor.first_name + " " + instance.contractor.last_name
             representation['contractor_phone'] = instance.contractor.phone
             representation['contractor_email'] = instance.contractor.email
 

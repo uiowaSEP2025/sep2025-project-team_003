@@ -49,6 +49,10 @@ class JobSerializer(serializers.ModelSerializer):
         """
         Update and return an existing Job instance, given the validated data.
         """
+
+        materials = validated_data.pop('materials', [])
+        services = validated_data.pop('services', [])
+        contractors = validated_data.pop('contractors', [])
         instance.job_status = validated_data.get('job_status', instance.job_status)
         instance.start_date = validated_data.get('start_date', instance.start_date)
         instance.end_date = validated_data.get('end_date', instance.end_date)
@@ -60,5 +64,15 @@ class JobSerializer(serializers.ModelSerializer):
         instance.job_state = validated_data.get('job_state', instance.job_state)
         instance.job_zip = validated_data.get('job_zip', instance.job_zip)
         instance.job_address = validated_data.get('job_address', instance.job_address)
+        instance.use_hourly_rate = validated_data.get('use_hourly_rate', instance.use_hourly_rate)
+        instance.minutes_worked = validated_data.get('minutes_worked', instance.minutes_worked)
+        instance.hourly_rate = validated_data.get('hourly_rate', instance.hourly_rate)
+        if services is not None:
+            instance.services.set(services)
+        if materials is not None:
+            instance.materials.set(materials)
+        if contractors is not None:
+            instance.contractors.set(contractors)
+
         instance.save()
         return instance
