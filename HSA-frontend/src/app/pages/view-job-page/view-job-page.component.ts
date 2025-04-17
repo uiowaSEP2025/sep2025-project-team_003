@@ -38,7 +38,6 @@ export class ViewJobPageComponent  implements OnInit {
     private jobService: JobService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private errorHandler: ErrorHandlerService,
     private dialog: MatDialog
   ) {
     this.activatedRoute.paramMap.subscribe(params => {

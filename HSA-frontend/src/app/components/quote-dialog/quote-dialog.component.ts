@@ -1,21 +1,29 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+
+type SendState = 'pending' | 'success' | 'error' | '';
 
 @Component({
   selector: 'app-quote-dialog',
-  // Ensure your standalone component includes all necessary modules
+  standalone: true,
   imports: [
     CommonModule,
+    MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
-    FormsModule
+    FormsModule,
+    MatProgressSpinnerModule,
+    MatIconModule,
+    MatButtonModule,
   ],
   templateUrl: './quote-dialog.component.html',
   styleUrls: ['./quote-dialog.component.scss']
@@ -23,13 +31,13 @@ import { MatInputModule } from '@angular/material/input';
 export class QuoteDialogComponent {
   pdfUrl: SafeResourceUrl | null = null;
   isLoading = false;
-  // Declare the recipients property so ngModel can bind to it.
+  sendState: SendState = '';
+
   recipients: string = '';
 
   constructor(
     private http: HttpClient,
     private sanitizer: DomSanitizer,
-    private errorHandler: ErrorHandlerService,
     public dialogRef: MatDialogRef<QuoteDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { jobID: number }
   ) {}
@@ -38,13 +46,12 @@ export class QuoteDialogComponent {
     this.isLoading = true;
     this.http.get(`api/generate/quote/${this.data.jobID}`, { responseType: 'blob' })
       .subscribe({
-        next: (blob) => {
+        next: blob => {
           const url = URL.createObjectURL(blob);
           this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
           this.isLoading = false;
         },
-        error: (err) => {
-          this.errorHandler.handleError(err);
+        error: () => {
           this.isLoading = false;
         }
       });
@@ -59,15 +66,22 @@ export class QuoteDialogComponent {
     }
   }
 
-  sendTo() {
-    // Call the API using the recipient's information.
-    this.http.get(`api/quotes/id/${this.recipients}`, { responseType: 'blob' })
+  send() {
+    this.sendState = 'pending';
+
+    this.http
+      .post<{ success: boolean; message?: string }>(
+        `api/send/quote/${this.data.jobID}`,
+        {},
+        { responseType: 'json' }
+      )
       .subscribe({
-        next: (blob) => {
-          alert(`Quote sent successfully to ${this.recipients}`);
+        next: res => {
+          this.sendState = res.success ? 'success' : 'error';
         },
-        error: (err) => {
-          this.errorHandler.handleError(err);
+        error: err => {
+          console.error('Send failed', err);
+          this.sendState = 'error';
         }
       });
   }
