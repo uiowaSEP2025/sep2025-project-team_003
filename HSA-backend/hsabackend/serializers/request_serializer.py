@@ -12,12 +12,8 @@ class RequestSerializer(serializers.ModelSerializer):
         """
         Create and return a new Request instance, given the validated data.
         """
-        services = validated_data.pop('service', [])
         request = Request.objects.create(**validated_data)
 
-        # Add services to the request
-        if services:
-            request.service.set(services)
 
         return request
 
@@ -42,9 +38,6 @@ class RequestSerializer(serializers.ModelSerializer):
         instance.organization = validated_data.get('organization', instance.organization)
         instance.job = validated_data.get('job', instance.job)
 
-        # Update services if provided
-        if services is not None:
-            instance.services.set(services)
 
         instance.save()
         return instance

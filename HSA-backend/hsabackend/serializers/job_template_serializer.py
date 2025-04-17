@@ -1,22 +1,16 @@
 from rest_framework import serializers
 
-from .contractor_serializer import ContractorSerializer
-from .customer_serializer import CustomerSerializer
-from .invoice_serializer import InvoiceSerializer
 from .material_serializer import MaterialSerializer
 from .service_serializer import ServiceSerializer
-from ..models.job import Job
+from ..models.job_template import JobTemplate
 
 
-class JobSerializer(serializers.ModelSerializer):
-    customer = CustomerSerializer(read_only=True)
+class JobTemplateSerializer(serializers.ModelSerializer):
     services = ServiceSerializer(many=True, read_only=True)
     materials = MaterialSerializer(many=True, read_only=True)
-    contractors = ContractorSerializer(many=True, read_only=True)
-    invoice = InvoiceSerializer(read_only=True)
 
     class Meta:
-        model = Job
+        model = JobTemplate
         fields = "__all__"
 
     def to_representation(self, instance):
@@ -41,17 +35,14 @@ class JobSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """
-        Create and return a new Job instance, given the validated data.
+        Create and return a new Job Template instance, given the validated data.
         """
         services_temp = validated_data.pop('services', [])
-        contractors_temp = validated_data.pop('contractors', [])
         materials_temp = validated_data.pop('materials', [])
-        request = Job.objects.create(**validated_data)
+        request = JobTemplate.objects.create(**validated_data)
 
         if services_temp:
             request.service.set(services_temp)
-        if contractors_temp:
-            request.contractors.set(contractors_temp)
         if materials_temp:
             request.materials.set(materials_temp)
 
@@ -59,32 +50,18 @@ class JobSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """
-        Update and return an existing Job instance, given the validated data.
+        Update and return an existing Job Template instance, given the validated data.
         """
 
         materials_temp = validated_data.pop('materials', [])
         services_temp = validated_data.pop('services', [])
-        contractors_temp = validated_data.pop('contractors', [])
-        instance.job_status = validated_data.get('job_status', instance.job_status)
-        instance.start_date = validated_data.get('start_date', instance.start_date)
-        instance.end_date = validated_data.get('end_date', instance.end_date)
+        instance.name = validated_data.get('name', instance.name)
         instance.description = validated_data.get('description', instance.description)
         instance.organization = validated_data.get('organization', instance.organization)
-        instance.invoice = validated_data.get('invoice', instance.invoice)
-        instance.customer = validated_data.get('customer', instance.customer)
-        instance.job_city = validated_data.get('job_city', instance.job_city)
-        instance.job_state = validated_data.get('job_state', instance.job_state)
-        instance.job_zip = validated_data.get('job_zip', instance.job_zip)
-        instance.job_address = validated_data.get('job_address', instance.job_address)
-        instance.use_hourly_rate = validated_data.get('use_hourly_rate', instance.use_hourly_rate)
-        instance.minutes_worked = validated_data.get('minutes_worked', instance.minutes_worked)
-        instance.hourly_rate = validated_data.get('hourly_rate', instance.hourly_rate)
         if services_temp is not None:
             instance.services.set(services_temp)
         if materials_temp is not None:
             instance.materials.set(materials_temp)
-        if contractors_temp is not None:
-            instance.contractors.set(contractors_temp)
 
         instance.save()
         return instance
