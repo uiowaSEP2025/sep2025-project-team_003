@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.core.serializers import serialize
 from django.db import models
 from hsabackend.models.contractor import Contractor
@@ -31,10 +33,25 @@ class Job(models.Model):
     job_state = models.CharField(max_length=50, validators=[isNonEmpty, validate_state])
     job_zip = models.CharField(max_length=10, validators=[isNonEmpty])
     job_address = models.CharField(max_length=100, validators=[isNonEmpty])
+    use_hourly_rate = models.BooleanField(default=False)
+    minutes_worked = models.IntegerField(default=0)
+    hourly_rate = models.DecimalField(max_digits=10, decimal_places=2, default=organization.default_labor_rate, blank=True)
 
     def __str__(self):
         return f"<Job, organization: {self.organization}, description: {self.description}>"
-    
+
+    @property
+    def subtotal(self):
+        running_sub = 0
+        services = self.services.all()
+        materials = self.materials.all()
+        for service in services:
+            running_sub += service.fee
+        for material in materials:
+            running_sub += material.quantity * material.unit_price
+        if self.use_hourly_rate:
+            Decimal(self.minutes_worked / 60) * self.hourly_rate
+        return running_sub
 
     def json(self):
         services_list = serialize('json', self.services.all())
@@ -110,25 +127,23 @@ class JobsServices(models.Model):
 
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
-    minutes = models.IntegerField()
-    hourly_rate = models.DecimalField(decimal_places=2, max_digits=10)
+    fee = models.DecimalField(decimal_places=4, max_digits=2)
+
     class Meta:
         db_table = 'hsabackend_job_services'
 
     def __str__(self):
-        return (f"<Job, Service, Minutes, Rate:"
+        return (f"<Job, Service, Fee:"
                 f" Job: {self.job},"
                 f" Service: {self.service},"
-                f" Minutes: {self.minutes},"
-                f" Hourly Rate: {self.hourly_rate}")
+                f" Hourly Rate: {self.fee}")
 
     def json(self):
         return {
             'id': self.pk,
             'job': self.job.id,
             'service': self.service.id,
-            'minutes': self.minutes,
-            'hourly_rate': self.hourly_rate,
+            'fee': self.fee,
 
         }
 

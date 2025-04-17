@@ -7,7 +7,7 @@ from hsabackend.models.service import Service
 
 class JobTemplate(models.Model):
     """A preset template that can be used by an organization to create jobs"""
-
+    name = models.CharField(max_length=100, blank=False)
     description = models.CharField(max_length=200, blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     services = models.ManyToManyField(Service, blank=True)
@@ -26,7 +26,7 @@ class JobTemplate(models.Model):
     def json_simplify(self):
         return {
             'id': self.pk,
-            # cap at 50 so table doesn't stretch
+            # cap at 50 so the table doesn't stretch
 
             'description': self.description[:50] + ("..." if len(self.description) > 50 else ""),
 
