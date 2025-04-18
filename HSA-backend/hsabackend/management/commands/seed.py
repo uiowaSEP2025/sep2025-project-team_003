@@ -47,12 +47,9 @@ class Command(BaseCommand):
         except CommandError as e:
             self.stdout.write(self.style.ERROR(f'Error flushing the database: {e}'))
         try: 
-            User.objects.create_user("devuser", "dev@uiowa.edu", "SepTeam003!")
-            User.objects.create_user("testuser", "test@uiowa.edu", "SepTeam003!")
-            usr  = User.objects.first()
-            usr1  = User.objects.last()
-            usr.save()
-            usr1.save()
+            usr = User.objects.create_user("devuser", "dev@uiowa.edu", "SepTeam003!")
+            usr1 = User.objects.create_user("testuser", "test@uiowa.edu", "SepTeam003!")
+
 
             org_data_1 = {
                 "org_name"              : "devorg",
