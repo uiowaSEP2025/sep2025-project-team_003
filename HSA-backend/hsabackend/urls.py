@@ -12,7 +12,7 @@ from hsabackend.views.customers import get_customer_excluded_table_data, get_cus
     edit_customer, delete_customer
 from hsabackend.views.discounts import get_discounts, edit_discount, create_discount, delete_discount
 from hsabackend.views.generate_invoice_pdf_view import generate_pdf
-from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice
+from hsabackend.views.invoices import create_invoice, getInvoices, deleteInvoice, updateInvoice
 from hsabackend.views.invoices import get_data_for_invoice
 from hsabackend.views.job_templates import get_job_template_table_data, get_job_template_individual_data, \
     create_job_template, edit_job_template, delete_job_template
@@ -31,7 +31,6 @@ from hsabackend.views.materials import get_material_excluded_table_data, get_mat
     edit_material, delete_material
 from hsabackend.views.organizations import createOrganization, deleteOrganization, getOrganizationDetail, \
     editOrganizationDetail
-from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForInvoiceByInvoice
 from hsabackend.views.requests import get_org_request_data, delete_request, approve_request
 from hsabackend.views.services import get_service_table_data, get_service_excluded_table_data, create_service, \
     edit_service, delete_service
@@ -132,7 +131,7 @@ urlpatterns = [
     path("api/delete/jobtemplate/<int:job_template_id>/materials", delete_cached_job_template_material),
 
     # invoices
-    path("api/create/invoice", createInvoice),
+    path("api/create/invoice", create_invoice),
     path("api/get/invoices", getInvoices),
     path("api/delete/invoice/<int:id>", deleteInvoice),
     path("api/edit/invoice/<int:id>", updateInvoice),

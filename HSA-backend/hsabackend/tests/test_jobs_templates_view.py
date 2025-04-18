@@ -9,8 +9,6 @@ from rest_framework.test import APITestCase
 from hsabackend.models.organization import Organization
 from hsabackend.models.service import Service
 from hsabackend.models.material import Material
-from hsabackend.models.job_template_service import JobTemplateService
-from hsabackend.models.job_template_material import JobTemplateMaterial
 from django.db.models import QuerySet
 from django.db.models import Q
 from unittest.mock import call

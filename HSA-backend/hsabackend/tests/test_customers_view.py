@@ -159,10 +159,10 @@ class CustomerViewTest(APITestCase):
         factory = APIRequestFactory()
         request = factory.post('api/create/customer',
                 data={
-                    'firstn': 'John',
-                    'lastn': 'Doe',
+                    'first_name': 'John',
+                    'last_name': 'Doe',
                     'email': 'john.doe@example.com',
-                    'phoneno': '',
+                    'phone': '',
                     'notes': 'Sample note for testing purposes.'
                     })
         request.user = mock_user  
@@ -181,8 +181,8 @@ class CustomerViewTest(APITestCase):
         factory = APIRequestFactory()
         request = factory.post('api/create/customer',
                 data={
-                    'firstn': 'John',
-                    'lastn': 'Doe',
+                    'first_name': 'John',
+                    'last_name': 'Doe',
                     'email': 'john.doe@example.com',
                     'phoneno': '1231231234',
                     'notes': 'Sample note for testing purposes.'
@@ -230,13 +230,13 @@ class CustomerViewTest(APITestCase):
         org.return_value = Organization()
         mock_cust = MagicMock(name="mock cust")
         cust_qs.__getitem__.side_effect = lambda x: mock_cust
-        mock_cust.full_clean.side_effect = ValidationError({'firstn': ['This field is required.']})
+        mock_cust.full_clean.side_effect = ValidationError({'first_name': ['This field is required.']})
 
         factory = APIRequestFactory()
         request = factory.post('/api/edit/customers/1',
                     data={
-                        'firstn': 'John',
-                        'lastn': 'Doe',
+                        'first_name': 'John',
+                        'last_name': 'Doe',
                         'email': 'john.doe@example.com',
                         'phoneno': '1231231234',
                         'notes': 'Sample note for testing purposes.'
@@ -259,8 +259,8 @@ class CustomerViewTest(APITestCase):
         factory = APIRequestFactory()
         request = factory.post('/api/edit/customers/1',
                     data={
-                        'firstn': 'John',
-                        'lastn': 'Doe',
+                        'first_name': 'John',
+                        'last_name': 'Doe',
                         'email': 'john.doe@example.com',
                         'phoneno': '1231231234',
                         'notes': 'Sample note for testing purposes.'

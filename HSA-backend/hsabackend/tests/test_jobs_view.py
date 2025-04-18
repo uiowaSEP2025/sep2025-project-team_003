@@ -1,24 +1,23 @@
-from rest_framework.test import APIRequestFactory
-from rest_framework import status
 from unittest.mock import MagicMock
 from unittest.mock import Mock
 from unittest.mock import patch
+
 from django.contrib.auth.models import User
-from hsabackend.views.jobs import get_job_individual_data, get_job_table_data, create_job, edit_job
-from rest_framework.test import APITestCase
-from hsabackend.models.organization import Organization
-from hsabackend.models.customer import Customer
-from hsabackend.models.service import Service
-from hsabackend.models.material import Material
-from hsabackend.models.contractor import Contractor
-from hsabackend.models.job_service import JobService
-from hsabackend.models.job_material import JobMaterial
-from hsabackend.models.job_contractor import JobContractor
-from django.db.models import QuerySet
-from django.db.models import Q
-from unittest.mock import call
-from hsabackend.models.job import Job
 from django.core.exceptions import ValidationError
+from django.db.models import Q
+from django.db.models import QuerySet
+from rest_framework import status
+from rest_framework.test import APIRequestFactory
+from rest_framework.test import APITestCase
+
+from hsabackend.models.contractor import Contractor
+from hsabackend.models.customer import Customer
+from hsabackend.models.job import Job, JobsMaterials, JobsServices
+from hsabackend.models.material import Material
+from hsabackend.models.organization import Organization
+from hsabackend.models.service import Service
+from hsabackend.views.jobs import get_job_individual_data, get_job_table_data, create_job, edit_job
+
 
 class jobViewTest(APITestCase):
     def test_get_job_table_data_unauth(self):
@@ -231,13 +230,13 @@ class jobViewTest(APITestCase):
         job_name_obj = MagicMock(spec=Job)
         job_name.return_value = job_name_obj
 
-        job_service_obj = MagicMock(spec=JobService)
+        job_service_obj = MagicMock(spec=JobsServices)
         job_service.return_value = job_service_obj
 
-        job_material_obj = MagicMock(spec=JobMaterial)
+        job_material_obj = MagicMock(spec=JobsMaterials)
         job_material.return_value = job_material_obj
 
-        job_contractor_obj = MagicMock(spec=JobContractor)
+        job_contractor_obj = MagicMock(spec=job_name_obj.contractors)
         job_contractor.return_value = job_contractor_obj
         
         factory = APIRequestFactory()
