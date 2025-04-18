@@ -25,7 +25,7 @@ stages:
     steps:
     - script: |
         echo $(Docker Token) | docker login -u $(Docker Username) --password-stdin
-        docker build --build-arg DATABASE_IP="$(DATABASE_IP)" --build-arg DATABASE_NAME="$(DATABASE_NAME)" --build-arg DATABASE_USERNAME="$(DATABASE_USERNAME)" --build-arg DATABASE_PASSWORD="$(DATABASE_PASSWORD)" -f '$(Build.SourcesDirectory)'/deployment/staging/development/Dockerfile -t $(Docker Username)/hsa:latest  .
+        docker build --build-arg EMAIL_HOST=$(EMAIL_HOST) --build-arg EMAIL_HOST_USER=$(EMAIL_HOST_USER) --build-arg EMAIL_HOST_PASSWORD=$(EMAIL_HOST_PASSWORD) --build-arg DATABASE_IP="$(DATABASE_IP)" --build-arg DATABASE_NAME="$(DATABASE_NAME)" --build-arg DATABASE_USERNAME="$(DATABASE_USERNAME)" --build-arg DATABASE_PASSWORD="$(DATABASE_PASSWORD)" -f '$(Build.SourcesDirectory)'/deployment/staging/development/Dockerfile -t $(Docker Username)/hsa:latest  .
         docker push $(Docker Username)/hsa:latest
       displayName: Run Docker build and push Scripts
 - stage: Deploy
