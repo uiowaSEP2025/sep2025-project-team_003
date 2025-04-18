@@ -16,6 +16,7 @@ class Organization(models.Model):
     owning_user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_onboarding = models.BooleanField(default=True)
     default_labor_rate = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=False)
+    default_payment_link = models.URLField(max_length=200, blank=True)
 
     def __str__(self):
         return f"<Organization, org_name: {self.org_name}>"

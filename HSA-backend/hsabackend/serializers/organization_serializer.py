@@ -30,5 +30,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
         instance.owning_user = validated_data.get('owning_user', instance.owning_user)
         instance.is_onboarding = validated_data.get('is_onboarding', instance.is_onboarding)
         instance.default_labor_rate = validated_data.get('default_labor_rate', instance.default_labor_rate)
+        instance.default_payment_link = validated_data.get('default_payment_link', instance.default_payment_link)
         instance.save()
         return instance

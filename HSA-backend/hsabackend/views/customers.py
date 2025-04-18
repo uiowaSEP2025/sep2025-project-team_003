@@ -87,16 +87,16 @@ def create_customer(request):
     if not request.user.is_authenticated:
         return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
     org = Organization.objects.get(owning_User=request.user)
-    first_name = request.data.get('firstn', '')
-    last_name = request.data.get('lastn', '')
+    first_name = request.data.get('first_name', '')
+    last_name = request.data.get('last_name', '')
     email = request.data.get('email', '')
-    phone_no = request.data.get('phoneno', '').replace("-","")
+    phone = request.data.get('phone', '').replace("-","")
     notes = request.data.get('notes', '')
     customer = Customer(
         first_name = first_name,
         last_name = last_name,
         email = email,
-        phone_no = phone_no,
+        phone = phone,
         notes = notes,
         organization = org,
     )
@@ -116,15 +116,15 @@ def edit_customer(request, id):
     if not customer_qs.exists():
         return Response({"message": "The customer does not exist"}, status=status.HTTP_404_NOT_FOUND)
     customer = customer_qs[0]
-    first_name = request.data.get('firstn', '')
-    last_name = request.data.get('lastn', '')
+    first_name = request.data.get('first_name', '')
+    last_name = request.data.get('last_name', '')
     email = request.data.get('email', '')
-    phone_no = request.data.get('phoneno', '')
+    phone = request.data.get('phone', '')
     notes = request.data.get('notes', '')
     customer.first_name = first_name
     customer.last_name = last_name
     customer.email = email
-    customer.phone_no = phone_no.replace("-",'')
+    customer.phone = phone.replace("-",'')
     customer.notes = notes
     
     try:

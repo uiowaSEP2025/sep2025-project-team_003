@@ -15,9 +15,10 @@ class Invoice(models.Model):
     date_issued = models.DateField(null=True,blank=True, default=None)
     date_due = models.DateField(null=True,blank=True, default=None)
     status = models.CharField(max_length=50, choices=status_choices, default="created")
-    sales_tax_percent = models.DecimalField(max_digits=2, decimal_places=2)
+    sales_tax_percent = models.DecimalField(max_digits=5, decimal_places=2)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     discounts = models.ManyToManyField(Discount, blank=True)
+    payment_link = models.URLField(max_length=200, blank=True)
 
 
     @property
@@ -29,11 +30,15 @@ class Invoice(models.Model):
         return running_sub
 
     @property
-    def discounted_subtotal(self):
-        total_discount = 0
+    def discount_aggregate_percentage(self):
+        discount_percentage = 0
         for discount in self.discounts.all():
-            total_discount += discount.discount_percent
-        return self.subtotal * total_discount
+            discount_percentage += discount.discount_percent
+        return discount_percentage
+
+    @property
+    def discounted_subtotal(self):
+                return self.subtotal * self.discount_aggregate_percentage / 100
 
     @property
     def subtotal_after_discount(self):
@@ -55,8 +60,8 @@ class Invoice(models.Model):
         return {
             "id": self.pk,
             "status": self.status,
-            "dueDate": "N/A" if self.due_date == None else self.due_date,
-            "issuanceDate": "N/A" if self.issuance_date == None else self.issuance_date,
+            "dueDate": "N/A" if self.date_due == None else self.date_due,
+            "issuanceDate": "N/A" if self.date_issued == None else self.date_issued,
             "customer": f"{self.customer.first_name}, {self.customer.last_name}"
         }
     
@@ -64,9 +69,9 @@ class Invoice(models.Model):
         return {
             "id": self.pk,
             "status": self.status,
-            "due_date": format_maybe_null_date(self.due_date),
-            "issuance_date": format_maybe_null_date(self.issuance_date),
+            "due_date": format_maybe_null_date(self.date_due),
+            "issuance_date": format_maybe_null_date(self.date_issued),
             "customer_id": {self.customer.id},
             "customer_name": f"{self.customer.first_name}, {self.customer.last_name}",
-            "tax": str(self.tax)
+            "tax": str(self.sales_tax_percent)
         }

@@ -25,5 +25,6 @@ class InvoiceSerializer(serializers.ModelSerializer):
         instance.status = validated_data.get('status', instance.status)
         instance.sales_tax_percent = validated_data.get('sales_tax_percent', instance.sales_tax_percent)
         instance.customer = validated_data.get('customer', instance.customer)
+        instance.payment_link = validated_data.get('payment_link', instance.payment_link)
         instance.save()
         return instance

@@ -6,9 +6,8 @@ from hsabackend.models.organization import Organization
 from hsabackend.models.customer import Customer
 from hsabackend.models.job import Job
 from datetime import date
-from hsabackend.models.quote import Quote
 from decimal import Decimal
-from hsabackend.models.discount_type import DiscountType
+from hsabackend.models.discount import Discount
 from hsabackend.models.invoice import Invoice
 
 def add_users():
@@ -23,9 +22,9 @@ def add_orgs(u1,u2):
         org_name = "devorg",
         org_email = "org@org.dev",
         org_city = "Iowa City",
-        org_requestor_state = "Iowa",
-        org_requestor_zip = "52240",
-        org_requestor_address = "123 main st",
+        org_state = "Iowa",
+        org_zip = "52240",
+        org_address = "123 main st",
         org_owner_first_name = "Dev",
         org_owner_last_name = "User",
         owning_User = u1,
@@ -35,9 +34,9 @@ def add_orgs(u1,u2):
         org_name = "testorg",
         org_email = "org1@org1.dev",
         org_city = "Iowa City",
-        org_requestor_state = "Iowa",
-        org_requestor_zip = "52240",
-        org_requestor_address = "123 main st",
+        org_state = "Iowa",
+        org_zip = "52240",
+        org_address = "123 main st",
         org_owner_first_name = "Test",
         org_owner_last_name = "User",
         owning_User = u2,
@@ -50,7 +49,7 @@ def add_customers(org1,org2):
         first_name=f"Firstorg1",
         last_name=f"Lastorg1",
         email=f"custorg1@example.com",
-        phone_no=f"1234567890",
+        phone=f"1234567890",
         notes=f"Sample notes for user customer org1",
         organization=org1
     )
@@ -58,13 +57,13 @@ def add_customers(org1,org2):
         first_name=f"Firstorg2",
         last_name=f"Lastorg2",
         email=f"custorg1@example.com",
-        phone_no=f"0987654321",
+        phone=f"0987654321",
         notes=f"Sample notes for user customer org2",
         organization=org2
     )
     return c1,c2
 
-def add_jobs(c1,o1):
+def add_jobs(c1,o1,inv):
     j1 = Job.objects.create(
         job_status='completed',
         start_date=date(2025, 3, 20),
@@ -72,10 +71,14 @@ def add_jobs(c1,o1):
         description="description j1",
         organization=o1,
         customer=c1,
-        requestor_city = "Iowa City",
-        requestor_state = "Iowa",
-        requestor_zip = "52240",
-        requestor_address = "2 W Washington St"
+        job_city = "Iowa City",
+        job_state = "Iowa",
+        job_zip = "52240",
+        job_address = "2 W Washington St",
+        use_hourly_rate=True,
+        minutes_worked=60,
+        hourly_rate=Decimal(150.00),
+        invoice = inv
     )
     j2 = Job.objects.create(
         job_status='completed',
@@ -84,53 +87,37 @@ def add_jobs(c1,o1):
         description="description j2",
         organization=o1,
         customer=c1,
-        requestor_city = "Iowa City",
-        requestor_state = "Iowa",
-        requestor_zip = "52240",
-        requestor_address = "2 W Washington St"
+        job_city = "Iowa City",
+        job_state = "Iowa",
+        job_zip = "52240",
+        job_address = "2 W Washington St",
+        use_hourly_rate = True,
+        minutes_worked = 60,
+        hourly_rate = Decimal(150.00),
+        invoice=inv
     )
     return j1,j2
 
 def add_discount(o1):
-    d = DiscountType.objects.create(
+    d = Discount.objects.create(
         discount_name="Holiday Sale",
         discount_percent=Decimal(20.00),
         organization=o1
     )
     return d
 
-
-def add_quotes(j1,j2, d1):
-    q1 = Quote.objects.create(
-        issuance_date=date(2025, 3, 20),
-        due_date=date(2025, 3, 27),
-        status="accepted",
-        material_subtotal=Decimal(100.00),
-        total_price=Decimal(200),
-        jobID=j1,
-        discount_type = d1)
-    q2 = Quote.objects.create(
-        issuance_date=date(2025, 3, 20),
-        due_date=date(2025, 3, 27),
-        status="accepted",
-        material_subtotal=Decimal(100.00),
-        total_price=Decimal(200),
-        jobID=j2,
-        discount_type = None)
-    return q1,q2
     
-def add_invoice(q1:Quote,q2:Quote,c1):
+def add_invoice(c1,d1):
     inv = Invoice.objects.create(
-        issuance_date=date(2025, 3, 20),
-        due_date=date(2025, 3, 27),
+        date_issued=date(2025, 3, 20),
+        date_due=date(2025, 3, 27),
         status = "paid",
-        tax = Decimal(0.10),
+        sales_tax_percent = Decimal(0.10),
         customer = c1,
+        discounts = [d1]
     )
-    q1.invoice = inv
-    q2.invoice = inv
-    q1.save()
-    q2.save()
+    inv.save()
+    return inv
 
 
 
@@ -146,10 +133,9 @@ class Command(BaseCommand):
             u1,u2 = add_users()
             o1,o2 = add_orgs(u1,u2)
             c1,c2 = add_customers(o1,o2)
-            j1,j2 = add_jobs(c1,o1)
             d = add_discount(o1)
-            q1,q2 = add_quotes(j1,j2,d)
-            add_invoice(q1,q2,c1)
+            inv = add_invoice(c1,d)
+            j1,j2 = add_jobs(c1,o1, inv)
 
             
         except Exception as e:
