@@ -1,0 +1,95 @@
+.parent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  button {
+    margin-right: 8px;
+  }
+  
+  header {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  .main-heading{
+    max-width: 800px;
+    text-align: center;
+    margin: auto;
+  }
+  
+  .main-heading h1{
+    font-size: 50px;
+  }
+  
+  .wide-card {
+      width: 400px;
+      margin: 0 auto;
+  }
+    
+  .full-width-field {
+      width: 100%;
+      margin-bottom: 5px;
+  }
+
+  table {
+    width: 100%;
+    th, td {
+      text-align: center;
+      min-width: 80px;
+    }
+  }
+
+  .schedule-table {
+    display: flex;
+    flex-direction: column;
+    margin-top: 16px;
+  
+  .header-row,
+  .data-row {
+    display: flex;
+  }
+
+  .time-header,
+  .time-label {
+    width: 80px;
+    flex-shrink: 0;
+    background-color: #f0f0f0;
+    font-weight: bold;
+  }
+
+  .cell {
+    border: 1px solid #ccc;
+    padding: 6px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .resource-header,
+  .time-slot {
+    flex: 0 0 120px; /* consistent column width */
+    width: 120px;
+  }
+
+  .resource-header {
+    background-color: #1976d2;
+    color: white;
+    font-weight: bold;
+  }
+
+  .time-slot {
+    background-color: #fff;
+  }
+
+  .time-slot.event {
+    background-color: #c8e6c9;
+  }
+
+  .event-title {
+    font-size: 13px;
+    font-weight: bold;
+  }
+}
+  

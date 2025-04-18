@@ -1,0 +1,27 @@
+<div class="parent">
+  <div class="main-heading">
+    <mat-card>
+      <div class="schedule-table">
+        <!-- Header row: first cell is "Time", followed by each resource as a column header -->
+        <div class="header-row">
+          <div class="cell time-header">Time</div>
+          <div class="cell resource-header" *ngFor="let resource of resources">
+            {{ resource }}
+          </div>
+        </div>
+      
+        <!-- Each time row: first cell shows time, followed by each resource's time slot -->
+        <div class="data-row" *ngFor="let time of timeSlots">
+          <div class="cell time-label">{{ time }}</div>
+      
+          <div
+            class="cell time-slot"
+            *ngFor="let resource of resources"
+            [class.event]="isSlotInEvent(resource, time)"
+            (click)="openDialog(resource, time)">
+          </div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</div>

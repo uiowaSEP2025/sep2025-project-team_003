@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>Select End Time</h1>
+<div mat-dialog-content>
+  <mat-form-field appearance="fill">
+    <mat-label>End Time</mat-label>
+    <mat-select [(value)]="selectedTime">
+      <mat-option *ngFor="let option of timeOptions" [value]="option">
+        {{ option }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="dialogRef.close()">Cancel</button>
+  <button mat-button [disabled]="!selectedTime" (click)="save()">OK</button>
+</div>
