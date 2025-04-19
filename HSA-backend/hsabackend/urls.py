@@ -21,6 +21,7 @@ from hsabackend.views.job_templates_materials import get_job_template_material_t
 from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice
 from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForInvoiceByInvoice
 from hsabackend.views.generate_invoice_pdf_view import generate_pdf
+from hsabackend.views.generate_quote_pdf_view import generate_quote_pdf, send_quote_pdf_to_customer_email
 from hsabackend.views.organizations import complete_onboarding, createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail
 from hsabackend.views.discounts import get_discounts, edit_discount, create_discount, delete_discount
 from django.http import HttpResponse
@@ -100,6 +101,7 @@ urlpatterns = [
     path("api/create/job/<int:id>/contractor", create_job_contractor),
     path("api/delete/job/<int:job_id>/contractor/<int:job_contractor_id>", delete_job_contractor),
     path("api/delete/job/<int:job_id>/contractors", delete_cached_job_contractor),
+    path("api/generate/quote/<int:id>", generate_quote_pdf),
 
     # job_templates
     path("api/get/jobtemplates", get_job_template_table_data),
@@ -137,6 +139,7 @@ urlpatterns = [
     # quotes
     path("api/get/quotesforinvoice/customer/<int:id>", getQuotesForInvoiceByCustomer),
     path("api/get/quotesforinvoice/invoice/<int:id>", getQuotesForInvoiceByInvoice),
+    path("api/send/quote/<int:id>", send_quote_pdf_to_customer_email),
 
     # discounts
     path("api/get/discounts", get_discounts),

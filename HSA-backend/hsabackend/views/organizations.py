@@ -18,8 +18,6 @@ from hsabackend.models.job_contractor import JobContractor
 @api_view(["GET"])
 @check_authenticated_and_onboarded(require_onboarding=False)
 def getOrganizationDetail(request):
-    # single get instead of list (as users only get 1 org)
-
     try:
         org = request.org
         return Response(org.json(), status=status.HTTP_200_OK)
@@ -68,6 +66,7 @@ def complete_onboarding(request):
         return Response({"message": "Already onboarded"}, status=status.HTTP_400_BAD_REQUEST)
     
     is_onboarding = request.data.get("isOnboarding")
+
     customer_request = request.data.get("customerRequest")
     service_request = request.data.get("serviceRequest")
     material_request = request.data.get("materialRequest")
@@ -173,6 +172,7 @@ def complete_onboarding(request):
             org.is_onboarding = is_onboarding
             org.save()
     except ValidationError as e:
+        print(e)
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response({"message": "Onboarding complete"}, status=status.HTTP_200_OK)
