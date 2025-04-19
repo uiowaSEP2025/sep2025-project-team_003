@@ -1,0 +1,53 @@
+.wide-card {
+	width: 600px;
+	margin: 0 auto;
+}
+  
+.full-width-field {
+	width: 100%;
+	margin-bottom: 5px;
+}
+
+.info-table {
+	width: 100%; 
+	table-layout: fixed; 
+	border-collapse: collapse;
+	margin: 20px 0;
+  }
+  
+  .info-table th:first-child,
+  .info-table td:first-child {
+	width: 20%;
+	white-space: nowrap; 
+	padding-right: 20px; 
+  }
+  
+  .info-table th:nth-child(2),
+  .info-table td:nth-child(2) {
+	width: 50%;
+	word-wrap: break-word;
+  }
+  
+  .info-table td, .info-table th {
+	border: 1px solid #000000;
+	padding: 12px;
+	text-align: left;
+  }
+  
+  .info-table th {
+	background-color: #7b93a1;
+  }
+
+  .customer-box-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	min-height: fit-content;
+  }
+  
+  .customer-name-span {
+	flex-grow: 1;
+  }
+  
+

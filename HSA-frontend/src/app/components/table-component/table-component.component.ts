@@ -128,7 +128,9 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   
     if (this.fetchedData !== undefined) {
       if (this.fetchedData.length !== 0) {
-        this.isDataNotAvailable = this.fetchedData.data.length === 0
+        if (this.fetchedData.data !== undefined) {
+          this.isDataNotAvailable = this.fetchedData.data.length === 0
+        }
       }  
     }
   }

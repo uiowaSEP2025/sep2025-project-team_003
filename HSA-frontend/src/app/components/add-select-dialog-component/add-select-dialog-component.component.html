@@ -9,40 +9,46 @@
 				[loadDataToTable]="
 					typeOfDialog === 'template'
 					? this.loadJobTemplatesToTable.bind(this)
-					: typeOfDialog === 'customer' 
-						? this.loadCustomersToTable.bind(this) 
-						: typeOfDialog === 'service' 
-							? this.loadServicesToTable.bind(this) 
-							: typeOfDialog === 'material' 
-								? this.loadMaterialsToTable.bind(this)
-								: this.loadContractorsToTable.bind(this)" 
+					: typeOfDialog === 'job' 
+						? this.loadJobsToTable.bind(this) 
+						: typeOfDialog === 'customer' 
+							? this.loadCustomersToTable.bind(this) 
+							: typeOfDialog === 'service' 
+								? this.loadServicesToTable.bind(this) 
+								: typeOfDialog === 'material' 
+									? this.loadMaterialsToTable.bind(this)
+									: this.loadContractorsToTable.bind(this)" 
 				editRedirect="" 
 				[hideValues]="['Actions', 'Id']"
 				[fetchedData]="this.dialogData"
-				[checkbox]="this.typeOfDialog === 'customer' || this.typeOfDialog === 'template' ? 'single' : 'multiple'"
+				[checkbox]="this.typeOfDialog === 'customer' || this.typeOfDialog === 'job' || this.typeOfDialog === 'template' ? 'single' : 'multiple'"
 				[unitUsedField]="this.isMaterial"
 				[pricePerUnitField]="this.isMaterial"
 				[checkedIds]="
 					typeOfDialog === 'template'
 					? this.selectedTemplate
-					: typeOfDialog === 'customer' 
-						? this.selectedCustomer 
-						: typeOfDialog === 'service' 
-							? this.selectedServices 
-							: typeOfDialog === 'material' 
-								? this.selectedMaterials
-								: this.selectedContractors"
+					: typeOfDialog === 'job' 
+						? this.selectedJob
+						: typeOfDialog === 'customer' 
+							? this.selectedCustomer 
+							: typeOfDialog === 'service' 
+								? this.selectedServices 
+								: typeOfDialog === 'material' 
+									? this.selectedMaterials
+									: this.selectedContractors"
 				[materialInputFields]="this.materialInputFields"
 				[setCheckedIds]="
 					typeOfDialog === 'template'
 					? this.setSelectedJobTemplate.bind(this)
-					: typeOfDialog === 'customer' 
-						? this.setSelectedCustomer.bind(this) 
-						: typeOfDialog === 'service' 
-							? this.setSelectedServices.bind(this) 
-							: typeOfDialog === 'material' 
-								? this.setSelectedMaterials.bind(this)
-								: this.setSelectedContractors.bind(this)"
+					: typeOfDialog === 'job' 
+						? this.setSelectedJob.bind(this) 
+						: typeOfDialog === 'customer' 
+							? this.setSelectedCustomer.bind(this) 
+							: typeOfDialog === 'service' 
+								? this.setSelectedServices.bind(this) 
+								: typeOfDialog === 'material' 
+									? this.setSelectedMaterials.bind(this)
+									: this.setSelectedContractors.bind(this)"
 				[setMaterialInputFields]="this.setMaterialInput.bind(this)"
 				[searchHint]="this.searchHint"
 				[width]="'700vw'"
