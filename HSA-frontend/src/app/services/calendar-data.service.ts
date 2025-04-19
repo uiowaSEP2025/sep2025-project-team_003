@@ -16,6 +16,9 @@ export class DataService {
     blue: "#2e78d6",
   };
 
+  exampleDate = "01/02"
+  exampleCustomer = "John Doe"
+
   events = [
     {
       id: DayPilot.guid(),
@@ -26,9 +29,22 @@ export class DataService {
       tags: {
         jobID: "1",
         jobDescription: "Hello",
-        bookingType: "quote"
+        bookingType: "quote",
       },
       backColor: "#6aa84f"
+    },
+    {
+      id: DayPilot.guid(),
+      text: "Event 3",
+      start: DayPilot.Date.today().addHours(10),
+      end: DayPilot.Date.today().addHours(14),
+      participants: 2,
+      tags: {
+        jobID: "3",
+        jobDescription: "Hello",
+        bookingType: "quote",
+      },
+      backColor: "#2e78d6"
     },
   ];
 

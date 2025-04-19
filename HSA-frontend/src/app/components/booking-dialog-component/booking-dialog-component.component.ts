@@ -37,7 +37,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class BookingDialogComponentComponent implements OnInit {
   eventForm: FormGroup;
   jobID: number = 0
-  selectedJob: number = 0
+  selectedJob: any
   minTime: Date
   colors: any
   currentColor: any
@@ -84,6 +84,7 @@ export class BookingDialogComponentComponent implements OnInit {
       });
 
       this.currentColor = currentColor
+      this.selectedJob = this.data.jobInfo
 
       this.eventForm.markAllAsTouched();
     }
@@ -112,7 +113,7 @@ export class BookingDialogComponentComponent implements OnInit {
         this.eventForm.controls['jobID'].setValue(jobEntry.id)
         this.eventForm.controls['jobDescription'].setValue(jobEntry.description)
         this.jobID = jobEntry.id;
-        this.selectedJob = jobEntry.id
+        this.selectedJob = jobEntry
       }
     })
   }
@@ -141,6 +142,7 @@ export class BookingDialogComponentComponent implements OnInit {
           jobID: this.eventForm.get('jobID')?.value,
           jobDescription: this.eventForm.get('jobDescription')?.value,
           bookingType: this.eventForm.get('bookingType')?.value,
+          jobInfo: this.selectedJob
         }
       });
     }
