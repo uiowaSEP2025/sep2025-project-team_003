@@ -71,8 +71,6 @@ export class BookingDialogComponentComponent implements OnInit {
         startTime: new Date(this.data.startTime)
       })
     } else {
-      let currentColor = this.getColorNameViaID(this.data.backColor);
-
       this.eventForm.setValue({
         eventName: this.data.eventName,
         startTime: new Date(this.data.startTime),
@@ -80,11 +78,10 @@ export class BookingDialogComponentComponent implements OnInit {
         bookingType: this.data.bookingType,
         jobID: this.data.jobID,
         jobDescription: this.data.jobDescription,
-        color: currentColor
+        color: this.data.backColor
       });
 
-      this.currentColor = currentColor
-      this.selectedJob = this.data.jobInfo
+      this.currentColor = this.data.backColor
 
       this.eventForm.markAllAsTouched();
     }
@@ -142,7 +139,6 @@ export class BookingDialogComponentComponent implements OnInit {
           jobID: this.eventForm.get('jobID')?.value,
           jobDescription: this.eventForm.get('jobDescription')?.value,
           bookingType: this.eventForm.get('bookingType')?.value,
-          jobInfo: this.selectedJob
         }
       });
     }

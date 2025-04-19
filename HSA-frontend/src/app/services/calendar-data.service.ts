@@ -16,9 +16,6 @@ export class DataService {
     blue: "#2e78d6",
   };
 
-  exampleDate = "01/02"
-  exampleCustomer = "John Doe"
-
   events = [
     {
       id: DayPilot.guid(),
@@ -27,7 +24,7 @@ export class DataService {
       end: DayPilot.Date.today().firstDayOfWeek().addHours(13),
       participants: 2,
       tags: {
-        jobID: "1",
+        jobID: 1,
         jobDescription: "Hello",
         bookingType: "quote",
       },
@@ -40,7 +37,7 @@ export class DataService {
       end: DayPilot.Date.today().addHours(14),
       participants: 2,
       tags: {
-        jobID: "3",
+        jobID: 3,
         jobDescription: "Hello",
         bookingType: "quote",
       },
@@ -64,14 +61,14 @@ export class DataService {
   }
 
   getColors(): any[] {
-      const colors = [
-        {name: "Green", id: DataService.colors.green},
-        {name: "Yellow", id: DataService.colors.yellow},
-        {name: "Red", id: DataService.colors.red},
-        {name: "Gray", id: DataService.colors.gray},
-        {name: "Blue", id: DataService.colors.blue},
-      ];
-      return colors;
+    const colors = [
+      {name: "Green", id: DataService.colors.green},
+      {name: "Yellow", id: DataService.colors.yellow},
+      {name: "Red", id: DataService.colors.red},
+      {name: "Gray", id: DataService.colors.gray},
+      {name: "Blue", id: DataService.colors.blue},
+    ];
+    return colors;
   }
 
 }

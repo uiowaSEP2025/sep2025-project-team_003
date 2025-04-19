@@ -40,13 +40,13 @@
             </tr>
           }
           <tr>
-            <td>Event Name</td>
+            <td>Event Name*</td>
             <td>
               <mat-form-field appearance="fill" class="full-width-field">
-                <mat-label>Event Name</mat-label>
                 <input
                   formControlName="eventName"
                   matInput
+                  required
                 >
               </mat-form-field>
               @if (eventForm.get('eventName')?.touched && eventForm.get('eventName')?.hasError('required')) {
@@ -55,13 +55,14 @@
             </td>
           </tr>
           <tr>
-            <td>Start Time</td>
+            <td>Start Time*</td>
             <td>
               <mat-form-field class="full-width-field">
                 <input 
                   matInput 
                   formControlName="startTime" 
                   [matTimepicker]="startTimePicker"
+                  required
                 >
                 <mat-timepicker-toggle matIconSuffix [for]="startTimePicker"/>
                 <mat-timepicker #startTimePicker/>
@@ -72,7 +73,7 @@
             </td>            
           </tr>
           <tr>
-            <td>End Time</td>
+            <td>End Time*</td>
             <td>
               <mat-form-field class="full-width-field">
                 <input 
@@ -80,6 +81,7 @@
                   formControlName="endTime" 
                   [matTimepicker]="endTimePicker"
                   [matTimepickerMin]="minTime"
+                  required
                 >
                 <mat-timepicker-toggle matIconSuffix [for]="endTimePicker"/>
                 <mat-timepicker #endTimePicker/>
@@ -90,13 +92,14 @@
             </td>         
           </tr>
           <tr>
-            <td>Booking Type</td>
+            <td>Booking Type*</td>
             <td>
               <mat-form-field appearance="fill" class="full-width-field">
                 <mat-select 
                   matNativeControl 
                   required 
                   formControlName="bookingType"
+                  required
                 >
                   <mat-option value="quote">quote</mat-option>
                   <mat-option value="job">job</mat-option>
@@ -112,13 +115,12 @@
             <td>
               <mat-form-field appearance="fill" class="full-width-field">
                 <mat-select 
-                  matNativeControl 
                   formControlName="color"
                 >
                 @for(color of colors; track color.id) {
                   <mat-option [value]="color.id">{{ color.name }}</mat-option>
                 }
-              </mat-select>
+                </mat-select>
               </mat-form-field>
             </td>
           </tr>
