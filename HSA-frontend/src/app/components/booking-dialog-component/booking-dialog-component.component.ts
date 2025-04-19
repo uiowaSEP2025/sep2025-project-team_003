@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -11,6 +11,7 @@ import {MatTimepickerModule} from '@angular/material/timepicker';
 import { AddSelectDialogData } from '../../interfaces/interface-helpers/addSelectDialog-helper.interface';
 import { AddSelectDialogComponentComponent } from '../add-select-dialog-component/add-select-dialog-component.component';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-booking-dialog-component',
@@ -33,18 +34,21 @@ import { MatSelectModule } from '@angular/material/select';
   templateUrl: './booking-dialog-component.component.html',
   styleUrl: './booking-dialog-component.component.scss'
 })
-export class BookingDialogComponentComponent {
+export class BookingDialogComponentComponent implements OnInit {
   eventForm: FormGroup;
   jobID: number = 0
   selectedJob: number = 0
   minTime: Date
   colors: any
+  currentColor: any
+  typeOfDialog: string
 
   constructor(
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<BookingDialogComponentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private eventFormBuilder: FormBuilder,
+    private snackBar: MatSnackBar
   ) {
     this.eventForm = this.eventFormBuilder.group({
       eventName: ['', Validators.required],
@@ -56,12 +60,33 @@ export class BookingDialogComponentComponent {
       color: ['']
     })
 
-    this.eventForm.patchValue({
-      startTime: new Date(this.data.startTime)
-    })
-
+    this.typeOfDialog = this.data.typeOfDialog
     this.minTime = new Date(this.data.startTime)
     this.colors = this.data.listOfColor
+  }
+
+  ngOnInit() {
+    if (this.typeOfDialog === "create") {
+      this.eventForm.patchValue({
+        startTime: new Date(this.data.startTime)
+      })
+    } else {
+      let currentColor = this.getColorNameViaID(this.data.backColor);
+
+      this.eventForm.setValue({
+        eventName: this.data.eventName,
+        startTime: new Date(this.data.startTime),
+        endTime: new Date(this.data.endTime),
+        bookingType: this.data.bookingType,
+        jobID: this.data.jobID,
+        jobDescription: this.data.jobDescription,
+        color: currentColor
+      });
+
+      this.currentColor = currentColor
+
+      this.eventForm.markAllAsTouched();
+    }
   }
 
   openAddJobDialog() {
@@ -99,21 +124,43 @@ export class BookingDialogComponentComponent {
   onSubmit() {
     if (this.eventForm.invalid) {
       this.eventForm.markAllAsTouched()
+      this.snackBar.open('Invalid fields. Please review the form and submit again!', '', {
+        duration: 3000
+      });
     } else {
+      this.snackBar.open(this.typeOfDialog === 'create' ? 'Event created!' : 'Event edited!', '', {
+        duration: 3000
+      });
+
       this.dialogRef.close({
         eventName: this.eventForm.get('eventName')?.value,
         startTime: this.eventForm.get('startTime')?.value,
         endTime: this.eventForm.get('endTime')?.value,
-        bookingType: this.eventForm.get('bookingType')?.value,
-        color: this.getColor()
+        backColor: this.getColorID(),
+        tags: {
+          jobID: this.eventForm.get('jobID')?.value,
+          jobDescription: this.eventForm.get('jobDescription')?.value,
+          bookingType: this.eventForm.get('bookingType')?.value,
+        }
       });
     }
   }
 
-  getColor() {
+  getColorID() {
     let chosenColor: any
     this.colors.forEach((element: any) => {
       if (element.id === this.eventForm.get('color')?.value) {
+        chosenColor = element.id
+      }
+    });
+
+    return chosenColor
+  }
+
+  getColorNameViaID(id: string) {
+    let chosenColor: any
+    this.colors.forEach((element: any) => {
+      if (element.id === id) {
         chosenColor = element
       }
     });

@@ -8,6 +8,7 @@ import {
 import { DataService } from '../../services/calendar-data.service';
 import { MatDialog } from '@angular/material/dialog';
 import { BookingDialogComponentComponent } from '../booking-dialog-component/booking-dialog-component.component';
+import { DeleteDialogComponentComponent } from '../delete-dialog-component/delete-dialog-component.component';
 
 @Component({
   selector: 'app-calendar-component',
@@ -26,40 +27,7 @@ export class CalendarComponentComponent implements AfterViewInit {
   @ViewChild("navigator") nav!: DayPilotNavigatorComponent;
 
   events: DayPilot.EventData[] = [];
-
   date = DayPilot.Date.today();
-
-  contextMenu = new DayPilot.Menu({
-    items: [
-      {
-        text: "Edit",
-        onClick: async args => {
-          const event = args.source;
-          const dp = event.calendar;
-
-          const modal = await DayPilot.Modal.prompt("Edit event text:", event.data.text);
-          dp.clearSelection();
-
-          console.log(modal.result)
-          if (!modal.result) { 
-            return; 
-          }
-
-          event.data.text = modal.result;
-          dp.events.update(event);
-        }
-      },
-      {
-        text: "Delete",
-        onClick: args => {
-          const event = args.source;
-          const dp = event.calendar;
-          dp.events.remove(event);
-        }
-      },
-      
-    ]
-  });
 
   configNavigator: DayPilot.NavigatorConfig = {
     showMonths: 3,
@@ -81,7 +49,6 @@ export class CalendarComponentComponent implements AfterViewInit {
 
   configDay: DayPilot.CalendarConfig = {
     durationBarVisible: false,
-    contextMenu: this.contextMenu,
     onTimeRangeSelected: this.onTimeRangeSelected.bind(this),
     onBeforeEventRender: this.onBeforeEventRender.bind(this),
     onEventClick: this.onEventClick.bind(this),
@@ -90,7 +57,6 @@ export class CalendarComponentComponent implements AfterViewInit {
   configWeek: DayPilot.CalendarConfig = {
     viewType: "Week",
     durationBarVisible: false,
-    contextMenu: this.contextMenu,
     onTimeRangeSelected: this.onTimeRangeSelected.bind(this),
     onBeforeEventRender: this.onBeforeEventRender.bind(this),
     onEventClick: this.onEventClick.bind(this),
@@ -132,22 +98,26 @@ export class CalendarComponentComponent implements AfterViewInit {
         right: 3,
         width: 20,
         height: 20,
-        symbol: "/icons/daypilot.svg#minichevron-down-2",
-        fontColor: "#fff",
-        toolTip: "Show context menu",
-        action: "ContextMenu",
-      },
-      {
-        top: 3,
-        right: 25,
-        width: 20,
-        height: 20,
         symbol: "/icons/daypilot.svg#x-circle",
-        fontColor: "#fff",
+        fontColor: "#000",
         action: "None",
         toolTip: "Delete event",
-        onClick: async (args: any)   => {
-          dp.events.remove(args.source);
+        onClick: async (args: any)  => {
+          const messageData = {
+            id: args.source.cache.id,
+            eventName: args.source.cache.text
+          }
+
+          const dialogRef = this.dialog.open(DeleteDialogComponentComponent, {
+            width: '425px',
+            data: messageData
+          });
+      
+          dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+              dp.events.remove(args.source);
+            }
+          });
         }
       }
     ];
@@ -164,7 +134,8 @@ export class CalendarComponentComponent implements AfterViewInit {
   async onTimeRangeSelected(args: any) {
     const slotData = {
       startTime: args.start.value,
-      listOfColor: this.calendarDataService.getColors()
+      listOfColor: this.calendarDataService.getColors(),
+      typeOfDialog: "create"
     }
 
     const dialogRef = this.dialog.open(BookingDialogComponentComponent, {
@@ -180,41 +151,68 @@ export class CalendarComponentComponent implements AfterViewInit {
         const dp = args.control;
         dp.clearSelection();
 
-        console.log(result)
-
         dp.events.add(new DayPilot.Event({
           start: new DayPilot.Date(result.startTime, true),
           end: new DayPilot.Date(result.endTime, true),
           id: DayPilot.guid(),
           text: result.eventName,
-          backColor: result.color.id
+          backColor: result.backColor,
+          tags: {
+            jobID: result.tags.jobID,
+            jobDescription: result.tags.jobDescription,
+            bookingType: result.tags.bookingType
+          }
         }));
       }
     });
   }
 
   async onEventClick(args: any) {
-    const form = [
-      {name: "Text", id: "text"},
-      {name: "Start", id: "start", dateFormat: "MM/dd/yyyy", type: "datetime"},
-      {name: "End", id: "end", dateFormat: "MM/dd/yyyy", type: "datetime"},
-      {name: "Color", id: "backColor", type: "select", options: this.calendarDataService.getColors()},
-    ];
-
-    const data = args.e.data;
-    console.log(args.e.data)
-
-    const modal = await DayPilot.Modal.form(form, data);
-
-    console.log(modal.result)
-
-    if (modal.canceled) {
-      return;
+    const currentEventData = {
+      eventName: args.e.data.text,
+      startTime: args.e.data.start.value,
+      endTime: args.e.data.end.value,
+      jobID: args.e.data.tags.jobID,
+      jobDescription: args.e.data.tags.jobDescription,
+      bookingType: args.e.data.tags.bookingType,
+      listOfColor: this.calendarDataService.getColors(),
+      typeOfDialog: "edit",
+      backColor: args.e.data.backColor
     }
 
-    const dp = args.control;
+    const dialogRef = this.dialog.open(BookingDialogComponentComponent, {
+      width: '800px', 
+      maxWidth: '90vw', 
+      height: 'auto', 
+      maxHeight: '90vh',
+      data: currentEventData
+    });
 
-    dp.events.update(modal.result);
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const dp = args.control
+
+        const updateEventData = new DayPilot.Event({
+          id: args.e.data.id,
+          text: result.eventName,
+          start: new DayPilot.Date(result.startTime, true),
+          end: new DayPilot.Date(result.endTime, true),
+          tags: {
+            jobID: result.tags.jobID,
+            jobDescription: result.tags.jobDescription,
+            bookingType: result.tags.bookingType
+          },
+          backColor: result.backColor
+        });
+
+        console.log(updateEventData.data)
+
+        dp.events.update(updateEventData.data)
+      }
+    });
   }
 
+  openDeleteDialog(args: any) {
+    
+  }
 }

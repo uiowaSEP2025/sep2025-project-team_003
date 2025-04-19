@@ -1,6 +1,6 @@
 <div class="dialog-content">
   <mat-dialog-content>
-    <h2 mat-dialog-title>Create new event</h2>
+    <h2 mat-dialog-title>{{ this.typeOfDialog === "create" ? "Create new" : "Edit" }} event</h2>
     <mat-card class="p-5 wide-card">
       
       <form class="parent" [formGroup]="eventForm">
@@ -94,14 +94,17 @@
             <td>
               <mat-form-field appearance="fill" class="full-width-field">
                 <mat-select 
-                matNativeControl 
-                required 
-                formControlName="bookingType"
+                  matNativeControl 
+                  required 
+                  formControlName="bookingType"
                 >
                   <mat-option value="quote">quote</mat-option>
                   <mat-option value="job">job</mat-option>
-              </mat-select>
+                </mat-select>
               </mat-form-field>
+              @if (eventForm.get('bookingType')?.touched && eventForm.get('bookingType')?.hasError('required')) {
+                <mat-error>Booking type is required</mat-error>
+              }
             </td>
           </tr>
           <tr>
@@ -109,14 +112,12 @@
             <td>
               <mat-form-field appearance="fill" class="full-width-field">
                 <mat-select 
-                matNativeControl 
-                required 
-                formControlName="color"
+                  matNativeControl 
+                  formControlName="color"
                 >
                 @for(color of colors; track color.id) {
                   <mat-option [value]="color.id">{{ color.name }}</mat-option>
                 }
-                  
               </mat-select>
               </mat-form-field>
             </td>
@@ -124,8 +125,9 @@
         </table>
       </form>
     </mat-card>
-    
+    <div class="spacer"></div>
   </mat-dialog-content>
+  
   <mat-dialog-actions>
     <div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
       <button data-testid="cancel" mat-stroked-button (click)="onCancel()">Cancel</button>

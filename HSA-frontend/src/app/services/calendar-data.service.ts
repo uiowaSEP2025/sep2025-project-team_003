@@ -18,11 +18,17 @@ export class DataService {
 
   events = [
     {
-      id: 1,
+      id: DayPilot.guid(),
       text: "Event 1",
       start: DayPilot.Date.today().firstDayOfWeek().addHours(10),
       end: DayPilot.Date.today().firstDayOfWeek().addHours(13),
       participants: 2,
+      tags: {
+        jobID: "1",
+        jobDescription: "Hello",
+        bookingType: "quote"
+      },
+      backColor: "#6aa84f"
     },
   ];
 
