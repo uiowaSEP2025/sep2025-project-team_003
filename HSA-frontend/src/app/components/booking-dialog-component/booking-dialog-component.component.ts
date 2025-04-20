@@ -57,6 +57,7 @@ export class BookingDialogComponentComponent implements OnInit {
       bookingType: ['', Validators.required],
       jobID: ['', Validators.required],
       jobDescription: [''],
+      status: ['', Validators.required],
       color: ['']
     })
 
@@ -68,7 +69,8 @@ export class BookingDialogComponentComponent implements OnInit {
   ngOnInit() {
     if (this.typeOfDialog === "create") {
       this.eventForm.patchValue({
-        startTime: new Date(this.data.startTime)
+        startTime: new Date(this.data.startTime),
+        status: "pending"
       })
     } else {
       this.eventForm.setValue({
@@ -77,12 +79,12 @@ export class BookingDialogComponentComponent implements OnInit {
         endTime: new Date(this.data.endTime),
         bookingType: this.data.bookingType,
         jobID: this.data.jobID,
+        status: this.data.status,
         jobDescription: this.data.jobDescription,
         color: this.data.backColor
       });
 
       this.currentColor = this.data.backColor
-
       this.eventForm.markAllAsTouched();
     }
   }
@@ -126,10 +128,6 @@ export class BookingDialogComponentComponent implements OnInit {
         duration: 3000
       });
     } else {
-      this.snackBar.open(this.typeOfDialog === 'create' ? 'Event created!' : 'Event edited!', '', {
-        duration: 3000
-      });
-
       this.dialogRef.close({
         eventName: this.eventForm.get('eventName')?.value,
         startTime: this.eventForm.get('startTime')?.value,
@@ -139,6 +137,7 @@ export class BookingDialogComponentComponent implements OnInit {
           jobID: this.eventForm.get('jobID')?.value,
           jobDescription: this.eventForm.get('jobDescription')?.value,
           bookingType: this.eventForm.get('bookingType')?.value,
+          status: this.eventForm.get('status')?.value,
         }
       });
     }

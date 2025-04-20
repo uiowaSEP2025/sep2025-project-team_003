@@ -111,6 +111,28 @@
             </td>
           </tr>
           <tr>
+            <td>Booking Status*</td>
+            <td>
+              <mat-form-field appearance="fill" class="full-width-field">
+                <mat-select 
+                  matNativeControl 
+                  required 
+                  formControlName="status"
+                >
+                  <mat-option value="pending">pending</mat-option>
+                  @if (this.typeOfDialog === "edit") {
+                    <mat-option value="accepted">accepted</mat-option>
+                    <mat-option value="rejected">rejected</mat-option>
+                    <mat-option value="cancelled">cancelled</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              @if (eventForm.get('bookingType')?.touched && eventForm.get('bookingType')?.hasError('required')) {
+                <mat-error>Booking type is required</mat-error>
+              }
+            </td>
+          </tr>
+          <tr>
             <td>Color Tag</td>
             <td>
               <mat-form-field appearance="fill" class="full-width-field">

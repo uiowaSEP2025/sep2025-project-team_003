@@ -23,6 +23,7 @@ from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForI
 from hsabackend.views.generate_invoice_pdf_view import generate_pdf
 from hsabackend.views.organizations import complete_onboarding, createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail
 from hsabackend.views.discounts import get_discounts, edit_discount, create_discount, delete_discount
+from hsabackend.views.bookings import create_event, delete_event, edit_event, get_booking_data
 from django.http import HttpResponse
 
 def handle_unmatched_api(request):
@@ -144,6 +145,12 @@ urlpatterns = [
     path("api/edit/discount/<int:id>", edit_discount),
     path("api/create/discount", create_discount),
     path("api/delete/discount/<int:id>", delete_discount),
+
+    # bookings
+    path("api/get/bookings", get_booking_data),
+    path("api/create/booking", create_event),
+    path("api/edit/booking/<int:id>", edit_event),
+    path("api/delete/booking/<int:id>", delete_event),
 
     # password reset
     re_path(r'^api/password_reset/', include('hsabackend.utils.password_reset_route_adder', namespace='password_reset')),

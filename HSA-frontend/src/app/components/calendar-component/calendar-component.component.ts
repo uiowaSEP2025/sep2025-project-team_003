@@ -11,6 +11,7 @@ import { BookingDialogComponentComponent } from '../booking-dialog-component/boo
 import { DeleteDialogComponentComponent } from '../delete-dialog-component/delete-dialog-component.component';
 import { JobService } from '../../services/job.service';
 import { ViewJobDialogComponentComponent } from '../view-job-dialog-component/view-job-dialog-component.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-calendar-component',
@@ -65,7 +66,12 @@ export class CalendarComponentComponent implements AfterViewInit {
     onEventClick: this.onEventClick.bind(this),
   };
 
-  constructor(private calendarDataService: DataService, private jobService: JobService, public dialog: MatDialog) {
+  constructor(
+    private calendarDataService: DataService, 
+    private jobService: JobService, 
+    public dialog: MatDialog, 
+    private snackBar: MatSnackBar
+  ) {
     this.viewWeek();
   }
 
@@ -90,19 +96,39 @@ export class CalendarComponentComponent implements AfterViewInit {
     const to = this.nav.control.visibleEnd();
 
     //load events from booking model
-    this.calendarDataService.getEvents(from, to).subscribe(result => {
-      //load job data for each event (Or made an aggregate api to do this once)
-      result.forEach((element: any) => {
-        this.jobService.getSpecificJobData(element.tags.jobID).subscribe({
-          next: (response) => {
-            this.jobs.push(response)
-            let endDate = response.data.endDate.split("-").slice(1).join("/");
-            element.html = this.eventHTML(element.text, endDate, response.data.customerName, element.tags.bookingType)
+    this.calendarDataService.getEvents(from, to).subscribe({
+      next: (response) => {
+        let allEvents: any = response
+        
+        if (allEvents.data.length !== 0) {
+          //load job data for each event (Or made an aggregate api to do this once)
+          allEvents.data.forEach((element: any) => {
+            let eventFormat = new DayPilot.Event({
+              id: element.id,
+              text: element["event_name"],
+              start: new DayPilot.Date(element["start_time"], true),
+              end: new DayPilot.Date(element["end_time"], true),
+              tags: {
+                jobID: element["job"],
+                bookingType: element["booking_type"],
+                status: element["status"]
+              },
+              backColor: element["back_color"]
+            })
 
-            this.events.push(element)
-          }
-        });
-      });
+            this.jobService.getSpecificJobData(eventFormat.data.tags.jobID).subscribe({
+              next: (response) => {
+                this.jobs.push(response)
+                let endDate = response.data.endDate.split("-").slice(1).join("/");
+                eventFormat.data.html = this.eventHTML(eventFormat.data.text, endDate, response.data.customerName, eventFormat.data.tags.bookingType)
+                eventFormat.data.tags.jobDescription = response.data.description
+
+                this.events.push(eventFormat.data)
+              }
+            });
+          });
+        }
+      }
     });
   }
 
@@ -163,12 +189,23 @@ export class CalendarComponentComponent implements AfterViewInit {
             width: '425px',
             data: messageData
           });
+
+          
       
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              dp.events.remove(args.source);
-              this.jobs = this.jobs.filter((item) => item.data.id === args.source.cache.tags.jobID)
-              console.log(this.jobs)
+              //call the api to delete booking model here
+              this.calendarDataService.deleteEvent({ id: args.source.data.id}).subscribe({
+                next: (response) => {
+                  this.snackBar.open('Event Deleted!', '', {
+                    duration: 3000
+                  });
+
+                  dp.events.remove(args.source);
+                  this.jobs = this.jobs.filter((item) => item.data.id === args.source.cache.tags.jobID)
+                },
+                error: (error) => {}
+            })
             }
           });
         }
@@ -222,10 +259,29 @@ export class CalendarComponentComponent implements AfterViewInit {
                 jobID: result.tags.jobID,
                 jobDescription: result.tags.jobDescription,
                 bookingType: result.tags.bookingType,
+                status: result.tags.status
               }
             }));
+            
+            const eventCreateRequest = {
+              eventName: result.eventName,
+              startTime: new DayPilot.Date(result.startTime, true).toString(),
+              endTime: new DayPilot.Date(result.endTime, true).toString(),
+              bookingType: result.tags.bookingType,
+              backColor: result.backColor,
+              status: result.tags.status,
+              jobID: result.tags.jobID
+            }
 
             //call the api to save booking model here
+            this.calendarDataService.createEvent(eventCreateRequest).subscribe({
+              next: (response) => {
+                this.snackBar.open('Event Created!', '', {
+                  duration: 3000
+                });
+              },
+              error: (error) => {}
+            })
           }
         })
       }
@@ -242,6 +298,7 @@ export class CalendarComponentComponent implements AfterViewInit {
       bookingType: args.e.data.tags.bookingType,
       listOfColor: this.calendarDataService.getColors(),
       typeOfDialog: "edit",
+      status: args.e.data.tags.status,
       backColor: args.e.data.backColor,
     }
 
@@ -275,13 +332,33 @@ export class CalendarComponentComponent implements AfterViewInit {
                 jobID: result.tags.jobID,
                 jobDescription: result.tags.jobDescription,
                 bookingType: result.tags.bookingType,
+                status: result.tags.status,
               },
               backColor: result.backColor
             });
 
             dp.events.update(updateEventData.data)
 
-            //call the api to save the booking model here
+            const eventEditRequest = {
+              id: args.e.data.id,
+              eventName: result.eventName,
+              startTime: new DayPilot.Date(result.startTime, true).toString(),
+              endTime: new DayPilot.Date(result.endTime, true).toString(),
+              bookingType: result.tags.bookingType,
+              backColor: result.backColor,
+              status: result.tags.status,
+              jobID: result.tags.jobID
+            }
+
+            //call the api to save booking model here
+            this.calendarDataService.editEvent(eventEditRequest).subscribe({
+              next: (response) => {
+                this.snackBar.open('Event Edited!', '', {
+                  duration: 3000
+                });
+              },
+              error: (error) => {}
+            })
           }
         })
       }
