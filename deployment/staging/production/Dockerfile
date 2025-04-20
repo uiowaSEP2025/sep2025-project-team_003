@@ -8,7 +8,7 @@ WORKDIR /HSA-frontend
 # Copy package files first for better caching
 COPY package*.json ./
 RUN npm install -g @angular/cli
-RUN npm install
+RUN npm ci
 
 # Run staging commands
 RUN ng build
