@@ -37,7 +37,6 @@ def get_booking_data(request):
         'data': serializer.data,
         'totalCount': count
     }    
-    print(serializer.data)
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])

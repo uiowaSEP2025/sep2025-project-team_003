@@ -394,6 +394,7 @@ export class CalendarComponentComponent implements AfterViewInit {
   }
 
   onChangeViaDragAndResize(args: any) {
+    console.log(args)
     const eventEditRequest = {
       id: args.e.data.id,
       eventName: args.e.data.text,

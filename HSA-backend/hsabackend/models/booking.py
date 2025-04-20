@@ -23,7 +23,7 @@ class Booking(models.Model):
     end_time = models.DateTimeField()
     booking_type = models.CharField(max_length=50, choices=type_choices, default="job")
     status = models.CharField(max_length=50, choices=status_choices, default="pending")
-    back_color = models.CharField(max_length=50, default='#6aa84f')
+    back_color = models.CharField(max_length=50, default='#6aa84f', blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
 
