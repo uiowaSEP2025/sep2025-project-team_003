@@ -125,8 +125,6 @@ def edit_event(request, id):
         'job': job_object.pk
     }
 
-    print(event_data)
-
     # Edit and validate event
     booking_serializer = BookingSerializer(event_object, data=event_data, partial=True)
 

@@ -1,10 +1,5 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import {
-  DayPilot,
-  DayPilotCalendarComponent,
-  DayPilotModule,
-  DayPilotNavigatorComponent
-} from "@daypilot/daypilot-lite-angular";
+import { DayPilot, DayPilotCalendarComponent, DayPilotModule, DayPilotNavigatorComponent } from "@daypilot/daypilot-lite-angular";
 import { DataService } from '../../services/calendar-data.service';
 import { MatDialog } from '@angular/material/dialog';
 import { BookingDialogComponentComponent } from '../booking-dialog-component/booking-dialog-component.component';
@@ -12,11 +7,12 @@ import { DeleteDialogComponentComponent } from '../delete-dialog-component/delet
 import { JobService } from '../../services/job.service';
 import { ViewJobDialogComponentComponent } from '../view-job-dialog-component/view-job-dialog-component.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.component';
 
 @Component({
   selector: 'app-calendar-component',
   imports: [
-    DayPilotModule
+    DayPilotModule,
   ],
   providers:    [
     DataService,
@@ -56,6 +52,18 @@ export class CalendarComponentComponent implements AfterViewInit {
     onTimeRangeSelected: this.onTimeRangeSelected.bind(this),
     onBeforeEventRender: this.onBeforeEventRender.bind(this),
     onEventClick: this.onEventClick.bind(this),
+    
+    //handling drag event
+    eventMoveHandling: "Update",
+    onEventMove: (args) => { 
+      this.onChangeViaDragAndResize(args)
+    },
+
+    //handling resize event
+    eventResizeHandling: "Update",
+    onEventResize: (args) => {
+      this.onChangeViaDragAndResize(args)
+    }
   };
 
   configWeek: DayPilot.CalendarConfig = {
@@ -64,6 +72,18 @@ export class CalendarComponentComponent implements AfterViewInit {
     onTimeRangeSelected: this.onTimeRangeSelected.bind(this),
     onBeforeEventRender: this.onBeforeEventRender.bind(this),
     onEventClick: this.onEventClick.bind(this),
+
+    //handling drag event
+    eventMoveHandling: "Update",
+    onEventMove: (args) => { 
+      this.onChangeViaDragAndResize(args)
+    },
+
+    //handling resize event
+    eventResizeHandling: "Update",
+    onEventResize: (args) => {
+      this.onChangeViaDragAndResize(args)
+    }
   };
 
   constructor(
@@ -126,6 +146,7 @@ export class CalendarComponentComponent implements AfterViewInit {
                 this.events.push(eventFormat.data)
               }
             });
+            
           });
         }
       }
@@ -157,7 +178,14 @@ export class CalendarComponentComponent implements AfterViewInit {
         action: "None",
         toolTip: "Info",
         onClick: async (args: any)  => {
-          const infoData = this.jobs.filter((item) => item.data.id === args.source.cache.tags.jobID);
+          const infoData = {
+            jobInfo: this.jobs.filter((item) => item.data.id === args.source.data.tags.jobID)[0],
+            bookingInfo: {
+              eventName: args.source.data.text,
+              status: args.source.data.tags.status,
+              bookingType: args.source.data.tags.bookingType
+            }
+          };
 
           const dialogRef = this.dialog.open(ViewJobDialogComponentComponent, {
             width: 'auto', 
@@ -181,8 +209,8 @@ export class CalendarComponentComponent implements AfterViewInit {
         toolTip: "Delete event",
         onClick: async (args: any)  => {
           const messageData = {
-            id: args.source.cache.id,
-            eventName: args.source.cache.text
+            id: args.source.data.id,
+            eventName: args.source.data.text
           }
 
           const dialogRef = this.dialog.open(DeleteDialogComponentComponent, {
@@ -202,7 +230,7 @@ export class CalendarComponentComponent implements AfterViewInit {
                   });
 
                   dp.events.remove(args.source);
-                  this.jobs = this.jobs.filter((item) => item.data.id === args.source.cache.tags.jobID)
+                  this.jobs = this.jobs.filter((item) => item.data.id === args.source.data.tags.jobID)
                 },
                 error: (error) => {}
             })
@@ -325,7 +353,7 @@ export class CalendarComponentComponent implements AfterViewInit {
             const updateEventData = new DayPilot.Event({
               id: args.e.data.id,
               text: result.eventName,
-              html: this.eventHTML(result.eventName, endDate, jobInfo['customerName'], result.bookingType),
+              html: this.eventHTML(result.eventName, endDate, jobInfo['customerName'], result.tags.bookingType),
               start: new DayPilot.Date(result.startTime, true),
               end: new DayPilot.Date(result.endTime, true),
               tags: {
@@ -363,5 +391,27 @@ export class CalendarComponentComponent implements AfterViewInit {
         })
       }
     });
+  }
+
+  onChangeViaDragAndResize(args: any) {
+    const eventEditRequest = {
+      id: args.e.data.id,
+      eventName: args.e.data.text,
+      startTime: new DayPilot.Date(args.newStart, true).toString(),
+      endTime: new DayPilot.Date(args.newEnd, true).toString(),
+      bookingType: args.e.data.tags.bookingType,
+      backColor: args.e.data.backColor,
+      status: args.e.data.tags.status,
+      jobID: args.e.data.tags.jobID
+    }
+
+    this.calendarDataService.editEvent(eventEditRequest).subscribe({
+      next: (response) => {
+        this.snackBar.open('Event Edited!', '', {
+          duration: 3000
+        });
+      },
+      error: (error) => {}
+    })
   }
 }

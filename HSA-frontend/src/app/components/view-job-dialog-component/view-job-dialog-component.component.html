@@ -4,12 +4,12 @@
         <app-loading-fallback stringToDisplay="Loading the job"></app-loading-fallback>
       }
       @else {
-        <h1 mat-dialog-title>Job Information</h1>
+        <h1 mat-dialog-title>Job and Booking Information</h1>
         <mat-card class="p-5 wide-card">
           <mat-accordion>
             <mat-expansion-panel [expanded]="true">
               <mat-expansion-panel-header>
-                <mat-panel-title> General Info </mat-panel-title>
+                <mat-panel-title> Job General Info </mat-panel-title>
               </mat-expansion-panel-header>
               <table class="info-table">
                 <tr>
@@ -70,6 +70,28 @@
           </mat-expansion-panel>
         </mat-accordion>
         <div class="spacer"></div>
+        <mat-accordion>
+          <mat-expansion-panel [expanded]="true">
+            <mat-expansion-panel-header>
+              <mat-panel-title> Booking Info </mat-panel-title>
+            </mat-expansion-panel-header>
+            <table class="info-table">
+              <tr>
+                <td>Event Name</td>
+                <td>{{bookingData.eventName}}</td>
+              </tr>
+              <tr>
+                <td>Status</td>
+                <td>{{bookingData.status}}</td>
+              </tr>
+              <tr>
+                <td>Type</td>
+                <td>{{bookingData.bookingType}}</td>
+              </tr>
+            </table>
+          </mat-expansion-panel>
+      </mat-accordion>
+      <div class="spacer"></div>
         </mat-card>
         <mat-dialog-actions>
           <div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">

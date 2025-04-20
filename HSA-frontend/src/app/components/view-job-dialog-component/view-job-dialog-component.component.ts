@@ -32,12 +32,14 @@ import { Router } from '@angular/router';
 })
 export class ViewJobDialogComponentComponent implements OnInit {
   jobData: JobDataInterface | null = null;
+  bookingData: any;
 
   constructor (
     public dialogRef: MatDialogRef<ViewJobDialogComponentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any ) 
   {
-    this.jobData = this.data[0]
+    this.jobData = this.data.jobInfo
+    this.bookingData = this.data.bookingInfo
   }
 
   ngOnInit() {
