@@ -32,7 +32,8 @@ export class CalendarComponentComponent implements AfterViewInit {
     showMonths: 3,
     cellWidth: 25,
     cellHeight: 25,
-    onVisibleRangeChanged: args => {
+    onVisibleRangeChanged: args => { 
+      this.events = []
       this.loadEvents();
     }
   };
