@@ -113,11 +113,12 @@ export class CalendarComponentComponent implements AfterViewInit {
     //load events from booking model
     this.calendarDataService.getEvents(from, to).subscribe({
       next: (response) => {
-        let allEvents: any = response
-        
-        if (allEvents.data.length !== 0) {
-          //load job data for each event (Or made an aggregate api to do this once)
-          allEvents.data.forEach((element: any) => {
+        let allInfo: any = response
+        let eventsInfo: any = allInfo["event_data"]
+        let jobsInfo: any = allInfo["job_data"]
+
+        if (eventsInfo.length !== 0) {
+          eventsInfo.forEach((element: any) => {
             let eventFormat = new DayPilot.Event({
               id: element.id,
               text: element["event_name"],
@@ -129,19 +130,18 @@ export class CalendarComponentComponent implements AfterViewInit {
                 status: element["status"]
               },
               backColor: element["back_color"]
-            })
-
-            this.jobService.getSpecificJobData(eventFormat.data.tags.jobID).subscribe({
-              next: (response) => {
-                this.jobs.push(response)
-                let endDate = response.data.endDate.split("-").slice(1).join("/");
-                eventFormat.data.html = this.eventHTML(eventFormat.data.text, endDate, response.data.customerName, eventFormat.data.tags.bookingType)
-                eventFormat.data.tags.jobDescription = response.data.description
-
-                this.events.push(eventFormat.data)
-              }
             });
-            
+
+            this.events.push(eventFormat.data)
+          });
+        }
+
+        if (jobsInfo.length !== 0) {
+          jobsInfo.forEach((element: any, index: number) => {
+            this.jobs.push(element)
+            let endDate = element.data.endDate.split("-").slice(1).join("/");
+            this.events[index].html = this.eventHTML(this.events[index].text, endDate, element.data.customerName, this.events[index].tags.bookingType)
+            this.events[index].tags.jobDescription = element.data.description
           });
         }
       }

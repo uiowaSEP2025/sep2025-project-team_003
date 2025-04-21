@@ -7,6 +7,9 @@ from django.utils import timezone
 from hsabackend.models.organization import Organization
 from hsabackend.models.booking import Booking
 from hsabackend.models.job import Job
+from hsabackend.models.job_service import JobService
+from hsabackend.models.job_material import JobMaterial
+from hsabackend.models.job_contractor import JobContractor
 from hsabackend.serializers.booking_serializer import BookingSerializer
 from django.db.models import Q
 from django.core.exceptions import ValidationError
@@ -32,9 +35,47 @@ def get_booking_data(request):
 
     serializer = BookingSerializer(bookings, many=True)
 
+    jobs = []
+
+    for event in serializer.data:
+        job_id = event["job"]
+        
+        try:
+            job = Job.objects.get(pk=job_id, organization=org)
+        except Job.DoesNotExist:
+            return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)  
+        
+        job_services = JobService.objects.filter(job=job.pk)
+        job_materials = JobMaterial.objects.filter(job=job.pk)
+        job_contractors = JobContractor.objects.filter(job=job.pk)
+
+        job_services_data = []
+        for service in job_services:
+            job_services_data.append(service.json())
+        
+        job_materials_data = []
+        for material in job_materials:
+            job_materials_data.append(material.json())
+        
+        job_contractors_data = []
+        for contractor in job_contractors:
+            job_contractors_data.append(contractor.json())
+
+        job_data = {
+            'data': job.json(),
+            'services': {'services': job_services_data},
+            'materials': {'materials': job_materials_data},
+            'contractors': {'contractors': job_contractors_data}
+        }  
+
+        jobs.append(job_data)
+             
+
     res = {
-        'data': serializer.data
+        'event_data': serializer.data,
+        'job_data': jobs
     }    
+
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
