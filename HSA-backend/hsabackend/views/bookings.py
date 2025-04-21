@@ -63,9 +63,9 @@ def get_booking_data(request):
 
         job_data = {
             'data': job.json(),
-            'services': {'services': job_services_data},
-            'materials': {'materials': job_materials_data},
-            'contractors': {'contractors': job_contractors_data}
+            'services': job_services_data,
+            'materials': job_materials_data,
+            'contractors': job_contractors_data
         }  
 
         jobs.append(job_data)

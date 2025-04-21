@@ -139,6 +139,7 @@ def get_job_individual_data(request, id):
     for contractor in job_contractors:
         job_contractors_data.append(contractor.json())
 
+    # DO NOT TOUCH OR IT WILL BREAK!, YES ITS BAD, WE KNOW!
     res = {
         'data': job.json(),
         'services': {'services': job_services_data},

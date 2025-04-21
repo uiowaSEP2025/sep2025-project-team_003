@@ -4,6 +4,7 @@ import {DayPilot} from "@daypilot/daypilot-lite-angular";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import { environment } from "../../environments/environment";
 import { StandardApiResponse } from "../interfaces/api-responses/standard-api-response.interface";
+import { BookingFetchResponse } from "../interfaces/api-responses/bookingJob.api.interface";
 
 interface BookingCreatePostData {
   eventName: string | null
@@ -33,7 +34,7 @@ interface BookingDeletePostData {
 @Injectable({
     providedIn: 'root'
 })
-export class DataService {
+export class BookingService {
   static colors = {
     green: "#6aa84f",
     yellow: "#f1c232",
@@ -80,12 +81,12 @@ export class DataService {
 
   constructor(private http : HttpClient) {}
 
-  public getEvents(from: DayPilot.Date, to: DayPilot.Date): Observable<StandardApiResponse> {
+  public getEvents(from: DayPilot.Date, to: DayPilot.Date): Observable<BookingFetchResponse> {
     console.log(from,to)
-    return this.http.get<StandardApiResponse>(this.apiGetUrl + "?from=" + from.toString() + "&to=" + to.toString());
+    return this.http.get<BookingFetchResponse>(this.apiGetUrl + "?from=" + from.toString() + "&to=" + to.toString());
   }
 
-  public createEvent(data: BookingCreatePostData): Observable<StandardApiResponse> {
+  public createEvent(data: BookingCreatePostData): Observable<any> {
     return this.http.post<StandardApiResponse>(this.apiCreateUrl, data)
   }
 
@@ -99,11 +100,11 @@ export class DataService {
 
   getColors(): any[] {
     const colors = [
-      {name: "Green", id: DataService.colors.green},
-      {name: "Yellow", id: DataService.colors.yellow},
-      {name: "Red", id: DataService.colors.red},
-      {name: "Gray", id: DataService.colors.gray},
-      {name: "Blue", id: DataService.colors.blue},
+      {name: "Green", id: BookingService.colors.green},
+      {name: "Yellow", id: BookingService.colors.yellow},
+      {name: "Red", id: BookingService.colors.red},
+      {name: "Gray", id: BookingService.colors.gray},
+      {name: "Blue", id: BookingService.colors.blue},
     ];
     return colors;
   }

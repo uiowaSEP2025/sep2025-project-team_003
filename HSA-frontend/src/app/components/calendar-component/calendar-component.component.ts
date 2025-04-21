@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { DayPilot, DayPilotCalendarComponent, DayPilotModule, DayPilotNavigatorComponent } from "@daypilot/daypilot-lite-angular";
-import { DataService } from '../../services/calendar-data.service';
+import { BookingService } from '../../services/calendar-data.service';
 import { MatDialog } from '@angular/material/dialog';
 import { BookingDialogComponentComponent } from '../booking-dialog-component/booking-dialog-component.component';
 import { DeleteDialogComponentComponent } from '../delete-dialog-component/delete-dialog-component.component';
@@ -14,7 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     DayPilotModule,
   ],
   providers:    [
-    DataService,
+    BookingService,
   ],
   templateUrl: './calendar-component.component.html',
   styleUrl: './calendar-component.component.scss'
@@ -83,7 +83,7 @@ export class CalendarComponentComponent implements AfterViewInit {
   };
 
   constructor(
-    private calendarDataService: DataService, 
+    private calendarDataService: BookingService, 
     private jobService: JobService, 
     public dialog: MatDialog, 
     private snackBar: MatSnackBar
