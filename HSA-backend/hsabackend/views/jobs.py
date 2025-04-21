@@ -60,6 +60,55 @@ def get_job_table_data(request):
     }    
     return Response(res, status=status.HTTP_200_OK)
 
+
+@api_view(["GET"])
+@check_authenticated_and_onboarded()
+def get_job_excluded_table_data(request):
+    org = request.org
+    search = request.query_params.get('search', '')
+    pagesize = request.query_params.get('pagesize', '')
+    offset = request.query_params.get('offset', 0)
+    excluded_ids_str = request.GET.getlist('excludeIDs', [])
+    excluded_ids = [int(id) for id in excluded_ids_str]
+    
+    if not pagesize or not offset:
+        return Response({"message": "missing pagesize or offset"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        pagesize = int(pagesize)
+        offset = int(offset)
+    except:
+        return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    offset = offset * pagesize
+    jobs = Job.objects.filter(organization=org.pk).exclude(id__in=excluded_ids).filter(
+        Q(customer__first_name__icontains=search) | 
+        Q(customer__last_name__icontains=search) | 
+        Q(start_date__icontains=search) | 
+        Q(end_date__icontains=search) |
+        Q(job_status__icontains=search) |
+        Q(description__icontains=search)
+    )[offset:offset + pagesize] if search else Job.objects.filter(organization=org.pk).exclude(id__in=excluded_ids)[offset:offset + pagesize]
+
+    data = []
+    for job in jobs:
+        data.append(job.json_simplify())
+    
+    count = Job.objects.filter(organization=org.pk).exclude(id__in=excluded_ids).filter(
+        Q(customer__first_name__icontains=search) | 
+        Q(customer__last_name__icontains=search) | 
+        Q(start_date__icontains=search) | 
+        Q(end_date__icontains=search) |
+        Q(job_status__icontains=search) |
+        Q(description__icontains=search)
+    ).count() if search else Job.objects.filter(organization=org.pk).exclude(id__in=excluded_ids).count()
+
+    res = {
+        'data': data,
+        'totalCount': count
+    }    
+    return Response(res, status=status.HTTP_200_OK)
+
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
 def get_job_individual_data(request, id):
@@ -90,6 +139,7 @@ def get_job_individual_data(request, id):
     for contractor in job_contractors:
         job_contractors_data.append(contractor.json())
 
+    # DO NOT TOUCH OR IT WILL BREAK!, YES ITS BAD, WE KNOW!
     res = {
         'data': job.json(),
         'services': {'services': job_services_data},

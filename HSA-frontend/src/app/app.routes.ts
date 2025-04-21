@@ -30,6 +30,7 @@ import { OnboardingPageComponent } from './pages/onboarding-page/onboarding-page
 import { Error500PageComponent } from './pages/error-500-page/error-500-page.component';
 import { RequestPasswordResetPageComponent } from './pages/request-password-reset-page/request-password-reset-page.component';
 import { PasswordResetPageComponent } from './pages/password-reset-page/password-reset-page.component';
+import { BookingPageComponent } from './pages/booking-page/booking-page.component';
 
 
 export const routes: Routes = [
@@ -110,6 +111,9 @@ export const routes: Routes = [
       },
       {
         path: 'discounts/edit/:id', component: EditDiscountPageComponent
+      },
+      {
+        path: 'booking', component: BookingPageComponent
       },
     ]
   },

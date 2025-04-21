@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { JobDataInterface } from '../interfaces/api-responses/job.api.data.interface';
+import { Job, JobParams } from '../interfaces/job.interface';
+import { TableApiResponse } from '../interfaces/api-responses/table.api.interface';
 
 interface JobCreatePostData {
   jobStatus: string | null,
@@ -69,6 +71,7 @@ interface JobJoinDeletePostData {
 })
 export class JobService {
   private apiGetUrl = `${environment.apiUrl}/api/get/jobs`;
+  private apiGetExcludedUrl = `${environment.apiUrl}/api/get/jobs/exclude`;
   private apiGetSpecificUrl = `${environment.apiUrl}/api/get/job`;
   private apiCreateUrl = `${environment.apiUrl}/api/create/job`;
   private apiEditUrl = `${environment.apiUrl}/api/edit/job`;
@@ -90,6 +93,29 @@ export class JobService {
     return this.http.get<StandardApiResponse>(this.apiGetUrl, { params: httpParams });
   }
   
+   public getExcludedJob(params?: JobParams): Observable<TableApiResponse<Job>> {
+    let httpParams = new HttpParams();
+
+    // Add query parameters
+    if (params?.excludeIDs) {
+      params.excludeIDs.forEach(id => {
+        httpParams = httpParams.append('excludeIDs', id.toString());
+      });
+    }
+
+    if (params) {
+      Object.keys(params).forEach(key => {
+        if (key !== 'excludeIDs') {
+          const value = params[key as keyof JobParams];
+          if (value !== undefined) {
+            httpParams = httpParams.append(key, value.toString());
+          }
+        }
+      });
+    }
+
+    return this.http.get<TableApiResponse<Job>>(this.apiGetExcludedUrl, { params: httpParams });
+  }
 
   public createJob(data:JobCreatePostData): Observable<StandardApiResponse> {
     return this.http.post<StandardApiResponse>(this.apiCreateUrl, data);

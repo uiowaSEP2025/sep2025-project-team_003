@@ -18,11 +18,13 @@ class BookingSerializer(serializers.ModelSerializer):
         """
         Update and return an existing Booking instance, given the validated data.
         """
+        instance.event_name = validated_data.get('event_name', instance.event_name)
         instance.start_time = validated_data.get('start_time', instance.start_time)
         instance.end_time = validated_data.get('end_time', instance.end_time)
         instance.organization = validated_data.get('organization', instance.organization)
         instance.booking_type = validated_data.get('booking_type', instance.booking_type)
+        instance.back_color = validated_data.get('back_color', instance.back_color)
         instance.status = validated_data.get('status', instance.status)
-        instance.job = validated_data.get('job', instance.job)
+        instance.job = validated_data.get('job', instance.job) # jobID
         instance.save()
         return instance

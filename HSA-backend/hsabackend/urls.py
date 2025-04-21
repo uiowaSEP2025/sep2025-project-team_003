@@ -11,7 +11,7 @@ from hsabackend.views.requests import get_org_request_data, delete_request,appro
 from hsabackend.views.services import get_service_table_data, get_service_excluded_table_data, create_service, edit_service, delete_service
 from hsabackend.views.materials import get_material_excluded_table_data, get_material_table_data, create_material, edit_material, delete_material
 from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice, get_data_for_invoice
-from hsabackend.views.jobs import get_job_table_data, get_job_individual_data, create_job, edit_job, delete_job
+from hsabackend.views.jobs import get_job_excluded_table_data, get_job_table_data, get_job_individual_data, create_job, edit_job, delete_job
 from hsabackend.views.jobs_services import get_job_service_table_data, create_job_service, delete_job_service, delete_cached_job_service
 from hsabackend.views.jobs_materials import get_job_material_table_data, create_job_material, delete_job_material, delete_cached_job_material
 from hsabackend.views.jobs_contractors import get_job_contractor_table_data, create_job_contractor, delete_job_contractor, delete_cached_job_contractor
@@ -24,6 +24,7 @@ from hsabackend.views.generate_invoice_pdf_view import generate_pdf
 from hsabackend.views.generate_quote_pdf_view import generate_quote_pdf, send_quote_pdf_to_customer_email
 from hsabackend.views.organizations import complete_onboarding, createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail
 from hsabackend.views.discounts import get_discounts, edit_discount, create_discount, delete_discount
+from hsabackend.views.bookings import create_event, delete_event, edit_event, get_booking_data
 from django.http import HttpResponse
 
 def handle_unmatched_api(request):
@@ -79,6 +80,7 @@ urlpatterns = [
 
     # jobs
     path("api/get/jobs", get_job_table_data),
+    path("api/get/jobs/exclude", get_job_excluded_table_data),
     path("api/get/job/<int:id>", get_job_individual_data),
     path("api/create/job", create_job),
     path("api/edit/job/<int:id>", edit_job),
@@ -146,6 +148,12 @@ urlpatterns = [
     path("api/edit/discount/<int:id>", edit_discount),
     path("api/create/discount", create_discount),
     path("api/delete/discount/<int:id>", delete_discount),
+
+    # bookings
+    path("api/get/bookings", get_booking_data),
+    path("api/create/booking", create_event),
+    path("api/edit/booking/<int:id>", edit_event),
+    path("api/delete/booking/<int:id>", delete_event),
 
     # password reset
     re_path(r'^api/password_reset/', include('hsabackend.utils.password_reset_route_adder', namespace='password_reset')),

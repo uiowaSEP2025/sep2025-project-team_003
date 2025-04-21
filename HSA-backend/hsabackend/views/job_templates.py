@@ -75,6 +75,7 @@ def get_job_template_individual_data(request, id):
     for material in job_template_materials:
         job_template_materials_data.append(material.json())
 
+    # DO NOT TOUCH OR IT WILL BREAK!, YES ITS BAD, WE KNOW!
     res = {
         'data': job_template.json(),
         'services': {'services': job_template_services_data},

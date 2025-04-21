@@ -40,8 +40,7 @@ export function RedirectAndAuthInterceptor(req: HttpRequest<unknown>, next: Http
                     router.navigateByUrl("/onboarding");
                     break;
                 default:
-                    console.log("Unknown fruit");
-                    break;
+                    return throwError(() => err);
                 }
             } else if (err.status === 404) {
                 router.navigateByUrl("/404");

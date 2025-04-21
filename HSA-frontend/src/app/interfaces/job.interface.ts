@@ -7,3 +7,10 @@ export interface Job {
   jobEndDate: Date;
   jobDescription: string;
 }
+
+export interface JobParams {
+  excludeIDs?: number[];
+  search: string,
+  pagesize: number,
+  offset: number,
+}
