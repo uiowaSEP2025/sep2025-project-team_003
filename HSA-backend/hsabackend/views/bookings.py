@@ -40,10 +40,8 @@ def get_booking_data(request):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def create_event(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-
     org = Organization.objects.get(owning_User=request.user)
     job_id = request.data.get('jobID')
 
@@ -55,7 +53,9 @@ def create_event(request):
     except Exception:
         return Response({"message": "Cannot parse date time"}, status=status.HTTP_400_BAD_REQUEST)
     
-    # Find job model
+    if startTimeObject > endTimeObject:
+        return Response({"message": "Start must be before end"}, status=status.HTTP_400_BAD_REQUEST)
+
     try:
         job_object = Job.objects.get(organization=org, pk=job_id)
     except Job.DoesNotExist:
@@ -79,16 +79,14 @@ def create_event(request):
     if not booking_serializer.is_valid():
         return Response({"errors": booking_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-    booking = booking_serializer.save()
+    booking_serializer.save()
 
     return Response({"message": "Event created successfully"}, status=status.HTTP_201_CREATED)
 
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def edit_event(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-
     org = Organization.objects.get(owning_User=request.user)
     job_id = request.data.get('jobID')
 
@@ -100,6 +98,9 @@ def edit_event(request, id):
     except Exception:
         return Response({"message": "Cannot parse date time"}, status=status.HTTP_400_BAD_REQUEST)
     
+    if startTimeObject > endTimeObject:
+        return Response({"message": "Start must be before end"}, status=status.HTTP_400_BAD_REQUEST)
+
     # Find job model
     try:
         job_object = Job.objects.get(organization=org, pk=job_id)
@@ -134,12 +135,9 @@ def edit_event(request, id):
 
     return Response({"message": "Event edited successfully"}, status=status.HTTP_200_OK)
 
-
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def delete_event(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-
     org = Organization.objects.get(owning_User=request.user)
     event_object = Booking.objects.filter(pk=id, organization=org)
 

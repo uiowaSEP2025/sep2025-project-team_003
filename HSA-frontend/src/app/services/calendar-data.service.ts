@@ -81,6 +81,7 @@ export class DataService {
   constructor(private http : HttpClient) {}
 
   public getEvents(from: DayPilot.Date, to: DayPilot.Date): Observable<StandardApiResponse> {
+    console.log(from,to)
     return this.http.get<StandardApiResponse>(this.apiGetUrl + "?from=" + from.toString() + "&to=" + to.toString());
   }
 
