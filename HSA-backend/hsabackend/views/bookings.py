@@ -29,13 +29,11 @@ def get_booking_data(request):
         return Response({"message": "Cannot parse date time"}, status=status.HTTP_400_BAD_REQUEST)
     
     bookings = Booking.objects.filter(organization=org.pk).filter(Q(start_time__gte=fromDateTimeObject) & Q(end_time__lte=toDateTimeObject))
-    count = Booking.objects.filter(organization=org.pk).filter(Q(start_time__lte=fromDateTimeObject) & Q(end_time__gte=toDateTimeObject)).count()
 
     serializer = BookingSerializer(bookings, many=True)
 
     res = {
-        'data': serializer.data,
-        'totalCount': count
+        'data': serializer.data
     }    
     return Response(res, status=status.HTTP_200_OK)
 
