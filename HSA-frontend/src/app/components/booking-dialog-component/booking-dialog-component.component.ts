@@ -139,8 +139,8 @@ export class BookingDialogComponentComponent implements OnInit {
     } else {
       this.dialogRef.close({
         eventName: this.eventForm.get('eventName')?.value,
-        startTime: this.eventForm.get('startTime')?.value,
-        endTime: this.eventForm.get('endTime')?.value,
+        startTime: this.data.startTime,
+        endTime: this.data.endTime,
         backColor: this.getColorID(),
         tags: {
           jobID: this.eventForm.get('jobID')?.value,
