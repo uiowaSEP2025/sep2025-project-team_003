@@ -79,7 +79,7 @@ def create_event(request):
 
     booking_serializer.save()
 
-    return Response({"message": "Event created successfully"}, status=status.HTTP_201_CREATED)
+    return Response({"message": "Event created successfully", "data": booking_serializer.data}, status=status.HTTP_201_CREATED)
 
 
 @api_view(["POST"])

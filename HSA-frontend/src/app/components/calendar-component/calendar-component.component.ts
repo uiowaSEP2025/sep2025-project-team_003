@@ -272,21 +272,6 @@ export class CalendarComponentComponent implements AfterViewInit {
 
             const endDate = jobInfo["endDate"].split("-").slice(1).join("/");
 
-            dp.events.add(new DayPilot.Event({
-              start: new DayPilot.Date(result.startTime, true),
-              end: new DayPilot.Date(result.endTime, true),
-              html: this.eventHTML(result.eventName, endDate, jobInfo['customerName'], result.bookingType),
-              id: DayPilot.guid(),
-              text: result.eventName,
-              backColor: result.backColor,
-              tags: {
-                jobID: result.tags.jobID,
-                jobDescription: result.tags.jobDescription,
-                bookingType: result.tags.bookingType,
-                status: result.tags.status
-              }
-            }));
-            
             const eventCreateRequest = {
               eventName: result.eventName,
               startTime: new DayPilot.Date(result.startTime, true).toString(),
@@ -300,12 +285,33 @@ export class CalendarComponentComponent implements AfterViewInit {
             //call the api to save booking model here
             this.calendarDataService.createEvent(eventCreateRequest).subscribe({
               next: (response) => {
+                let eventInfo: any = response
+
                 this.snackBar.open('Event Created!', '', {
                   duration: 3000
                 });
+
+                dp.events.add(new DayPilot.Event({
+                  start: new DayPilot.Date(result.startTime, true),
+                  end: new DayPilot.Date(result.endTime, true),
+                  html: this.eventHTML(result.eventName, endDate, jobInfo['customerName'], result.tags.bookingType),
+                  id: eventInfo.data.id,
+                  text: result.eventName,
+                  backColor: result.backColor,
+                  tags: {
+                    jobID: result.tags.jobID,
+                    jobDescription: result.tags.jobDescription,
+                    bookingType: result.tags.bookingType,
+                    status: result.tags.status
+                  }
+                }));
               },
               error: (error) => {}
             })
+
+            
+            
+            
           }
         })
       }
