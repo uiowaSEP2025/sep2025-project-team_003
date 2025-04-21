@@ -7,7 +7,6 @@ import { DeleteDialogComponentComponent } from '../delete-dialog-component/delet
 import { JobService } from '../../services/job.service';
 import { ViewJobDialogComponentComponent } from '../view-job-dialog-component/view-job-dialog-component.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.component';
 
 @Component({
   selector: 'app-calendar-component',
@@ -37,10 +36,6 @@ export class CalendarComponentComponent implements AfterViewInit {
       this.loadEvents();
     }
   };
-
-  selectTomorrow() {
-    this.date = DayPilot.Date.today().addDays(1);
-  }
 
   changeDate(date: DayPilot.Date): void {
     this.configDay.startDate = date;
@@ -250,8 +245,10 @@ export class CalendarComponentComponent implements AfterViewInit {
   }
 
   async onTimeRangeSelected(args: any) {
+    console.log(typeof args.end.value)
     const slotData = {
       startTime: args.start.value,
+      endTime: args.end.value,
       listOfColor: this.calendarDataService.getColors(),
       typeOfDialog: "create"
     }
@@ -265,11 +262,10 @@ export class CalendarComponentComponent implements AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      const dp = args.control;
+      dp.clearSelection(); // clears the highlighting that the user used to create the event
       if (result) {
-        const dp = args.control;
-        dp.clearSelection();
-        
-        this.jobService.getSpecificJobData(result.tags.jobID).subscribe({
+        this.jobService.getSpecificJobData(result.tags.jobID).subscribe({ // to take the job info
           next: (response) => {
             this.jobs.push(response)
             let jobInfo = response.data
@@ -394,7 +390,6 @@ export class CalendarComponentComponent implements AfterViewInit {
   }
 
   onChangeViaDragAndResize(args: any) {
-    console.log(args)
     const eventEditRequest = {
       id: args.e.data.id,
       eventName: args.e.data.text,

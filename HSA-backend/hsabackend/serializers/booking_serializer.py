@@ -25,6 +25,6 @@ class BookingSerializer(serializers.ModelSerializer):
         instance.booking_type = validated_data.get('booking_type', instance.booking_type)
         instance.back_color = validated_data.get('back_color', instance.back_color)
         instance.status = validated_data.get('status', instance.status)
-        instance.job = validated_data.get('job', instance.job)
+        instance.job = validated_data.get('job', instance.job) # jobID
         instance.save()
         return instance

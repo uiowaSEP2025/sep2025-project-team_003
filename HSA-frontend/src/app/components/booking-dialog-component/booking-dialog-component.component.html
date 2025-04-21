@@ -2,7 +2,7 @@
   <mat-dialog-content>
     <h2 mat-dialog-title>{{ this.typeOfDialog === "create" ? "Create new" : "Edit" }} event</h2>
     <mat-card class="p-5 wide-card">
-      
+
       <form class="parent" [formGroup]="eventForm">
         <table class="info-table">
           <tr>
@@ -10,103 +10,69 @@
             <td>
               <div class="customer-box-container">
                 @if (this.eventForm.get('jobID')?.value !== "") {
-                  <span 
-                    class="customer-name-span"
-                  >
-                    {{this.eventForm.get('jobID')?.value}} 
-                  </span>
+                <span class="customer-name-span">
+                  {{this.eventForm.get('jobID')?.value}}
+                </span>
                 }
                 <button type="button" mat-flat-button (click)="this.openAddJobDialog()">
                   @if (this.eventForm.get('jobID')?.value !== "") { Change } @else { Select }
-                 job</button>
+                  job</button>
               </div>
               @if (eventForm.get('jobID')?.touched && eventForm.get('jobID')?.hasError('required')) {
-                <mat-error>Job ID is required</mat-error>
+              <mat-error>Job ID is required</mat-error>
               }
             </td>
           </tr>
           @if (this.eventForm.get('jobDescription')?.value !== "") {
-            <tr>
-              <td>Description</td>
-              <td>
-                <div class="customer-box-container">
-                    <span 
-                      class="customer-name-span"
-                    >
-                      {{this.eventForm.get('jobDescription')?.value}} 
-                    </span>
-                </div>
-              </td>
-            </tr>
+          <tr>
+            <td>Description</td>
+            <td>
+              <div class="customer-box-container">
+                <span class="customer-name-span">
+                  {{this.eventForm.get('jobDescription')?.value}}
+                </span>
+              </div>
+            </td>
+          </tr>
           }
           <tr>
             <td>Event Name*</td>
             <td>
               <mat-form-field appearance="fill" class="full-width-field">
-                <input
-                  formControlName="eventName"
-                  matInput
-                  required
-                >
+                <input formControlName="eventName" matInput required>
               </mat-form-field>
               @if (eventForm.get('eventName')?.touched && eventForm.get('eventName')?.hasError('required')) {
-                <mat-error>Event name is required</mat-error>
+              <mat-error>Event name is required</mat-error>
               }
             </td>
           </tr>
           <tr>
-            <td>Start Time*</td>
+            <td>Start Time</td>
             <td>
-              <mat-form-field class="full-width-field">
-                <input 
-                  matInput 
-                  formControlName="startTime" 
-                  [matTimepicker]="startTimePicker"
-                  required
-                >
-                <mat-timepicker-toggle matIconSuffix [for]="startTimePicker"/>
-                <mat-timepicker #startTimePicker/>
-              </mat-form-field>
-              @if (eventForm.get('startTime')?.touched && eventForm.get('startTime')?.hasError('required')) {
-                <mat-error>Start time is required</mat-error>
-              }
-            </td>            
+              <span class="text-2xl font-bold text-gray-800">
+                {{ formatTime(data.startTime) }}
+              </span>
+            </td>
           </tr>
           <tr>
-            <td>End Time*</td>
+            <td>End Time</td>
             <td>
-              <mat-form-field class="full-width-field">
-                <input 
-                  matInput 
-                  formControlName="endTime" 
-                  [matTimepicker]="endTimePicker"
-                  [matTimepickerMin]="minTime"
-                  required
-                >
-                <mat-timepicker-toggle matIconSuffix [for]="endTimePicker"/>
-                <mat-timepicker #endTimePicker/>
-              </mat-form-field>
-              @if (eventForm.get('endTime')?.touched && eventForm.get('endTime')?.hasError('required')) {
-                <mat-error>End time is required</mat-error>
-              }
-            </td>         
+              <span class="text-2xl font-bold text-gray-800">
+                {{ formatTime(data.endTime) }}
+              </span>
+            </td>
           </tr>
           <tr>
             <td>Booking Type*</td>
             <td>
               <mat-form-field appearance="fill" class="full-width-field">
-                <mat-select 
-                  matNativeControl 
-                  required 
-                  formControlName="bookingType"
-                  required
-                >
+                <mat-select matNativeControl required formControlName="bookingType" required>
                   <mat-option value="quote">quote</mat-option>
                   <mat-option value="job">job</mat-option>
                 </mat-select>
               </mat-form-field>
               @if (eventForm.get('bookingType')?.touched && eventForm.get('bookingType')?.hasError('required')) {
-                <mat-error>Booking type is required</mat-error>
+              <mat-error>Booking type is required</mat-error>
               }
             </td>
           </tr>
@@ -114,21 +80,17 @@
             <td>Booking Status*</td>
             <td>
               <mat-form-field appearance="fill" class="full-width-field">
-                <mat-select 
-                  matNativeControl 
-                  required 
-                  formControlName="status"
-                >
+                <mat-select matNativeControl required formControlName="status">
                   <mat-option value="pending">pending</mat-option>
                   @if (this.typeOfDialog === "edit") {
-                    <mat-option value="accepted">accepted</mat-option>
-                    <mat-option value="rejected">rejected</mat-option>
-                    <mat-option value="cancelled">cancelled</mat-option>
+                  <mat-option value="accepted">accepted</mat-option>
+                  <mat-option value="rejected">rejected</mat-option>
+                  <mat-option value="cancelled">cancelled</mat-option>
                   }
                 </mat-select>
               </mat-form-field>
               @if (eventForm.get('bookingType')?.touched && eventForm.get('bookingType')?.hasError('required')) {
-                <mat-error>Booking type is required</mat-error>
+              <mat-error>Booking type is required</mat-error>
               }
             </td>
           </tr>
@@ -136,12 +98,10 @@
             <td>Color Tag</td>
             <td>
               <mat-form-field appearance="fill" class="full-width-field">
-                <mat-select 
-                  formControlName="color"
-                >
-                @for(color of colors; track color.id) {
+                <mat-select formControlName="color">
+                  @for(color of colors; track color.id) {
                   <mat-option [value]="color.id">{{ color.name }}</mat-option>
-                }
+                  }
                 </mat-select>
               </mat-form-field>
             </td>
@@ -151,7 +111,7 @@
     </mat-card>
     <div class="spacer"></div>
   </mat-dialog-content>
-  
+
   <mat-dialog-actions>
     <div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
       <button data-testid="cancel" mat-stroked-button (click)="onCancel()">Cancel</button>

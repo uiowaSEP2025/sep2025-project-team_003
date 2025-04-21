@@ -38,7 +38,6 @@ export class BookingDialogComponentComponent implements OnInit {
   eventForm: FormGroup;
   jobID: number = 0
   selectedJob: any
-  minTime: Date
   colors: any
   currentColor: any
   typeOfDialog: string
@@ -52,8 +51,6 @@ export class BookingDialogComponentComponent implements OnInit {
   ) {
     this.eventForm = this.eventFormBuilder.group({
       eventName: ['', Validators.required],
-      startTime: ['', Validators.required],
-      endTime: ['', Validators.required],
       bookingType: ['', Validators.required],
       jobID: ['', Validators.required],
       jobDescription: [''],
@@ -62,7 +59,6 @@ export class BookingDialogComponentComponent implements OnInit {
     })
 
     this.typeOfDialog = this.data.typeOfDialog
-    this.minTime = new Date(this.data.startTime)
     this.colors = this.data.listOfColor
   }
 
@@ -75,8 +71,6 @@ export class BookingDialogComponentComponent implements OnInit {
     } else {
       this.eventForm.setValue({
         eventName: this.data.eventName,
-        startTime: new Date(this.data.startTime),
-        endTime: new Date(this.data.endTime),
         bookingType: this.data.bookingType,
         jobID: this.data.jobID,
         status: this.data.status,
@@ -87,6 +81,21 @@ export class BookingDialogComponentComponent implements OnInit {
       this.currentColor = this.data.backColor
       this.eventForm.markAllAsTouched();
     }
+  }
+
+
+  formatTime(input: string): string {
+    const date = new Date(input);
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+  
+    const ampm = hours >= 12 ? ' PM' : ' AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+  
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+  
+    return `${hours}:${formattedMinutes}${ampm}`;
   }
 
   openAddJobDialog() {
