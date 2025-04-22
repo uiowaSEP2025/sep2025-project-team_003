@@ -71,10 +71,10 @@
             }
             @else if (header === "Approval" && element.status !== "approved" && element.status !== "denied") {
               <div class="flex gap-2">
-                <button mat-mini-fab style="background-color: rgb(42, 167, 10);" (click)="openApprovalDialog(element.id, true)">
+                <button mat-mini-fab style="background-color: rgb(42, 167, 10);" click-stop-propagation (click)="openApprovalDialog(element, true)">
                   <mat-icon>done</mat-icon>
                 </button>
-              <button mat-mini-fab style="background-color: rgb(196, 24, 24);" click-stop-propagation (click)="openApprovalDialog(element.id, false)">
+              <button mat-mini-fab style="background-color: rgb(196, 24, 24);" click-stop-propagation (click)="openApprovalDialog(element, false)">
                 <mat-icon>close</mat-icon>
               </button>
             </div>

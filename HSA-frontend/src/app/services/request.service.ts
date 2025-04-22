@@ -28,6 +28,8 @@ export class RequestService {
   private apiGetSpecificUrl = `${environment.apiUrl}/api/get/request`;
   private apiCreateUrl = `${environment.apiUrl}/api/create/request`;
   private apiEditUrl = `${environment.apiUrl}/api/edit/request`;
+  private apiApproveUrl = `${environment.apiUrl}/api/approve/request`;
+  private apiDenyUrl = `${environment.apiUrl}/api/delete/request`;
   private apiDeleteUrl = `${environment.apiUrl}/api/delete/request`;
   responses: any[]  = []
 
@@ -77,6 +79,13 @@ export class RequestService {
   public editRequest(data: RequestEditPostData): Observable<StandardApiResponse> {
     return this.http.post<StandardApiResponse>(this.apiEditUrl + `/${data.id}`, data);
   }
+
+  public approveDenyRequest(data: RequestDeletePostData, isApproved: boolean): Observable<StandardApiResponse> {
+    console.log(data, isApproved)
+    return isApproved
+      ? this.http.post<StandardApiResponse>(this.apiApproveUrl + `/${data.id}`, data)
+      : this.http.post<StandardApiResponse>(this.apiDenyUrl + `/${data.id}`, data)
+  } 
 
   public deleteRequest(data: RequestDeletePostData): Observable<StandardApiResponse> {
     return this.http.post<StandardApiResponse>(this.apiDeleteUrl + `/${data.id}`, data);

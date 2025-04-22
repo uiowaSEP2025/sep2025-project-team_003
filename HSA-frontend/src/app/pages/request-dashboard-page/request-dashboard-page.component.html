@@ -11,6 +11,7 @@
         editRedirect="" 
         [fetchedData]="requests" 
         [deleteRequest]="requestService.deleteRequest.bind(requestService)" 
+        [approveRequest]="requestService.approveDenyRequest.bind(requestService)"
         [loadDataToTable]="this.loadDataToTable.bind(this)"
         searchHint="Search by any keywords" 
         [checkbox]="'approval'"

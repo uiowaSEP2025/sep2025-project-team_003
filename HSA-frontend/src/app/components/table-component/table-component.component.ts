@@ -20,6 +20,7 @@ import { ClickStopPropagationDirective } from '../../utils/click-event-propogati
 import { OnInit } from '@angular/core';
 import { InputFieldDictionary } from '../../interfaces/interface-helpers/inputField-row-helper.interface';
 import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.component';
+import { AddConfirmDialogComponentComponent } from '../add-confirm-dialog-component/add-confirm-dialog-component.component';
 
 @Component({
   selector: 'app-table-component',
@@ -42,6 +43,7 @@ import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.c
 export class TableComponentComponent implements AfterViewInit, OnChanges, OnDestroy, OnInit {
   @Input() fetchedData: any = null
   @Input() deleteRequest!: (data: any) => Observable<StandardApiResponse>
+  @Input() approveRequest!: (data: any, isApproved: boolean) => Observable<any>
   @Input({ required: true }) loadDataToTable!: (search: string, pageSize: number, offSet: number) => void
   @Input() hideValues: string[] = [];
   @Input() width: string = 'auto'
@@ -169,7 +171,23 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   openApprovalDialog(args: any, isApproved: boolean) {
+    const dialogRef = this.dialog.open(AddConfirmDialogComponentComponent, {
+      width: '300px',
+      data: isApproved ? "approval" : "deny"
+    });
 
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+          this.approveRequest(args, isApproved).subscribe({
+            next: (response) => {
+              this.snackBar.open(isApproved ? 'Approved successfully' : 'Denied successfully', '', {
+                duration: 3000
+              });
+            }
+          })
+        window.location.reload();
+      }
+    })
   }
 
   ngOnChanges(changes: SimpleChanges): void {
