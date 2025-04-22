@@ -27,7 +27,9 @@ class RequestView(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        get.return_value = Organization()
+        org = Organization()
+        org.is_onboarding = False
+        get.return_value = org
         factory = APIRequestFactory()
         request = factory.get('/api/get/requests?search')
         request.user = mock_user  
@@ -41,7 +43,9 @@ class RequestView(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        get.return_value = Organization()
+        org = Organization()
+        org.is_onboarding = False
+        get.return_value = org
         qs = MagicMock(spec=QuerySet) # needed because it's sliced in the code
         filter.return_value = qs
         
@@ -60,9 +64,11 @@ class RequestView(APITestCase):
     def test_get_request_table_data_valid_query_empty(self,get, filter):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org = Mock(spec=Organization)
+        org = Organization()
         org.pk = 1
+        org.is_onboarding = False
         get.return_value = org
+
         
         factory = APIRequestFactory()
         request = factory.get('/api/get/requests?search&pagesize=10&offset=10')
@@ -88,8 +94,9 @@ class RequestView(APITestCase):
     def test_delete_not_found(self, req, get):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org = Mock(spec=Organization)
+        org = Organization()
         org.pk = 1
+        org.is_onboarding = False
         get.return_value = org
         req_qs = MagicMock(id="request_queryset")
         req_qs.exists.return_value = False
@@ -108,8 +115,9 @@ class RequestView(APITestCase):
     def test_delete_success(self, req,get):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org = Mock(spec=Organization)
+        org = Organization()
         org.pk = 1
+        org.is_onboarding = False
         get.return_value = org
         req_qs = MagicMock(id="request_queryset")
         req_qs.exists.return_value = True
@@ -138,7 +146,9 @@ class RequestView(APITestCase):
     def test_approve_not_exists(self,filter, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         factory = APIRequestFactory()
         qs = MagicMock()
         qs.exists.return_value = False
@@ -155,7 +165,9 @@ class RequestView(APITestCase):
     def test_approve_valid(self,filter, org, job, customer):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         factory = APIRequestFactory()
         qs = MagicMock(name= "req qs")
         qs.exists.return_value = True

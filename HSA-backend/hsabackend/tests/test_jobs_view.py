@@ -1,23 +1,24 @@
+from rest_framework.test import APIRequestFactory
+from rest_framework import status
 from unittest.mock import MagicMock
 from unittest.mock import Mock
 from unittest.mock import patch
-
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
-from django.db.models import Q
-from django.db.models import QuerySet
-from rest_framework import status
-from rest_framework.test import APIRequestFactory
-from rest_framework.test import APITestCase
-
-from hsabackend.models.contractor import Contractor
-from hsabackend.models.customer import Customer
-from hsabackend.models.job import Job, JobsMaterials, JobsServices
-from hsabackend.models.material import Material
-from hsabackend.models.organization import Organization
-from hsabackend.models.service import Service
 from hsabackend.views.jobs import get_job_individual_data, get_job_table_data, create_job, edit_job
-
+from rest_framework.test import APITestCase
+from hsabackend.models.organization import Organization
+from hsabackend.models.customer import Customer
+from hsabackend.models.service import Service
+from hsabackend.models.material import Material
+from hsabackend.models.contractor import Contractor
+from hsabackend.models.job_service import JobService
+from hsabackend.models.job_material import JobMaterial
+from hsabackend.models.job_contractor import JobContractor
+from django.db.models import QuerySet
+from django.db.models import Q
+from unittest.mock import call
+from hsabackend.models.job import Job
+from django.core.exceptions import ValidationError
 
 class jobViewTest(APITestCase):
     def test_get_job_table_data_unauth(self):
@@ -36,7 +37,9 @@ class jobViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        get.return_value = Organization()
+        org = Organization()
+        org.is_onboarding = False
+        get.return_value = org
         factory = APIRequestFactory()
         request = factory.get('/api/get/jobs?search')
         request.user = mock_user  
@@ -50,7 +53,9 @@ class jobViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        get.return_value = Organization()
+        org = Organization()
+        org.is_onboarding = False
+        get.return_value = org
         qs = MagicMock(spec=QuerySet)
         filter.return_value = qs
         
@@ -69,8 +74,9 @@ class jobViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        org = Mock(spec=Organization)
+        org = Organization()
         org.pk = 1
+        org.is_onboarding = False
         get.return_value = org
         filter.return_value = MagicMock(spec=QuerySet)
         
@@ -100,7 +106,9 @@ class jobViewTest(APITestCase):
         mock_user.is_authenticated = True
 
         job.return_value = None
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         factory = APIRequestFactory()
         request = factory.get('/api/get/job/1')
@@ -115,8 +123,9 @@ class jobViewTest(APITestCase):
     def test_get_job_individual_data_valid(self, get_org, get_job):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org = Mock(spec=Organization)
+        org = Organization()
         org.pk = 1
+        org.is_onboarding = False
         get_org.return_value = org
 
         mock_response = {
@@ -164,7 +173,9 @@ class jobViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         customer.return_value = Customer()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         
         factory = APIRequestFactory()
         request = factory.post('api/create/job',
@@ -222,7 +233,9 @@ class jobViewTest(APITestCase):
         mock_user.is_authenticated = True
         
         customer.return_value = Customer()
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         service.return_value = Service()
         material.return_value = Material()
         contractor.return_value = Contractor()
@@ -230,13 +243,13 @@ class jobViewTest(APITestCase):
         job_name_obj = MagicMock(spec=Job)
         job_name.return_value = job_name_obj
 
-        job_service_obj = MagicMock(spec=JobsServices)
+        job_service_obj = MagicMock(spec=JobService)
         job_service.return_value = job_service_obj
 
-        job_material_obj = MagicMock(spec=JobsMaterials)
+        job_material_obj = MagicMock(spec=JobMaterial)
         job_material.return_value = job_material_obj
 
-        job_contractor_obj = MagicMock(spec=job_name_obj.contractors)
+        job_contractor_obj = MagicMock(spec=JobContractor)
         job_contractor.return_value = job_contractor_obj
         
         factory = APIRequestFactory()
@@ -307,7 +320,9 @@ class jobViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         job_name.return_value = None
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         
         factory = APIRequestFactory()
         request = factory.post('/api/edit/job/0')
@@ -325,7 +340,9 @@ class jobViewTest(APITestCase):
         mock_job_name = MagicMock(spec=Job)
         customer.return_value = Customer()
         job_name.return_value = mock_job_name
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         
         mock_job_name.full_clean.side_effect = ValidationError({'description': ['This field is required.']})
 
@@ -355,7 +372,9 @@ class jobViewTest(APITestCase):
         mock_job_name = MagicMock(spec=Job)
         customer.return_value = Customer()
         job_name.return_value = mock_job_name
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         factory = APIRequestFactory()
         request = factory.post('/api/edit/job/1',

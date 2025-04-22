@@ -29,7 +29,9 @@ class CustomerViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        get.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        get.return_value = organization
         factory = APIRequestFactory()
         request = factory.get('/api/get/customers?search')
         request.user = mock_user  
@@ -43,7 +45,9 @@ class CustomerViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        get.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        get.return_value = organization
         qs = MagicMock(spec=QuerySet) # needed because it's sliced in the code
         filter.return_value = qs
         
@@ -62,8 +66,9 @@ class CustomerViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        org = Mock(spec=Organization)
+        org = Organization()
         org.pk = 1
+        org.is_onboarding = False
         get.return_value = org
         filter.return_value = MagicMock(spec=QuerySet)
         
@@ -91,7 +96,9 @@ class CustomerViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        get.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        get.return_value = organization
         factory = APIRequestFactory()
         request = factory.get('/api/get/customers/exclude?excludeIDs=1&search')
         request.user = mock_user  
@@ -106,7 +113,9 @@ class CustomerViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        get.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        get.return_value = organization
         qs = MagicMock(spec=QuerySet) # needed because it's sliced in the code
         filter.return_value = qs
         exclude.return_value = qs
@@ -126,8 +135,9 @@ class CustomerViewTest(APITestCase):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        org = Mock(spec=Organization)
+        org = Organization()
         org.pk = 1
+        org.is_onboarding = False
         get.return_value = org
         filter.return_value = MagicMock(spec=QuerySet)
         
@@ -154,15 +164,17 @@ class CustomerViewTest(APITestCase):
     def test_create_customer_auth_invalid(self, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         
         factory = APIRequestFactory()
         request = factory.post('api/create/customer',
                 data={
-                    'first_name': 'John',
-                    'last_name': 'Doe',
+                    'firstn': 'John',
+                    'lastn': 'Doe',
                     'email': 'john.doe@example.com',
-                    'phone': '',
+                    'phoneno': '',
                     'notes': 'Sample note for testing purposes.'
                     })
         request.user = mock_user  
@@ -174,15 +186,17 @@ class CustomerViewTest(APITestCase):
     def test_calls_save_if_valid(self, cust, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         cust_obj = MagicMock(spec=Customer)
         cust.return_value = cust_obj
         
         factory = APIRequestFactory()
         request = factory.post('api/create/customer',
                 data={
-                    'first_name': 'John',
-                    'last_name': 'Doe',
+                    'firstn': 'John',
+                    'lastn': 'Doe',
                     'email': 'john.doe@example.com',
                     'phoneno': '1231231234',
                     'notes': 'Sample note for testing purposes.'
@@ -210,7 +224,9 @@ class CustomerViewTest(APITestCase):
         mock_cust = MagicMock()
         mock_cust.exists.return_value = False
         cust.return_value = mock_cust
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         
         factory = APIRequestFactory()
         request = factory.post('/api/edit/customers/1')
@@ -227,16 +243,18 @@ class CustomerViewTest(APITestCase):
         cust_qs = MagicMock()
         cust_qs.exists.return_value = True
         cust.return_value = cust_qs
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         mock_cust = MagicMock(name="mock cust")
         cust_qs.__getitem__.side_effect = lambda x: mock_cust
-        mock_cust.full_clean.side_effect = ValidationError({'first_name': ['This field is required.']})
+        mock_cust.full_clean.side_effect = ValidationError({'firstn': ['This field is required.']})
 
         factory = APIRequestFactory()
         request = factory.post('/api/edit/customers/1',
                     data={
-                        'first_name': 'John',
-                        'last_name': 'Doe',
+                        'firstn': 'John',
+                        'lastn': 'Doe',
                         'email': 'john.doe@example.com',
                         'phoneno': '1231231234',
                         'notes': 'Sample note for testing purposes.'
@@ -254,13 +272,15 @@ class CustomerViewTest(APITestCase):
         mock_cust.exists.return_value = True
         cust.return_value = mock_cust
 
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
 
         factory = APIRequestFactory()
         request = factory.post('/api/edit/customers/1',
                     data={
-                        'first_name': 'John',
-                        'last_name': 'Doe',
+                        'firstn': 'John',
+                        'lastn': 'Doe',
                         'email': 'john.doe@example.com',
                         'phoneno': '1231231234',
                         'notes': 'Sample note for testing purposes.'
@@ -285,7 +305,9 @@ class CustomerViewTest(APITestCase):
     def test_delete_not_found(self, org, cust):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True 
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         cust_query_set = MagicMock()
         cust_query_set.exists.return_value = False
         cust.return_value = cust_query_set
@@ -301,7 +323,9 @@ class CustomerViewTest(APITestCase):
     def test_delete_success(self, org, cust):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True 
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         cust_query_set = MagicMock()
         cust_query_set.exists.return_value = True
         cust.return_value = cust_query_set

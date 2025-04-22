@@ -24,7 +24,9 @@ class DiscountTableTest(APITestCase):
     @patch('hsabackend.views.discounts.Organization.objects.get')
     def test_get_discount_table_data_missing_data(self, org):
         mock_user = Mock(spec=User)
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         mock_user.is_authenticated = True
         
         factory = APIRequestFactory()
@@ -38,7 +40,9 @@ class DiscountTableTest(APITestCase):
     def test_get_discount_table_data_bad_data(self,org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         
         factory = APIRequestFactory()
         request = factory.get('/api/get/discounts?search&pagesize=oops&offset=0')
@@ -47,7 +51,7 @@ class DiscountTableTest(APITestCase):
         
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    @patch('hsabackend.views.discounts.Discount.objects.filter')
+    @patch('hsabackend.views.discounts.DiscountType.objects.filter')
     @patch('hsabackend.views.discounts.Organization.objects.get')
     def test_get_discount_table_data_bad_data(self,org,discounts):
         mock_user = Mock(spec=User)
@@ -55,7 +59,9 @@ class DiscountTableTest(APITestCase):
         qs = MagicMock()
         count_qs = MagicMock(name="count_qs")
         qs.filter.return_value = count_qs
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         discounts.return_value = qs
         
         factory = APIRequestFactory()
@@ -79,9 +85,11 @@ class CreateDiscountTest(APITestCase):
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
     
     @patch('hsabackend.views.discounts.Organization.objects.get')
-    @patch('hsabackend.views.discounts.Discount')
+    @patch('hsabackend.views.discounts.DiscountType')
     def test_create_disount_validation_failed(self,discnt, org):
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         mock_discnt = Mock()
         mock_discnt.full_clean.side_effect = ValidationError({'name': ['This field is required.']})
         discnt.return_value = mock_discnt
@@ -97,9 +105,11 @@ class CreateDiscountTest(APITestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @patch('hsabackend.views.discounts.Organization.objects.get')
-    @patch('hsabackend.views.discounts.Discount')
+    @patch('hsabackend.views.discounts.DiscountType')
     def test_create_disount_create_ok(self,discnt, org):
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         mock_discnt = Mock()
 
         mock_user = Mock(spec=User)
@@ -131,13 +141,15 @@ class EditDiscountTest(APITestCase):
         
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    @patch('hsabackend.views.discounts.Discount.objects.filter')
+    @patch('hsabackend.views.discounts.DiscountType.objects.filter')
     @patch('hsabackend.views.discounts.Organization.objects.get')
     def test_edit_not_exist(self,org,discnt):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         discnt_mock = Mock()
         discnt.return_value = discnt_mock
         discnt_mock.exists.return_value = False
@@ -149,13 +161,15 @@ class EditDiscountTest(APITestCase):
         
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    @patch('hsabackend.views.discounts.Discount.objects.filter')
+    @patch('hsabackend.views.discounts.DiscountType.objects.filter')
     @patch('hsabackend.views.discounts.Organization.objects.get')
     def test_edit_fails_validation(self,org,discnt):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         discnt_qs = MagicMock()
         discnt.return_value = discnt_qs
         discnt_qs.exists.return_value = True
@@ -175,13 +189,15 @@ class EditDiscountTest(APITestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-    @patch('hsabackend.views.discounts.Discount.objects.filter')
+    @patch('hsabackend.views.discounts.DiscountType.objects.filter')
     @patch('hsabackend.views.discounts.Organization.objects.get')
     def test_edit_ok(self,org,discnt):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         discnt_qs = MagicMock()
         discnt.return_value = discnt_qs
         discnt_qs.exists.return_value = True
@@ -212,10 +228,12 @@ class DeleteDiscountTest(APITestCase):
         
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
     
-    @patch('hsabackend.views.discounts.Discount.objects.filter')
+    @patch('hsabackend.views.discounts.DiscountType.objects.filter')
     @patch('hsabackend.views.discounts.Organization.objects.get')
     def test_delete_not_found(self, org, discnt):
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         discnt_qs = MagicMock()
         discnt.return_value = discnt_qs
 
@@ -231,10 +249,12 @@ class DeleteDiscountTest(APITestCase):
         
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    @patch('hsabackend.views.discounts.Discount.objects.filter')
+    @patch('hsabackend.views.discounts.DiscountType.objects.filter')
     @patch('hsabackend.views.discounts.Organization.objects.get')
     def test_delete_ok(self, org, discnt):
-        org.return_value = Organization()
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
         discnt_qs = MagicMock()
         discnt.return_value = discnt_qs
 
