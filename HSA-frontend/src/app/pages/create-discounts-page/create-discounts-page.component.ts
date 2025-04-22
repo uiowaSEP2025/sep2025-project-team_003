@@ -5,7 +5,6 @@ import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-sta
 import { MatButtonModule } from '@angular/material/button';
 import { DiscountsService } from '../../services/discount.service';
 import { Router } from '@angular/router';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-create-discounts-page',
@@ -19,7 +18,7 @@ export class CreateDiscountsPageComponent {
   percentControl = new FormControl('', [Validators.required, Validators.pattern(this.numberPattern), Validators.min(0), Validators.max(100)])
   matcher = new GenericFormErrorStateMatcher()
 
-  constructor(private discountService: DiscountsService, private router:Router, private errorHandler: ErrorHandlerService) {
+  constructor(private discountService: DiscountsService, private router:Router) {
 
   }
 
@@ -37,7 +36,6 @@ export class CreateDiscountsPageComponent {
         this.router.navigate(['/discounts']);
       },
       error: (error) => {
-        this.errorHandler.handleError(error, "discounts/create")
       }
     }
     )

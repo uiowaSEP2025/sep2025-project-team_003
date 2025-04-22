@@ -6,6 +6,13 @@ from rest_framework.response import Response
 from hsabackend.models.contractor import Contractor
 from hsabackend.models.job import Job
 from hsabackend.models.material import Material
+from hsabackend.models.contractor import Contractor
+from hsabackend.models.job_material import JobMaterial
+from hsabackend.models.job_service import JobService
+from hsabackend.models.job_contractor import JobContractor
+from django.db.models import Q
+from django.core.exceptions import ValidationError
+from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 from hsabackend.models.organization import Organization
 from hsabackend.models.service import Service
 from hsabackend.serializers.job_contractor_serializer import JobContractorSerializer
@@ -15,11 +22,11 @@ from hsabackend.serializers.job_service_serializer import JobServiceSerializer
 
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def get_job_table_data(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
-    org = Organization.objects.get(owning_User=request.user.pk)
+
+    org = request.org
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset', 0)
@@ -60,13 +67,61 @@ def get_job_table_data(request):
     }    
     return Response(res, status=status.HTTP_200_OK)
 
+
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
+def get_job_excluded_table_data(request):
+    org = request.org
+    search = request.query_params.get('search', '')
+    pagesize = request.query_params.get('pagesize', '')
+    offset = request.query_params.get('offset', 0)
+    excluded_ids_str = request.GET.getlist('excludeIDs', [])
+    excluded_ids = [int(id) for id in excluded_ids_str]
+
+    if not pagesize or not offset:
+        return Response({"message": "missing pagesize or offset"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        pagesize = int(pagesize)
+        offset = int(offset)
+    except:
+        return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
+
+    offset = offset * pagesize
+    jobs = Job.objects.filter(organization=org.pk).exclude(id__in=excluded_ids).filter(
+        Q(customer__first_name__icontains=search) |
+        Q(customer__last_name__icontains=search) |
+        Q(start_date__icontains=search) |
+        Q(end_date__icontains=search) |
+        Q(job_status__icontains=search) |
+        Q(description__icontains=search)
+    )[offset:offset + pagesize] if search else Job.objects.filter(organization=org.pk).exclude(id__in=excluded_ids)[offset:offset + pagesize]
+
+    data = []
+    for job in jobs:
+        data.append(job.json_simplify())
+
+    count = Job.objects.filter(organization=org.pk).exclude(id__in=excluded_ids).filter(
+        Q(customer__first_name__icontains=search) |
+        Q(customer__last_name__icontains=search) |
+        Q(start_date__icontains=search) |
+        Q(end_date__icontains=search) |
+        Q(job_status__icontains=search) |
+        Q(description__icontains=search)
+    ).count() if search else Job.objects.filter(organization=org.pk).exclude(id__in=excluded_ids).count()
+
+    res = {
+        'data': data,
+        'totalCount': count
+    }
+    return Response(res, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@check_authenticated_and_onboarded()
 def get_job_individual_data(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
-    org = Organization.objects.get(owning_User=request.user.pk)
 
+    org = request.org
     try:
         job = Job.objects.get(pk=id, organization=org)
     except Job.DoesNotExist:
@@ -82,6 +137,7 @@ def get_job_individual_data(request, id):
     job_materials_serializer = JobMaterialSerializer(job, many=True)
     job_contractors_serializer = JobContractorSerializer(job, many=True)
 
+    # DO NOT TOUCH OR IT WILL BREAK!, YES ITS BAD, WE KNOW!
     res = {
         'data': job_serializer.data,
         'services': {'services': job_services_serializer.data},
@@ -92,11 +148,17 @@ def get_job_individual_data(request, id):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded(require_onboarding=False)
 def create_job(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-
-    org = Organization.objects.get(owning_User=request.user)
+    org = request.org
+    job_description = request.data.get('description', '')
+    job_start_date = request.data.get('startDate', '')
+    job_end_date = request.data.get('endDate', '')
+    customer = Customer.objects.get(id=request.data.get('customerID'))
+    requestor_city = request.data.get('city', '')
+    requestor_state = request.data.get('state', '')
+    requestor_zip = request.data.get('zip', '')
+    requestor_address = request.data.get('address', '')
 
     # Prepare job data
     job_data = {
@@ -181,11 +243,11 @@ def create_job(request):
     return Response({"message": "Job created successfully"}, status=status.HTTP_201_CREATED)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def edit_job(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
-    org = Organization.objects.get(owning_User=request.user)
+
+    org = request.org
 
     try:
         job = Job.objects.get(pk=id, organization=org)
@@ -219,11 +281,11 @@ def edit_job(request, id):
 
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def delete_job(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
-    org = Organization.objects.get(owning_User=request.user)
+
+    org = request.org
     job = Job.objects.filter(pk=id, organization=org)
 
     if not job.exists():

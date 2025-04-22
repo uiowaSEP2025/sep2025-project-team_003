@@ -4,7 +4,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { ContractorService } from '../../services/contractor.service';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { CommonModule } from '@angular/common';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 
@@ -18,7 +17,7 @@ export class ContractorsPageComponent implements OnInit  {
   contractors: any = null
   contractorService: ContractorService
 
-  constructor(private router: Router, contractorService: ContractorService, private errorHandler: ErrorHandlerService) {
+  constructor(private router: Router, contractorService: ContractorService) {
     this.contractorService = contractorService
   }
 
@@ -32,7 +31,6 @@ export class ContractorsPageComponent implements OnInit  {
         this.contractors = response
       },
       error: (error) => {
-        this.errorHandler.handleError(error, 'contractors')
       }
     })
   }

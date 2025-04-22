@@ -5,7 +5,6 @@ import {MatInput} from "@angular/material/input";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from '@angular/router';
 import { ServiceService } from '../../services/service.service';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-edit-service-page',
@@ -25,7 +24,7 @@ export class EditServicePageComponent {
   public currentServiceName: string;
   serviceID: number | null = null
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute, private serviceFormBuilder: FormBuilder, private serviceService: ServiceService, private errorHandler: ErrorHandlerService) {
+  constructor(private router: Router, private activatedRoute: ActivatedRoute, private serviceFormBuilder: FormBuilder, private serviceService: ServiceService) {
     this.serviceForm = this.serviceFormBuilder.group({
       serviceName: ['', Validators.required],
       serviceDescription: [''],
@@ -57,7 +56,6 @@ export class EditServicePageComponent {
           this.router.navigate(['/services']);
         },
         error: (error) => {
-          this.errorHandler.handleError(error)
         }}
       )
   }

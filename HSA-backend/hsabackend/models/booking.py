@@ -18,10 +18,12 @@ class Booking(models.Model):
         ('cancelled', 'cancelled'),
     ]
 
+    event_name = models.CharField(max_length=50, default='')
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     booking_type = models.CharField(max_length=50, choices=type_choices, default="job")
     status = models.CharField(max_length=50, choices=status_choices, default="pending")
+    back_color = models.CharField(max_length=50, default='#6aa84f', blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
 
@@ -40,6 +42,7 @@ class Booking(models.Model):
     def __str__(self):
         return (f"<Booking Details:"
                 f" id: {self.pk},"
+                f" event_name: {self.event_name},"
                 f" booking_date: {self.booking_date},"
                 f" start_time: {self.start_time},"
                 f" end_time: {self.end_time},"

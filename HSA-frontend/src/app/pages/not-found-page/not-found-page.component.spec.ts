@@ -20,4 +20,16 @@ describe('NotFoundPageComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should render correctly', () => {
+    const compiled = fixture.debugElement.nativeElement;
+    const header = compiled.querySelector('mat-card-header')
+    const txt = compiled.querySelector('mat-card-content')
+    const button = compiled.querySelector('button')
+
+    expect(header.textContent).toContain('404 - Page Not Found')
+    expect(txt.textContent).toContain('Oops! It seems like the resource you\'re trying to access or modify does not exist.')
+    expect(button).toBeTruthy()
+
+  })
 });

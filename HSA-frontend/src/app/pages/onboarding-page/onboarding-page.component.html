@@ -1,0 +1,413 @@
+<div class="parent">
+	<div class="main-heading">
+		<h1 style="margin-bottom: 20px; margin-top: 20px;">
+			Welcome to Handyman Service Application
+		</h1>
+		<h2 style="margin-bottom: 20px;">
+			Please follow this guide steps to utilize this application
+		</h2>
+		<mat-vertical-stepper #stepper [linear]="true">
+      <mat-step [stepControl]="buttonForm">
+        <form [formGroup]="buttonForm">
+          <ng-template matStepLabel>Example</ng-template>
+          <div style="max-width: 800px; display: flex; justify-content: space-between;">
+            <h2 style="margin-bottom: 20px; word-wrap: break-word;">
+              Do you want to proceed with example data?
+            </h2>
+            <div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
+              <button data-testid="yes" mat-flat-button (click)="onYesNoConfirm('yes')">Yes</button>
+              <button data-testid="no" mat-flat-button (click)="onYesNoConfirm('no')">No</button>
+            </div>
+          </div>
+        </form>
+      </mat-step>
+			<mat-step [editable]="!isLockedServiceStep" [stepControl]="serviceForm">
+				<form class="parent" [formGroup]="serviceForm" (ngSubmit)="onSubmitServiceCreation()">
+					<ng-template matStepLabel>Create Service</ng-template>
+					<mat-card class="p-5 wide-card">
+						<mat-form-field class="full-width-field">
+							<mat-label>Service Name</mat-label>
+							<input
+								data-testid="service-name"
+								formControlName = "serviceName"
+								matInput
+								placeholder="Ex: Painting Ceiling"
+								required
+							>
+							@if (serviceForm.get('serviceName')?.touched && serviceForm.get('serviceName')?.hasError('required')) {
+								<mat-error>Service Name is required</mat-error>
+							}
+						</mat-form-field>
+						<mat-form-field class="full-width-field">
+							<mat-label>Service Description</mat-label>
+							<input
+							  	data-testid="service-description"
+								formControlName = "serviceDescription"
+								matInput
+								placeholder=""
+								required
+							>
+							@if (serviceForm.get('serviceDescription')?.touched && serviceForm.get('serviceDescription')?.hasError('required')) {
+								<mat-error>Service Description is required</mat-error>
+							}
+						</mat-form-field>
+						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
+							<button data-testid="next-1" mat-flat-button type="submit">Next</button>
+						</div>
+					</mat-card>
+				</form>
+			</mat-step>
+			<mat-step [editable]="!isLockedCustomerStep" [stepControl]="customerForm">
+				<form class="parent" [formGroup]="customerForm" (ngSubmit)="onSubmitCustomerCreation()">
+					<ng-template matStepLabel>Create Customer</ng-template>
+					<mat-card class="p-5 wide-card">
+						<mat-form-field class="full-width-field">
+							<mat-label>Customer First Name</mat-label>
+							<input
+							  	data-testid="customer-first-name"
+								formControlName = "firstName"
+								matInput
+								placeholder="Ex: John"
+								required
+							>
+							@if (customerForm.get('firstName')?.touched && customerForm.get('firstName')?.hasError('required')) {
+								<mat-error>First Name is required</mat-error>
+							}
+						</mat-form-field>
+						<mat-form-field class="full-width-field">
+							<mat-label>Customer Last Name</mat-label>
+							<input
+							  	data-testid="customer-last-name"
+								formControlName = "lastName"
+								matInput
+								placeholder="Ex: Doe"
+								required
+							>
+							@if (customerForm.get('lastName')?.touched && customerForm.get('lastName')?.hasError('required')) {
+								<mat-error>Last Name is required</mat-error>
+							}
+						</mat-form-field>
+						<mat-form-field class="full-width-field">
+							<mat-label>Customer Email</mat-label>
+							<input
+							  	data-testid="customer-email"
+								formControlName = "email"
+								matInput
+								placeholder="Ex: john.doe@gmail.com"
+								required
+							>
+							@if (customerForm.get('email')?.touched && customerForm.get('email')?.hasError('required')) {
+								<mat-error>Email is required</mat-error>
+							}
+							@if (customerForm.get('email')?.touched && customerForm.get('email')?.hasError('email')) {
+								<mat-error>Email format is invalid</mat-error>
+							}
+						</mat-form-field>
+						<mat-form-field class="full-width-field">
+							<mat-label>Customer Phone Number</mat-label>
+							<input
+							 	data-testid="customer-phone-number"
+								formControlName = "phone"
+								matInput
+								placeholder="000-000-0000"
+								required
+                				pattern="(\(\d{3}\)\s?|\d{3}[-.\s])\d{3}[-.\s]?\d{4}"
+							>
+							@if (customerForm.get('phone')?.touched && customerForm.get('phone')?.hasError('required')) {
+								<mat-error>Phone is required</mat-error>
+							}
+							@if (customerForm.get('phone')?.hasError('pattern')) {
+								<mat-error>Format is <strong>xxx-xxx-xxxx</strong></mat-error>
+							}
+						</mat-form-field>
+						<mat-form-field class="example-full-width">
+							<mat-label>Add Notes</mat-label>
+							<textarea 
+							  	data-testid="add-notes"
+								formControlName = "note"
+								matInput 
+								placeholder=""
+							></textarea>
+						</mat-form-field>
+						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
+							<button data-testid="next-2" mat-flat-button type="submit">Next</button>
+						</div>
+					</mat-card>
+				</form>
+			</mat-step>
+			<mat-step [editable]="!isLockedMaterialStep" [stepControl]="materialForm" [optional]="true">
+				<form class="parent" [formGroup]="materialForm">
+					<ng-template matStepLabel>Create Material</ng-template>
+					<mat-card class="p-5 wide-card">
+						<mat-form-field class="full-width-field">
+							<mat-label>Material Name</mat-label>
+							<input
+							  	data-testid="material-name"
+								formControlName = "materialName"
+								matInput
+								placeholder="Ex: Valspar White Paint"
+							>
+						</mat-form-field>
+						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
+							<button data-testid="next-3" mat-flat-button type="submit" (click)="onSubmitMaterialCreation()">Next</button>
+						</div>
+					</mat-card>
+				</form>
+			</mat-step>
+			<mat-step [editable]="!isLockedContractorStep" [stepControl]="contractorForm" [optional]="true">
+				<form class="parent" [formGroup]="contractorForm">
+					<ng-template matStepLabel>Create Contractor</ng-template>
+					<mat-card class="p-5 wide-card">
+						<mat-form-field class="full-width-field">
+							<mat-label>Contractor First Name</mat-label>
+							<input
+								data-testid="contractor-first-name"
+								formControlName = "firstName"
+								matInput
+								placeholder="Ex: John"
+							>
+						</mat-form-field>
+						<mat-form-field class="full-width-field">
+							<mat-label>Contractor Last Name</mat-label>
+							<input
+							  	data-testid="contractor-last-name"
+								formControlName = "lastName"
+								matInput
+								placeholder="Ex: Doe"
+							>
+						</mat-form-field>
+						<mat-form-field class="full-width-field">
+							<mat-label>Contractor Email</mat-label>
+							<input
+							  	data-testid="contractor-email"
+								formControlName = "email"
+								matInput
+								placeholder="Ex: john.doe@gmail.com"
+							>
+							@if (contractorForm.get('email')?.touched && contractorForm.get('email')?.hasError('email')) {
+								<mat-error>Email format is invalid</mat-error>
+							}
+						</mat-form-field>
+						<mat-form-field class="full-width-field">
+							<mat-label>Contractor Phone Number</mat-label>
+							<input
+							  	data-testid="contractor-phone-number"
+								formControlName = "phone"
+								matInput
+								placeholder="000-000-0000"
+                				pattern="(\(\d{3}\)\s?|\d{3}[-.\s])\d{3}[-.\s]?\d{4}"
+							>
+							@if (contractorForm.get('phone')?.hasError('pattern')) {
+								<mat-error>Format is <strong>xxx-xxx-xxxx</strong></mat-error>
+							}
+						</mat-form-field>
+						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
+							<button data-testid="next-4" mat-flat-button type="submit" (click)="onSubmitContractorCreation()">Next</button>
+						</div>
+					</mat-card>
+				</form>
+			</mat-step>
+			<mat-step [stepControl]="jobGeneralForm">
+				<mat-card class="flex p-5 flex-direction: column; items-left">
+					<ng-template matStepLabel>Create Job Info</ng-template>
+					<form class="parent" [formGroup]="jobGeneralForm">
+						<table class="info-table">
+							<tr>
+								<td>Customer*</td>
+								<td>
+									<div class="customer-box-container">
+										@if (this.jobGeneralForm.get('customerName')?.value !== "") {
+											<span 
+												data-testid="customer"
+												class="customer-name-span"
+											>
+												{{this.jobGeneralForm.get('customerName')?.value}} 
+											</span>
+										}
+										<button data-testid="select-customer" type="button" mat-flat-button (click)="this.openAddCustomerDialog()">
+											@if (this.jobGeneralForm.get('customerName')?.value !== "") {Change} @else {Select} customer
+										</button>
+									</div>
+									@if (jobGeneralForm.get('customerName')?.touched && jobGeneralForm.get('customerName')?.hasError('required')) {
+										<mat-error>Customer is required</mat-error>
+									}
+								</td>
+							</tr>
+							<tr>
+								<td>Start Date*</td>
+								<td>
+									<mat-form-field appearance="fill" class="full-width">
+										<input
+										  data-testid="start-date"
+											matInput 
+											[matDatepicker]="startDatePicker" 
+											formControlName="startDate" 
+											required
+										>
+										<mat-hint>MM/DD/YYYY</mat-hint>
+										<mat-datepicker-toggle matIconSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+										<mat-datepicker #startDatePicker></mat-datepicker>
+										@if (jobGeneralForm.get('startDate')?.touched && jobGeneralForm.hasError('noStartDate')) {
+											<mat-error>Start date is required</mat-error>
+										}
+									</mat-form-field>
+								</td>
+							</tr>
+							<tr>
+								<td>End Date*</td>
+								<td>
+									<mat-form-field appearance="fill" class="full-width">
+										<input 
+											data-testid="end-date"
+											matInput 
+											[matDatepicker]="endDatePicker" 
+											formControlName="endDate" 
+											required
+										>
+										<mat-hint>MM/DD/YYYY</mat-hint>
+										<mat-datepicker-toggle matIconSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+										<mat-datepicker #endDatePicker></mat-datepicker>
+										@if (jobGeneralForm.get('endDate')?.touched && jobGeneralForm.hasError('noEndDate')) {
+											<mat-error>End date is required</mat-error>
+										}
+									</mat-form-field>
+									@if ((jobGeneralForm.get('endDate')?.touched || jobGeneralForm.get('startDate')?.touched) && jobGeneralForm.hasError('endDateBefore')) {
+											<mat-error>Dates are invalid</mat-error>
+									}
+								</td>
+							</tr>
+							<tr>
+								<td>Description*</td>
+								<td>
+									<mat-form-field appearance="fill" class="full-width">
+										<input
+											data-testid="description"
+											formControlName = "jobDescription"
+											matInput
+											required
+										>
+										@if (jobGeneralForm.get('jobDescription')?.touched && jobGeneralForm.get('jobDescription')?.hasError('required')) {
+											<mat-error>Job description is required</mat-error>
+										}
+									</mat-form-field>
+								</td>
+							</tr>
+							<tr>
+								<td>Address*</td>
+								<td>
+									<mat-form-field appearance="fill" class="full-width">
+										<input
+											data-testid="address"
+											formControlName = "requestorAddress"
+											matInput
+										>
+										@if (jobGeneralForm.get('requestorAddress')?.touched && jobGeneralForm.get('requestorAddress')?.hasError('required')) {
+											<mat-error>Job assigned address is required</mat-error>
+										}
+									</mat-form-field>
+								</td>
+							</tr>
+							<tr>
+								<td>City*</td>
+								<td>
+									<mat-form-field appearance="fill" class="full-width">
+										<input
+											data-testid="city"
+											formControlName = "requestorCity"
+											matInput
+										>
+										@if (jobGeneralForm.get('requestorCity')?.touched && jobGeneralForm.get('requestorCity')?.hasError('required')) {
+											<mat-error>Job assigned city is required</mat-error>
+										}
+									</mat-form-field>
+								</td>
+							</tr>
+							<tr>
+								<td>State*</td>
+								<td>
+									<mat-form-field appearance="fill" class="full-width">
+										<mat-select
+											data-testid="state"
+											formControlName="requestorStateSelect"
+										>
+											@for (state of states; track state) {
+												<mat-option data-testid="option" [value]="state.name">{{state.name}} - {{state.code}}</mat-option>
+											}
+										</mat-select>
+										@if (jobGeneralForm.get('requestorStateSelect')?.touched && jobGeneralForm.get('requestorStateSelect')?.hasError('required')) {
+											<mat-error>State is required</mat-error>
+										}
+									</mat-form-field>
+								</td>
+							</tr>
+							<tr>
+								<td>Zip Code*</td>
+								<td>
+									<mat-form-field appearance="fill" class="full-width">
+										<input
+											data-testid="zip-code"
+											formControlName = "requestorZip"
+											matInput
+										>
+										@if (jobGeneralForm.get('requestorZip')?.touched && jobGeneralForm.get('requestorZip')?.hasError('required')) {
+											<mat-error>Job assigned zip code is required</mat-error>
+										}
+									</mat-form-field>
+								</td>
+							</tr>
+						</table>
+						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
+							<button data-testid="next-5" mat-flat-button type="submit" (click)="onSubmitJobGeneral()">Next</button>
+						</div>
+					</form>
+				</mat-card>
+			</mat-step>
+			<mat-step>
+				<mat-card class="flex p-5 flex-direction: column; items-left">
+					<ng-template matStepLabel>Create Job Services</ng-template>
+					<div>
+						<app-job-display-table
+							[dataSource]="this.services"
+							[typeToDisplay]="'service'"
+							[isEditRow]="true"
+							[popOutEntry]="this.onDelete.bind(this)"
+							[listOfTable]="this.services"
+						></app-job-display-table>
+					</div>
+					<div class="button-container">
+						<button data-testid="add-service" mat-flat-button type="submit" class="mt-10 mb-5" (click)="this.openAddServiceDialog()">Add service</button>
+					</div>
+					<div>
+						<app-job-display-table
+							[dataSource]="this.materials"
+							[typeToDisplay]="'material'"
+							[isEditRow]="true"
+							[popOutEntry]="this.onDelete.bind(this)"
+							[listOfTable]="this.materials"
+						></app-job-display-table>
+					</div>
+					<div class="button-container">
+						<button data-testid="add-material" mat-flat-button type="submit" class="mt-10 mb-5" (click)="openAddMaterialDialog()">Add material</button>
+					</div>
+					<div>
+						<app-job-display-table
+							[dataSource]="this.contractors"
+							[typeToDisplay]="'contractor'"
+							[isEditRow]="true"
+							[popOutEntry]="this.onDelete.bind(this)"
+							[listOfTable]="this.contractors"
+						></app-job-display-table>
+					</div>
+					<div class="button-container">
+						<button data-testid="add-contractor" mat-flat-button type="submit" class="mt-10 mb-5" (click)="openAddContractorDialog()">Add Contractor</button>
+					</div>
+					<div class="spacer"></div>
+					<div class="items-center">
+						<button data-testid="create" mat-flat-button type="submit" class="mt-10 mb-5" (click)="onCreateConfirmDialog('job')">Create</button>
+						<button data-testid="cancel" mat-stroked-button class="mt-10 mb-5" (click)="onCancelOnboaring()">Cancel</button>
+					</div>
+				</mat-card>
+			</mat-step>
+		</mat-vertical-stepper>
+	</div>
+</div>

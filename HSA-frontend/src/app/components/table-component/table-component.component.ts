@@ -17,7 +17,6 @@ import { StringFormatter } from '../../utils/string-formatter';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 import { ClickStopPropagationDirective } from '../../utils/click-event-propogation-stopper';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { OnInit } from '@angular/core';
 import { InputFieldDictionary } from '../../interfaces/interface-helpers/inputField-row-helper.interface';
 import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.component';
@@ -60,7 +59,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   // note: headers are decided based on backend json keys
   searchHint = input<string>("Use me to search the data")
 
-  constructor(private router: Router, public dialog: MatDialog, private snackBar: MatSnackBar, private errorHandler: ErrorHandlerService) {
+  constructor(private router: Router, public dialog: MatDialog, private snackBar: MatSnackBar) {
   }
 
   searchControl = new FormControl('')
@@ -108,10 +107,32 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   ngOnInit(): void {
+    
     this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
       return !this.hideValues.includes(header)
     }) // this has to be here to allow default headers change. On init is ran
     // when inputs are recieved
+
+    if (this.checkbox !== 'none') {
+      if (!this.headersWithActions.includes('Checkbox')) {
+        
+        this.headersWithActions = ['Checkbox', ...this.headersWithActions]
+      }
+    }
+
+    if (this.unitUsedField === true) {
+      if (!this.headersWithActions.includes('Unit Used')) {
+        this.headersWithActions = [...this.headersWithActions, 'Unit Used', 'Price Per Unit']
+      }
+    }
+  
+    if (this.fetchedData !== undefined) {
+      if (this.fetchedData.length !== 0) {
+        if (this.fetchedData.data !== undefined) {
+          this.isDataNotAvailable = this.fetchedData.data.length === 0
+        }
+      }  
+    }
   }
 
   redirectEdit(id: number, args: any) {
@@ -141,7 +162,6 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
             window.location.reload(); //reload for now, may have a better solution
           },
           error: (error) => {
-            this.errorHandler.handleError(error)
           }
         });
       }

@@ -7,11 +7,12 @@ import { MatCardModule } from '@angular/material/card';
 import { JobDisplayTableComponent } from '../../components/job-display-table/job-display-table.component';
 import { JobService } from '../../services/job.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { JobDataInterface } from '../../interfaces/api-responses/job.api.data.interface';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
+import { MatDialog } from '@angular/material/dialog';
+import { QuoteDialogComponent } from '../../components/quote-dialog/quote-dialog.component';
 
 @Component({
   selector: 'app-view-job-page',
@@ -33,10 +34,22 @@ export class ViewJobPageComponent  implements OnInit {
   jobID!: number
   jobData: JobDataInterface | null = null;
 
-  constructor (private jobService: JobService, private activatedRoute:ActivatedRoute, private router: Router, private errorHandler: ErrorHandlerService) {
+  constructor(
+    private jobService: JobService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private dialog: MatDialog
+  ) {
     this.activatedRoute.paramMap.subscribe(params => {
       this.jobID = Number(params.get('id'));
-    })
+    });
+  }
+
+  openQuoteDialog() {
+    this.dialog.open(QuoteDialogComponent, {
+      width: '800px',
+      data: { jobID: this.jobID }
+    });
   }
 
   ngOnInit(): void {
@@ -45,7 +58,6 @@ export class ViewJobPageComponent  implements OnInit {
         this.jobData = response
       },
       error: (error) => {
-        this.errorHandler.handleError(error)
       }}
     )
   }

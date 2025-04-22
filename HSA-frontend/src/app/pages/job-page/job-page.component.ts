@@ -6,7 +6,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { JobService } from '../../services/job.service';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 import { CommonModule } from '@angular/common';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-job-page',
@@ -18,7 +17,7 @@ export class JobPageComponent implements OnInit  {
   jobs: any = null;
   jobService: JobService
 
-  constructor(private router: Router, jobService: JobService, private errorHandler: ErrorHandlerService) {
+  constructor(private router: Router, jobService: JobService) {
     this.jobService = jobService
   }
 
@@ -32,7 +31,6 @@ export class JobPageComponent implements OnInit  {
         this.jobs = response
       },
       error: (error) => {
-        this.errorHandler.handleError(error, 'jobs')
       }
     })
   }

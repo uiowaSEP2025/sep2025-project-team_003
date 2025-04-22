@@ -5,7 +5,6 @@ import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-sta
 import { MatButtonModule } from '@angular/material/button';
 import { DiscountsService } from '../../services/discount.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 
 @Component({
   selector: 'app-edit-discount-page',
@@ -23,7 +22,7 @@ export class EditDiscountPageComponent implements OnInit{
   id!: string | null
 
 
-  constructor(private discountService: DiscountsService, private router:Router, private errorHandler: ErrorHandlerService, private activatedRoute: ActivatedRoute) {
+  constructor(private discountService: DiscountsService, private router:Router, private activatedRoute: ActivatedRoute) {
 
   }
 
@@ -63,7 +62,6 @@ export class EditDiscountPageComponent implements OnInit{
         this.router.navigate(['/discounts']);
       },
       error: (error) => {
-        this.errorHandler.handleError(error, "discounts/edit")
       }
     }
     )

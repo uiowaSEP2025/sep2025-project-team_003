@@ -8,7 +8,7 @@ WORKDIR /HSA-frontend
 # Copy package files first for better caching
 COPY package*.json ./
 RUN npm install -g @angular/cli
-RUN npm install
+RUN npm ci
 
 # Run staging commands
 RUN ng build --configuration=staging
@@ -22,10 +22,18 @@ ARG DATABASE_IP
 ARG DATABASE_USERNAME
 ARG DATABASE_PASSWORD
 ARG DATABASE_NAME
+ARG EMAIL_HOST
+ARG EMAIL_HOST_USER
+ARG EMAIL_HOST_PASSWORD
+ARG ENV
 ENV DATABASE_IP=$DATABASE_IP
 ENV DATABASE_USERNAME=$DATABASE_USERNAME
 ENV DATABASE_PASSWORD=$DATABASE_PASSWORD
 ENV DATABASE_NAME=$DATABASE_NAME
+ENV EMAIL_HOST = $EMAIL_HOST
+ENV EMAIL_HOST_USER = $EMAIL_HOST_USER
+ENV EMAIL_HOST_PASSWORD = $EMAIL_HOST_PASSWORD
+ENV ENV = $ENV
 
 # Copy from frontend stage with specific paths
 COPY --from=frontend /HSA-frontend /app/HSA-frontend

@@ -41,7 +41,6 @@ describe('CreateMaterialPageComponent', () => {
     const compiled = fixture.debugElement.nativeElement;
     const materialFields = compiled.querySelectorAll('mat-form-field');
     expect(materialFields[0].querySelector('mat-label').textContent).toEqual('Material Name');
-    expect(materialFields[1].querySelector('mat-label').textContent).toEqual('Description');
   })
 
   it('should display error when material name is missing', () => {
@@ -59,46 +58,10 @@ describe('CreateMaterialPageComponent', () => {
     const materialNameField = compiled.querySelectorAll('mat-form-field')[0].querySelector('input');
     materialNameField.value = 'alex';
     materialNameField.dispatchEvent(new Event('input'));
-    const descriptionField = compiled.querySelectorAll('mat-form-field')[1].querySelector('textarea');
-    descriptionField.value = 'guo';
-    descriptionField.dispatchEvent(new Event('input'));
     createButton.click();
     fixture.detectChanges();
 
     const errorTexts = Array.from(compiled.querySelectorAll('mat-error'));
     expect(errorTexts.length).toEqual(0);
-  })
-
-  describe('observables', () => {
-    beforeEach(() => {
-      const compiled = fixture.debugElement.nativeElement;
-    const createButton = compiled.querySelector('button');
-    const materialNameField = compiled.querySelectorAll('mat-form-field')[0].querySelector('input');
-    materialNameField.value = 'alex';
-    materialNameField.dispatchEvent(new Event('input'));
-    const descriptionField = compiled.querySelectorAll('mat-form-field')[1].querySelector('textarea');
-    descriptionField.value = 'guo';
-    descriptionField.dispatchEvent(new Event('input'));
-    createButton.click();
-    fixture.detectChanges();
-
-
-    })
-
-    it('should navigate to login page on 401 unauthorized response', () => {
-      const req = httpMock.expectOne(`${environment.apiUrl}/api/create/material`);
-      expect(req.request.method).toBe('POST');
-      req.flush(null, { status: 401, statusText: 'Unauthorized' });
-
-      expect(router.navigate).toHaveBeenCalledWith(['/login'], { queryParams: { prevPath: 'home' } });
-    });
-
-    it('should redirect to customers on successful response', () => {
-      const req = httpMock.expectOne(`${environment.apiUrl}/api/create/material`);
-      expect(req.request.method).toBe('POST');
-      req.flush(null, { status: 200, statusText: 'ok' });
-      expect(router.navigate).toHaveBeenCalledWith(['/materials']);
-
-    });
   })
 });

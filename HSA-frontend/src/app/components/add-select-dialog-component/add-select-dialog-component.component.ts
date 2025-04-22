@@ -1,6 +1,5 @@
-import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { StringFormatter } from '../../utils/string-formatter';
 import { MatButtonModule } from '@angular/material/button';
 import { TableComponentComponent } from "../table-component/table-component.component";
 import { InputFieldDictionary } from '../../interfaces/interface-helpers/inputField-row-helper.interface';
@@ -8,15 +7,17 @@ import { AddSelectDialogData } from '../../interfaces/interface-helpers/addSelec
 import { ServiceService } from '../../services/service.service';
 import { MaterialService } from '../../services/material.service';
 import { ContractorService } from '../../services/contractor.service';
-import { ErrorHandlerService } from '../../services/error.handler.service';
 import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.component';
 import { CustomerService } from '../../services/customer.service';
 import { JobTemplateService } from '../../services/jobTemplate.service';
 import { ApplyTemplateConfirmDialogComponentComponent } from '../apply-template-confirm-dialog-component/apply-template-confirm-dialog-component.component';
+import { CommonModule } from '@angular/common';
+import { JobService } from '../../services/job.service';
 
 @Component({
   selector: 'app-add-select-dialog-component',
   imports: [
+    CommonModule,
     MatDialogModule,
     MatButtonModule,
     TableComponentComponent,
@@ -35,6 +36,7 @@ export class AddSelectDialogComponentComponent {
   searchHint: string = '';
   headers: string[] = []
   templates: any
+  jobs: any
   customers: any
   services: any
   materials: any
@@ -45,6 +47,8 @@ export class AddSelectDialogComponentComponent {
   selectedTemplateIsError: boolean = false
   selectedCustomer: any = []
   selectedCustomerIsError: boolean = false
+  selectedJob: any = []
+  selectedJobIsError: boolean = false
   selectedServices: any = []
   selectedServicesIsError: boolean = false
   selectedMaterials: any = []
@@ -59,12 +63,12 @@ export class AddSelectDialogComponentComponent {
     public dialogRef: MatDialogRef<AddSelectDialogComponentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AddSelectDialogData,
     public dialog: MatDialog,
+    private jobService: JobService,
     private customerService: CustomerService,
     private serviceService: ServiceService,
     private materialService: MaterialService,
     private contractorService: ContractorService,
     private jobTemplateService: JobTemplateService,
-    private errorHandler: ErrorHandlerService,
   ) {
     this.isMaterial = this.data.typeOfDialog === 'material' ? true : false;
     this.typeOfDialog = this.data.typeOfDialog;
@@ -76,6 +80,9 @@ export class AddSelectDialogComponentComponent {
 
   ngOnInit() {
     switch(this.typeOfDialog) {
+      case 'job':
+        this.loadJobsToTable('', 5, 0);
+        break;
       case 'customer':
         this.loadCustomersToTable('', 5, 0);
         break;
@@ -109,7 +116,6 @@ export class AddSelectDialogComponentComponent {
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
       },
       error: (error) => {
-        this.errorHandler.handleError(error);
       }
     });
   }
@@ -122,7 +128,6 @@ export class AddSelectDialogComponentComponent {
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
       },
       error: (error) => {
-        this.errorHandler.handleError(error);
       }
     });
   }
@@ -134,7 +139,6 @@ export class AddSelectDialogComponentComponent {
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
       },
       error: (error) => {
-        this.errorHandler.handleError(error);
       }
     });
   }
@@ -146,9 +150,19 @@ export class AddSelectDialogComponentComponent {
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
       },
       error: (error) => {
-        this.errorHandler.handleError(error);
       }
     });
+  }
+
+  loadJobsToTable(searchTerm: string, pageSize: number, offSet: number) {
+    this.jobService.getExcludedJob({ search: searchTerm, pagesize: pageSize, offset: offSet}).subscribe({
+      next: (response) => {
+        this.dialogData = response;
+        this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
+      },
+      error: (error) => {
+      }
+    })
   }
 
   loadJobTemplatesToTable(searchTerm: string, pageSize: number, offSet: number) {
@@ -158,7 +172,6 @@ export class AddSelectDialogComponentComponent {
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
       },
       error: (error) => {
-        this.errorHandler.handleError(error);
       }
     });
   }
@@ -168,6 +181,13 @@ export class AddSelectDialogComponentComponent {
     this.selectedItems = this.selectedCustomer;
     this.selectedCustomerIsError = this.selectedCustomer === null ? true : false
     this.isNotSelectedItems = this.selectedCustomer === null ? true : false
+  }
+
+  setSelectedJob(jobs: number[]) {
+    this.selectedJob = [...jobs];
+    this.selectedItems = this.selectedJob;
+    this.selectedJobIsError= this.selectedJob === null ? true : false
+    this.isNotSelectedItems = this.selectedJob === null ? true : false
   }
 
   setSelectedJobTemplate(templates: number[]) {
@@ -263,13 +283,15 @@ export class AddSelectDialogComponentComponent {
 
     if (this.typeOfDialog !== 'template') {
       this.dialogRef.close({
-        selectedItems: this.typeOfDialog === 'customer' 
-          ? this.selectedCustomer[0]
-          : this.typeOfDialog === 'service' 
-            ? this.selectedServices 
-            : this.typeOfDialog === 'contractor' 
-              ? this.selectedContractors 
-              : this.materialInputFields,
+        selectedItems: this.typeOfDialog === 'job' 
+          ? this.selectedJob[0]
+           :this.typeOfDialog === 'customer' 
+            ? this.selectedCustomer[0]
+            : this.typeOfDialog === 'service' 
+              ? this.selectedServices 
+              : this.typeOfDialog === 'contractor' 
+                ? this.selectedContractors 
+                : this.materialInputFields,
           itemsInfo: itemsInfo
         }
       );
@@ -284,5 +306,15 @@ export class AddSelectDialogComponentComponent {
   getPricePerUnitValue(id: number): number | string {
     const entry = this.materialInputFields.find(item => item.id === id);
     return entry?.['pricePerUnit'] ?? ''; 
+  }
+
+  getButtonAction(): string {
+    if (this.typeOfDialog === 'template') {
+      return 'apply';
+    }
+    if (this.typeOfDialog === 'customer' || this.typeOfDialog === 'job') {
+      return this.data.dialogData === 0 ? 'select' : 'change';
+    }
+    return 'add';
   }
 }

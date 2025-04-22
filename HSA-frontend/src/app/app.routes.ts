@@ -26,14 +26,99 @@ import { EditJobPageComponent } from './pages/edit-job-page/edit-job-page.compon
 import { DiscountsPageComponent } from './pages/discounts-page/discounts-page.component';
 import { CreateDiscountsPageComponent } from './pages/create-discounts-page/create-discounts-page.component';
 import { EditDiscountPageComponent } from './pages/edit-discount-page/edit-discount-page.component';
+import { OnboardingPageComponent } from './pages/onboarding-page/onboarding-page.component';
+import { Error500PageComponent } from './pages/error-500-page/error-500-page.component';
+import { RequestPasswordResetPageComponent } from './pages/request-password-reset-page/request-password-reset-page.component';
+import { PasswordResetPageComponent } from './pages/password-reset-page/password-reset-page.component';
+import { BookingPageComponent } from './pages/booking-page/booking-page.component';
+
 
 export const routes: Routes = [
   {
-    path: '', component: HomePageComponent,
+    path: '',
+    children: [
+      {
+        path: 'home', component: HomePageComponent,
+      },
+      {
+        path: 'onboarding', component: OnboardingPageComponent
+      },
+      {
+        path: 'services', component: ServicePageComponent
+      },
+      {
+        path: 'services/create', component: CreateServicePageComponent
+      },
+      {
+        path: 'services/edit/:id', component: EditServicePageComponent
+      },
+      {
+        path: 'materials', component: MaterialsPageComponent
+      },
+      {
+        path: 'materials/create', component: CreateMaterialPageComponent
+      },
+      {
+        path: 'materials/edit/:id', component: EditMaterialPageComponent
+      },
+      {
+        path: 'customers', component: CustomersPageComponent
+      },
+      {
+        path: 'customers/create', component: CreateCustomerPageComponent
+      },
+      {
+        path: 'customers/edit/:id', component: EditCustomerPageComponent
+      },
+      {
+        path: 'contractors', component: ContractorsPageComponent
+      },
+      {
+        path: 'contractors/edit/:id', component: EditContractorsPageComponent
+      },
+      {
+        path: 'contractors/create', component: CreateContractorsPageComponent
+      },
+      {
+        path: 'jobs', component: JobPageComponent
+      },
+      {
+        path: 'job/:id', component: ViewJobPageComponent
+      },
+      {
+        path: 'jobs/create', component: CreateJobPageComponent
+      },
+      {
+        path: 'jobs/edit/:id', component: EditJobPageComponent
+      },
+      {
+        path: 'invoices', component: InvoicesPageComponent
+      },
+      {
+        path: 'invoices/create', component: CreateInvoicePageComponent
+      },
+      {
+        path: 'invoice/:id', component: ViewInvoicePageComponent
+      },
+      {
+        path: 'edit/invoice/:id', component: EditInvoicePageComponent
+      },
+      { 
+        path: "discounts", component: DiscountsPageComponent 
+      },
+      {
+        path: "discounts/create", component: CreateDiscountsPageComponent
+      },
+      {
+        path: 'discounts/edit/:id', component: EditDiscountPageComponent
+      },
+      {
+        path: 'booking', component: BookingPageComponent
+      },
+    ]
   },
-  {
-    path: 'home', component: HomePageComponent,
-  },
+  
+  
   {
     path: 'signup', component: SignupPageComponent,
   },
@@ -41,77 +126,18 @@ export const routes: Routes = [
     path: 'login', component: LoginComponent
   },
   {
-    path: 'services', component: ServicePageComponent
+    path: 'password/reset/confirmation', component: PasswordResetPageComponent
   },
   {
-    path: 'services/create', component: CreateServicePageComponent
-  },
-  {
-    path: 'services/edit/:id', component: EditServicePageComponent
-  },
-  {
-    path: 'materials', component: MaterialsPageComponent
-  },
-  {
-    path: 'materials/create', component: CreateMaterialPageComponent
-  },
-  {
-    path: 'materials/edit/:id', component: EditMaterialPageComponent
-  },
-  {
-    path: 'customers', component: CustomersPageComponent
-  },
-  {
-    path: 'customers/create', component: CreateCustomerPageComponent
-  },
-  {
-    path: 'customers/edit/:id', component: EditCustomerPageComponent
-  },
-  {
-    path: 'contractors', component: ContractorsPageComponent
-  },
-  {
-    path: 'contractors/edit/:id', component: EditContractorsPageComponent
-  },
-  {
-    path: 'contractors/create', component: CreateContractorsPageComponent
-  },
-  {
-    path: 'jobs', component: JobPageComponent
-  },
-  {
-    path: 'job/:id', component: ViewJobPageComponent
-  },
-  {
-    path: 'jobs/create', component: CreateJobPageComponent
-  },
-  {
-    path: 'jobs/edit/:id', component: EditJobPageComponent
-  },
-  {
-    path: 'invoices', component: InvoicesPageComponent
-  },
-  {
-    path: 'invoices/create', component: CreateInvoicePageComponent
-  },
-  {
-    path: 'invoice/:id', component: ViewInvoicePageComponent
-  },
-  {
-    path: 'edit/invoice/:id', component: EditInvoicePageComponent
-  },
-  { 
-    path: "discounts", component: DiscountsPageComponent 
-  },
-  {
-    path: "discounts/create", component: CreateDiscountsPageComponent
-  },
-  {
-    path: 'discounts/edit/:id', component: EditDiscountPageComponent
+    path: 'password/reset', component: RequestPasswordResetPageComponent
   },
   {
     path: '404',
     component: NotFoundPageComponent
+  },
+  {
+    path: '500',
+    component: Error500PageComponent
   },
   {
     path: '**',

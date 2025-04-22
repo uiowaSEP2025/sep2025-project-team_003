@@ -19,7 +19,7 @@ export class StringFormatter {
       const [idKey, idValue] = entries.find(([key]) => key.toLowerCase().includes('id')) || ["Unknown ID", "N/A"];
       const [dataKey, dataValue] = entries.find(([key]) => key !== idKey) || ["Unknown Field", "N/A"];
     
-      return `${this.formatSnakeToCamel(dataKey).replace(/_/g, ' ')}: ${dataValue} (${this.formatSnakeToCamel(idKey)}: ${idValue})`;
+      return `${this.formatSnakeToCamel(dataKey).replace(/_/g, ' ')}: ${dataValue}\n(${this.formatSnakeToCamel(idKey)}: ${idValue})`;
     }
 
     formatCurrency(amount: string): string {

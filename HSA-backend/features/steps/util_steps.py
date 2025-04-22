@@ -1,3 +1,4 @@
+from urllib.parse import urlparse
 from behave import then, given, when
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
@@ -19,6 +20,12 @@ def step_check_snackbar_text(context, text):
     element = wait.until(EC.visibility_of_element_located((By.TAG_NAME, "simple-snack-bar")))
     assert text in element.text, f"Snack bar doesn't contain '{text}'"
 
+@then(u'I expect the element "{element}" show up')
+def expect_input_field(context, element):
+    wait = WebDriverWait(context.browser, 10)
+    element = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, f'[data-testid="{"-".join(element.replace("*", "").lower().split(" "))}"]')))
+    element.location_once_scrolled_into_view
+
 @given('I am logged in')
 def step_user_logged_in(context):
     context.browser.get(f"{context.url}/login")
@@ -38,6 +45,45 @@ def step_user_logged_in(context):
     wait = WebDriverWait(context.browser, 20)
     element = wait.until(EC.visibility_of_element_located((By.TAG_NAME, "simple-snack-bar")))
     assert text in element.text, f"Snack bar doesn't contain '{text}'"
+
+@given('I have finished the onboarding process')
+def finish_onboarding(context):
+    context.execute_steps(f'''
+Given I am on the onboarding page
+Then I expect the input field "Service Name" show up 
+When I click the "Prefill 1" button
+Then I wait for 0.5 seconds
+When I click the "Confirm" button
+Then I wait for 0.5 seconds
+When I click the "Next 1" button
+Then I expect the input field "Customer First Name" show up
+Then I wait for 0.5 seconds
+When I click the "Prefill 2" button
+Then I wait for 0.5 seconds
+When I click the "Confirm" button
+Then I wait for 0.5 seconds
+When I click the "Next 2" button
+Then I expect the input field "Material Name" show up
+Then I wait for 0.5 seconds
+When I click the "Next 3" button
+Then I expect the input field "Contractor First Name" show up
+Then I wait for 0.5 seconds
+When I click the "Next 4" button
+Then I expect the input field "Start Date" show up
+Then I wait for 0.5 seconds
+When I click the "Prefill 5" button
+Then I wait for 0.5 seconds
+When I click the "Confirm" button
+Then I wait for 0.5 seconds
+When I click the "Next 5" button
+Then I expect the button "Add Service" show up
+Then I wait for 0.5 seconds
+When I click the "Create" button
+Then I wait for 0.5 seconds
+When I click the "Confirm" button
+Then I wait for 0.5 seconds
+Then the current URL should be "/home/"
+''')
 
 @then('I {should_or_not} see a table row with the following elements')
 def find_rows(context, should_or_not):
@@ -65,11 +111,11 @@ def find_rows(context, should_or_not):
 
     assert should_or_not == found, f"{'No table ' if should_or_not else 'Table '}row found containing values: {expected_values}"
 
-@when('I click the delete button')
+@when('I click the delete button specifically')
 def set_click_delete(context):
     rows = context.browser.find_elements(By.TAG_NAME, "tr")
-    second_row = rows[1]
     print(rows)
+    second_row = rows[1]
     buttons = second_row.find_elements(By.TAG_NAME, "mat-icon")
     found = False
     for button in buttons:
@@ -115,7 +161,7 @@ def step_look_for_empty_table(context):
     assert any("Nothing to show here" in child.text for child in child_elements), \
         'Expected text "Nothing to show here" not found in table'
 
-@when('I click the edit button')
+@when('I click the edit button specifically')
 def step_click_edit(context):
     rows = context.browser.find_elements(By.TAG_NAME, "tr")
     second_row = rows[1]
@@ -134,7 +180,31 @@ def step_click_table_row(context):
     second_row = rows[1]
     second_row.click()
 
-@when('I click the submit button')
+@when('I click the submit button specifically')
 def click_submit(context):
     submit_button = context.browser.find_element(By.CSS_SELECTOR, '[data-testid="submit"]')
     submit_button.click()
+
+@then('the current URL should be "{expected_url}"')
+def step_impl(context, expected_url):
+    current_url = context.browser.current_url
+    parsed_path = urlparse(current_url).path
+
+    assert parsed_path.rstrip('/') == expected_url.rstrip('/'), \
+        f"Expected '{expected_url}' in '{parsed_path}'"
+    
+@then(u'I expect the element "{element}" has text "{expected_text}"')
+def expect_element_text(context, element, expected_text):
+    wait = WebDriverWait(context.browser, 10)
+    element = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, f'[data-testid="{"-".join(element.replace("*", "").lower().split(" "))}"]')))
+    element.location_once_scrolled_into_view
+    actual_text = element.text.strip()
+    assert actual_text == expected_text, f"Expected '{expected_text}' but got '{actual_text}'"
+
+@then(u'I expect the input field "{input_field}" has value "{expected_text}"')
+def expect_element_text(context, input_field, expected_text):
+    wait = WebDriverWait(context.browser, 10)
+    input_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, f'[data-testid="{"-".join(input_field.replace("*", "").lower().split(" "))}"]')))
+    input_field.location_once_scrolled_into_view
+    actual_text = input_field.get_attribute("value")
+    assert actual_text == expected_text, f"Expected '{expected_text}' but got '{actual_text}'"

@@ -1,0 +1,33 @@
+<h1 mat-dialog-title class="text-center">Generate Quote Preview</h1>
+<div mat-dialog-content class="dialog-content">
+  <!-- Input for Recipients -->
+
+  <p class="instruction-text">
+    Click <strong>"Generate Preview"</strong> to generate the PDF.
+  </p>
+
+  <div class="button-group">
+    <button mat-raised-button color="primary" (click)="generatePreview()" [disabled]="isLoading">
+      {{ isLoading ? 'Generating...' : 'Generate Preview' }}
+    </button>
+
+    <!-- Download PDF button -->
+    <button mat-stroked-button color="accent" (click)="downloadPdf()" [disabled]="!pdfUrl">
+      Download PDF
+    </button>
+
+    <!-- Send To button -->
+  </div>
+
+  <div *ngIf="pdfUrl" class="pdf-container">
+    <iframe [src]="pdfUrl" style="width: 90%; display: block; margin: auto; border: none;"></iframe>
+  </div>
+  <form>
+    <button mat-raised-button color="warn" (click)="send()">
+        Send
+      </button>
+</form>
+
+
+
+</div>

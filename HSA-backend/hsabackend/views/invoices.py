@@ -11,15 +11,15 @@ from hsabackend.models.invoice import Invoice
 from hsabackend.models.job import Job
 from hsabackend.models.organization import Organization
 from hsabackend.utils.api_validators import parseAndReturnDate, parse_and_return_decimal
+from decimal import Decimal
+from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def create_invoice(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-
     json = request.data  
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
 
     customer_id = json.get("customerID", None)
     if not isinstance(customer_id, int):
@@ -27,10 +27,10 @@ def create_invoice(request):
 
     job_ids = json.get("jobIDs", [])
     if not isinstance(job_ids, list):
-        return Response({"message": "Jobs must be list"}, status=status.HTTP_400_BAD_REQUEST)  
+        return Response({"message": "Jobs must be list"}, status=status.HTTP_400_BAD_REQUEST)
 
     if len(job_ids) == 0:
-        return Response({"message": "Must include at least 1 job"}, status=status.HTTP_400_BAD_REQUEST)  
+        return Response({"message": "Must include at least 1 job"}, status=status.HTTP_400_BAD_REQUEST)
 
     invoice_status = json.get("status",None)
     issued = parseAndReturnDate(json.get("issuedDate",""))
@@ -87,10 +87,9 @@ def create_invoice(request):
 
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def getInvoices(request):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset',0)
@@ -127,19 +126,18 @@ def getInvoices(request):
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def updateInvoice(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     json = request.data  
 
     job_ids = json.get("jobIDs",[])
 
     if not isinstance(job_ids, list):
-        return Response({"message": "Jobs must be list"}, status=status.HTTP_400_BAD_REQUEST)  
+        return Response({"message": "Jobs must be list"}, status=status.HTTP_400_BAD_REQUEST)
 
     if len(job_ids) == 0:
-        return Response({"message": "Must include at least 1 job"}, status=status.HTTP_400_BAD_REQUEST)  
+        return Response({"message": "Must include at least 1 job"}, status=status.HTTP_400_BAD_REQUEST)
 
     invoice_status = json.get("status",None)
 
@@ -198,10 +196,9 @@ def updateInvoice(request, id):
     return Response({"message": "Invoice updated successfully"}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def deleteInvoice(request,id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     invoice_qs = Invoice.objects.filter(
         customer__organization=org.pk,
         pk = id
@@ -212,11 +209,10 @@ def deleteInvoice(request,id):
     return Response({"message": "Invoice Deleted successfully"}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def get_data_for_invoice(request, id):
     """gets all the data for the invoice detailed view"""
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     invoice_qs = Invoice.objects.filter(
         customer__organization=org.pk,
         pk = id
