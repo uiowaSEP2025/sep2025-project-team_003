@@ -27,7 +27,7 @@ from hsabackend.serializers.service_serializer import ServiceSerializer
 def random_currency(min_value=0.01, max_value=1000.00):
     """
     Generate a random currency value within a given range.
-    
+
     :param min_value: Minimum currency value (default is 0.01)
     :param max_value: Maximum currency value (default is 1000.00)
     :return: A formatted string representing the random currency value
@@ -52,6 +52,7 @@ class Command(BaseCommand):
 
 
             org_data_1 = {
+                "id"                    : 1,
                 "org_name"              : "devorg",
                 "org_email"             : "org@org.dev",
                 "org_city"              : "Iowa City",
@@ -71,6 +72,7 @@ class Command(BaseCommand):
             org_serializer_1.create(org_data_1)
 
             org_data_2 = {
+                "id"                    : 2,
                 "org_name"              : "testorg",
                 "org_email"             : "org1@org.dev",
                 "org_city"              : "Iowa City",
@@ -88,10 +90,10 @@ class Command(BaseCommand):
             org_serializer_2 = OrganizationSerializer(data=org_data_2)
             org_serializer_2.is_valid(raise_exception=True)
             org_serializer_2.create(org_data_2)
-            
+
             org_1 = Organization.objects.filter(owning_user=usr.id).first()
             org_2 = Organization.objects.filter(owning_user=usr1.id).first()
-            
+
             service_data = [
                 {"service_name": "Window Cleaning",
                  "service_description": "Cleaning of windows for residential and commercial properties.",
@@ -99,13 +101,14 @@ class Command(BaseCommand):
                  "organization": org_1},
                 {"service_name": "Pest Control",
                  "service_description": "Extermination and prevention of pests.",
-                 "default_fee": 0},
+                 "default_fee": 0,
+                 "organization": org_1},
                 {"service_name": "Handyman Services",
                  "service_description": "General repair and maintenance services.",
                  "default_fee": 0,
                  "organization": org_1},
                 ]
-            
+
             service_data1 = [
                 {"service_name": "Window Cleaning",
                  "service_description": "Cleaning of windows for residential and commercial properties. (test user)",
@@ -381,7 +384,7 @@ class Command(BaseCommand):
 
 
                 job_data = {
-                    "job_status": random.choice(['created', 'accepted', 'completed']),
+                    "job_status": random.choice(['created', 'in-progress', 'completed', 'rejected']),
                     "start_date": timezone.now().date(),
                     "end_date": timezone.now().date() + timezone.timedelta(days=random.randint(1, 30)),
                     "description": random.choice(job_descriptions),
@@ -398,7 +401,7 @@ class Command(BaseCommand):
                 }
 
                 job_data_2 = {
-                    "job_status": random.choice(['created', 'accepted', 'completed']),
+                    "job_status": random.choice(['created', 'in-progress', 'completed', 'rejected']),
                     "start_date": timezone.now().date(),
                     "end_date": timezone.now().date() + timezone.timedelta(days=random.randint(1, 30)),
                     "description": random.choice(job_descriptions),
@@ -451,4 +454,3 @@ class Command(BaseCommand):
         except Exception as e:
             stack_trace = traceback.format_exc()
             self.stdout.write(self.style.ERROR(f'Error seeding the database: {e}\n{stack_trace}'))
-        

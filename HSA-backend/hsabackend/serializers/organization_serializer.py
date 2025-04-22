@@ -1,8 +1,13 @@
 from rest_framework import serializers
 
 from hsabackend.models.organization import Organization
+from hsabackend.serializers.user_serializer import UserSerializer
+
 
 class OrganizationSerializer(serializers.ModelSerializer):
+
+    id = serializers.IntegerField(read_only=True)
+    owning_user = UserSerializer(read_only=True)
 
     class Meta:
         model = Organization

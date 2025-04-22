@@ -16,6 +16,7 @@ class Job(models.Model):
         ('created', 'created'),
         ('in-progress', 'in-progress'),
         ('completed', 'completed'),
+        ('rejected', 'rejected'),
     ]
 
     job_status = models.CharField(max_length=50, choices=status_choices, default="created")
@@ -24,7 +25,7 @@ class Job(models.Model):
     description = models.CharField(max_length=200, blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     invoice = models.ForeignKey('hsabackend.Invoice', null=True, on_delete=models.SET_NULL)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, null=True, on_delete=models.CASCADE)
     services = models.ManyToManyField(Service, blank=True, through='JobsServices')
     materials = models.ManyToManyField(Material, blank=True, through='JobsMaterials')
     contractors = models.ManyToManyField(Contractor, blank=True)
@@ -95,8 +96,8 @@ class JobsMaterials(models.Model):
 
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     material = models.ForeignKey(Material, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-    unit_price = models.DecimalField(decimal_places=2, max_digits=10)
+    quantity = models.IntegerField(default=0)
+    unit_price = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
     class Meta:
         db_table = 'hsabackend_job_materials'
 
@@ -129,7 +130,7 @@ class JobsServices(models.Model):
 
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
-    fee = models.DecimalField(decimal_places=2, max_digits=10)
+    fee = models.DecimalField(decimal_places=2, max_digits=10, null=True, blank=True)
 
     class Meta:
         db_table = 'hsabackend_job_services'

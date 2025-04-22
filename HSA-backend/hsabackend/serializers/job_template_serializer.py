@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .material_serializer import MaterialSerializer
+from .organization_serializer import OrganizationSerializer
 from .service_serializer import ServiceSerializer
 from ..models.job_template import JobTemplate
 
@@ -8,6 +9,7 @@ from ..models.job_template import JobTemplate
 class JobTemplateSerializer(serializers.ModelSerializer):
     services = ServiceSerializer(many=True, read_only=True)
     materials = MaterialSerializer(many=True, read_only=True)
+    organization = OrganizationSerializer(read_only=True)
 
     class Meta:
         model = JobTemplate

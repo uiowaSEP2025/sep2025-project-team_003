@@ -64,7 +64,7 @@ class JobMaterialSerializer(serializers.ModelSerializer):
             for material_data in materials_data:
                 material = material_data.get('material')
                 quantity = material_data.get('quantity', 1)
-                unit_price = material_data.get('unit_price', 0)
+                unit_price = material_data.get('unit_price', material.default_cost)
 
                 JobsMaterials.objects.create(
                     job=instance,

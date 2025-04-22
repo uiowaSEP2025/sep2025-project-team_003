@@ -1,9 +1,12 @@
 from rest_framework import serializers
 
 from hsabackend.models.customer import Customer
+from hsabackend.serializers.organization_serializer import OrganizationSerializer
 
 
 class CustomerSerializer(serializers.ModelSerializer):
+    organization = OrganizationSerializer(read_only=True)
+
     class Meta:
         model = Customer
         fields = "__all__"

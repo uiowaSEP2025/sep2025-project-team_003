@@ -4,6 +4,7 @@ from .contractor_serializer import ContractorSerializer
 from .customer_serializer import CustomerSerializer
 from .invoice_serializer import InvoiceSerializer
 from .material_serializer import MaterialSerializer
+from .organization_serializer import OrganizationSerializer
 from .service_serializer import ServiceSerializer
 from ..models.job import Job
 
@@ -14,6 +15,7 @@ class JobSerializer(serializers.ModelSerializer):
     materials = MaterialSerializer(many=True, read_only=True)
     contractors = ContractorSerializer(many=True, read_only=True)
     invoice = InvoiceSerializer(read_only=True)
+    organization = OrganizationSerializer(read_only=True)
 
     class Meta:
         model = Job
@@ -49,7 +51,7 @@ class JobSerializer(serializers.ModelSerializer):
         request = Job.objects.create(**validated_data)
 
         if services_temp:
-            request.service.set(services_temp)
+            request.services.set(services_temp)
         if contractors_temp:
             request.contractors.set(contractors_temp)
         if materials_temp:

@@ -1,9 +1,12 @@
 from rest_framework import serializers
 
 from hsabackend.models.discount import Discount
+from hsabackend.serializers.organization_serializer import OrganizationSerializer
 
 
 class DiscountSerializer(serializers.ModelSerializer):
+    organization = OrganizationSerializer(read_only=True)
+
     class Meta:
         model = Discount
         fields = "__all__"

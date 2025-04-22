@@ -1,9 +1,12 @@
 from rest_framework import serializers
 
 from hsabackend.models.service import Service
+from hsabackend.serializers.organization_serializer import OrganizationSerializer
 
 
 class ServiceSerializer(serializers.ModelSerializer):
+    organization = OrganizationSerializer(read_only=True)
+
     class Meta:
         model = Service
         fields = "__all__"

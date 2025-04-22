@@ -1,9 +1,12 @@
 from rest_framework import serializers
 
 from hsabackend.models.material import Material
+from hsabackend.serializers.organization_serializer import OrganizationSerializer
 
 
 class MaterialSerializer(serializers.ModelSerializer):
+    organization = OrganizationSerializer(read_only=True)
+
     class Meta:
         model = Material
         fields = "__all__"

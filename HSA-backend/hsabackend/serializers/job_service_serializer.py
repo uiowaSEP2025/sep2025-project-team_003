@@ -32,14 +32,12 @@ class JobServiceSerializer(serializers.ModelSerializer):
         # Add services to the job
         for service_data in services_data:
             service = service_data.get('service')
-            minutes = service_data.get('minutes', 0)
-            hourly_rate = service_data.get('hourly_rate', 0)
+            fee = service_data.get('fee', service.default_fee)
 
             JobsServices.objects.create(
                 job=job,
                 service=service,
-                minutes=minutes,
-                hourly_rate=hourly_rate
+                fee=fee,
             )
 
         return job
@@ -62,14 +60,12 @@ class JobServiceSerializer(serializers.ModelSerializer):
             # Add new services
             for service_data in services_data:
                 service = service_data.get('service')
-                minutes = service_data.get('minutes', 0)
-                hourly_rate = service_data.get('hourly_rate', 0)
+                fee = service_data.get('fee', service.default_fee)
 
                 JobsServices.objects.create(
                     job=instance,
                     service=service,
-                    minutes=minutes,
-                    hourly_rate=hourly_rate
+                    fee=fee,
                 )
 
         instance.save()

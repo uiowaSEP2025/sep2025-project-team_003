@@ -1,9 +1,12 @@
 from rest_framework import serializers
 
 from hsabackend.models.contractor import Contractor
+from hsabackend.serializers.organization_serializer import OrganizationSerializer
 
 
 class ContractorSerializer(serializers.ModelSerializer):
+    organization = OrganizationSerializer(read_only=True)
+
     class Meta:
         model = Contractor
         fields = "__all__"
