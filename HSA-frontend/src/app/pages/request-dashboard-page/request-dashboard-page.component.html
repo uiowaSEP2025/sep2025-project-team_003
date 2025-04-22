@@ -1,0 +1,26 @@
+<div class="parent">
+    <div class="main-heading">
+      @if (requests === null) {
+        <app-loading-fallback stringToDisplay="Loading the request table"></app-loading-fallback>
+      }
+      @else {
+      <h1>
+        <span>Requests</span>
+      </h1>
+      <app-table-component 
+        editRedirect="" 
+        [fetchedData]="requests" 
+        [deleteRequest]="requestService.deleteRequest.bind(requestService)" 
+        [loadDataToTable]="this.loadDataToTable.bind(this)"
+        searchHint="Search by any keywords" 
+        [checkbox]="'approval'"
+        [hideValues]="['Id']"
+        [width]="'auto'"
+        [clickableRows]="true"
+        [onRowClick]="redirectRequestDetails.bind(this)"
+        ></app-table-component>
+      <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
+      </div>
+  }
+  </div>
+</div>

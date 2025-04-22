@@ -45,7 +45,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   @Input({ required: true }) loadDataToTable!: (search: string, pageSize: number, offSet: number) => void
   @Input() hideValues: string[] = [];
   @Input() width: string = 'auto'
-  @Input() checkbox: 'none' | 'single' | 'multiple' = 'none';
+  @Input() checkbox: 'none' | 'single' | 'multiple' | 'approval' = 'none';
   @Input() unitUsedField: boolean = false;
   @Input() pricePerUnitField: boolean = false;
   @Input() checkedIds: number[] | null = null;
@@ -168,6 +168,10 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
     });
   }
 
+  openApprovalDialog(args: any, isApproved: boolean) {
+
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     // this has to be here to change the headers, and does not affect how the headers are set based on the data
     if (changes["fetchedData"]?.currentValue || changes["dataSource"] || changes["formControl"]) {
@@ -182,6 +186,11 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
 
         if (this.checkbox === "none") {
           this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
+            return !this.hideValues.includes(header)
+          })
+        }
+        else if (this.checkbox === "approval") {
+          this.headersWithActions = [...this.headers, 'Approval'].filter((header) => {
             return !this.hideValues.includes(header)
           })
         }

@@ -24,17 +24,27 @@ class Request(models.Model):
     service = models.ManyToManyField(Service)
 
     def __str__(self):
-        return f"<Request, name: {self.requestor_name}, address: {self.requestor_address}>"
+        return f"<Request, name: {self.requestor_first_name + ' ' + self.requestor_last_name}, address: {self.requestor_address}>"
     
     def json(self):
         return {
             'id': self.id,
-            'requestor_name': self.requestor_name,
+            'requestor_name': self.requestor_first_name + " " + self.requestor_last_name,
             'requestor_email': self.requestor_email,
             'requestor_city': self.requestor_city,
             'requestor_state': self.requestor_state,
             'requestor_zip': self.requestor_zip,
             'requestor_address': self.requestor_address,
+            'description': self.description,
+            'status': self.status
+        }
+    
+    def json_simplify(self):
+        return {
+            'id': self.id,
+            'requestor_name': self.requestor_first_name + " " + self.requestor_last_name,
+            'requestor_email': self.requestor_email,
+            'requestor_address': self.requestor_address + ", " + self.requestor_city + ", " + self.requestor_state + " " + self.requestor_zip,
             'description': self.description,
             'status': self.status
         }

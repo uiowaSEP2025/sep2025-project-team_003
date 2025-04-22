@@ -30,7 +30,7 @@ def get_org_request_data(request):
 
     data = []
     for req in requests:
-        data.append(req.json())
+        data.append(req.json_simplify())
     
     count = requests = Request.objects.filter(organization=org.pk).filter(
         Q(name__icontains=search)).count() if search else Request.objects.filter(
