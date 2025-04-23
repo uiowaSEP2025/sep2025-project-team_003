@@ -10,7 +10,7 @@ from hsabackend.views.contractors import get_contractor_excluded_table_data, get
 from hsabackend.views.requests import get_org_request_data, delete_request,approve_request
 from hsabackend.views.services import get_service_table_data, get_service_excluded_table_data, create_service, edit_service, delete_service
 from hsabackend.views.materials import get_material_excluded_table_data, get_material_table_data, create_material, edit_material, delete_material
-from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice, get_data_for_invoice
+from hsabackend.views.invoices import create_invoice, get_invoices, delete_invoice, update_invoice, get_data_for_invoice
 from hsabackend.views.jobs import get_job_excluded_table_data, get_job_table_data, get_job_individual_data, create_job, edit_job, delete_job
 from hsabackend.views.jobs_services import get_job_service_table_data, create_job_service, delete_job_service, delete_cached_job_service
 from hsabackend.views.jobs_materials import get_job_material_table_data, create_job_material, delete_job_material, delete_cached_job_material
@@ -18,8 +18,6 @@ from hsabackend.views.jobs_contractors import get_job_contractor_table_data, cre
 from hsabackend.views.job_templates import get_job_template_table_data, get_job_template_individual_data, create_job_template, edit_job_template, delete_job_template
 from hsabackend.views.job_templates_services import get_job_template_service_table_data, create_job_template_service, delete_job_template_service, delete_cached_job_template_service
 from hsabackend.views.job_templates_materials import get_job_template_material_table_data, create_job_template_material, delete_job_template_material, delete_cached_job_template_material
-from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice
-from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForInvoiceByInvoice
 from hsabackend.views.generate_invoice_pdf_view import generate_pdf
 from hsabackend.views.generate_quote_pdf_view import generate_quote_pdf, send_quote_pdf_to_customer_email
 from hsabackend.views.organizations import complete_onboarding, createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail
@@ -125,10 +123,10 @@ urlpatterns = [
     path("api/delete/jobtemplate/<int:job_template_id>/materials", delete_cached_job_template_material),
 
     # invoices
-    path("api/create/invoice", createInvoice),
-    path("api/get/invoices", getInvoices),
-    path("api/delete/invoice/<int:id>", deleteInvoice),
-    path("api/edit/invoice/<int:id>", updateInvoice),
+    path("api/create/invoice", create_invoice),
+    path("api/get/invoices", get_invoices),
+    path("api/delete/invoice/<int:id>", delete_invoice),
+    path("api/edit/invoice/<int:id>", update_invoice),
     path("api/generate/invoice/<int:id>", generate_pdf),
     path("api/get/invoice/displaydata/<int:id>", get_data_for_invoice),
     
@@ -138,10 +136,6 @@ urlpatterns = [
     path("api/edit/organization", editOrganizationDetail),
     path("api/edit/organization/onboarding", complete_onboarding),
 
-    # quotes
-    path("api/get/quotesforinvoice/customer/<int:id>", getQuotesForInvoiceByCustomer),
-    path("api/get/quotesforinvoice/invoice/<int:id>", getQuotesForInvoiceByInvoice),
-    path("api/send/quote/<int:id>", send_quote_pdf_to_customer_email),
 
     # discounts
     path("api/get/discounts", get_discounts),

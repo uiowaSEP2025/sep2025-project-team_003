@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase
 from unittest.mock import Mock, patch, MagicMock
 from django.contrib.auth.models import User
 from rest_framework.test import APIRequestFactory
-from hsabackend.views.invoices import getInvoices, createInvoice, updateInvoice, deleteInvoice, get_data_for_invoice
+from hsabackend.views.invoices import get_invoices, createInvoice, update_invoice, delete_invoice, get_data_for_invoice
 from rest_framework import status
 from django.core.exceptions import ValidationError
 from hsabackend.models.organization import Organization
@@ -15,7 +15,7 @@ class InvoiceViewTest(APITestCase):
         factory = APIRequestFactory()
         request = factory.get('/api/get/materials?search&pagesize=100&offset=0')
         request.user = mock_user  
-        response = getInvoices(request)
+        response = get_invoices(request)
         
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -30,7 +30,7 @@ class InvoiceViewTest(APITestCase):
         mock_org = Organization()
         mock_org.is_onboarding = False
         org.return_value = mock_org
-        response = getInvoices(request)
+        response = get_invoices(request)
         
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -45,7 +45,7 @@ class InvoiceViewTest(APITestCase):
         mock_org = Organization()
         mock_org.is_onboarding = False
         org.return_value = mock_org
-        response = getInvoices(request)
+        response = get_invoices(request)
         
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         
@@ -67,7 +67,7 @@ class InvoiceViewTest(APITestCase):
         mock_filtered = MagicMock()
         mock_select.filter.return_value = mock_filtered
 
-        response = getInvoices(request)
+        response = get_invoices(request)
         
         assert response.status_code == status.HTTP_200_OK
 
@@ -283,7 +283,7 @@ class InvoiceViewTest(APITestCase):
         factory = APIRequestFactory()
         request = factory.post('/api/edit/invoice/1')
         request.user = mock_user  
-        response = updateInvoice(request,1)
+        response = update_invoice(request, 1)
         
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -301,7 +301,7 @@ class InvoiceViewTest(APITestCase):
             "quoteIDs": '[1]'
         }, format='json')
         request.user = mock_user  
-        response = updateInvoice(request,1)
+        response = update_invoice(request, 1)
         
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -319,7 +319,7 @@ class InvoiceViewTest(APITestCase):
             "quoteIDs": []
         }, format='json')
         request.user = mock_user  
-        response = updateInvoice(request,1)
+        response = update_invoice(request, 1)
         
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -338,7 +338,7 @@ class InvoiceViewTest(APITestCase):
             "status": "bob"
         }, format='json')
         request.user = mock_user  
-        response = updateInvoice(request,1)
+        response = update_invoice(request, 1)
         
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -357,7 +357,7 @@ class InvoiceViewTest(APITestCase):
             "status": "paid"
         }, format='json')
         request.user = mock_user  
-        response = updateInvoice(request,1)
+        response = update_invoice(request, 1)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @patch('hsabackend.views.invoices.Organization.objects.get')
@@ -377,7 +377,7 @@ class InvoiceViewTest(APITestCase):
             "dueDate": "dueDate"
         }, format='json')
         request.user = mock_user  
-        response = updateInvoice(request,1)
+        response = update_invoice(request, 1)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @patch('hsabackend.views.invoices.Organization.objects.get')
@@ -397,7 +397,7 @@ class InvoiceViewTest(APITestCase):
             "dueDate": "2003-03-20"
         }, format='json')
         request.user = mock_user  
-        response = updateInvoice(request,1)
+        response = update_invoice(request, 1)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @patch('hsabackend.views.invoices.Invoice.objects.filter')
@@ -422,7 +422,7 @@ class InvoiceViewTest(APITestCase):
             "dueDate": "2003-03-20"
         }, format='json')
         request.user = mock_user  
-        response = updateInvoice(request,1)
+        response = update_invoice(request, 1)
         
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
@@ -456,7 +456,7 @@ class InvoiceViewTest(APITestCase):
             "dueDate": "2003-03-20"
         }, format='json')
         request.user = mock_user  
-        response = updateInvoice(request,1)
+        response = update_invoice(request, 1)
         
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -489,7 +489,7 @@ class InvoiceViewTest(APITestCase):
             "dueDate": "2003-03-20"
         }, format='json')
         request.user = mock_user  
-        response = updateInvoice(request,1)
+        response = update_invoice(request, 1)
         
         assert response.status_code == status.HTTP_200_OK
 
@@ -520,7 +520,7 @@ class InvoiceViewTest(APITestCase):
             "status": "created"
         }, format='json')
         request.user = mock_user  
-        response = updateInvoice(request,1)
+        response = update_invoice(request, 1)
         
         assert response.status_code == status.HTTP_200_OK
     
@@ -531,7 +531,7 @@ class InvoiceViewTest(APITestCase):
         factory = APIRequestFactory()
         request = factory.post('/api/delete/invoice/1')
         request.user = mock_user  
-        response = updateInvoice(request,1)
+        response = update_invoice(request, 1)
         
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -552,7 +552,7 @@ class InvoiceViewTest(APITestCase):
         factory = APIRequestFactory()
         request = factory.post('api/delete/invoice/1')
         request.user = mock_user  
-        response = deleteInvoice(request,1)
+        response = delete_invoice(request, 1)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
     
@@ -576,7 +576,7 @@ class InvoiceViewTest(APITestCase):
         factory = APIRequestFactory()
         request = factory.post('api/delete/invoice/1')
         request.user = mock_user  
-        response = deleteInvoice(request,1)
+        response = delete_invoice(request, 1)
 
         assert response.status_code == status.HTTP_200_OK
         invoice_mock.delete.assert_called_once()

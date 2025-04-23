@@ -76,6 +76,9 @@ class Job(models.Model):
             'jobZip': self.job_zip,
             'jobAddress': self.job_address,
             'invoice': self.invoice,
+            'useHourlyRate': self.use_hourly_rate,
+            'minutesWorked': self.minutes_worked,
+            'hourlyRate': self.hourly_rate,
         }
 
     def json_simplify(self):
@@ -84,10 +87,10 @@ class Job(models.Model):
             # cap at 50 so the table doesn't stretch
 
             'description': self.description[:50] + ("..." if len(self.description) > 50 else ""),
-            'job_status': self.job_status,
-            'start_date': self.start_date,
-            'end_date': self.end_date,
-            'customer_name': self.customer.first_name + " " + self.customer.last_name,
+            'jobStatus': self.job_status,
+            'startDate': self.start_date,
+            'endDate': self.end_date,
+            'customer': self.customer.first_name + " " + self.customer.last_name,
         }
 
 

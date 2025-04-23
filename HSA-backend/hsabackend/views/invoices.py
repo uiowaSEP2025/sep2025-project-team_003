@@ -1,7 +1,5 @@
-from decimal import Decimal
-
 from django.core.exceptions import ValidationError
-from django.db.models import Q, Sum
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -9,9 +7,7 @@ from rest_framework.response import Response
 from hsabackend.models.customer import Customer
 from hsabackend.models.invoice import Invoice
 from hsabackend.models.job import Job
-from hsabackend.models.organization import Organization
 from hsabackend.utils.api_validators import parseAndReturnDate, parse_and_return_decimal
-from decimal import Decimal
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 
@@ -88,7 +84,7 @@ def create_invoice(request):
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
-def getInvoices(request):
+def get_invoices(request):
     org = request.org
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
@@ -127,7 +123,7 @@ def getInvoices(request):
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
-def updateInvoice(request, id):
+def update_invoice(request, id):
     org = request.org
     json = request.data  
 
@@ -197,7 +193,7 @@ def updateInvoice(request, id):
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
-def deleteInvoice(request,id):
+def delete_invoice(request, id):
     org = request.org
     invoice_qs = Invoice.objects.filter(
         customer__organization=org.pk,
