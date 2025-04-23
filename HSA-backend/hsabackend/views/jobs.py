@@ -10,52 +10,14 @@ from hsabackend.serializers.job_material_serializer import JobMaterialSerializer
 from hsabackend.serializers.job_serializer import JobSerializer
 from hsabackend.serializers.job_service_serializer import JobServiceSerializer
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+from utils.response_helpers import get_table_data
 
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
 def get_job_table_data(request):
 
-    org = request.org
-    search = request.query_params.get('search', '')
-    pagesize = request.query_params.get('pagesize', '')
-    offset = request.query_params.get('offset', 0)
-
-    if not pagesize or not offset:
-        return Response({"message": "missing pagesize or offset"}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        pagesize = int(pagesize)
-        offset = int(offset)
-    except:
-        return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
-
-    offset = offset * pagesize
-    jobs = Job.objects.filter(organization=org.pk).filter(
-        Q(customer__first_name__icontains=search) | 
-        Q(customer__last_name__icontains=search) | 
-        Q(start_date__icontains=search) | 
-        Q(end_date__icontains=search) |
-        Q(job_status__icontains=search) |
-        Q(description__icontains=search)
-    )[offset:offset + pagesize] if search else Job.objects.filter(organization=org.pk)[offset:offset + pagesize]
-
-    serializer = JobSerializer(jobs, many=True)
-
-    count = Job.objects.filter(organization=org.pk).filter(
-        Q(customer__first_name__icontains=search) | 
-        Q(customer__last_name__icontains=search) | 
-        Q(start_date__icontains=search) | 
-        Q(end_date__icontains=search) |
-        Q(job_status__icontains=search) |
-        Q(description__icontains=search)
-    ).count()
-
-    res = {
-        'data': serializer.data,
-        'totalCount': count
-    }    
-    return Response(res, status=status.HTTP_200_OK)
+    return get_table_data(request, "job")
 
 
 @api_view(["GET"])

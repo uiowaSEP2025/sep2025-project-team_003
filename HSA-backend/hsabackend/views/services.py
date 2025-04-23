@@ -1,11 +1,12 @@
+from django.core.exceptions import ValidationError
+from django.db.models import Q
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
-from hsabackend.models.organization import Organization
+
 from hsabackend.models.service import Service
-from django.db.models import Q
-from django.core.exceptions import ValidationError
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()

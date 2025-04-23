@@ -1,51 +1,20 @@
+from django.core.exceptions import ValidationError
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
-from hsabackend.models.organization import Organization
-from django.db.models import Q
-from django.core.exceptions import ValidationError
+
 from hsabackend.models.job_template import JobTemplate
-from hsabackend.models.service import Service
 from hsabackend.models.material import Material
+from hsabackend.models.service import Service
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+from utils.response_helpers import get_table_data
+
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
 def get_job_template_table_data(request):
-    org = request.org
-    search = request.query_params.get('search', '')
-    pagesize = request.query_params.get('pagesize', '')
-    offset = request.query_params.get('offset', 0)
-    
-    if not pagesize or not offset:
-        return Response({"message": "missing pagesize or offset"}, status=status.HTTP_400_BAD_REQUEST)
 
-    try:
-        pagesize = int(pagesize)
-        offset = int(offset)
-    except:
-        return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
-    
-    offset = offset * pagesize
-    job_templates = JobTemplate.objects.filter(organization=org.pk).filter(
-        Q(name__icontains=search) |
-        Q(description__icontains=search)
-    )[offset:offset + pagesize] if search else JobTemplate.objects.filter(organization=org.pk)[offset:offset + pagesize]
-
-    data = []
-    for job in job_templates:
-        data.append(job.json())
-    
-    count = JobTemplate.objects.filter(organization=org.pk).filter(
-        Q(name__icontains=search) |
-        Q(description__icontains=search)
-    ).count()
-
-    res = {
-        'data': data,
-        'totalCount': count
-    }    
-    return Response(res, status=status.HTTP_200_OK)
+    return get_table_data(request, "job_template")
 
 
 @api_view(["GET"])
