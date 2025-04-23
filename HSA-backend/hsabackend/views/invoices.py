@@ -66,17 +66,12 @@ def create_invoice(request):
 
     serializer = InvoiceSerializer(data=invoice_data)
     try:
-        invoice.full_clean()
-        invoice.save()
+        serializer.is_valid(raise_exception=True)
+        serializer.create(invoice_data)
 
         # Associate the selected jobs with this invoice
         if job_ids:
-            Job.objects.filter(pk__in=job_ids, customer__organization=org).update(invoice=invoice)
-
-        # Add discounts if provided
-        discount_ids = json.get("discountIDs", [])
-        if isinstance(discount_ids, list) and discount_ids:
-            invoice.discounts.add(*discount_ids)
+            Job.objects.filter(pk__in=job_ids, customer__organization=org).update(invoice=serializer.instance)
 
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
@@ -107,10 +102,7 @@ def get_invoices(request):
         Q(customer__first_name__icontains=search) |
         Q(customer__last_name__icontains=search)   
     )[offset : offset + pagesize] 
-    data = []
-
-    for invoice in invoices:
-        data.append(invoice.json())
+    serializer = InvoiceSerializer(invoices, many=True)
 
     count = Invoice.objects.select_related("customer").filter(
         customer__organization=org.pk).filter(
@@ -119,14 +111,14 @@ def get_invoices(request):
     ).count()
 
     res = {
-        'data': data,
+        'data': serializer.data,
         'totalCount': count
     }    
     return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
-def update_invoice(request, id):
+def update_invoice(request, invoice_id):
     org = request.org
     json = request.data  
 
@@ -158,14 +150,26 @@ def update_invoice(request, id):
 
     invoice_qs = Invoice.objects.filter(
         customer__organization=org.pk,
-        pk = id
+        pk = invoice_id
         )
 
     if not invoice_qs.exists():
         return Response({"message": "The invoice does not exist"}, status=status.HTTP_404_NOT_FOUND)
-    customer = invoice_qs[0].customer
 
     invoice = invoice_qs[0]
+
+    invoice_data = {
+        'customer': request.data.get('customer'),
+        'date_issued': request.data.get('date_issued', ''),
+        'date_due': request.data.get('date_due',),
+        'sales_tax_percent': request.data.get('sales_tax_percent', '0.00'),
+        'status': request.data.get('status','created'),
+        'discounts': request.get('discounts',[]),
+        'payment_link': request.get('payment_link','')
+    }
+
+    customer = invoice_qs[0].customer
+
     invoice.status = invoice_status
     invoice.date_issued = issued
     invoice.date_due = due
