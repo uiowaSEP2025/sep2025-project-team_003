@@ -1,25 +1,51 @@
 <div class="parent">
     <div class="main-heading">
-      @if (requests === null) {
+      @if (approvedRequests === null) {
         <app-loading-fallback stringToDisplay="Loading the request table"></app-loading-fallback>
       }
       @else {
       <h1>
         <span>Requests</span>
       </h1>
-      <app-table-component 
-        editRedirect="" 
-        [fetchedData]="requests" 
-        [deleteRequest]="requestService.deleteRequest.bind(requestService)" 
-        [approveRequest]="requestService.approveDenyRequest.bind(requestService)"
-        [loadDataToTable]="this.loadDataToTable.bind(this)"
-        searchHint="Search by any keywords" 
-        [checkbox]="'approval'"
-        [hideValues]="['Id']"
-        [width]="'auto'"
-        [clickableRows]="true"
-        [onRowClick]="redirectRequestDetails.bind(this)"
-        ></app-table-component>
+      <div class="spacer"></div>
+      <mat-tab-group (selectedTabChange)="onTabChange($event)">
+        <mat-tab [label]="'Approved'">
+          <div class="small-box mat-elevation-z4">
+            <app-table-component 
+              editRedirect="" 
+              [fetchedData]="approvedRequests" 
+              [deleteRequest]="requestService.deleteRequest.bind(requestService)" 
+              [approveRequest]="requestService.approveDenyRequest.bind(requestService)"
+              [loadDataToTable]="this.loadApprovedDataToTable.bind(this)"
+              searchHint="Search by any keywords" 
+              [status]="'approved'"
+              [checkbox]="'none'"
+              [hideValues]="['Id']"
+              [width]="'auto'"
+              [clickableRows]="true"
+              [onRowClick]="redirectRequestDetails.bind(this)"
+            ></app-table-component>
+          </div>
+        </mat-tab>
+        <mat-tab [label]="'Pending'">
+          <div class="large-box mat-elevation-z4">
+            <app-table-component 
+              editRedirect="" 
+              [fetchedData]="pendingRequests" 
+              [deleteRequest]="requestService.deleteRequest.bind(requestService)" 
+              [approveRequest]="requestService.approveDenyRequest.bind(requestService)"
+              [loadDataToTable]="this.loadPendingDataToTable.bind(this)"
+              searchHint="Search by any keywords" 
+              [status]="'received'"
+              [checkbox]="'approval'"
+              [hideValues]="['Id']"
+              [width]="'auto'"
+              [clickableRows]="true"
+              [onRowClick]="redirectRequestDetails.bind(this)"
+            ></app-table-component>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
       <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
       </div>
   }

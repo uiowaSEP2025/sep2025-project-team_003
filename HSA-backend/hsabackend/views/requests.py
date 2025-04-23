@@ -34,7 +34,7 @@ def get_org_request_data(request):
     for req in requests:
         data.append(req.json_simplify())
     
-    count = requests = Request.objects.filter(organization=org.pk).filter(
+    count = Request.objects.filter(organization=org.pk).filter(
         Q(name__icontains=search)).count() if search else Request.objects.filter(
         organization=org.pk).count()
     
@@ -43,6 +43,49 @@ def get_org_request_data(request):
         'totalCount': count
     }    
     return Response(res, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@check_authenticated_and_onboarded()
+def get_individual_request_data(request, id):
+    org = request.org
+
+    try:
+        request = Request.objects.get(pk=id, organization=org)
+    except Request.DoesNotExist:
+        return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    
+    res = {
+        'data': request.json(),
+    }
+
+    return Response(res, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@check_authenticated_and_onboarded()
+def get_filtered_request_data(request):
+    org = request.org
+    reqStatus = request.query_params.get('status', '')
+
+    if reqStatus == None:
+        return Response({"message": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if reqStatus == 'none':
+        requests = Request.objects.filter(organization=org.pk)
+        count = Request.objects.filter(organization=org.pk).count()
+    else:
+        requests = Request.objects.filter(organization=org.pk).filter(Q(status__icontains=reqStatus))
+        count = Request.objects.filter(organization=org.pk).filter(Q(status__icontains=reqStatus)).count()
+    
+    data = []
+    for req in requests:
+        data.append(req.json_simplify())
+
+    res = {
+        'data': data,
+        'totalCount': count
+    }    
+    return Response(res, status=status.HTTP_200_OK)
+
     
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
@@ -55,12 +98,11 @@ def delete_request(request,id):
     req[0].delete()
     return Response({"message": "Request Deleted successfully"}, status=status.HTTP_200_OK)
 
+
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
 def approve_request(request, id):
     org = request.org
-    
-    
 
     try:
         with transaction.atomic():

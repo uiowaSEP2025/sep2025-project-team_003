@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { TableApiResponse } from '../interfaces/api-responses/table.api.interface';
-import { Request, RequestParams } from '../interfaces/request.interface';
+import { Request, RequestFilteredParams, RequestParams } from '../interfaces/request.interface';
 import { RequestData } from '../interfaces/api-responses/request.api.interface';
 
 interface RequestCreatePostData {
@@ -24,6 +24,7 @@ interface RequestDeletePostData {
 })
 export class RequestService {
   private apiGetUrl = `${environment.apiUrl}/api/get/requests`;
+  private apiGetFilteredUrl =  `${environment.apiUrl}/api/get/requests/filter`;
   private apiGetExcludedUrl = `${environment.apiUrl}/api/get/requests/exclude`;
   private apiGetSpecificUrl = `${environment.apiUrl}/api/get/request`;
   private apiCreateUrl = `${environment.apiUrl}/api/create/request`;
@@ -46,6 +47,29 @@ export class RequestService {
     }
 
     return this.http.get<StandardApiResponse>(this.apiGetUrl, { params: httpParams });
+  }
+
+  public getFilteredRequest(params?: RequestFilteredParams): Observable<StandardApiResponse> {
+    let httpParams = new HttpParams();
+
+    // Add query parameters
+    if (params?.status) {
+      httpParams = httpParams.append('status', params.status)
+    }
+
+    if (params) {
+      Object.keys(params).forEach(key => {
+        if (key !== 'status') {
+          const value = params[key as keyof RequestFilteredParams];
+
+          if (value !== undefined) {
+            httpParams = httpParams.append(key, value.toString());
+          }
+        }
+      });
+    }
+
+    return this.http.get<StandardApiResponse>(this.apiGetFilteredUrl, { params: httpParams });
   }
   
    public getExcludedRequest(params?: RequestParams): Observable<TableApiResponse<Request>> {

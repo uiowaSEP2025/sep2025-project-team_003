@@ -44,10 +44,11 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   @Input() fetchedData: any = null
   @Input() deleteRequest!: (data: any) => Observable<StandardApiResponse>
   @Input() approveRequest!: (data: any, isApproved: boolean) => Observable<any>
-  @Input({ required: true }) loadDataToTable!: (search: string, pageSize: number, offSet: number) => void
+  @Input({ required: true }) loadDataToTable!: (search: string, pageSize: number, offSet: number, status?: string) => void
+  @Input() status: 'approved' | 'pending' | 'received' | 'none' = 'none'
   @Input() hideValues: string[] = [];
   @Input() width: string = 'auto'
-  @Input() checkbox: 'none' | 'single' | 'multiple' | 'approval' = 'none';
+  @Input() checkbox: 'none' | 'single' | 'multiple' | 'actions' | 'approval' = 'actions';
   @Input() unitUsedField: boolean = false;
   @Input() pricePerUnitField: boolean = false;
   @Input() checkedIds: number[] | null = null;
@@ -115,9 +116,8 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
     }) // this has to be here to allow default headers change. On init is ran
     // when inputs are recieved
 
-    if (this.checkbox !== 'none') {
-      if (!this.headersWithActions.includes('Checkbox')) {
-        
+    if (this.checkbox !== 'actions') {
+      if (!this.headersWithActions.includes('Checkbox')) { 
         this.headersWithActions = ['Checkbox', ...this.headersWithActions]
       }
     }
@@ -203,6 +203,11 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
         this.headers = this.headers.map(header => this.stringFormatter.formatSnakeToCamel(header))
 
         if (this.checkbox === "none") {
+          this.headersWithActions = [...this.headers].filter((header) => {
+            return !this.hideValues.includes(header)
+          })
+        }
+        else if (this.checkbox === "actions") {
           this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
             return !this.hideValues.includes(header)
           })
@@ -306,7 +311,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   refetch(textField: string) {
-    this.loadDataToTable(textField, this.pageSize ?? 20, this.page ?? 0)
+    this.loadDataToTable(textField, this.pageSize ?? 20, this.page ?? 0, this.status)
   }
 
   shouldCheckCheckbox(id: number): boolean {

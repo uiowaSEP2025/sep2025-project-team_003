@@ -44,7 +44,5 @@ class Request(models.Model):
             'id': self.id,
             'requestor_name': self.requestor_first_name + " " + self.requestor_last_name,
             'requestor_email': self.requestor_email,
-            'requestor_address': self.requestor_address + ", " + self.requestor_city + ", " + self.requestor_state + " " + self.requestor_zip,
             'description': self.description,
-            'status': self.status
         }

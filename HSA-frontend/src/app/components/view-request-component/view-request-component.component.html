@@ -1,0 +1,45 @@
+<div class="dialog-content">
+  <mat-dialog-content>
+    @if (requestData === null) {
+      <app-loading-fallback stringToDisplay="Loading the request info"></app-loading-fallback>
+    }
+    @else {
+      <h1 mat-dialog-title>Request Information</h1>
+      <mat-card class="p-5 wide-card">
+          <table class="info-table">
+            <tr>
+              <td>Requestor Name</td>
+              <td>{{requestData.data.requestor_name}}</td>
+            </tr>
+            <tr>
+              <td>Requestor Email</td>
+              <td>{{requestData.data.requestor_email}}</td>
+            </tr>
+            <tr>
+              <td>Status</td>
+              <td>{{requestData.data.status}}</td>
+            </tr>
+            <tr>
+              <td>Description</td>
+              <td>{{requestData.data.description}}</td>
+            </tr>
+            <tr>
+              <td>Address</td>
+              <td>{{requestData.data.requestor_address + ", " + requestData.data.requestor_city + ", " + requestData.data.requestor_state + " " + requestData.data.requestor_zip}}</td>
+            </tr>
+          </table>
+      </mat-card>
+    }
+  </mat-dialog-content>
+  <mat-dialog-actions class="flex-split">
+    <div>
+      @if (status === "pending") {
+        <button mat-flat-button style="background-color: rgb(42, 167, 10); color: black" (click)="openApprovalDialog(true)">Approve</button>
+        <button mat-flat-button style="background-color: rgb(196, 24, 24); color: black" (click)="openApprovalDialog(false)">Deny</button>
+      }
+    </div>
+    <button mat-stroked-button (click)="onReturn()">Return</button>
+  </mat-dialog-actions>
+</div>
+  
+  

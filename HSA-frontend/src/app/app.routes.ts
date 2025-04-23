@@ -118,7 +118,7 @@ export const routes: Routes = [
       },
       {
         path: 'requests', component: RequestDashboardPageComponent
-      }
+      },
     ]
   },
   

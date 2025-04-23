@@ -28,3 +28,27 @@ header {
     background-color:rgb(250, 249, 253);
     width: 100vw;
 }
+
+.spacer {
+    flex: 1 1 auto;
+    min-height: 20px;
+}
+
+.small-box, .large-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 16px;
+    padding: 16px;
+    border-radius: 8px;
+  }
+  
+  .small-box {
+    height: auto;
+    width: auto;
+  }
+  
+  .large-box {
+    height: auto;
+    width: auto;
+  }

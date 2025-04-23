@@ -14,3 +14,10 @@ export interface RequestParams {
   pagesize: number,
   offset: number,
 }
+
+export interface RequestFilteredParams {
+  status?: string,
+  search: string,
+  pagesize: number,
+  offset: number,
+}
