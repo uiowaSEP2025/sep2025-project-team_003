@@ -3,11 +3,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from hsabackend.models.contractor import Contractor
 from hsabackend.models.customer import Customer
 from hsabackend.models.job import Job
-from hsabackend.models.material import Material
-from hsabackend.models.service import Service
 from hsabackend.serializers.job_contractor_serializer import JobContractorSerializer
 from hsabackend.serializers.job_material_serializer import JobMaterialSerializer
 from hsabackend.serializers.job_serializer import JobSerializer
@@ -223,11 +220,11 @@ def edit_job(request, job_id):
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
-def delete_job(request, id):
+def delete_job(request, job_id):
 
 
     org = request.org
-    job = Job.objects.filter(pk=id, organization=org)
+    job = Job.objects.filter(pk=job_id, organization=org)
 
     if not job.exists():
         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
