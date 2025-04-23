@@ -5,7 +5,7 @@ from hsabackend.models.job import Job
 from hsabackend.utils.string_formatters import format_maybe_null_date
 
 class Invoice(models.Model):
-    """A bill sent to a customer from an organization on a monthly basis"""
+    """A bill sent to a customer from an organization monthly"""
     status_choices = [
         ('created', 'created'),
         ('issued', 'issued'),
