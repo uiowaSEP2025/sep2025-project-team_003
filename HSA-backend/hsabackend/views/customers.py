@@ -1,11 +1,13 @@
+from django.core.exceptions import ValidationError
+from django.db.models import Q
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
-from hsabackend.models.organization import Organization
+
 from hsabackend.models.customer import Customer
-from django.db.models import Q
-from django.core.exceptions import ValidationError
+from hsabackend.serializers.customer_serializer import CustomerSerializer
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
@@ -28,16 +30,14 @@ def get_customer_table_data(request):
         Q(first_name__icontains=search) | Q(last_name__icontains=search) 
     )[offset:offset + pagesize] if search else Customer.objects.filter(organization=org.pk)[offset:offset + pagesize]
 
-    data = []
-    for cust in customers:
-        data.append(cust.json())
+    serializers = CustomerSerializer(customers, many=True)
     
     count = Customer.objects.filter(organization=org.pk).filter(
         Q(first_name__icontains=search) | Q(last_name__icontains=search)
     ).count() if search else Customer.objects.filter(organization=org.pk).count()
 
     res = {
-        'data': data,
+        'data': serializers.data,
         'totalCount': count
     }    
     return Response(res, status=status.HTTP_200_OK)
@@ -66,16 +66,14 @@ def get_customer_excluded_table_data(request):
         Q(first_name__icontains=search) | Q(last_name__icontains=search) 
     )[offset:offset + pagesize] if search else Customer.objects.filter(organization=org.pk).exclude(id__in=excluded_ids)[offset:offset + pagesize]
 
-    data = []
-    for cust in customers:
-        data.append(cust.json())
+    serializers = CustomerSerializer(customers, many=True)
     
     count = Customer.objects.filter(organization=org.pk).exclude(id__in=excluded_ids).filter(
         Q(first_name__icontains=search) | Q(last_name__icontains=search)
     ).count() if search else Customer.objects.filter(organization=org.pk).exclude(id__in=excluded_ids).count()
 
     res = {
-        'data': data,
+        'data': serializers.data,
         'totalCount': count
     }    
     return Response(res, status=status.HTTP_200_OK)
@@ -89,18 +87,21 @@ def create_customer(request):
     email = request.data.get('email', '')
     phone = request.data.get('phone', '').replace("-","")
     notes = request.data.get('notes', '')
-    customer = Customer(
-        first_name = first_name,
-        last_name = last_name,
-        email = email,
-        phone = phone,
-        notes = notes,
-        organization = org,
-    )
+    customer_data = {
+        "first_name": first_name,
+        "last_name": last_name,
+        "email": email,
+        "phone": phone,
+        "notes": notes,
+        "organization": org,
+    }
+
+    serializer = CustomerSerializer(data=customer_data)
+
     try:
-        customer.full_clean()  # Validate the model instance
-        customer.save()
-        return Response({"message": "Customer created successfully", "data": customer.json()}, status=status.HTTP_201_CREATED)
+        serializer.is_valid()  # Validate the model instance
+        serializer.create(customer_data)
+        return Response({"message": "Customer created successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -117,15 +118,20 @@ def edit_customer(request, id):
     email = request.data.get('email', '')
     phone = request.data.get('phone', '')
     notes = request.data.get('notes', '')
-    customer.first_name = first_name
-    customer.last_name = last_name
-    customer.email = email
-    customer.phone = phone.replace("-",'')
-    customer.notes = notes
+    customer_data = {
+        "first_name": first_name,
+        "last_name": last_name,
+        "email": email,
+        "phone": phone,
+        "notes": notes,
+        "organization": org,
+    }
+
+    serializer = CustomerSerializer(data=customer_data)
     
     try:
-        customer.full_clean()  # Validate the model instance
-        customer.save()
+        serializer.is_valid()  # Validate the model instance
+        serializer.update(customer, customer_data)
         return Response({"message": "Customer edited successfully"}, status=status.HTTP_200_OK)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
@@ -136,6 +142,6 @@ def delete_customer(request, id):
     org = request.org
     cust = Customer.objects.filter(pk=id, organization=org)
     if not cust.exists():
-        return Response({"message": "The cutomer does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "The customer does not exist"}, status=status.HTTP_404_NOT_FOUND)
     cust[0].delete()
     return Response({"message": "Customer Deleted successfully"}, status=status.HTTP_200_OK)

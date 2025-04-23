@@ -1,37 +1,34 @@
+from django.db.models import Q
+from django.utils import timezone
+from django.utils.dateparse import parse_datetime
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
-from datetime import datetime
-from django.utils.dateparse import parse_datetime
-from django.utils import timezone
-from hsabackend.models.organization import Organization
+
 from hsabackend.models.booking import Booking
-from hsabackend.models.job import Job
-from hsabackend.models.job_service import JobService
-from hsabackend.models.job_material import JobMaterial
-from hsabackend.models.job_contractor import JobContractor
+from hsabackend.models.job import Job, JobsServices, JobsMaterials
+from hsabackend.models.organization import Organization
 from hsabackend.serializers.booking_serializer import BookingSerializer
-from django.db.models import Q
-from django.core.exceptions import ValidationError
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
 def get_booking_data(request):
     org = request.org
-    fromDateString = request.query_params.get('from', '')
-    toDateString= request.query_params.get('to', '')
+    from_date_string = request.query_params.get('from', '')
+    to_date_string= request.query_params.get('to', '')
 
-    if not fromDateString or not toDateString:
+    if not from_date_string or not to_date_string:
         return Response({"message": "missing a starting date or ending date"}, status=status.HTTP_400_BAD_REQUEST)
     
     try:
-        fromDateTimeObject = timezone.make_aware(parse_datetime(fromDateString))
-        toDateTimeObject = timezone.make_aware(parse_datetime(toDateString))
+        from_date_time_object = timezone.make_aware(parse_datetime(from_date_string))
+        to_date_time_object = timezone.make_aware(parse_datetime(to_date_string))
     except Exception:
         return Response({"message": "Cannot parse date time"}, status=status.HTTP_400_BAD_REQUEST)
     
-    bookings = Booking.objects.filter(organization=org.pk).filter(Q(start_time__gte=fromDateTimeObject) & Q(end_time__lte=toDateTimeObject))
+    bookings = Booking.objects.filter(organization=org.pk).filter(Q(start_time__gte=from_date_time_object) & Q(end_time__lte=to_date_time_object))
 
     serializer = BookingSerializer(bookings, many=True)
 
@@ -45,9 +42,9 @@ def get_booking_data(request):
         except Job.DoesNotExist:
             return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)  
         
-        job_services = JobService.objects.filter(job=job.pk)
-        job_materials = JobMaterial.objects.filter(job=job.pk)
-        job_contractors = JobContractor.objects.filter(job=job.pk)
+        job_services = JobsServices.objects.filter(job=job.pk)
+        job_materials = JobsMaterials.objects.filter(job=job.pk)
+        job_contractors = job.contractors
 
         job_services_data = []
         for service in job_services:
@@ -85,14 +82,14 @@ def create_event(request):
     job_id = request.data.get('jobID')
 
     try:
-        startTimeString = request.data.get('startTime', '')
-        endTimeString = request.data.get('endTime', '')
-        startTimeObject = timezone.make_aware(parse_datetime(startTimeString))
-        endTimeObject = timezone.make_aware(parse_datetime(endTimeString))
+        start_time_string = request.data.get('startTime', '')
+        end_time_string = request.data.get('endTime', '')
+        start_time_object = timezone.make_aware(parse_datetime(start_time_string))
+        end_time_object = timezone.make_aware(parse_datetime(end_time_string))
     except Exception:
         return Response({"message": "Cannot parse date time"}, status=status.HTTP_400_BAD_REQUEST)
     
-    if startTimeObject > endTimeObject:
+    if start_time_object > end_time_object:
         return Response({"message": "Start must be before end"}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
@@ -103,8 +100,8 @@ def create_event(request):
     # Prepare event data
     event_data = {
         'event_name': request.data.get('eventName', ''),
-        'start_time': startTimeObject,
-        'end_time': endTimeObject,
+        'start_time': start_time_object,
+        'end_time': end_time_object,
         'booking_type': request.data.get('bookingType', ''),
         'back_color': request.data.get('backColor', ''),
         'status': 'pending',
@@ -130,23 +127,23 @@ def edit_event(request, id):
     job_id = request.data.get('jobID')
 
     try:
-        startTimeString = request.data.get('startTime', '')
-        endTimeString = request.data.get('endTime', '')
-        startTimeObject = timezone.make_aware(parse_datetime(startTimeString))
-        endTimeObject = timezone.make_aware(parse_datetime(endTimeString))
+        start_time_string = request.data.get('startTime', '')
+        end_time_string = request.data.get('endTime', '')
+        start_time_object = timezone.make_aware(parse_datetime(start_time_string))
+        end_time_object = timezone.make_aware(parse_datetime(end_time_string))
     except Exception:
         return Response({"message": "Cannot parse date time"}, status=status.HTTP_400_BAD_REQUEST)
     
-    if startTimeObject > endTimeObject:
+    if start_time_object > end_time_object:
         return Response({"message": "Start must be before end"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Find job model
+    # Find the job model
     try:
         job_object = Job.objects.get(organization=org, pk=job_id)
     except Job.DoesNotExist:
         return Response({"errors": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
     
-    # Find event model
+    # Find the event model
     try:
         event_object = Booking.objects.get(organization=org, pk=id)
     except Booking.DoesNotExist:
@@ -155,8 +152,8 @@ def edit_event(request, id):
     # Prepare event data
     event_data = {
         'event_name': request.data.get('eventName', ''),
-        'start_time': startTimeObject,
-        'end_time': endTimeObject,
+        'start_time': start_time_object,
+        'end_time': end_time_object,
         'booking_type': request.data.get('bookingType', ''),
         'back_color': request.data.get('backColor', ''),
         'status': request.data.get('status'),

@@ -1,11 +1,13 @@
+from django.core.exceptions import ValidationError
+from django.db.models import Q
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
-from hsabackend.models.organization import Organization
+
 from hsabackend.models.discount import Discount
-from django.db.models import Q
-from django.core.exceptions import ValidationError
+from hsabackend.serializers.discount_serializer import DiscountSerializer
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
@@ -27,10 +29,7 @@ def get_discounts(request):
         organization=org.pk).filter(
         Q(discount_name__icontains=search) 
     )[offset : offset + pagesize] 
-    data = []
-
-    for d in discounts:
-        data.append(d.json_for_discount_table())
+    serializers = DiscountSerializer(discounts, many=True)
     
     count = Discount.objects.filter(
         organization=org.pk).filter(
@@ -38,7 +37,7 @@ def get_discounts(request):
     ).count()
 
     res = {
-        'data': data,
+        'data': serializers.data,
         'totalCount': count
     }    
     return Response(res, status=status.HTTP_200_OK)
@@ -47,43 +46,44 @@ def get_discounts(request):
 @check_authenticated_and_onboarded()
 def create_discount(request):
     org = request.org
-    name = request.data.get('name', '')
-    percent = request.data.get('percent', '')
+    discount_name = request.data.get('name', '')
+    discount_percent = request.data.get('percent', '')
 
-    
-    discount = Discount(
-        discount_name = name,
-        discount_percent = percent,
-        organization = org
-    )
+    discount_data = {
+        'discount_name': discount_name,
+        'discount_percent': discount_percent,
+        'organization': org,
+    }
+
+    serializer = DiscountSerializer(data=discount_data)
+
     try:
-        discount.full_clean()
-        discount.save()
-        return Response({"messsage": "discount created"}, status=status.HTTP_201_CREATED)
+        serializer.is_valid(raise_exception=True)
+        serializer.create(discount_data)
+        return Response({"message": "discount created"}, status=status.HTTP_201_CREATED)
 
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
-def edit_discount(request,id):
+def edit_discount(request, discount_id):
     org = request.org
-    name = request.data.get('name', '')
-    percent = request.data.get('percent', '')
-
-    discount = Discount.objects.filter(
-        pk=id,
-        organization = org
-    )
-
+    discount_name = request.data.get('name', '')
+    discount_percent = request.data.get('percent', '')
+    discount = Discount.objects.filter(pk=discount_id, organization=org)
     if not discount.exists():
         return Response({"message": "not found"}, status=status.HTTP_404_NOT_FOUND)
+    discount_data = {
+        'discount_name': discount_name,
+        'discount_percent': discount_percent,
+        'organization': org,
+    }
     discount = discount[0]
-    discount.discount_name = name
-    discount.discount_percent = percent
+    serializer = DiscountSerializer(discount, data=discount_data)
     try:
-        discount.full_clean()
-        discount.save()
+        serializer.is_valid(raise_exception=True)
+        serializer.update(discount, discount_data)
         return Response({"message": "discount edited"}, status=status.HTTP_200_OK)
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)

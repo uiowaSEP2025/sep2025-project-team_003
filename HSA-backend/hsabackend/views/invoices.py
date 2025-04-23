@@ -7,9 +7,9 @@ from rest_framework.response import Response
 from hsabackend.models.customer import Customer
 from hsabackend.models.invoice import Invoice
 from hsabackend.models.job import Job
+from hsabackend.serializers.invoice_serializer import InvoiceSerializer
 from hsabackend.utils.api_validators import parseAndReturnDate, parse_and_return_decimal
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
-
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
@@ -51,17 +51,20 @@ def create_invoice(request):
     cust_qs = Customer.objects.filter(pk=int(customer_id), organization=org)
 
     if not cust_qs.exists():
-        # will be here if user does not own the customer ID
+        # will be here if the user does not own the customer ID
         return Response({"message": "Must provide customer for the invoice."}, status=status.HTTP_404_NOT_FOUND)
 
-    invoice = Invoice(
-        customer = cust_qs[0],
-        date_issued = issued,
-        date_due = due,
-        sales_tax_percent = parse_and_return_decimal(tax_percent),
-        status=invoice_status
-    )
+    invoice_data = {
+        'customer': cust_qs[0],
+        'date_issued': issued,
+        'date_due': due,
+        'sales_tax_percent': parse_and_return_decimal(tax_percent),
+        'status': invoice_status,
+        'discounts': request.get('discounts'),
+        'payment_link': request.get('payment_link')
+    }
 
+    serializer = InvoiceSerializer(data=invoice_data)
     try:
         invoice.full_clean()
         invoice.save()
