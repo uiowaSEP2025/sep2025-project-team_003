@@ -10,6 +10,8 @@ from hsabackend.models.job import Job
 from hsabackend.serializers.invoice_serializer import InvoiceSerializer
 from hsabackend.utils.api_validators import parseAndReturnDate, parse_and_return_decimal
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+from utils.response_helpers import get_table_data
+
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
@@ -83,38 +85,7 @@ def create_invoice(request):
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
 def get_invoices(request):
-    org = request.org
-    search = request.query_params.get('search', '')
-    pagesize = request.query_params.get('pagesize', '')
-    offset = request.query_params.get('offset',0)
-    if not pagesize or not offset:
-        return Response({"message": "missing pagesize or offset"}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        pagesize = int(pagesize)
-        offset = int(offset)
-    except:
-        return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
-
-    offset = offset * pagesize
-    invoices = Invoice.objects.select_related("customer").filter(
-        customer__organization=org.pk).filter(
-        Q(customer__first_name__icontains=search) |
-        Q(customer__last_name__icontains=search)   
-    )[offset : offset + pagesize] 
-    serializer = InvoiceSerializer(invoices, many=True)
-
-    count = Invoice.objects.select_related("customer").filter(
-        customer__organization=org.pk).filter(
-        Q(customer__first_name__icontains=search) |
-        Q(customer__last_name__icontains=search)   
-    ).count()
-
-    res = {
-        'data': serializer.data,
-        'totalCount': count
-    }    
-    return Response(res, status=status.HTTP_200_OK)
+    return get_table_data(request, "invoice")
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()

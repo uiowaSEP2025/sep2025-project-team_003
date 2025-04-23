@@ -6,43 +6,13 @@ from rest_framework.response import Response
 
 from hsabackend.models.service import Service
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+from utils.response_helpers import get_table_data
 
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
 def get_service_table_data(request):
-    org = request.org
-    search = request.query_params.get('search', '')
-    pagesize = request.query_params.get('pagesize', '')
-    offset = request.query_params.get('offset', 0)
-    
-    if not pagesize or not offset:
-        return Response({"message": "missing pagesize or offset"}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        pagesize = int(pagesize)
-        offset = int(offset)
-    except:
-        return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
-    
-    offset = offset * pagesize
-    services = Service.objects.filter(organization=org.pk).filter(
-        Q(service_name__icontains=search) | Q(service_description__icontains=search) 
-    )[offset:offset + pagesize] if search else Service.objects.filter(organization=org.pk)[offset:offset + pagesize]
-
-    data = []
-    for service in services:
-        data.append(service.json())
-    
-    count = Service.objects.filter(organization=org.pk).filter(
-        Q(service_name__icontains=search) | Q(service_description__icontains=search)
-    ).count()
-
-    res = {
-        'data': data,
-        'totalCount': count
-    }    
-    return Response(res, status=status.HTTP_200_OK)
+    return get_table_data(request, "service")
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded(require_onboarding=False)
