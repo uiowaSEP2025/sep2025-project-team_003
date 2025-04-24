@@ -1,6 +1,7 @@
 from django.db.models import Q
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 
 from hsabackend.models.contractor import Contractor
 from hsabackend.models.customer import Customer
@@ -20,140 +21,133 @@ from hsabackend.serializers.request_serializer import RequestSerializer
 from hsabackend.serializers.service_serializer import ServiceSerializer
 
 
+class CustomPagination(PageNumberPagination):
+    page_size_query_param = 'pagesize'
+    page_query_param = 'offset'
+
+    def get_page_number(self, request, paginator):
+        # Get the page number from the request
+        page_number = request.query_params.get(self.page_query_param, 0)
+        if page_number in self.last_page_strings:
+            page_number = paginator.num_pages
+
+        try:
+            # In the original implementation, offset is 0-indexed
+            # Django's pagination is 1-indexed, so we add 1
+            return int(page_number) + 1
+        except (TypeError, ValueError):
+            return 1
+
+    def get_paginated_response(self, data):
+        return Response({
+            'data': data,
+            'totalCount': self.page.paginator.count
+        })
+
+
 def get_table_data(request, object_type, exclude=False, exclude_ids=None):
     org = request.org
     search = request.query_params.get('search', '')
-    pagesize = request.query_params.get('pagesize', '')
-    offset = request.query_params.get('offset', 0) * pagesize
-
-    if not pagesize or not offset:
-        return Response(
-
-
-        data = {
-            "message": "missing pagesize or offset"
-        },
-        status = status.HTTP_400_BAD_REQUEST
-        )
-    try:
-        pagesize = int(pagesize)
-        offset = int(offset)
-    except:
-        return Response(
-        data = {
-            "message": "pagesize and offset must be int"
-        },
-        status = status.HTTP_400_BAD_REQUEST
-        )
+    paginator = CustomPagination()
 
     match object_type:
         case "job_template":
-            job_templates = JobTemplate.objects.filter(organization=org.pk).filter(
-                Q(name__icontains=search) |
-                Q(description__icontains=search)
-            )[offset:offset + pagesize] if search else JobTemplate.objects.filter(organization=org.pk)[offset:offset + pagesize]
+            queryset = JobTemplate.objects.filter(organization=org.pk)
+            if search:
+                queryset = queryset.filter(
+                    Q(name__icontains=search) |
+                    Q(description__icontains=search)
+                )
 
-            serializer = JobTemplateSerializer(job_templates, many=True)
-
-            count = JobTemplate.objects.filter(organization=org.pk).filter(
-                Q(name__icontains=search) |
-                Q(description__icontains=search)
-            ).count() if search else JobTemplate.objects.filter(organization=org.pk).count()
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = JobTemplateSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
         case "contractor":
-            contractors = Contractor.objects.filter(organization=org.pk).filter(
-                Q(first_name__icontains=search) | Q(last_name__icontains=search)
-            )[offset:offset + pagesize] if search else Contractor.objects.filter(organization=org.pk)[offset:offset + pagesize]
+            queryset = Contractor.objects.filter(organization=org.pk)
+            if search:
+                queryset = queryset.filter(
+                    Q(first_name__icontains=search) | Q(last_name__icontains=search)
+                )
 
-            serializer = ContractorSerializer(contractors, many=True)
-
-            count = Contractor.objects.filter(organization=org.pk).filter(
-                Q(first_name__icontains=search) | Q(last_name__icontains=search)
-            ).count() if search else Contractor.objects.filter(organization=org.pk).count()
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = ContractorSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
         case "customer":
-            customers = Customer.objects.filter(organization=org.pk).filter(
-                Q(first_name__icontains=search) | Q(last_name__icontains=search)
-            )[offset:offset + pagesize] if search else Customer.objects.filter(organization=org.pk)[offset:offset + pagesize]
-            serializer = CustomerSerializer(customers, many=True)
+            queryset = Customer.objects.filter(organization=org.pk)
+            if search:
+                queryset = queryset.filter(
+                    Q(first_name__icontains=search) | Q(last_name__icontains=search)
+                )
 
-            count = Customer.objects.filter(organization=org.pk).filter(
-                Q(first_name__icontains=search) | Q(last_name__icontains=search)
-            ).count() if search else Customer.objects.filter(organization=org.pk).count()
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = CustomerSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
         case "job":
-            jobs = Job.objects.filter(organization=org.pk).filter(
-                Q(customer__first_name__icontains=search) |
-                Q(customer__last_name__icontains=search) |
-                Q(start_date__icontains=search) |
-                Q(end_date__icontains=search) |
-                Q(job_status__icontains=search) |
-                Q(description__icontains=search)
-            )[offset:offset + pagesize] if search else Job.objects.filter(organization=org.pk)[offset:offset + pagesize]
-            serializer = JobSerializer(jobs, many=True)
+            queryset = Job.objects.filter(organization=org.pk)
+            if search:
+                queryset = queryset.filter(
+                    Q(customer__first_name__icontains=search) |
+                    Q(customer__last_name__icontains=search) |
+                    Q(start_date__icontains=search) |
+                    Q(end_date__icontains=search) |
+                    Q(job_status__icontains=search) |
+                    Q(description__icontains=search)
+                )
 
-            count = Job.objects.filter(organization=org.pk).filter(
-                Q(customer__first_name__icontains=search) |
-                Q(customer__last_name__icontains=search) |
-                Q(start_date__icontains=search) |
-                Q(end_date__icontains=search) |
-                Q(job_status__icontains=search) |
-                Q(description__icontains=search)
-            ).count() if search else Job.objects.filter(organization=org.pk).count()
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = JobSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
         case "service":
-            services = Service.objects.filter(organization=org.pk).filter(
-                Q(service_name__icontains=search) |
-                Q(service_description__icontains=search) |
-                Q(default_fee__icontains=search)
-            )[offset:offset + pagesize] if search else Service.objects.filter(organization=org.pk).filter()
-            serializer = ServiceSerializer(services, many=True)
-            count = Service.objects.filter(organization=org.pk).filter(
-                Q(service_name__icontains=search) |
-                Q(service_description__icontains=search) |
-                Q(default_fee__icontains=search)
-            ).count() if search else Service.objects.filter(organization=org.pk).count()
+            queryset = Service.objects.filter(organization=org.pk)
+            if search:
+                queryset = queryset.filter(
+                    Q(service_name__icontains=search) |
+                    Q(service_description__icontains=search) |
+                    Q(default_fee__icontains=search)
+                )
+
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = ServiceSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
         case "material":
-            materials = Material.objects.filter(organization=org.pk).filter(
-                Q(material_name__icontains=search)
-            )[offset:offset + pagesize] if search else Material.objects.filter(organization=org.pk)[offset:offset + pagesize]
+            queryset = Material.objects.filter(organization=org.pk)
+            if search:
+                queryset = queryset.filter(
+                    Q(material_name__icontains=search)
+                )
 
-            serializer = MaterialSerializer(materials, many=True)
-
-            count = Material.objects.filter(organization=org.pk).filter(
-                Q(material_name__icontains=search)
-            ).count() if search else Material.objects.filter(organization=org.pk).count()
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = MaterialSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
 
         case "request":
-            requests = Request.objects.filter(organization=org.pk).filter(
-                Q(name__icontains=search))[offset:offset + pagesize] if search else Request.objects.filter(
-                organization=org.pk)[offset:offset + pagesize]
+            queryset = Request.objects.filter(organization=org.pk)
+            if search:
+                queryset = queryset.filter(
+                    Q(name__icontains=search)
+                )
 
-            serializer = RequestSerializer(requests, many=True)
-
-            count = Request.objects.filter(organization=org.pk).filter(
-                Q(name__icontains=search)).count() if search else Request.objects.filter(
-                organization=org.pk).count()
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = RequestSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
         case "invoice":
-            invoices = Invoice.objects.filter(organization=org.pk).filter(
-                Q(date_issued__icontains=search) |
-                Q(date_due__icontains=search) |
-                Q(status__icontains=search) |
-                Q(customer__first_name__icontains=search) |
-                Q(customer__last_name__icontains=search) |
-                Q(payment_link__icontains=search) |
-                Q(sales_tax_percent__icontains=search) |
-                Q(discount__discount_name__icontains=search) |
-                Q(discount__discount_percent__icontains=search)
-            )[offset:offset + pagesize] if search else Invoice.objects.filter(organization=org.pk)[offset:offset + pagesize]
-            serializer = InvoiceSerializer(invoices, many=True)
-            count = Invoice.objects.filter(organization=org.pk).filter(
-                Q(date_issued__icontains=search) |
-                Q(date_due__icontains=search) |
-                Q(status__icontains=search) |
-                Q(customer__first_name__icontains=search) |
-                Q(customer__last_name__icontains=search) |
-                Q(payment_link__icontains=search) |
-                Q(sales_tax_percent__icontains=search) |
-                Q(discount__discount_name__icontains=search) |
-                Q(discount__discount_percent__icontains=search
-            )).count() if search else Invoice.objects.filter(organization=org.pk).count()
+            queryset = Invoice.objects.filter(organization=org.pk)
+            if search:
+                queryset = queryset.filter(
+                    Q(date_issued__icontains=search) |
+                    Q(date_due__icontains=search) |
+                    Q(status__icontains=search) |
+                    Q(customer__first_name__icontains=search) |
+                    Q(customer__last_name__icontains=search) |
+                    Q(payment_link__icontains=search) |
+                    Q(sales_tax_percent__icontains=search) |
+                    Q(discount__discount_name__icontains=search) |
+                    Q(discount__discount_percent__icontains=search)
+                )
+
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = InvoiceSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
         case _:
             return Response(
                 data={
@@ -161,9 +155,3 @@ def get_table_data(request, object_type, exclude=False, exclude_ids=None):
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
-
-    res = {
-        'data': serializer.data,
-        'totalCount': count
-    }
-    return Response(res, status=status.HTTP_200_OK)
