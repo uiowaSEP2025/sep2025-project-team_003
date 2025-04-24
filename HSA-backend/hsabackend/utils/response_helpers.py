@@ -16,6 +16,7 @@ from hsabackend.serializers.booking_serializer import BookingSerializer
 from hsabackend.serializers.contractor_serializer import ContractorSerializer
 from hsabackend.serializers.customer_serializer import CustomerSerializer
 from hsabackend.serializers.invoice_serializer import InvoiceSerializer
+from hsabackend.serializers.job_contractor_serializer import JobContractorSerializer
 from hsabackend.serializers.job_serializer import JobSerializer
 from hsabackend.serializers.job_template_serializer import JobTemplateSerializer
 from hsabackend.serializers.material_serializer import MaterialSerializer

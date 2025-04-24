@@ -9,7 +9,7 @@ from django.db.models import QuerySet
 from django.db.models import Q
 from unittest.mock import call
 from django.core.exceptions import ValidationError
-from hsabackend.views.organizations import complete_onboarding, createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail
+from hsabackend.views.organizations import complete_onboarding, createOrganization, deleteOrganization, get_organization, edit_organization
 from hsabackend.models.organization import Organization
 from hsabackend.models.customer import Customer
 from hsabackend.models.service import Service
@@ -29,7 +29,7 @@ class orgViewTests(APITestCase):
         # get org test
         request = factory.get('/api/get/organization')
         request.user = mock_user  
-        response = getOrganizationDetail(request)
+        response = get_organization(request)
         
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -43,7 +43,7 @@ class orgViewTests(APITestCase):
         # edit organization test
         request = factory.post('/api/edit/organization')
         request.user = mock_user  
-        response = editOrganizationDetail(request)
+        response = edit_organization(request)
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -67,7 +67,7 @@ class orgViewTests(APITestCase):
 
         request = factory.get('api/get/organization')
         request.user = mock_user
-        response = getOrganizationDetail(request)
+        response = get_organization(request)
         
         assert response.status_code == status.HTTP_200_OK
 
@@ -205,7 +205,7 @@ class orgViewTests(APITestCase):
         request = factory.post('api/edit/organization', data=mock_data, format='json')
         request.user = mock_user
         request.org = org_object
-        response = editOrganizationDetail(request)
+        response = edit_organization(request)
         org_object.save.assert_called_once()
         
         assert response.status_code == status.HTTP_200_OK
@@ -234,7 +234,7 @@ class orgViewTests(APITestCase):
 
         request = factory.post('api/edit/organization', data=mock_data, format='json')
         request.user = mock_user
-        response = editOrganizationDetail(request)
+        response = edit_organization(request)
         
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert response.data.get("errors", "") == {'email': ['Invalid Email']}

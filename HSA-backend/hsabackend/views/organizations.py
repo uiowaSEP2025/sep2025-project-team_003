@@ -1,61 +1,59 @@
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from hsabackend.models.organization import Organization
-from django.db.models import Q
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
-from hsabackend.models.customer import Customer
-from hsabackend.models.service import Service
-from hsabackend.models.material import Material
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 from hsabackend.models.contractor import Contractor
+from hsabackend.models.customer import Customer
 from hsabackend.models.job import Job
-from hsabackend.models.job_service import JobService
-from hsabackend.models.job_material import JobMaterial
-from hsabackend.models.job_contractor import JobContractor
+from hsabackend.models.material import Material
+from hsabackend.models.organization import Organization
+from hsabackend.models.service import Service
+from hsabackend.serializers.contractor_serializer import ContractorSerializer
+from hsabackend.serializers.customer_serializer import CustomerSerializer
+from hsabackend.serializers.job_serializer import JobSerializer
+from hsabackend.serializers.material_serializer import MaterialSerializer
+from hsabackend.serializers.organization_serializer import OrganizationSerializer
+from hsabackend.serializers.service_serializer import ServiceSerializer
+from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded(require_onboarding=False)
-def getOrganizationDetail(request):
-    try:
-        org = request.org
-        return Response(org.json(), status=status.HTTP_200_OK)
-
-    except Exception as e:
-        return Response({"error":"An error occured trying to get organization. Please make sure you have created an organization."}, status=status.HTTP_400_BAD_REQUEST)
+def get_organization(request):
+    org = request.org
+    serializer = OrganizationSerializer(org)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
-def editOrganizationDetail(request):
+def edit_organization(request):
     org = request.org
-    name = request.data.get('name', org.org_name)
-    email = request.data.get('email', org.org_email)
-    city = request.data.get('city', org.org_city)
-    phone = request.data.get('phone', org.org_phone)
-    requestor_state = request.data.get('requestorState', org.org_requestor_state)
-    requestor_zip = request.data.get('requestorZip', org.org_requestor_zip)
-    requestor_address = request.data.get('requestorAddress', org.org_requestor_address)
-    ownerFn = request.data.get('ownerFn', org.org_owner_first_name)
-    ownerLn = request.data.get('ownerLn', org.org_owner_last_name)
-    
-    org.org_name = name
-    org.org_email = email
-    org.org_city = city
-    org.org_requestor_state = requestor_state
-    org.org_requestor_zip = requestor_zip
-    org.org_requestor_address = requestor_address
-    org.org_phone = phone
-    org.org_owner_first_name = ownerFn
-    org.org_owner_last_name = ownerLn
-    
+    org_data = {
+        "org_name": request.data.get("orgName", ""),
+        "org_email": request.data.get("orgEmail", ""),
+        "org_city": request.data.get("orgCity", ""),
+        "org_phone": request.data.get("orgPhone", "").replace("-", ""),
+        "org_state": request.data.get("orgState", ""),
+        "org_zip": request.data.get("orgZip", ""),
+        "org_address": request.data.get("orgAddress", ""),
+        "org_owner_first_name": request.data.get("orgOwnerFirstName", ""),
+        "org_owner_last_name": request.data.get("orgOwnerLastName", ""),
+        "default_labor_rate": request.data.get("defaultLaborRate", ""),
+        "default_payment_link": request.data.get("defaultPaymentLink", "")
+    }
+
+    serializer = OrganizationSerializer(org, data=org_data, partial=True)
+
     try:
-        org.full_clean()
-        org.save()
+        serializer.is_valid(raise_exception=True)
+        serializer.update(org, serializer.validated_data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
-    
-    return Response({"message": "Organization details updated successfully."}, status=status.HTTP_200_OK)
+
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded(require_onboarding=False)
@@ -81,94 +79,77 @@ def complete_onboarding(request):
             org.full_clean()
 
             if customer_request:
-                new_customer = Customer(
-                    first_name = customer_request.get('firstn'),
-                    last_name = customer_request.get('lastn'),
-                    email = customer_request.get('email'),
-                    phone_no = customer_request.get('phoneno').replace("-", ""),
-                    notes = customer_request.get('notes'),
-                    organization = org
-                )
-                new_customer.full_clean()
-                new_customer.save()
+                customer_data = {
+                    "first_name"      : customer_request.get('firstn'),
+                    "last_name"       : customer_request.get('lastn'),
+                    "email"           : customer_request.get('email'),
+                    "phone"        : customer_request.get('phoneno').replace("-", ""),
+                    "notes"           : customer_request.get('notes'),
+                    "organization"    : org
+                }
+                customer_serializer = CustomerSerializer(data=customer_data)
+                customer_serializer.is_valid(raise_exception=True)
+                customer_serializer.save()
             
             if service_request:
-                new_service = Service(
-                    service_name = service_request.get('service_name'),
-                    service_description = service_request.get('service_description'),
-                    organization = org
-                )
-                new_service.full_clean()
-                new_service.save()
+                service_data = {
+                    "service_name" : service_request.get('service_name'),
+                    "service_description" : service_request.get('service_description'),
+                    "organization" : org
+                }
+
+                service_serializer = ServiceSerializer(data=service_data)
+                service_serializer.is_valid(raise_exception=True)
+                service_serializer.save()
             
             if material_request:
-                new_material = Material(
-                    material_name = material_request.get('material_name'),
-                    organization = org
-                )
-                new_material.full_clean()
-                new_material.save()
+                material_data = {
+                    "material_name" : material_request.get('material_name'),
+                    "material_description" : material_request.get('material_description'),
+                    "default_cost": material_request.get('default_cost'),
+                    "organization" : org
+                }
+
+                material_serializer = MaterialSerializer(data=material_data)
+                material_serializer.is_valid(raise_exception=True)
+                material_serializer.save()
 
             if contractor_request:
-                new_contractor = Contractor(
-                    first_name = contractor_request.get('firstName'),
-                    last_name = contractor_request.get('lastName'),
-                    email = contractor_request.get('email'),
-                    phone = contractor_request.get('phone').replace("-", ""),
-                    organization = org
-                )
-                new_contractor.full_clean()
-                new_contractor.save()
+                contractor_data = {
+                    "first_name" : contractor_request.get('firstName'),
+                    "last_name" : contractor_request.get('lastName'),
+                    "email" : contractor_request.get('email'),
+                    "phone" : contractor_request.get('phone').replace("-", ""),
+                    "organization" : org
+                }
+
+                contractor_serializer = ContractorSerializer(data=contractor_data)
+                contractor_serializer.is_valid(raise_exception=True)
+                contractor_serializer.save()
 
             if job_request:
-                new_job = Job(
-                    job_status = "created",
-                    start_date = job_request.get("startDate"),
-                    end_date = job_request.get("endDate"),
-                    description = job_request.get("description"),
-                    organization = org,
-                    customer = new_customer,
-                    requestor_address = job_request.get("address"),
-                    requestor_city = job_request.get("city"),
-                    requestor_state = job_request.get("state"),
-                    requestor_zip = job_request.get("zip")
-                )
-                new_job.full_clean()
-                new_job.save()
+                job_data = {
+                    "job_status"      : "created",
+                    "start_date"      : job_request.get("startDate"),
+                    "end_date"        : job_request.get("endDate"),
+                    "description"     : job_request.get("description"),
+                    "organization"    : org,
+                    "customer"        : customer_serializer.instance if customer_serializer.is_valid() else None,
+                    "job_address"     : job_request.get("address"),
+                    "job_city"        : job_request.get("city"),
+                    "job_state"       : job_request.get("state"),
+                    "job_zip"         : job_request.get("zip"),
+                    "services"        : job_request.get("services"),
+                    "materials"       : job_request.get("materials"),
+                    "contractors"     : job_request.get("contractors"),
+                    "use_hourly_rate" : job_request.get("useHourlyRate"),
+                    "hourly_rate"     : job_request.get("hourlyRate"),
+                    "minutes_worked"  : job_request.get("minutesWorked"),
+                }
 
-                # Add service and job join entry
-                service_list = job_request.get("services") or []
-                for service in service_list:
-                    new_job_service = JobService(
-                        job = new_job,
-                        service = new_service
-                    )
-                    new_job_service.full_clean()
-                    new_job_service.save()
-                
-                # Add material and job join entry
-                material_list = job_request.get("materials") or []
-                for material in material_list:
-                    new_material_job = JobMaterial(
-                        material = new_material,
-                        job = new_job,
-                        units_used = material["unitsUsed"],
-                        price_per_unit = material["pricePerUnit"]
-                    )
-                    new_material_job.full_clean()
-                    new_material_job.save()
-                
-                # Add contractor and job join entry
-                contractor_list = job_request.get("contractors") or []
-                for contractor in contractor_list:
-                    new_job_contractor = JobContractor(
-                        job = new_job,
-                        contractor = new_contractor
-                    )
-
-                    new_job_contractor.full_clean()
-                    new_job_contractor.save()  
-
+                job_serializer = JobSerializer(data=job_data)
+                job_serializer.is_valid(raise_exception=True)
+                job_serializer.save()
             org.is_onboarding = is_onboarding
             org.save()
     except ValidationError as e:
@@ -185,47 +166,34 @@ def createOrganization(request):
     if org_count > 0:
         return Response({"errors": "This user already has an organization"}, status=status.HTTP_400_BAD_REQUEST)
 
-    name = request.data.get('name', '')
-    email = request.data.get('email', '')
-    city = request.data.get('city', '')
-    phone = request.data.get('phone', '').replace("-","")
-    requestor_state = request.data.get('requestorState', '')
-    requestor_zip = request.data.get('requestorZip', '')
-    requestor_address = request.data.get('requestorAddress', '')
-
-    ownerFn = request.data.get('ownerFn', '')
-    ownerLn = request.data.get('ownerLn', '')
-
-    owning_User = request.user
+    org_data = {
+        "org_name": request.data.get("orgName", ""),
+        "org_email": request.data.get("orgEmail", ""),
+        "org_city": request.data.get("orgCity", ""),
+        "org_phone": request.data.get("orgPhone", "").replace("-", ""),
+        "org_state": request.data.get("orgState", ""),
+        "org_zip": request.data.get("orgZip", ""),
+        "org_address": request.data.get("orgAddress", ""),
+        "org_owner_first_name": request.data.get("orgOwnerFirstName", ""),
+        "org_owner_last_name": request.data.get("orgOwnerLastName", ""),
+        "default_labor_rate": request.data.get("defaultLaborRate", ""),
+        "default_payment_link": request.data.get("defaultPaymentLink", ""),
+        "owning_user":  request.user
+    }
 
     try:
-        the_organization = Organization(
-            org_name = name,
-            org_email = email,
-            org_city = city,
-            org_requestor_state = requestor_state,
-            org_requestor_zip = requestor_zip,
-            org_phone=phone,
-            org_requestor_address = requestor_address,
-            org_owner_first_name = ownerFn,
-            org_owner_last_name = ownerLn,
-            owning_User = owning_User,
-        )
-        the_organization.full_clean()
-        the_organization.save()
+        serializer = OrganizationSerializer(data=org_data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"message": "Organization created"}, status=status.HTTP_201_CREATED)
 
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
-    return Response({"message": "Organization created"}, status=status.HTTP_201_CREATED)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded(require_onboarding=False)
 def deleteOrganization(request):
-    # This API is unreachable due to the fact that one login must have exactly one org, may be used in the future
-
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-
     try:
         org_count = Organization.objects.filter(owning_User=request.user.pk).count()
         if org_count <= 1:
@@ -236,4 +204,4 @@ def deleteOrganization(request):
         Organization.objects.filter(owning_User=request.user.pk).delete()
         return Response({"message": "Organization deleted"}, status=status.HTTP_200_OK)
     except Exception as e:
-        return Response({"error":f"An error occured trying to delete organization. Please contact admin. Error: {e}"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error":f"An error occurred trying to delete organization. Please contact admin. Error: {e}"}, status=status.HTTP_400_BAD_REQUEST)
