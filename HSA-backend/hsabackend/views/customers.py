@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from hsabackend.models.customer import Customer
 from hsabackend.serializers.customer_serializer import CustomerSerializer
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
-from utils.response_helpers import get_table_data
+from hsabackend.utils.response_helpers import get_table_data
 
 
 @api_view(["GET"])

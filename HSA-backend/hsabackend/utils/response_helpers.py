@@ -2,25 +2,25 @@ from django.db.models import Q
 from rest_framework import status
 from rest_framework.response import Response
 
-from models.contractor import Contractor
-from models.customer import Customer
-from models.invoice import Invoice
-from models.job import Job
-from models.job_template import JobTemplate
-from models.material import Material
-from models.request import Request
-from models.service import Service
-from serializers.contractor_serializer import ContractorSerializer
-from serializers.customer_serializer import CustomerSerializer
-from serializers.invoice_serializer import InvoiceSerializer
-from serializers.job_serializer import JobSerializer
-from serializers.job_template_serializer import JobTemplateSerializer
-from serializers.material_serializer import MaterialSerializer
-from serializers.request_serializer import RequestSerializer
-from serializers.service_serializer import ServiceSerializer
+from hsabackend.models.contractor import Contractor
+from hsabackend.models.customer import Customer
+from hsabackend.models.invoice import Invoice
+from hsabackend.models.job import Job
+from hsabackend.models.job_template import JobTemplate
+from hsabackend.models.material import Material
+from hsabackend.models.request import Request
+from hsabackend.models.service import Service
+from hsabackend.serializers.contractor_serializer import ContractorSerializer
+from hsabackend.serializers.customer_serializer import CustomerSerializer
+from hsabackend.serializers.invoice_serializer import InvoiceSerializer
+from hsabackend.serializers.job_serializer import JobSerializer
+from hsabackend.serializers.job_template_serializer import JobTemplateSerializer
+from hsabackend.serializers.material_serializer import MaterialSerializer
+from hsabackend.serializers.request_serializer import RequestSerializer
+from hsabackend.serializers.service_serializer import ServiceSerializer
 
 
-def get_table_data(request, object_type):
+def get_table_data(request, object_type, exclude=False, exclude_ids=None):
     org = request.org
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
@@ -73,7 +73,6 @@ def get_table_data(request, object_type):
             customers = Customer.objects.filter(organization=org.pk).filter(
                 Q(first_name__icontains=search) | Q(last_name__icontains=search)
             )[offset:offset + pagesize] if search else Customer.objects.filter(organization=org.pk)[offset:offset + pagesize]
-
             serializer = CustomerSerializer(customers, many=True)
 
             count = Customer.objects.filter(organization=org.pk).filter(
@@ -88,7 +87,6 @@ def get_table_data(request, object_type):
                 Q(job_status__icontains=search) |
                 Q(description__icontains=search)
             )[offset:offset + pagesize] if search else Job.objects.filter(organization=org.pk)[offset:offset + pagesize]
-
             serializer = JobSerializer(jobs, many=True)
 
             count = Job.objects.filter(organization=org.pk).filter(
