@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, Input } from '@angular/core';
 import { DayPilot, DayPilotCalendarComponent, DayPilotModule, DayPilotNavigatorComponent } from "@daypilot/daypilot-lite-angular";
 import { BookingService } from '../../services/calendar-data.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,13 +7,14 @@ import { DeleteDialogComponentComponent } from '../delete-dialog-component/delet
 import { JobService } from '../../services/job.service';
 import { ViewJobDialogComponentComponent } from '../view-job-dialog-component/view-job-dialog-component.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ContractorService } from '../../services/contractor.service';
 
 @Component({
   selector: 'app-calendar-component',
   imports: [
     DayPilotModule,
   ],
-  providers:    [
+  providers: [
     BookingService,
   ],
   templateUrl: './calendar-component.component.html',
@@ -24,15 +25,18 @@ export class CalendarComponentComponent implements AfterViewInit {
   @ViewChild("week") week!: DayPilotCalendarComponent;
   @ViewChild("navigator") nav!: DayPilotNavigatorComponent;
 
+  @Input({required: true}) contractorNames!: String[]
+
   events: DayPilot.EventData[] = [];
   jobs: any[] = [];
   date = DayPilot.Date.today();
+  contractors: String[] | null = null
 
   configNavigator: DayPilot.NavigatorConfig = {
     showMonths: 3,
     cellWidth: 25,
     cellHeight: 25,
-    onVisibleRangeChanged: args => { 
+    onVisibleRangeChanged: args => {
       this.events = []
       this.loadEvents();
     }
@@ -48,10 +52,10 @@ export class CalendarComponentComponent implements AfterViewInit {
     onTimeRangeSelected: this.onTimeRangeSelected.bind(this),
     onBeforeEventRender: this.onBeforeEventRender.bind(this),
     onEventClick: this.onEventClick.bind(this),
-    
+
     //handling drag event
     eventMoveHandling: "Update",
-    onEventMove: (args) => { 
+    onEventMove: (args) => {
       this.onChangeViaDragAndResize(args)
     },
 
@@ -71,7 +75,7 @@ export class CalendarComponentComponent implements AfterViewInit {
 
     //handling drag event
     eventMoveHandling: "Update",
-    onEventMove: (args) => { 
+    onEventMove: (args) => {
       this.onChangeViaDragAndResize(args)
     },
 
@@ -83,15 +87,17 @@ export class CalendarComponentComponent implements AfterViewInit {
   };
 
   constructor(
-    private calendarDataService: BookingService, 
-    private jobService: JobService, 
-    public dialog: MatDialog, 
-    private snackBar: MatSnackBar
+    private calendarDataService: BookingService,
+    private jobService: JobService,
+    public dialog: MatDialog,
+    private snackBar: MatSnackBar,
+    private contractorService: ContractorService
   ) {
     this.viewWeek();
   }
 
   ngAfterViewInit(): void {
+    console.log(this.contractorNames)
     this.loadEvents();
   }
 
@@ -149,13 +155,13 @@ export class CalendarComponentComponent implements AfterViewInit {
     });
   }
 
-  viewDay():void {
+  viewDay(): void {
     this.configNavigator.selectMode = "Day";
     this.configDay.visible = true;
     this.configWeek.visible = false;
   }
 
-  viewWeek():void {
+  viewWeek(): void {
     this.configNavigator.selectMode = "Week";
     this.configDay.visible = false;
     this.configWeek.visible = true;
@@ -173,7 +179,7 @@ export class CalendarComponentComponent implements AfterViewInit {
         fontColor: "#000",
         action: "None",
         toolTip: "Info",
-        onClick: async (args: any)  => {
+        onClick: async (args: any) => {
           const infoData = {
             jobInfo: this.jobs.filter((item) => item.data.id === args.source.data.tags.jobID)[0],
             bookingInfo: {
@@ -184,14 +190,14 @@ export class CalendarComponentComponent implements AfterViewInit {
           };
 
           const dialogRef = this.dialog.open(ViewJobDialogComponentComponent, {
-            width: 'auto', 
-            maxWidth: '90vw', 
-            height: 'auto', 
+            width: 'auto',
+            maxWidth: '90vw',
+            height: 'auto',
             maxHeight: '90vh',
             data: infoData
           });
-      
-          dialogRef.afterClosed().subscribe(result => {});
+
+          dialogRef.afterClosed().subscribe(result => { });
         }
       },
       {
@@ -203,7 +209,7 @@ export class CalendarComponentComponent implements AfterViewInit {
         fontColor: "#000",
         action: "None",
         toolTip: "Delete event",
-        onClick: async (args: any)  => {
+        onClick: async (args: any) => {
           const messageData = {
             id: args.source.data.id,
             eventName: args.source.data.text
@@ -214,12 +220,12 @@ export class CalendarComponentComponent implements AfterViewInit {
             data: messageData
           });
 
-          
-      
+
+
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
               //call the api to delete booking model here
-              this.calendarDataService.deleteEvent({ id: args.source.data.id}).subscribe({
+              this.calendarDataService.deleteEvent({ id: args.source.data.id }).subscribe({
                 next: (response) => {
                   this.snackBar.open('Event Deleted!', '', {
                     duration: 3000
@@ -228,8 +234,8 @@ export class CalendarComponentComponent implements AfterViewInit {
                   dp.events.remove(args.source);
                   this.jobs = this.jobs.filter((item) => item.data.id === args.source.data.tags.jobID)
                 },
-                error: (error) => {}
-            })
+                error: (error) => { }
+              })
             }
           });
         }
@@ -255,9 +261,9 @@ export class CalendarComponentComponent implements AfterViewInit {
     }
 
     const dialogRef = this.dialog.open(BookingDialogComponentComponent, {
-      width: '800px', 
-      maxWidth: '90vw', 
-      height: 'auto', 
+      width: '800px',
+      maxWidth: '90vw',
+      height: 'auto',
       maxHeight: '90vh',
       data: slotData
     });
@@ -307,12 +313,12 @@ export class CalendarComponentComponent implements AfterViewInit {
                   }
                 }));
               },
-              error: (error) => {}
+              error: (error) => { }
             })
 
-            
-            
-            
+
+
+
           }
         })
       }
@@ -334,9 +340,9 @@ export class CalendarComponentComponent implements AfterViewInit {
     }
 
     const dialogRef = this.dialog.open(BookingDialogComponentComponent, {
-      width: '800px', 
-      maxWidth: '90vw', 
-      height: 'auto', 
+      width: '800px',
+      maxWidth: '90vw',
+      height: 'auto',
       maxHeight: '90vh',
       data: currentEventData
     });
@@ -344,15 +350,15 @@ export class CalendarComponentComponent implements AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         const dp = args.control
-        this.jobs = this.jobs.filter((item) => item.data.id !== args.e.data.tags.jobID) 
-        
+        this.jobs = this.jobs.filter((item) => item.data.id !== args.e.data.tags.jobID)
+
         this.jobService.getSpecificJobData(result.tags.jobID).subscribe({
           next: (response) => {
             this.jobs.push(response)
             let jobInfo = response.data
 
             const endDate = jobInfo["endDate"].split("-").slice(1).join("/");
-        
+
             const updateEventData = new DayPilot.Event({
               id: args.e.data.id,
               text: result.eventName,
@@ -388,7 +394,7 @@ export class CalendarComponentComponent implements AfterViewInit {
                   duration: 3000
                 });
               },
-              error: (error) => {}
+              error: (error) => { }
             })
           }
         })
@@ -414,7 +420,7 @@ export class CalendarComponentComponent implements AfterViewInit {
           duration: 3000
         });
       },
-      error: (error) => {}
+      error: (error) => { }
     })
   }
 }

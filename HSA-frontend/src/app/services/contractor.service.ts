@@ -26,12 +26,17 @@ interface ContractorDeletePostData {
 })
 export class ContractorService {
   private apiGetUrl = `${environment.apiUrl}/api/get/contractors`;
+  private apiGetAllUrl = `${environment.apiUrl}/api/get/all/contractors`;
   private apiGetExcludedUrl = `${environment.apiUrl}/api/get/contractors/exclude`;
   private apiCreateUrl = `${environment.apiUrl}/api/create/contractor`;
   private apiEditUrl = `${environment.apiUrl}/api/edit/contractor`;
   private apiDeleteUrl = `${environment.apiUrl}/api/delete/contractor`;
 
   constructor(private http: HttpClient) {}
+
+  public getAllContractors():Observable<String[]> {
+    return this.http.get<String[]>(this.apiGetAllUrl);
+  }
 
   public getContractor(params?: Record<string, string | number>): Observable<TableApiResponse<Contractor>> {
     let httpParams = new HttpParams();
