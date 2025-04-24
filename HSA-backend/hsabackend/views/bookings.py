@@ -10,70 +10,73 @@ from hsabackend.models.job import Job, JobsServices, JobsMaterials
 from hsabackend.models.organization import Organization
 from hsabackend.serializers.booking_serializer import BookingSerializer
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+from hsabackend.utils.response_helpers import get_table_data
 
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
 def get_booking_data(request):
-    org = request.org
-    from_date_string = request.query_params.get('from', '')
-    to_date_string= request.query_params.get('to', '')
+    return get_table_data(request, "booking")
 
-    if not from_date_string or not to_date_string:
-        return Response({"message": "missing a starting date or ending date"}, status=status.HTTP_400_BAD_REQUEST)
-    
-    try:
-        from_date_time_object = timezone.make_aware(parse_datetime(from_date_string))
-        to_date_time_object = timezone.make_aware(parse_datetime(to_date_string))
-    except Exception:
-        return Response({"message": "Cannot parse date time"}, status=status.HTTP_400_BAD_REQUEST)
-    
-    bookings = Booking.objects.filter(organization=org.pk).filter(Q(start_time__gte=from_date_time_object) & Q(end_time__lte=to_date_time_object))
+    # org = request.org
+    # from_date_string = request.query_params.get('from', '')
+    # to_date_string= request.query_params.get('to', '')
+    #
+    # if not from_date_string or not to_date_string:
+    #     return Response({"message": "missing a starting date or ending date"}, status=status.HTTP_400_BAD_REQUEST)
+    #
+    # try:
+    #     from_date_time_object = timezone.make_aware(parse_datetime(from_date_string))
+    #     to_date_time_object = timezone.make_aware(parse_datetime(to_date_string))
+    # except Exception:
+    #     return Response({"message": "Cannot parse date time"}, status=status.HTTP_400_BAD_REQUEST)
+    #
+    # bookings = Booking.objects.filter(organization=org.pk).filter(Q(start_time__gte=from_date_time_object) & Q(end_time__lte=to_date_time_object))
+    #
+    # serializer = BookingSerializer(bookings, many=True)
+    #
+    # jobs = []
+    #
+    # for event in serializer.data:
+    #     job_id = event["job"]
+    #
+    #     try:
+    #         job = Job.objects.get(pk=job_id, organization=org)
+    #     except Job.DoesNotExist:
+    #         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    #
+    #     job_services = JobsServices.objects.filter(job=job.pk)
+    #     job_materials = JobsMaterials.objects.filter(job=job.pk)
+    #     job_contractors = job.contractors
+    #
+    #     job_services_data = []
+    #     for service in job_services:
+    #         job_services_data.append(service.json())
+    #
+    #     job_materials_data = []
+    #     for material in job_materials:
+    #         job_materials_data.append(material.json())
+    #
+    #     job_contractors_data = []
+    #     for contractor in job_contractors:
+    #         job_contractors_data.append(contractor.json())
+    #
+    #     job_data = {
+    #         'data': job.json(),
+    #         'services': job_services_data,
+    #         'materials': job_materials_data,
+    #         'contractors': job_contractors_data
+    #     }
+    #
+    #     jobs.append(job_data)
+    #
+    #
+    # res = {
+    #     'event_data': serializer.data,
+    #     'job_data': jobs
+    # }
 
-    serializer = BookingSerializer(bookings, many=True)
-
-    jobs = []
-
-    for event in serializer.data:
-        job_id = event["job"]
-        
-        try:
-            job = Job.objects.get(pk=job_id, organization=org)
-        except Job.DoesNotExist:
-            return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)  
-        
-        job_services = JobsServices.objects.filter(job=job.pk)
-        job_materials = JobsMaterials.objects.filter(job=job.pk)
-        job_contractors = job.contractors
-
-        job_services_data = []
-        for service in job_services:
-            job_services_data.append(service.json())
-        
-        job_materials_data = []
-        for material in job_materials:
-            job_materials_data.append(material.json())
-        
-        job_contractors_data = []
-        for contractor in job_contractors:
-            job_contractors_data.append(contractor.json())
-
-        job_data = {
-            'data': job.json(),
-            'services': job_services_data,
-            'materials': job_materials_data,
-            'contractors': job_contractors_data
-        }  
-
-        jobs.append(job_data)
-             
-
-    res = {
-        'event_data': serializer.data,
-        'job_data': jobs
-    }    
-
-    return Response(res, status=status.HTTP_200_OK)
+    # return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()

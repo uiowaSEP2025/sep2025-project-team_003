@@ -1,8 +1,9 @@
 from django.db.models import Q
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
 
+from hsabackend.models.booking import Booking
 from hsabackend.models.contractor import Contractor
 from hsabackend.models.customer import Customer
 from hsabackend.models.invoice import Invoice
@@ -11,6 +12,7 @@ from hsabackend.models.job_template import JobTemplate
 from hsabackend.models.material import Material
 from hsabackend.models.request import Request
 from hsabackend.models.service import Service
+from hsabackend.serializers.booking_serializer import BookingSerializer
 from hsabackend.serializers.contractor_serializer import ContractorSerializer
 from hsabackend.serializers.customer_serializer import CustomerSerializer
 from hsabackend.serializers.invoice_serializer import InvoiceSerializer
@@ -45,10 +47,13 @@ class CustomPagination(PageNumberPagination):
         })
 
 
-def get_table_data(request, object_type, exclude=False, exclude_ids=None):
+def get_table_data(request, object_type, exclude=False):
     org = request.org
     search = request.query_params.get('search', '')
     paginator = CustomPagination()
+
+    if exclude:
+        exclude_ids = [int(excluded_id) for excluded_id in request.GET.getlist('excludeIDs', [])]
 
     match object_type:
         case "job_template":
@@ -131,7 +136,19 @@ def get_table_data(request, object_type, exclude=False, exclude_ids=None):
             queryset = Request.objects.filter(organization=org.pk)
             if search:
                 queryset = queryset.filter(
-                    Q(name__icontains=search)
+                Q(requester_first_name__icontains=search) |
+                Q(requester_last_name__icontains=search) |
+                Q(requester_email__icontains=search) |
+                Q(requester_city__icontains=search) |
+                Q(requester_state__icontains=search) |
+                Q(requester_zip__icontains=search) |
+                Q(requester_address__icontains=search) |
+                Q(requester_phone__icontains=search) |
+                Q(description__icontains=search) |
+                Q(availability__icontains=search) |
+                Q(request_status__icontains=search) |
+                Q(organization__icontains=search) |
+                Q(job__icontains=search)
                 )
             if exclude:
                 queryset = queryset.exclude(id__in=exclude_ids) if exclude_ids else queryset.exclude(id__in=[])
@@ -157,6 +174,132 @@ def get_table_data(request, object_type, exclude=False, exclude_ids=None):
             page = paginator.paginate_queryset(queryset, request)
             serializer = InvoiceSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
+        case "booking":
+            queryset = Booking.objects.filter(organization=org.pk)
+            if search:
+                queryset = queryset.filter(
+                    Q(job__customer__first_name__icontains=search) |
+                    Q(job__customer__last_name__icontains=search) |
+                    Q(job__start_date__icontains=search) |
+                    Q(job__end_date__icontains=search) |
+                    Q(job__job_status__icontains=search) |
+                    Q(job__description__icontains=search) |
+                    Q(event_name__icontains=search) |
+                    Q(start_time__icontains=search) |
+                    Q(end_time__icontains=search) |
+                    Q(booking_type__icontains=search) |
+                    Q(status__icontains=search)
+                )
+            if exclude:
+                queryset = queryset.exclude(id__in=exclude_ids) if exclude_ids else queryset.exclude(id__in=[])
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = BookingSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+        case _:
+            return Response(
+                data={
+                    "message": "Invalid model type"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+def get_individual_data(request, object_id, object_type):
+    org = request.org
+    match object_type:
+        case "job_template":
+            try:
+                query = JobTemplate.objects.get(pk=object_id, organization=org)
+            except JobTemplate.DoesNotExist:
+                return Response({"message": "The job template does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+            if not query:
+                return Response({"message": "The job template does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = JobTemplateSerializer(query)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        case "contractor":
+            try:
+                query = Contractor.objects.get(pk=object_id, organization=org)
+            except Contractor.DoesNotExist:
+                return Response({"message": "The contractor does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+            if not query:
+                return Response({"message": "The contractor does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = ContractorSerializer(query)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        case "customer":
+            try:
+                query = Customer.objects.get(pk=object_id, organization=org)
+            except Customer.DoesNotExist:
+                return Response({"message": "The customer does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+            if not query:
+                return Response({"message": "The customer does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = CustomerSerializer(query)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        case "job":
+            try:
+                query = Job.objects.get(pk=object_id, organization=org)
+            except Job.DoesNotExist:
+                return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+            if not query:
+                return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = JobSerializer(query)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        case "service":
+            try:
+                query = Service.objects.get(pk=object_id, organization=org)
+            except Service.DoesNotExist:
+                return Response({"message": "The service does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+            if not query:
+                return Response({"message": "The service does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = ServiceSerializer(query)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        case "material":
+            try:
+                query = Material.objects.get(pk=object_id, organization=org)
+            except Material.DoesNotExist:
+                return Response({"message": "The material does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+            if not query:
+                return Response({"message": "The material does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = MaterialSerializer(query)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        case "request":
+            try:
+                query = Request.objects.get(pk=object_id, organization=org)
+            except Request.DoesNotExist:
+                return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+            if not query:
+                return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = RequestSerializer(query)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        case "invoice":
+            try:
+                query = Invoice.objects.get(pk=object_id, organization=org)
+            except Invoice.DoesNotExist:
+                return Response({"message": "The invoice does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+            if not query:
+                return Response({"message": "The invoice does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = InvoiceSerializer(query)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        case "booking":
+            try:
+                query = Booking.objects.get(pk=object_id, organization=org)
+            except Booking.DoesNotExist:
+                return Response({"message": "The booking does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+            if not query:
+                return Response({"message": "The booking does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = BookingSerializer(query)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         case _:
             return Response(
                 data={
