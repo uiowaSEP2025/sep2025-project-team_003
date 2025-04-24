@@ -76,6 +76,7 @@ export class JobService {
   private apiCreateUrl = `${environment.apiUrl}/api/create/job`;
   private apiEditUrl = `${environment.apiUrl}/api/edit/job`;
   private apiDeleteUrl = `${environment.apiUrl}/api/delete/job`;
+  private getJobsByContractorUrl = `${environment.apiUrl}/api/fixit`
   responses: any[]  = []
 
   constructor(private http: HttpClient) {}
