@@ -4,19 +4,21 @@
 			(dateChange)="changeDate($event)" #navigator></daypilot-navigator>
 	</div>
 	<div class="content">
-		<div class="buttons">
-			<button (click)="viewDay()"
-				[class]="this.configNavigator.selectMode == 'Day' ? 'selected' : ''">Day</button>
-			<button (click)="viewWeek()"
-				[class]="this.configNavigator.selectMode == 'Week' ? 'selected' : ''">Week</button>
+		<div class="flex flex-row justify-evenly">
+			<div class="buttons">
+				<button (click)="viewDay()"
+					[class]="this.configNavigator.selectMode == 'Day' ? 'selected' : ''">Day</button>
+				<button (click)="viewWeek()"
+					[class]="this.configNavigator.selectMode == 'Week' ? 'selected' : ''">Week</button>
+			</div>
+	
+			<mat-form-field appearance="fill" class="ml-4">
+				<mat-label>Select a contractor</mat-label>
+				<mat-select>
+					<mat-option *ngFor="let contractor of contractorNames">{{ contractor }}</mat-option>
+				</mat-select>
+			  </mat-form-field>
 		</div>
-
-		<mat-form-field appearance="fill" class="ml-4">
-			<mat-label>Select a contractor</mat-label>
-			<mat-select>
-				<mat-option *ngFor="let contractor of contractorNames">{{ contractor }}</mat-option>
-			</mat-select>
-		  </mat-form-field>
 		<daypilot-calendar [config]="configDay" [events]="events" #day></daypilot-calendar>
 		<daypilot-calendar [config]="configWeek" [events]="events" #week></daypilot-calendar>
 	</div>
