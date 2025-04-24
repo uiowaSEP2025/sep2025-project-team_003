@@ -1,5 +1,4 @@
 from django.core.exceptions import ValidationError
-from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -10,7 +9,7 @@ from hsabackend.models.job import Job
 from hsabackend.serializers.invoice_serializer import InvoiceSerializer
 from hsabackend.utils.api_validators import parseAndReturnDate, parse_and_return_decimal
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
-from utils.response_helpers import get_table_data
+from hsabackend.utils.response_helpers import get_table_data, get_individual_data
 
 
 @api_view(["POST"])
@@ -181,6 +180,10 @@ def delete_invoice(request, id):
         return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
     invoice_qs[0].delete()
     return Response({"message": "Invoice Deleted successfully"}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+def get_invoice(request, invoice_id):
+    return get_individual_data(request,  invoice_id, "invoice")
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
