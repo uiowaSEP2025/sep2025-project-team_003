@@ -287,7 +287,8 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
       startTime: args.start.value,
       endTime: args.end.value,
       listOfColor: this.calendarDataService.getColors(),
-      typeOfDialog: "create"
+      typeOfDialog: "create",
+      contractorId: this.selectControl.value?.id
     }
 
     const dialogRef = this.dialog.open(BookingDialogComponentComponent, {
@@ -295,7 +296,7 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
       maxWidth: '90vw',
       height: 'auto',
       maxHeight: '90vh',
-      data: slotData
+      data: slotData,
     });
 
     dialogRef.afterClosed().subscribe(result => {

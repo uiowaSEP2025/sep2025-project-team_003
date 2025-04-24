@@ -6,6 +6,7 @@ import { environment } from '../../environments/environment';
 import { JobDataInterface } from '../interfaces/api-responses/job.api.data.interface';
 import { Job, JobParams } from '../interfaces/job.interface';
 import { TableApiResponse } from '../interfaces/api-responses/table.api.interface';
+import JobSimplified from '../interfaces/jobData.interface';
 
 interface JobCreatePostData {
   jobStatus: string | null,
@@ -39,21 +40,6 @@ interface JobDeletePostData {
   id: number | null,
 }
 
-interface JobServiceCreatePostData {
-  jobID: number | null,
-  services: [] | null
-}
-
-interface JobMaterialCreatePostData {
-  jobID: number | null,
-  materials: [] | null
-}
-
-interface JobContractorCreatePostData {
-  jobID: number | null,
-  contractors: [] | null
-}
-
 interface JobJoinCreatePostData {
   type: string,
   id: number | null,
@@ -76,10 +62,15 @@ export class JobService {
   private apiCreateUrl = `${environment.apiUrl}/api/create/job`;
   private apiEditUrl = `${environment.apiUrl}/api/edit/job`;
   private apiDeleteUrl = `${environment.apiUrl}/api/delete/job`;
-  private getJobsByContractorUrl = `${environment.apiUrl}/api/fixit`
+  private getJobsByContractorUrl = `${environment.apiUrl}/api/get/jobs/by-contractor`
   responses: any[]  = []
 
   constructor(private http: HttpClient) {}
+
+  public getJobsByContractor(contractorID: number, search: string, pageSize: number, offset: number): Observable<TableApiResponse<JobSimplified>> {
+    const searchquery = search === "" ? "" : `search=${search}&`
+    return this.http.get<TableApiResponse<JobSimplified>>(`${this.getJobsByContractorUrl}?${searchquery}pagesize=${pageSize}&offset=${offset}&contractor=${contractorID}`);
+  }
 
   public getJob(params?: Record<string, string | number>): Observable<StandardApiResponse> {
     let httpParams = new HttpParams();

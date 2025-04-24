@@ -1,7 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from hsabackend.models.organization import Organization
 from hsabackend.models.customer import Customer
 from hsabackend.models.job import Job
 from hsabackend.models.service import Service
@@ -22,7 +21,7 @@ def get_jobs_by_contractor(request):
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset', 0)
-    contractor_id = request.query_params.get('offset', 0)
+    contractor_id = request.query_params.get('contractor', 0)
 
     if not pagesize or not offset:
         return Response({"message": "missing pagesize or offset"}, status=status.HTTP_400_BAD_REQUEST)
@@ -46,6 +45,11 @@ def get_jobs_by_contractor(request):
         Q(description__icontains=search)
     ).distinct()
 
+    jres = []
+
+    for job in jobs:
+        jres.append(job.json_simplify())
+
     count = Job.objects.filter(
         organization=org.pk,
         jobcontractor__contractor__id=contractor_id
@@ -56,7 +60,7 @@ def get_jobs_by_contractor(request):
         Q(end_date__icontains=search) |
         Q(job_status__icontains=search) |
         Q(description__icontains=search)
-    )
+    ).count()
 
     jres = []
 
@@ -64,9 +68,10 @@ def get_jobs_by_contractor(request):
         jres.append(j.json_simplify())
 
     res = {
-        'data': jobs,
+        'data': jres,
         'totalCount': count
     }
+
     return Response(res, status=status.HTTP_200_OK)
 
 

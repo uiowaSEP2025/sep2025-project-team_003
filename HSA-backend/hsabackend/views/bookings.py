@@ -44,6 +44,8 @@ def get_booking_data(request):
         end_time__lte=toDateTimeObject
     ).distinct()
 
+    print(bookings.query)
+
     serializer = BookingSerializer(bookings, many=True)
 
     jobs = []

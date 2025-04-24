@@ -1,1 +1,7 @@
-<app-table-component [loadDataToTable]="loadData.bind(this)" editRedirect=""></app-table-component>
+<div class="p-7">
+    <app-table-component [loadDataToTable]="loadData.bind(this)" editRedirect="" fetchedData=""></app-table-component>
+    <div class="flex justify-end">
+        <button mat-button (click)="closeDialog()">Exit</button>
+        <button mat-button (click)="acceptSelection()">Done</button>
+    </div>
+</div>
