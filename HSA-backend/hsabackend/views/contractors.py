@@ -9,6 +9,19 @@ from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
+def get_all_contractors_for_org(request):
+    org = request.org
+    contractors = Contractor.objects.filter(organization=org.pk)
+
+    res = []
+    for contractor in contractors:
+        res.append(contractor.first_name)
+
+    return Response(res, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@check_authenticated_and_onboarded()
 def get_contractor_table_data(request):
     org = request.org
     search = request.query_params.get('search', '')
