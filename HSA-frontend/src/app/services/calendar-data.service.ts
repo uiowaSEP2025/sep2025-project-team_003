@@ -43,8 +43,6 @@ export class BookingService {
     blue: "#2e78d6",
   };
 
-
-
   // events = [
   //   {
   //     id: DayPilot.guid(),
@@ -81,8 +79,7 @@ export class BookingService {
 
   constructor(private http : HttpClient) {}
 
-  public getEvents(from: DayPilot.Date, to: DayPilot.Date): Observable<BookingFetchResponse> {
-    console.log(from,to)
+  public getEvents(from: DayPilot.Date, to: DayPilot.Date, contractorId: number): Observable<BookingFetchResponse> {
     return this.http.get<BookingFetchResponse>(this.apiGetUrl + "?from=" + from.toString() + "&to=" + to.toString());
   }
 

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, Input, OnInit, OnChanges } from '@angular/core';
 import { DayPilot, DayPilotCalendarComponent, DayPilotModule, DayPilotNavigatorComponent } from "@daypilot/daypilot-lite-angular";
 import { BookingService } from '../../services/calendar-data.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ContractorNameId } from '../../services/contractor.service';
 
 @Component({
   selector: 'app-calendar-component',
@@ -27,16 +28,16 @@ import { ReactiveFormsModule } from '@angular/forms';
   templateUrl: './calendar-component.component.html',
   styleUrl: './calendar-component.component.scss'
 })
-export class CalendarComponentComponent implements AfterViewInit, OnInit {
+export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   @ViewChild("day") day!: DayPilotCalendarComponent;
   @ViewChild("week") week!: DayPilotCalendarComponent;
   @ViewChild("navigator") nav!: DayPilotNavigatorComponent;
-  @Input({required: true}) contractorNames!: String[]
+  @Input({ required: true }) contractorNames!: ContractorNameId[]
 
   events: DayPilot.EventData[] = [];
   jobs: any[] = [];
   date = DayPilot.Date.today();
-  selectControl:FormControl<String | null> = new FormControl('');
+  selectControl: FormControl<ContractorNameId | null> = new FormControl(null);
 
   configNavigator: DayPilot.NavigatorConfig = {
     showMonths: 3,
@@ -106,10 +107,10 @@ export class CalendarComponentComponent implements AfterViewInit, OnInit {
 
   ngAfterViewInit(): void {
     this.loadEvents();
-  
+
   }
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     if (this.contractorNames && this.contractorNames.length > 0) {
       this.selectControl.setValue(this.contractorNames[0]);
     }
@@ -132,7 +133,7 @@ export class CalendarComponentComponent implements AfterViewInit, OnInit {
     const to = this.nav.control.visibleEnd();
 
     //load events from booking model
-    this.calendarDataService.getEvents(from, to).subscribe({
+    this.calendarDataService.getEvents(from, to, this.selectControl.value!.id).subscribe({
       next: (response) => {
         let allInfo: any = response
         let eventsInfo: any = allInfo["event_data"]
@@ -266,7 +267,6 @@ export class CalendarComponentComponent implements AfterViewInit, OnInit {
   }
 
   async onTimeRangeSelected(args: any) {
-    console.log(typeof args.end.value)
     const slotData = {
       startTime: args.start.value,
       endTime: args.end.value,

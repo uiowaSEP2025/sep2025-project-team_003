@@ -6,6 +6,11 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Contractor, ContractorParams } from '../interfaces/contractor.interface';
 import { environment } from '../../environments/environment';
 
+export interface ContractorNameId {
+  name: string,
+  id: number
+}
+
 interface ContractorCreatePostData {
   firstName: string | null
   lastName: string | null
@@ -34,8 +39,8 @@ export class ContractorService {
 
   constructor(private http: HttpClient) {}
 
-  public getAllContractors():Observable<String[]> {
-    return this.http.get<String[]>(this.apiGetAllUrl);
+  public getAllContractors():Observable<ContractorNameId[]> {
+    return this.http.get<ContractorNameId[]>(this.apiGetAllUrl);
   }
 
   public getContractor(params?: Record<string, string | number>): Observable<TableApiResponse<Contractor>> {

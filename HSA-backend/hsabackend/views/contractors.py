@@ -15,7 +15,7 @@ def get_all_contractors_for_org(request):
 
     res = []
     for contractor in contractors:
-        res.append(f"{contractor.last_name}, {contractor.first_name}")
+        res.append(contractor.name_id_json())
 
     return Response(res, status=status.HTTP_200_OK)
 

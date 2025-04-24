@@ -10,6 +10,7 @@ import { CalendarComponentComponent } from "../../components/calendar-component/
 import { ContractorService } from '../../services/contractor.service';
 import { MatSelectModule } from '@angular/material/select';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
+import { ContractorNameId } from '../../services/contractor.service';
 
 @Component({
   selector: 'app-booking-page',
@@ -31,7 +32,7 @@ import { LoadingFallbackComponent } from '../../components/loading-fallback/load
   styleUrl: './booking-page.component.scss'
 })
 export class BookingPageComponent implements OnInit {
-  contractors: String[] | null = null
+  contractors: ContractorNameId[] | null = null
 
   ngOnInit(): void {
     this.contractorService.getAllContractors().subscribe({
