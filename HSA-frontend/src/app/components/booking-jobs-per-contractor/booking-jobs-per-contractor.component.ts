@@ -35,6 +35,7 @@ export class BookingJobsPerContractorComponent implements OnInit {
       this.jobservice.getJobsByContractor(contractorId, search, pageSize, offSet).subscribe({
       next: (res) => {
         this.jobData = res
+        console.log(this.jobData)
       }
     })
   }

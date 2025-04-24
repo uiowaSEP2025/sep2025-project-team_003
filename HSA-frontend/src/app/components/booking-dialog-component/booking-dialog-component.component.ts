@@ -7,7 +7,7 @@ import { MatOption, provideNativeDateAdapter } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import {MatTimepickerModule} from '@angular/material/timepicker';
+import { MatTimepickerModule } from '@angular/material/timepicker';
 import { AddSelectDialogData } from '../../interfaces/interface-helpers/addSelectDialog-helper.interface';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -88,20 +88,22 @@ export class BookingDialogComponentComponent implements OnInit {
     const date = new Date(input);
     let hours = date.getHours();
     const minutes = date.getMinutes();
-  
+
     const ampm = hours >= 12 ? ' PM' : ' AM';
     hours = hours % 12;
     hours = hours ? hours : 12; // the hour '0' should be '12'
-  
+
     const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
-  
+
     return `${hours}:${formattedMinutes}${ampm}`;
   }
 
   openAddJobDialog() {
 
     const dialogRef = this.dialog.open(BookingJobsPerContractorComponent, {
-      data: {contractorId: this.data.contractorId}
+      width: 'auto',
+      height: 'auto',
+      data: { contractorId: this.data.contractorId }
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
