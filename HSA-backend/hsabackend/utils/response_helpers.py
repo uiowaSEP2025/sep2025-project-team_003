@@ -69,6 +69,9 @@ def get_table_data(request, object_type, exclude=False, exclude_ids=None):
                     Q(first_name__icontains=search) | Q(last_name__icontains=search)
                 )
 
+            if exclude:
+                queryset = queryset.exclude(id__in=exclude_ids) if exclude_ids else queryset.exclude(id__in=[])
+
             page = paginator.paginate_queryset(queryset, request)
             serializer = ContractorSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
@@ -78,7 +81,8 @@ def get_table_data(request, object_type, exclude=False, exclude_ids=None):
                 queryset = queryset.filter(
                     Q(first_name__icontains=search) | Q(last_name__icontains=search)
                 )
-
+            if exclude:
+                queryset = queryset.exclude(id__in=exclude_ids) if exclude_ids else queryset.exclude(id__in=[])
             page = paginator.paginate_queryset(queryset, request)
             serializer = CustomerSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
@@ -93,7 +97,8 @@ def get_table_data(request, object_type, exclude=False, exclude_ids=None):
                     Q(job_status__icontains=search) |
                     Q(description__icontains=search)
                 )
-
+            if exclude:
+                queryset = queryset.exclude(id__in=exclude_ids) if exclude_ids else queryset.exclude(id__in=[])
             page = paginator.paginate_queryset(queryset, request)
             serializer = JobSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
@@ -105,7 +110,8 @@ def get_table_data(request, object_type, exclude=False, exclude_ids=None):
                     Q(service_description__icontains=search) |
                     Q(default_fee__icontains=search)
                 )
-
+            if exclude:
+                queryset = queryset.exclude(id__in=exclude_ids) if exclude_ids else queryset.exclude(id__in=[])
             page = paginator.paginate_queryset(queryset, request)
             serializer = ServiceSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
@@ -115,7 +121,8 @@ def get_table_data(request, object_type, exclude=False, exclude_ids=None):
                 queryset = queryset.filter(
                     Q(material_name__icontains=search)
                 )
-
+            if exclude:
+                queryset = queryset.exclude(id__in=exclude_ids) if exclude_ids else queryset.exclude(id__in=[])
             page = paginator.paginate_queryset(queryset, request)
             serializer = MaterialSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
@@ -126,7 +133,8 @@ def get_table_data(request, object_type, exclude=False, exclude_ids=None):
                 queryset = queryset.filter(
                     Q(name__icontains=search)
                 )
-
+            if exclude:
+                queryset = queryset.exclude(id__in=exclude_ids) if exclude_ids else queryset.exclude(id__in=[])
             page = paginator.paginate_queryset(queryset, request)
             serializer = RequestSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
@@ -144,7 +152,8 @@ def get_table_data(request, object_type, exclude=False, exclude_ids=None):
                     Q(discount__discount_name__icontains=search) |
                     Q(discount__discount_percent__icontains=search)
                 )
-
+            if exclude:
+                queryset = queryset.exclude(id__in=exclude_ids) if exclude_ids else queryset.exclude(id__in=[])
             page = paginator.paginate_queryset(queryset, request)
             serializer = InvoiceSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
