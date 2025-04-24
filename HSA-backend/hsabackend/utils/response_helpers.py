@@ -307,3 +307,78 @@ def get_individual_data(request, object_id, object_type):
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+def create_individual_data(request, object_type):
+    org = request.org
+    match object_type:
+        case "job_template":
+            serializer = JobTemplateSerializer(data=request.data)
+        case "contractor":
+            serializer = ContractorSerializer(data=request.data)
+        case "customer":
+            serializer = CustomerSerializer(data=request.data)
+        case "job":
+            serializer = JobSerializer(data=request.data)
+        case "service":
+            serializer = ServiceSerializer(data=request.data)
+        case "material":
+            serializer = MaterialSerializer(data=request.data)
+        case "request":
+            serializer = RequestSerializer(data=request.data)
+        case "invoice":
+            serializer = InvoiceSerializer(data=request.data)
+        case "booking":
+            serializer = BookingSerializer(data=request.data)
+        case _:
+            return Response(
+                data={
+                    "message": "Invalid model type"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    if serializer.is_valid():
+        serializer.save(organization=org)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+def update_individual_data(request, object_id, object_type):
+    org = request.org
+    match object_type:
+        case "job_template":
+            query_object = JobTemplate.filter(organization=org.pk, pk=object_id).first()
+            serializer = JobTemplateSerializer(query_object, data=request.data)
+        case "contractor":
+            query_object = Contractor.filter(organization=org.pk, pk=object_id).first()
+            serializer = ContractorSerializer(query_object, data=request.data)
+        case "customer":
+            query_object = Customer.filter(organization=org.pk, pk=object_id).first()
+            serializer = CustomerSerializer(query_object, data=request.data)
+        case "job":
+            query_object = Job.filter(organization=org.pk, pk=object_id).first()
+            serializer = JobSerializer(query_object, data=request.data)
+        case "service":
+            query_object = Service.filter(organization=org.pk, pk=object_id).first()
+            serializer = ServiceSerializer(query_object, data=request.data)
+        case "material":
+            query_object = Material.filter(organization=org.pk, pk=object_id).first()
+            serializer = MaterialSerializer(query_object, data=request.data)
+        case "request":
+            query_object = Request.filter(organization=org.pk, pk=object_id).first()
+            serializer = RequestSerializer(query_object, data=request.data)
+        case "invoice":
+            query_object = Invoice.filter(organization=org.pk, pk=object_id).first()
+            serializer = InvoiceSerializer(query_object, data=request.data)
+        case "booking":
+            query_object = Booking.filter(organization=org.pk, pk=object_id).first()
+            serializer = BookingSerializer(query_object, data=request.data)
+        case _:
+            return Response(
+                data={
+                    "message": "Invalid model type"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    if serializer.is_valid():
+        serializer.update(query_object, request.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
