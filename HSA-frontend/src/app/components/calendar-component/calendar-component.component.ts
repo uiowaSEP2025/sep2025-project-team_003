@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild, Input, OnInit, OnChanges } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, Input, OnChanges } from '@angular/core';
 import { DayPilot, DayPilotCalendarComponent, DayPilotModule, DayPilotNavigatorComponent } from "@daypilot/daypilot-lite-angular";
 import { BookingService } from '../../services/calendar-data.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -39,12 +39,26 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   date = DayPilot.Date.today();
   selectControl: FormControl<ContractorNameId | null> = new FormControl(null);
 
+  clearAllEvents() {
+    // DO NOT SET EVENTS TO [] TO CLEAR EVENTS. THAT DOES NOTHING!
+    //USE THIS INSTEAD!
+    this.events = [];
+    if (this.day && this.day.control) {
+      this.day.control.events.list = [];
+      this.day.control.update();
+    }
+    if (this.week && this.week.control) {
+      this.week.control.events.list = [];
+      this.week.control.update();
+    }
+  }
+
   configNavigator: DayPilot.NavigatorConfig = {
     showMonths: 3,
     cellWidth: 25,
     cellHeight: 25,
     onVisibleRangeChanged: args => {
-      this.events = []
+      
       this.loadEvents();
     }
   };
@@ -102,7 +116,10 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
     this.viewWeek();
     this.selectControl.valueChanges
       .pipe(debounceTime(300))
-      .subscribe(() => this.loadEvents());
+      .subscribe(() => {
+        this.clearAllEvents()
+        this.loadEvents();
+      });
   }
 
   ngAfterViewInit(): void {
@@ -138,7 +155,6 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
         let allInfo: any = response
         let eventsInfo: any = allInfo["event_data"]
         let jobsInfo: any = allInfo["job_data"]
-
         if (eventsInfo.length !== 0) {
           eventsInfo.forEach((element: any) => {
             let eventFormat = new DayPilot.Event({
@@ -329,10 +345,6 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
               },
               error: (error) => { }
             })
-
-
-
-
           }
         })
       }
