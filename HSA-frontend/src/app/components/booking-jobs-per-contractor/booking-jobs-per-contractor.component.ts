@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { TableComponentComponent } from '../table-component/table-component.component';
 import JobSimplified from '../../interfaces/jobData.interface';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { JobService } from '../../services/job.service';
 import { TableApiResponse } from '../../interfaces/api-responses/table.api.interface';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,7 +12,7 @@ interface dialogInput {
 
 @Component({
   selector: 'app-booking-jobs-per-contractor',
-  imports: [TableComponentComponent, MatButtonModule],
+  imports: [TableComponentComponent, MatButtonModule, MatDialogModule],
   templateUrl: './booking-jobs-per-contractor.component.html',
   styleUrl: './booking-jobs-per-contractor.component.scss'
 })

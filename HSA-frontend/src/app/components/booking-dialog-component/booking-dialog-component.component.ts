@@ -102,7 +102,9 @@ export class BookingDialogComponentComponent implements OnInit {
 
     const dialogRef = this.dialog.open(BookingJobsPerContractorComponent, {
       width: 'auto',
+      maxWidth: '90vw',
       height: 'auto',
+      maxHeight: '90vh',
       data: { contractorId: this.data.contractorId }
     });
 
