@@ -382,3 +382,36 @@ def update_individual_data(request, object_id, object_type):
         serializer.update(query_object, request.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+def delete_object(request, object_id, object_type):
+    org = request.org
+    match object_type:
+        case "job_template":
+            query_object = JobTemplate.filter(organization=org.pk, pk=object_id).first()
+        case "contractor":
+            query_object = Contractor.filter(organization=org.pk, pk=object_id).first()
+        case "customer":
+            query_object = Customer.filter(organization=org.pk, pk=object_id).first()
+        case "job":
+            query_object = Job.filter(organization=org.pk, pk=object_id).first()
+        case "service":
+            query_object = Service.filter(organization=org.pk, pk=object_id).first()
+        case "material":
+            query_object = Material.filter(organization=org.pk, pk=object_id).first()
+        case "request":
+            query_object = Request.filter(organization=org.pk, pk=object_id).first()
+        case "invoice":
+            query_object = Invoice.filter(organization=org.pk, pk=object_id).first()
+        case "booking":
+            query_object = Booking.filter(organization=org.pk, pk=object_id).first()
+        case _:
+            return Response(
+                data={
+                    "message": "Invalid model type"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    query_object.delete()
+    return Response({
+        "message": object_type + " deleted successfully"
+    }, status=status.HTTP_200_OK)
