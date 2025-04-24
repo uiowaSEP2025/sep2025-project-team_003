@@ -7,12 +7,15 @@ import { DeleteDialogComponentComponent } from '../delete-dialog-component/delet
 import { JobService } from '../../services/job.service';
 import { ViewJobDialogComponentComponent } from '../view-job-dialog-component/view-job-dialog-component.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ContractorService } from '../../services/contractor.service';
+import { MatSelectModule } from '@angular/material/select';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-calendar-component',
   imports: [
     DayPilotModule,
+    MatSelectModule,
+    CommonModule  
   ],
   providers: [
     BookingService,
@@ -30,7 +33,6 @@ export class CalendarComponentComponent implements AfterViewInit {
   events: DayPilot.EventData[] = [];
   jobs: any[] = [];
   date = DayPilot.Date.today();
-  contractors: String[] | null = null
 
   configNavigator: DayPilot.NavigatorConfig = {
     showMonths: 3,
@@ -91,7 +93,6 @@ export class CalendarComponentComponent implements AfterViewInit {
     private jobService: JobService,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private contractorService: ContractorService
   ) {
     this.viewWeek();
   }
