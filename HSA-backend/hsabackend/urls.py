@@ -155,7 +155,7 @@ urlpatterns = [
     # Catch-all for unmatched API requests
     re_path(r'^api/.*', handle_unmatched_api), 
 
-    # all non API routes should redirect to angular
+    # all non-API routes should redirect to angular
     # must be at the bottom!!!
     re_path(r'.*', hview.main_view)   
 ]
