@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild, Input } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, Input, OnInit } from '@angular/core';
 import { DayPilot, DayPilotCalendarComponent, DayPilotModule, DayPilotNavigatorComponent } from "@daypilot/daypilot-lite-angular";
 import { BookingService } from '../../services/calendar-data.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -9,13 +9,17 @@ import { ViewJobDialogComponentComponent } from '../view-job-dialog-component/vi
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
+import { FormControl } from '@angular/forms';
+import { debounceTime } from 'rxjs';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-calendar-component',
   imports: [
     DayPilotModule,
     MatSelectModule,
-    CommonModule  
+    CommonModule,
+    ReactiveFormsModule
   ],
   providers: [
     BookingService,
@@ -23,16 +27,16 @@ import { CommonModule } from '@angular/common';
   templateUrl: './calendar-component.component.html',
   styleUrl: './calendar-component.component.scss'
 })
-export class CalendarComponentComponent implements AfterViewInit {
+export class CalendarComponentComponent implements AfterViewInit, OnInit {
   @ViewChild("day") day!: DayPilotCalendarComponent;
   @ViewChild("week") week!: DayPilotCalendarComponent;
   @ViewChild("navigator") nav!: DayPilotNavigatorComponent;
-
   @Input({required: true}) contractorNames!: String[]
 
   events: DayPilot.EventData[] = [];
   jobs: any[] = [];
   date = DayPilot.Date.today();
+  selectControl:FormControl<String | null> = new FormControl('');
 
   configNavigator: DayPilot.NavigatorConfig = {
     showMonths: 3,
@@ -95,11 +99,20 @@ export class CalendarComponentComponent implements AfterViewInit {
     private snackBar: MatSnackBar,
   ) {
     this.viewWeek();
+    this.selectControl.valueChanges
+      .pipe(debounceTime(300))
+      .subscribe(() => this.loadEvents());
   }
 
   ngAfterViewInit(): void {
-    console.log(this.contractorNames)
     this.loadEvents();
+  
+  }
+
+  ngOnInit(): void {
+    if (this.contractorNames && this.contractorNames.length > 0) {
+      this.selectControl.setValue(this.contractorNames[0]);
+    }
   }
 
   eventHTML(eventName: string, endDate: string, customerName: string, typeOfEvent: string) {

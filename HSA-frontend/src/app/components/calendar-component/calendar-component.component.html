@@ -14,8 +14,10 @@
 	
 			<mat-form-field appearance="fill" class="ml-4">
 				<mat-label>Select a contractor</mat-label>
-				<mat-select>
-					<mat-option *ngFor="let contractor of contractorNames">{{ contractor }}</mat-option>
+				<mat-select [formControl]="selectControl">
+				  <mat-option *ngFor="let contractor of contractorNames" [value]="contractor">
+					{{ contractor }}
+				  </mat-option>
 				</mat-select>
 			  </mat-form-field>
 		</div>
