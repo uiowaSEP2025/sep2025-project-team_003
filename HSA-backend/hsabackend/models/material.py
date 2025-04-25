@@ -1,8 +1,8 @@
-from curses.ascii import isblank
-
 from django.db import models
+
 from hsabackend.models.model_validators import isNonEmpty
 from hsabackend.models.organization import Organization
+
 
 class Material(models.Model):
     """A physical object used in fulfillment of a job"""
