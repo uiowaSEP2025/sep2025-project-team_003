@@ -31,7 +31,7 @@ export class BookingJobsPerContractorComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: dialogInput, 
   private jobservice: JobService,
-  private dialogRef: MatDialogRef<BookingJobsPerContractorComponent>) {} //this.data is the data
+  private dialogRef: MatDialogRef<BookingJobsPerContractorComponent>) {} 
 
   loadData(search: string, pageSize: number, offSet: number) { 
     const contractorId = this.data.contractorId
@@ -43,6 +43,7 @@ export class BookingJobsPerContractorComponent implements OnInit {
   }
 
   acceptSelection() {
+    console.log(this)
     this.dialogRef.close(this.job[0]);
   }
 
