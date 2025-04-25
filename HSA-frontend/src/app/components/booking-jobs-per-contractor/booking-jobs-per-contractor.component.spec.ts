@@ -9,7 +9,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 
 
-fdescribe('BookingJobsPerContractorComponent', () => {
+describe('BookingJobsPerContractorComponent', () => {
   let component: BookingJobsPerContractorComponent;
   let fixture: ComponentFixture<BookingJobsPerContractorComponent>;
   let httpMock: HttpTestingController;

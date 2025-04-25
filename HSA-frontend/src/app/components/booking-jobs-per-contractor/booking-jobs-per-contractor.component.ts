@@ -43,7 +43,6 @@ export class BookingJobsPerContractorComponent implements OnInit {
   }
 
   acceptSelection() {
-    console.log(this)
     this.dialogRef.close(this.job[0]);
   }
 
