@@ -121,7 +121,7 @@ urlpatterns = [
     path("api/delete/invoice/<int:invoice_id>", delete_invoice),
     path("api/edit/invoice/<int:invoice_id>", update_invoice),
     path("api/generate/invoice/<int:invoice_id>", generate_pdf),
-    path("api/get/invoice/displaydata/<int:invoice_id>", get_data_for_invoice),
+    path("api/get/invoice/display-data/<int:invoice_id>", get_data_for_invoice),
     path("api/get/invoice/<int:invoice_id>", get_invoice),
     
     # orgs
