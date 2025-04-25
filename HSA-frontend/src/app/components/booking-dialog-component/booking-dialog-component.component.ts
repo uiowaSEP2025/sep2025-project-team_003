@@ -11,6 +11,7 @@ import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BookingJobsPerContractorComponent } from '../booking-jobs-per-contractor/booking-jobs-per-contractor.component';
+import { BookingService } from '../../services/calendar-data.service';
 
 @Component({
   selector: 'app-booking-dialog-component',
@@ -36,7 +37,6 @@ import { BookingJobsPerContractorComponent } from '../booking-jobs-per-contracto
 export class BookingDialogComponentComponent implements OnInit {
   eventForm: FormGroup;
   jobID: number = 0
-  selectedJob: any
   colors: any
   currentColor: any
   typeOfDialog: string
@@ -46,7 +46,8 @@ export class BookingDialogComponentComponent implements OnInit {
     public dialogRef: MatDialogRef<BookingDialogComponentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private eventFormBuilder: FormBuilder,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private colorService: BookingService
   ) {
     this.eventForm = this.eventFormBuilder.group({
       eventName: ['', Validators.required],
@@ -58,7 +59,8 @@ export class BookingDialogComponentComponent implements OnInit {
     })
 
     this.typeOfDialog = this.data.typeOfDialog
-    this.colors = this.data.listOfColor
+    this.colors = this.colorService.getColors()
+
   }
 
   ngOnInit() {

@@ -6,6 +6,8 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 fdescribe('BookingDialogComponentComponent', () => {
   let component: BookingDialogComponentComponent;
@@ -20,6 +22,8 @@ fdescribe('BookingDialogComponentComponent', () => {
       ],
       providers: [
         provideAnimationsAsync(),
+        provideHttpClient(),
+        provideHttpClientTesting(), 
         {
           provide: MatDialogRef,
           useValue: { close: jasmine.createSpy('close') }
@@ -120,7 +124,40 @@ fdescribe('BookingDialogComponentComponent', () => {
 
   })
 
-  it('should return the correct value on close', () => { })
+  it('should return the correct value on close', async () => {
+    component.eventForm.controls['jobID'].setValue!("2")
+    component.eventForm.controls['bookingType'].setValue!("job")
+    component.eventForm.controls['jobDescription'].setValue!("setting things on fire")
+    component.eventForm.controls['status'].setValue!("pending")
+    component.eventForm.controls['color'].setValue!("Green")
+    component.eventForm.controls['eventName'].setValue!("demon")
+
+    const compiled = fixture.nativeElement;
+    const filteredButtons = await Promise.all(
+      (await loader.getAllHarnesses(MatButtonHarness)).map(async (button) => {
+        const text = await button.getText();
+        return text === 'Submit' ? button : null;
+      })
+    ).then(results => results.filter(button => button !== null)) // correctly working async filter
+
+    const submit = filteredButtons[0]
+    await submit.click()
+    fixture.detectChanges()
+
+    expect(component.dialogRef.close).toHaveBeenCalledWith( {
+      eventName: 'demon',
+      startTime: undefined,
+      endTime: undefined,
+      backColor: undefined,
+      tags: {
+        jobID: '2',
+        jobDescription: 'setting things on fire',
+        bookingType: 'job',
+        status: 'pending'
+      }
+    });
+
+  })
 
   it('should return the correct value on cancel', async  () => {
     const filteredButtons = await Promise.all(
@@ -132,7 +169,6 @@ fdescribe('BookingDialogComponentComponent', () => {
 
     const cancel = filteredButtons[0]
     await cancel.click()
-
 
     expect(component.dialogRef.close).toHaveBeenCalledWith(false);
 

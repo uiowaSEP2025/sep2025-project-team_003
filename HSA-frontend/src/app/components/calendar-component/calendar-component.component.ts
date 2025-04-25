@@ -10,7 +10,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { FormControl } from '@angular/forms';
-import { debounceTime } from 'rxjs';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ContractorNameId } from '../../services/contractor.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -293,7 +292,6 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
     const slotData = {
       startTime: args.start.value,
       endTime: args.end.value,
-      listOfColor: this.calendarDataService.getColors(),
       typeOfDialog: "create",
       contractorId: this.selectControl.value?.id
     }
@@ -367,7 +365,6 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
       jobID: args.e.data.tags.jobID,
       jobDescription: args.e.data.tags.jobDescription,
       bookingType: args.e.data.tags.bookingType,
-      listOfColor: this.calendarDataService.getColors(),
       typeOfDialog: "edit",
       status: args.e.data.tags.status,
       backColor: args.e.data.backColor,
