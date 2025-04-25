@@ -12,12 +12,12 @@ class Material(models.Model):
     default_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True)
 
     def __str__(self):
-        return f"<Material, name: {self.material_name}, organization: {self.organization}>"
+        return f"<Material, name: {self.name}, organization: {self.organization}>"
     
     def json(self):
         return {
             'id': self.pk,
-            'name': self.material_name,
-            'description': self.material_description,
+            'name': self.name,
+            'description': self.description,
             'default_cost': self.default_cost,
         }
