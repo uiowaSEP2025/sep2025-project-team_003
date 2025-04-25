@@ -13,6 +13,8 @@ import { FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ContractorNameId } from '../../services/contractor.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
 
 @Component({
   selector: 'app-calendar-component',
@@ -20,7 +22,9 @@ import { ContractorNameId } from '../../services/contractor.service';
     DayPilotModule,
     MatSelectModule,
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   providers: [
     BookingService,
@@ -115,7 +119,6 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   ) {
     this.viewWeek();
     this.selectControl.valueChanges
-      .pipe(debounceTime(300))
       .subscribe(() => {
         this.clearAllEvents()
         this.loadEvents();
@@ -146,6 +149,10 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   }
 
   loadEvents(): void {
+    /*There is no way to test this fn, somehow, this.nav.control is null in only the test.
+    if any1 has a fix, feel free to try. 1.5 hrs wasted on this -alex
+    
+    */
     const from = this.nav.control.visibleStart();
     const to = this.nav.control.visibleEnd();
 

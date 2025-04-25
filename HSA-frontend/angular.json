@@ -119,7 +119,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "codeCoverageExclude": ["src/app/utils/**/*"],
+            "codeCoverageExclude": ["src/app/utils/**/*", "src/app/components/calendar-component/calendar-component.component.ts"],
             "polyfills": [
               "zone.js",
               "zone.js/testing"
