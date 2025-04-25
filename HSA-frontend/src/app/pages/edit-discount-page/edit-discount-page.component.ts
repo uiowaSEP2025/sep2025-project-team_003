@@ -34,7 +34,7 @@ export class EditDiscountPageComponent implements OnInit{
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
       this.name = params["discount_name"]
-      
+
       this.percent = params['discount_percent'];
       this.nameControl.setValue(this.name);
       this.percentControl.setValue(this.parsePercentage(this.percent));
@@ -52,8 +52,8 @@ export class EditDiscountPageComponent implements OnInit{
     }
 
     const formdata = {
-      name: this.nameControl.value,
-      percent: this.percentControl.value,
+      discount_name: this.nameControl.value,
+      discount_percent: this.percentControl.value,
       id: this.id
     }
 

@@ -28,8 +28,8 @@ export class CreateDiscountsPageComponent {
     }
 
     const formdata = {
-      name: this.nameControl.value,
-      percent: this.percentControl.value
+      discount_name: this.nameControl.value,
+      discount_percent: this.percentControl.value
     }
     this.discountService.createDiscount(formdata).subscribe({
       next: (response) => {

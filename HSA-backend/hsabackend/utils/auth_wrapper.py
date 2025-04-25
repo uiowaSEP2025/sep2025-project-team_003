@@ -14,7 +14,7 @@ def check_authenticated_and_onboarded(require_onboarding=True):
                 )
 
             try:
-                org = Organization.objects.get(owning_User=request.user)
+                org = Organization.objects.get(owning_user=request.user)
             except Organization.DoesNotExist:
                 raise RuntimeError('No Organization found for the current user')
             

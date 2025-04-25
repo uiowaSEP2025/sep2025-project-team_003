@@ -8,18 +8,18 @@ import { TableApiResponse } from '../interfaces/api-responses/table.api.interfac
 
 interface getTableResponse {
     "id": number,
-    "discount_name": string 
-    "discount_percent": string 
+    "discount_name": string
+    "discount_percent": string
 }
 
 interface createDiscountInterface {
-    name:string | null,
-    percent: string | null
+  discount_name:string | null,
+  discount_percent: string | null
 }
 
 interface editDiscountInterface {
-  name:string | null,
-  percent: string | null,
+  discount_name:string | null,
+  discount_percent: string | null,
   id: string | null
 }
 
@@ -54,12 +54,12 @@ export class DiscountsService {
   public deleteDiscount(id: any) {
     id = id.id
     return this.http.post<StandardApiResponse>(`${this.apiDeleteUrl}/${id}`, null);
-    
+
   }
 
   public editDiscount(data: editDiscountInterface) {
     return this.http.post<StandardApiResponse>(`${this.apiEditUrl}/${data.id}`, data);
   }
-  
-  
+
+
 }
