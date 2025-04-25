@@ -418,10 +418,21 @@ class JobsByCustomer(APITestCase):
         org.is_onboarding = False
         orgg.return_value = org
         factory = APIRequestFactory()
-        request = factory.get('/api/get/jobs/by-contractor?offset=2&contractor=ajajaj')
+        request = factory.get('/api/get/jobs/by-contractor?offset=2&pagesize=10&contractor=ajajaj')
         request.user = mock_user  
         response = get_jobs_by_contractor(request)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_fetch_ok(self):
-        pass
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_fetch_ok(self,orgg):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        
+        org = Organization()
+        org.is_onboarding = False
+        orgg.return_value = org
+        factory = APIRequestFactory()
+        request = factory.get('/api/get/jobs/by-contractor?offset=2&contractor=2&pagesize=10')
+        request.user = mock_user  
+        response = get_jobs_by_contractor(request)
+        assert response.status_code == status.HTTP_200_OK
