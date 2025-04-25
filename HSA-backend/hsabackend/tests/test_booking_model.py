@@ -1,4 +1,4 @@
-from django.test import TestCase
+from rest_framework.test import APITestCase, APIRequestFactory
 from django.utils import timezone
 from datetime import timedelta
 from hsabackend.models.booking import Booking
@@ -6,7 +6,7 @@ from hsabackend.models.organization import Organization
 from hsabackend.models.job import Job
 from django.contrib.auth.models import User
 
-class BookingModelTest(TestCase):
+class BookingModelTest(APITestCase):
     def setUp(self):
         # Create a user for the organization
         self.user = User.objects.create_user(

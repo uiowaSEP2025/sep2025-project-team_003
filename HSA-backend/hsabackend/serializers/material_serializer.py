@@ -21,8 +21,8 @@ class MaterialSerializer(serializers.ModelSerializer):
         """
         Update and return an existing Material instance, given the validated data.
         """
-        instance.material_name = validated_data.get('material_name', instance.material_name)
-        instance.material_description = validated_data.get('material_description', instance.material_description)
+        instance.name = validated_data.get('name', instance.material_name)
+        instance.description = validated_data.get('description', instance.material_description)
         instance.organization = validated_data.get('organization', instance.organization)
         instance.default_cost = validated_data.get('default_cost', instance.default_cost)
         instance.save()

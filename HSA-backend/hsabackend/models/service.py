@@ -4,8 +4,8 @@ from hsabackend.models.model_validators import isNonEmpty
 
 class Service(models.Model):
     """A service offered by an organization. e.g. Lawn care"""
-    service_name = models.CharField(max_length=100, validators=[isNonEmpty])
-    service_description = models.CharField(max_length=200, blank=True)
+    name = models.CharField(max_length=100, validators=[isNonEmpty])
+    description = models.CharField(max_length=200, blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     default_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True)
 
@@ -15,7 +15,7 @@ class Service(models.Model):
     def json(self):
         return {
             'id': self.pk,
-            'service_name': self.service_name,
-            'service_description': self.service_description,
+            'name': self.service_name,
+            'description': self.service_description,
             'default_fee': self.default_fee,
         }

@@ -1,10 +1,10 @@
-from django.test import TestCase
+from rest_framework.test import APITestCase, APIRequestFactory
 from django.contrib.auth.models import User
 from hsabackend.models.contractor import Contractor
 from hsabackend.models.organization import Organization
 from hsabackend.utils.string_formatters import format_phone_number
 
-class ContractorModelTest(TestCase):
+class ContractorModelTest(APITestCase):
     def setUp(self):
         # Create a user for the organization
         self.user = User.objects.create_user(
