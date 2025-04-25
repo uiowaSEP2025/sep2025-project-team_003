@@ -6,17 +6,19 @@ import { StandardApiResponse } from '../interfaces/api-responses/standard-api-re
 import {Job} from '../interfaces/job.interface';
 
 interface CreateOrganizationPostData {
-	requesterFirstName: string | null
-  requesterLastName: string | null
-	email: string | null
-	city: string | null
-	phone: string | null
-	state: string | null
-	zip: string | null
-	address: string | null
-	description: string | null
-  status: 'received' | 'approved'
-  job: Job
+  org_name: string | null
+  org_email: string | null
+  org_city : string | null
+  org_state: string | null
+  org_zip: string | null
+  org_address: string | null
+  org_phone: string | null
+  org_owner_first_name: string | null
+  org_owner_last_name: string | null
+  owning_user: string | null
+  is_onboarding: boolean | null
+  default_labor_rate: number | null
+  default_payment_link: string | null
 }
 
 interface OnboardingUpdatePostData {

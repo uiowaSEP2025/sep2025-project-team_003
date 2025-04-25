@@ -40,10 +40,10 @@ export class CreateCustomerPageComponent {
       return
     }
     const data = {
-      firstn: this.firstNameControl.value,
-      lastn: this.lastNameControl.value,
+      first_name: this.firstNameControl.value,
+      last_name: this.lastNameControl.value,
       email: this.emailControl.value,
-      phoneno: this.phoneControl.value,
+      phone: this.phoneControl.value,
       notes: this.notesControl.value
     }
 
