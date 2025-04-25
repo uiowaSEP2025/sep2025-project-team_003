@@ -9,20 +9,22 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 
 @xframe_options_exempt
 @api_view(["GET"])
-@renderer_classes([TemplateHTMLRenderer])
 def getHTMLForm(request, id):
     org = get_object_or_404(Organization, pk=id)
     services    = Service.objects.filter(organization=org)
     contractors = Contractor.objects.filter(organization=org)
 
-    resp = Response(
+    response = render(
+        request,
+        "requests/requests.html",
         {
-            "org_id":       id,
-            "services":     services,
-            "contractors":  contractors,
-        },
-        template_name="requests/requests.html"
+            "org_id":      id,
+            "services":    services,
+            "contractors": contractors,
+        }
     )
 
-    resp.headers.pop("X-Frame-Options", None)
-    return resp
+    # remove X-Frame-Options so it will embed in an <iframe>
+    response.headers.pop("X-Frame-Options", None)
+    return response
+

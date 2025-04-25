@@ -5,3 +5,6 @@ __pycache__
 # because angular is being served through static files, we shouldn't use the staticdir for important assets.
 static/*
 .coverage
+
+# finegrain remove index.html from templates
+templates/index.html
