@@ -1,20 +1,14 @@
-from django.core.management.base import BaseCommand, CommandError
-from django.core.management import call_command
-from hsabackend.models.organization import Organization
-from hsabackend.models.service import Service
-from hsabackend.models.customer import Customer
-from hsabackend.models.contractor import Contractor
-from hsabackend.models.material import Material
-from django.contrib.auth.models import User
-from hsabackend.models.request import Request
-from hsabackend.models.job import Job, JobsMaterials, JobsServices
-from hsabackend.models.job_template import JobTemplate
-from hsabackend.models.discount import Discount
-from django.utils import timezone
+import random
 import traceback
 
-import random
+from django.contrib.auth.models import User
+from django.core.management import call_command
+from django.core.management.base import BaseCommand, CommandError
+from django.utils import timezone
 
+from hsabackend.models.material import Material
+from hsabackend.models.organization import Organization
+from hsabackend.models.service import Service
 from hsabackend.serializers.contractor_serializer import ContractorSerializer
 from hsabackend.serializers.customer_serializer import CustomerSerializer
 from hsabackend.serializers.discount_serializer import DiscountSerializer
