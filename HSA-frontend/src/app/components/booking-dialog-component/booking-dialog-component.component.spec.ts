@@ -54,7 +54,7 @@ fdescribe('BookingDialogComponentComponent', () => {
     expect(compiled.querySelector('[data-testid="submit"]')).toBeTruthy();
   });
 
-  fit('should not be valid without a job id', async () => {
+  it('should not be valid without a job id', async () => {
     const compiled = fixture.nativeElement;
     const filteredButtons = await Promise.all(
       (await loader.getAllHarnesses(MatButtonHarness)).map(async (button) => {
@@ -64,25 +64,77 @@ fdescribe('BookingDialogComponentComponent', () => {
     ).then(results => results.filter(button => button !== null)) // correctly working async filter
 
     const submit = filteredButtons[0]
-
     await submit.click()
-
     fixture.detectChanges()
 
     const errors = Array.from(compiled.querySelectorAll('mat-error')) as HTMLElement[];
     const error: HTMLElement[] = errors.filter((e) => {
-      console.log(e.textContent)
       return e.textContent!.includes("Job ID is required")
     });
 
     expect(error).toBeTruthy()
   })
 
-  it('should not be valid without a booking name', () => { })
+  it('should not be valid without a booking name', async () => {
+    const compiled = fixture.nativeElement;
+    const filteredButtons = await Promise.all(
+      (await loader.getAllHarnesses(MatButtonHarness)).map(async (button) => {
+        const text = await button.getText();
+        return text === 'Submit' ? button : null;
+      })
+    ).then(results => results.filter(button => button !== null)) // correctly working async filter
 
-  it('should not be valid without a booking type', () => { })
+    const submit = filteredButtons[0]
+    await submit.click()
+
+    fixture.detectChanges()
+
+    const errors = Array.from(compiled.querySelectorAll('mat-error')) as HTMLElement[];
+    const error: HTMLElement[] = errors.filter((e) => {
+      return e.textContent!.includes("Event name is required")
+    });
+
+    expect(error).toBeTruthy()
+  })
+
+  it('should not be valid without a booking type', async () => {
+    const compiled = fixture.nativeElement;
+    const filteredButtons = await Promise.all(
+      (await loader.getAllHarnesses(MatButtonHarness)).map(async (button) => {
+        const text = await button.getText();
+        return text === 'Submit' ? button : null;
+      })
+    ).then(results => results.filter(button => button !== null)) // correctly working async filter
+
+    const submit = filteredButtons[0]
+    await submit.click()
+
+    fixture.detectChanges()
+
+    const errors = Array.from(compiled.querySelectorAll('mat-error')) as HTMLElement[];
+    const error: HTMLElement[] = errors.filter((e) => {
+      return e.textContent!.includes("Booking type is required")
+    });
+
+    expect(error).toBeTruthy()
+
+  })
 
   it('should return the correct value on close', () => { })
 
-  it('should return the correct value on cancel', () => { })
+  it('should return the correct value on cancel', async  () => {
+    const filteredButtons = await Promise.all(
+      (await loader.getAllHarnesses(MatButtonHarness)).map(async (button) => {
+        const text = await button.getText();
+        return text === 'Cancel' ? button : null;
+      })
+    ).then(results => results.filter(button => button !== null)) // correctly working async filter
+
+    const cancel = filteredButtons[0]
+    await cancel.click()
+
+
+    expect(component.dialogRef.close).toHaveBeenCalledWith(false);
+
+  })
 });

@@ -107,12 +107,12 @@ export class BookingDialogComponentComponent implements OnInit {
       data: { contractorId: this.data.contractorId }
     });
 
-    dialogRef.afterClosed().subscribe((result: any) => {
+    dialogRef.afterClosed().subscribe((result: {id: number, desc: string}) => {
       if (result) {
-        this.jobID = result
+        this.jobID = result.id
         this.eventForm.get('jobID')?.setValue(result)
         this.eventForm.get('jobID')!.markAsUntouched()
-        
+        this.eventForm.get('jobDescription')!.setValue(result.desc) 
       }
     })
   }

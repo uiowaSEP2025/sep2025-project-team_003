@@ -43,7 +43,14 @@ export class BookingJobsPerContractorComponent implements OnInit {
   }
 
   acceptSelection() {
-    this.dialogRef.close(this.job[0]);
+    const id = this.job[0]
+    const jobDesc = this.jobData.data.filter((data) => {
+      return data.id === id
+    })[0].description
+    this.dialogRef.close({
+      id: this.job[0],
+      desc: jobDesc
+    });
   }
 
   closeDialog() {
