@@ -46,8 +46,8 @@ class Job(models.Model):
     @property
     def subtotal(self):
         running_sub = 0
-        services = self.services.all()
-        materials = self.materials.all()
+        materials = JobsMaterials.objects.filter(job=self.pk).all()
+        services = JobsServices.objects.filter(job=self.pk).all()
         for service in services:
             running_sub += service.fee
         for material in materials:
