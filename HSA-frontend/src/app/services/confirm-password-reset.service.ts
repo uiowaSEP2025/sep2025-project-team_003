@@ -24,10 +24,10 @@ export class ConfirmPasswordResetServiceService {
   constructor(private http: HttpClient) { }
 
   confirmPasswordReset(password: string, token: string): Observable<ResetConfirmationResponse> {
-    const formdata = new FormData()
-    formdata.append("password", password!)
-    formdata.append("token", token)
+    const form_data = new FormData()
+    form_data.append("password", password!)
+    form_data.append("token", token)
 
-    return this.http.post<ResetConfirmationResponse>(this.url, formdata)
+    return this.http.post<ResetConfirmationResponse>(this.url, form_data)
   }
 }

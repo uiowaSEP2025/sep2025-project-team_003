@@ -9,6 +9,6 @@ export interface Customer extends PersonalInformationHelper {
 export interface CustomerParams {
   excludeIDs?: number[];
   search: string,
-  pagesize: number,
+  pageSize: number,
   offset: number,
 }

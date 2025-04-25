@@ -36,7 +36,7 @@ export class CreateMaterialPageComponent {
       return;
     } else {
       this.materialService.createMaterial({
-        material_name: this.materialForm.controls["materialName"].value
+        name: this.materialForm.controls["materialName"].value
       }).subscribe({
         next: () => {
           this.snackBar.open('Create material successfully', '', {

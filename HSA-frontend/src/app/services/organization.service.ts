@@ -3,23 +3,26 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { StandardApiResponse } from '../interfaces/api-responses/standard-api-response.interface';
+import {Job} from '../interfaces/job.interface';
 
 interface CreateOrganizationPostData {
-	name: string | null
+	requesterFirstName: string | null
+  requesterLastName: string | null
 	email: string | null
 	city: string | null
 	phone: string | null
-	requestorState: string | null
-	requestorZip: string | null
-	requestorAddress: string | null
-	ownerFn: string | null
-	ownerLn: string | null
+	state: string | null
+	zip: string | null
+	address: string | null
+	description: string | null
+  status: 'received' | 'approved'
+  job: Job
 }
 
 interface OnboardingUpdatePostData {
 	customerRequest: any | null
 	serviceRequest: any | null
-	materialrRequest: any | null
+	materialRequest: any | null
 	contractorRequest: any | null
 	isOnboarding: boolean | null
 }

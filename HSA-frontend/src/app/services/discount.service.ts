@@ -3,7 +3,6 @@ import { StandardApiResponse } from '../interfaces/api-responses/standard-api-re
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Customer, CustomerParams } from '../interfaces/customer.interface';
 import { TableApiResponse } from '../interfaces/api-responses/table.api.interface';
 
 interface getTableResponse {

@@ -39,8 +39,8 @@ interface Contractor {
 interface JobData {
     data : Job,
     services: Service[],
-    'materials': Material[],
-    'contractors': Contractor[]
+    materials: Material[],
+    contractors: Contractor[]
 
 }
 
@@ -57,6 +57,6 @@ interface Booking {
   }
 
 export interface BookingFetchResponse {
-    'event_data': Booking,
-    'job_data': JobData
-}    
+    event_data: Booking,
+    job_data: JobData
+}

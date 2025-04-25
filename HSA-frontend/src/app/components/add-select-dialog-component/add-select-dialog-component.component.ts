@@ -110,7 +110,7 @@ export class AddSelectDialogComponentComponent {
   }
 
   loadContractorsToTable(searchTerm: string, pageSize: number, offSet: number) {
-    this.contractorService.getExcludedContractor({ excludeIDs: this.getIDsFromData(this.data.dialogData.contractors, 'contractorID'), search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
+    this.contractorService.getExcludedContractor({ excludeIDs: this.getIDsFromData(this.data.dialogData.contractors, 'contractorID'), search: searchTerm, pageSize: pageSize, offset: offSet }).subscribe({
       next: (response) => {
         this.dialogData = response;
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
@@ -122,7 +122,7 @@ export class AddSelectDialogComponentComponent {
 
 
   loadServicesToTable(searchTerm: string, pageSize: number, offSet: number) {
-    this.serviceService.getExcludedService({ excludeIDs: this.getIDsFromData(this.data.dialogData.services, 'serviceID'), search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
+    this.serviceService.getExcludedService({ excludeIDs: this.getIDsFromData(this.data.dialogData.services, 'serviceID'), search: searchTerm, pageSize: pageSize, offset: offSet }).subscribe({
       next: (response) => {
         this.dialogData = response;
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
@@ -133,7 +133,7 @@ export class AddSelectDialogComponentComponent {
   }
 
   loadMaterialsToTable(searchTerm: string, pageSize: number, offSet: number) {
-    this.materialService.getExcludedMaterial({ excludeIDs: this.getIDsFromData(this.data.dialogData.materials, 'materialID'), search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
+    this.materialService.getExcludedMaterial({ excludeIDs: this.getIDsFromData(this.data.dialogData.materials, 'materialID'), search: searchTerm, pageSize: pageSize, offset: offSet }).subscribe({
       next: (response) => {
         this.dialogData = response
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
@@ -144,7 +144,7 @@ export class AddSelectDialogComponentComponent {
   }
 
   loadCustomersToTable(searchTerm: string, pageSize: number, offSet: number) {
-    this.customerService.getExcludedCustomer({ excludeIDs: [this.data.dialogData], search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
+    this.customerService.getExcludedCustomer({ excludeIDs: [this.data.dialogData], search: searchTerm, pageSize: pageSize, offset: offSet }).subscribe({
       next: (response) => {
         this.dialogData = response;
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
@@ -155,7 +155,7 @@ export class AddSelectDialogComponentComponent {
   }
 
   loadJobsToTable(searchTerm: string, pageSize: number, offSet: number) {
-    this.jobService.getExcludedJob({ search: searchTerm, pagesize: pageSize, offset: offSet}).subscribe({
+    this.jobService.getExcludedJob({ search: searchTerm, pageSize: pageSize, offset: offSet}).subscribe({
       next: (response) => {
         this.dialogData = response;
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
@@ -202,7 +202,7 @@ export class AddSelectDialogComponentComponent {
     this.selectedItems = this.selectedServices;
     this.selectedServicesIsError = this.selectedServices.length === 0 ? true : false;
     this.isNotSelectedItems = this.selectedServices.length === 0 ? true : false;
-    
+
   }
 
   setSelectedMaterials(materials: number[]) {
@@ -221,7 +221,7 @@ export class AddSelectDialogComponentComponent {
         } else {
           this.materialInputFields.push({"id": element, "unitsUsed": 0, "pricePerUnit": 0.00});
         }
-        
+
       });
     } else {
       this.materialInputFields = [];
@@ -248,10 +248,10 @@ export class AddSelectDialogComponentComponent {
     this.selectedItems.forEach((element : number) => {
       if (this.typeOfDialog === 'template') {
         const secondDialogRef = this.dialog.open(ApplyTemplateConfirmDialogComponentComponent, {
-          width: 'auto', 
-          maxWidth: '90vw', 
-          height: 'auto', 
-          maxHeight: '90vh', 
+          width: 'auto',
+          maxWidth: '90vw',
+          height: 'auto',
+          maxHeight: '90vh',
           data: element,
           disableClose: false
         });
@@ -283,14 +283,14 @@ export class AddSelectDialogComponentComponent {
 
     if (this.typeOfDialog !== 'template') {
       this.dialogRef.close({
-        selectedItems: this.typeOfDialog === 'job' 
+        selectedItems: this.typeOfDialog === 'job'
           ? this.selectedJob[0]
-           :this.typeOfDialog === 'customer' 
+           :this.typeOfDialog === 'customer'
             ? this.selectedCustomer[0]
-            : this.typeOfDialog === 'service' 
-              ? this.selectedServices 
-              : this.typeOfDialog === 'contractor' 
-                ? this.selectedContractors 
+            : this.typeOfDialog === 'service'
+              ? this.selectedServices
+              : this.typeOfDialog === 'contractor'
+                ? this.selectedContractors
                 : this.materialInputFields,
           itemsInfo: itemsInfo
         }
@@ -300,12 +300,12 @@ export class AddSelectDialogComponentComponent {
 
   getUnitsUsedValue(id: number): number | string {
     const entry = this.materialInputFields.find(item => item.id === id);
-    return entry?.['unitsUsed'] ?? ''; 
+    return entry?.['unitsUsed'] ?? '';
   }
 
   getPricePerUnitValue(id: number): number | string {
     const entry = this.materialInputFields.find(item => item.id === id);
-    return entry?.['pricePerUnit'] ?? ''; 
+    return entry?.['pricePerUnit'] ?? '';
   }
 
   getButtonAction(): string {

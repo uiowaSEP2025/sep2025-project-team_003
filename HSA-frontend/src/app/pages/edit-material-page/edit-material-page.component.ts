@@ -50,7 +50,7 @@ export class EditMaterialPageComponent implements OnInit {
       return;
     } else {
       this.materialService.editMaterial({
-        material_name: this.materialForm.controls["materialName"].value,
+        name: this.materialForm.controls["materialName"].value,
         id: this.materialID
       }).subscribe({
         next: () => {

@@ -12,17 +12,17 @@ interface CreateInvoiceInterface {
     customerID: number,
     quoteIDs: number[],
     status: "created" | "issued" | "paid"
-    issuedDate: string,
-    dueDate: string,
-    tax: string
+    dateIssued: string,
+    dateDue: string,
+    salesTaxPercent: string
 }
 
 interface UpdateInvoiceInterface {
         quoteIDs: number[],
         status: "created" | "issued" | "paid",
-        issuedDate: string,
-        dueDate: string, 
-        tax: string
+        dateIssued: string,
+        dateDue: string,
+        salesTaxPercent: string
 }
 
 @Injectable({
@@ -32,7 +32,7 @@ export class InvoiceService {
     private apiGetUrl = `${environment.apiUrl}/api/get/invoices`;
     private createUrl = `${environment.apiUrl}/api/create/invoice`;
     private deleteUrl = `${environment.apiUrl}/api/delete/invoice`;
-    private getSpecificUrl = `${environment.apiUrl}/api/get/invoice/displaydata`;
+    private getSpecificUrl = `${environment.apiUrl}/api/get/invoice/display-data`;
     private editUrl = `${environment.apiUrl}/api/edit/invoice`;
 
 
@@ -54,17 +54,17 @@ export class InvoiceService {
                 httpParams = httpParams.append(key, params[key])
             })
         }
-        
+
         return this.http.get<TableApiResponse<Invoice>>(this.apiGetUrl, { params: httpParams });
     }
 
     public createInvoice(json: CreateInvoiceInterface): Observable<StandardApiResponse> {
-        json.tax = this.convertTaxInputToMathPercent(json.tax)
+        json.salesTaxPercent = this.convertTaxInputToMathPercent(json.salesTaxPercent)
         return this.http.post<StandardApiResponse>(this.createUrl, json);
     }
 
     public updateInvoice(id: number, data: UpdateInvoiceInterface) {
-        data.tax = this.convertTaxInputToMathPercent(data.tax)
+        data.salesTaxPercent = this.convertTaxInputToMathPercent(data.salesTaxPercent)
         return this.http.post<StandardApiResponse>(`${this.editUrl}/${id}`, data);
     }
 

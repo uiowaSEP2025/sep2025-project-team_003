@@ -8,6 +8,6 @@ export interface Service {
 export interface ServiceParams {
   excludeIDs?: number[];
   search: string,
-  pagesize: number,
+  pageSize: number,
   offset: number,
 }
