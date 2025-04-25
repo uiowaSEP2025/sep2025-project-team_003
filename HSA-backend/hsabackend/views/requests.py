@@ -8,6 +8,56 @@ from django.db.models import Q
 from hsabackend.models.customer import Customer
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
+@api_view(["POST"])
+def create_request(request, id):
+    """
+    Public: create a new Request for org=id.
+    Rate-limit this endpoint via DRF throttling or similar!
+    """
+    try:
+        org = Organization.objects.get(pk=id)
+    except Organization.DoesNotExist:
+        return Response(
+            {"message": f"Organization {id} not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    data = request.data
+
+    # 2) build the Request instance (job left as None)
+    req = ServiceRequest(
+        requester_first_name = data.get("requester_first_name", "").strip(),
+        requester_last_name  = data.get("requester_last_name",  "").strip(),
+        requester_email      = data.get("requester_email",      "").strip(),
+        requester_city       = data.get("requester_city",       "").strip(),
+        requester_state      = data.get("requester_state",      "").strip(),
+        requester_zip        = data.get("requester_zip",        "").strip(),
+        requester_address    = data.get("requester_address",    "").strip(),
+        requester_phone      = data.get("requester_phone",      "").replace("-", "").strip(),
+        description          = data.get("description",          "").strip(),
+        availability         = data.get("availability",         "").strip(),
+        organization         = org,
+        job                  = None,
+    )
+
+    # 3) validate & save
+    try:
+        req.full_clean()
+        req.save()
+    except ValidationError as e:
+        return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+
+    # 4) return the new id + full JSON
+    return Response(
+        {
+            "message": "Request created successfully",
+            "id":      req.id,
+            "data":    req.json(),
+        },
+        status=status.HTTP_201_CREATED
+    )
+
+
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
 def get_org_request_data(request):
@@ -41,7 +91,7 @@ def get_org_request_data(request):
         'totalCount': count
     }    
     return Response(res, status=status.HTTP_200_OK)
-    
+
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
 def delete_request(request,id):

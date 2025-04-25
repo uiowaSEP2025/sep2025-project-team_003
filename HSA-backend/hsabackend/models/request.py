@@ -24,7 +24,7 @@ class Request(models.Model):
     availability            = models.CharField(max_length=200, validators=[isNonEmpty])
     request_status          = models.CharField(max_length=50, choices=status_choices, default="received")
     organization            = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    job                     = models.ForeignKey(Job, on_delete=models.CASCADE)
+    job                     = models.ForeignKey(Job, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return f"<Request, name: {self.requester_first_name} {self.requester_last_name}, address: {self.requester_address}>"
