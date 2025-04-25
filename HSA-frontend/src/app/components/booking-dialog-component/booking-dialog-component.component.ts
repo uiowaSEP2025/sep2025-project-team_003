@@ -8,7 +8,6 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angu
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTimepickerModule } from '@angular/material/timepicker';
-import { AddSelectDialogData } from '../../interfaces/interface-helpers/addSelectDialog-helper.interface';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BookingJobsPerContractorComponent } from '../booking-jobs-per-contractor/booking-jobs-per-contractor.component';
@@ -109,13 +108,12 @@ export class BookingDialogComponentComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
-      // if (result.length !== 0) {
-      //   let jobEntry = result.itemsInfo[0]
-      //   this.eventForm.controls['jobID'].setValue(jobEntry.id)
-      //   this.eventForm.controls['jobDescription'].setValue(jobEntry.description)
-      //   this.jobID = jobEntry.id;
-      //   this.selectedJob = jobEntry
-      // }
+      if (result) {
+        this.jobID = result
+        this.eventForm.get('jobID')?.setValue(result)
+        this.eventForm.get('jobID')!.markAsUntouched()
+        
+      }
     })
   }
 

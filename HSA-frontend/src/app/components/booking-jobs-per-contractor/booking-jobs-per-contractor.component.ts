@@ -17,31 +17,33 @@ interface dialogInput {
   styleUrl: './booking-jobs-per-contractor.component.scss'
 })
 export class BookingJobsPerContractorComponent implements OnInit {
-  jobData: TableApiResponse<JobSimplified> | null = null
+  jobData: TableApiResponse<JobSimplified> = {data: [], totalCount: 0}
   totalCount:number = 0
-  ids = []
+  job: number[] = []
+  isError = false
   ngOnInit(): void {
     this.loadData("", 5, 0)
   }
   
+  setSelectedJob(jobs: number[]) {
+    this.job = [...jobs]
+  }
+
   constructor(@Inject(MAT_DIALOG_DATA) public data: dialogInput, 
   private jobservice: JobService,
   private dialogRef: MatDialogRef<BookingJobsPerContractorComponent>) {} //this.data is the data
-  
-
 
   loadData(search: string, pageSize: number, offSet: number) { 
     const contractorId = this.data.contractorId
       this.jobservice.getJobsByContractor(contractorId, search, pageSize, offSet).subscribe({
       next: (res) => {
         this.jobData = res
-        console.log(this.jobData)
       }
     })
   }
 
   acceptSelection() {
-    this.dialogRef.close(this.ids[0]);
+    this.dialogRef.close(this.job[0]);
   }
 
   closeDialog() {
