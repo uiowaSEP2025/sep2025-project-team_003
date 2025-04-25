@@ -8,7 +8,6 @@ import { provideHttpClient } from '@angular/common/http';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 
-
 describe('BookingJobsPerContractorComponent', () => {
   let component: BookingJobsPerContractorComponent;
   let fixture: ComponentFixture<BookingJobsPerContractorComponent>;

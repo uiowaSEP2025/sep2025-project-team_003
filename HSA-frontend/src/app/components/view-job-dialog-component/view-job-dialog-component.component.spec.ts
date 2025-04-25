@@ -8,7 +8,7 @@ class MatDialogRefMock {
   close() { }
 }
 
-fdescribe('ViewJobDialogComponentComponent', () => {
+describe('ViewJobDialogComponentComponent', () => {
   let component: ViewJobDialogComponentComponent;
   let fixture: ComponentFixture<ViewJobDialogComponentComponent>;
 
