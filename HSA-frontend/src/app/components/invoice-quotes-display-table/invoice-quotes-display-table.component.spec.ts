@@ -24,7 +24,7 @@ describe('InvoiceQuotesDisplayTableComponent', () => {
         "subtotal": '$300.00',
         "taxPercent": '0.10',
         "totalDiscount": '0.10',
-        "grandtotal" : '400.00',
+        "grandTotal" : '400.00',
     }
 
     fixture = TestBed.createComponent(InvoiceQuotesDisplayTableComponent);

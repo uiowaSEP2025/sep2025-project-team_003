@@ -28,13 +28,13 @@ describe('EditDiscountPageComponent', () => {
   paramMapSubject = new Subject();
         const activatedRouteMock = {
           paramMap: of(convertToParamMap({ id: '1' })),
-          queryParams: of({ 
+          queryParams: of({
             "discount_percent": "20.00 %",
             "discount_name": "Summer Sale"
            }),
-           
+
         };
-  
+
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -87,7 +87,7 @@ describe('EditDiscountPageComponent', () => {
     const error = compiled.querySelector('mat-error')
 
     expect(error.textContent).toEqual("Name is required")
-    
+
   })
 
   it('should be invalid without a percent', async () => {
@@ -105,7 +105,7 @@ describe('EditDiscountPageComponent', () => {
 
     const error = compiled.querySelector('mat-error')
     expect(error.textContent).toEqual("Discount percent is required")
-    
+
   })
 
   it('should be invalid with an invalid percent', async () => {
@@ -145,13 +145,13 @@ describe('EditDiscountPageComponent', () => {
 
     const req = httpMock.expectOne('default/api/edit/discount/1'); // Adjust the URL if needed
     expect(req.request.method).toBe('POST');
-    
+
     // Verify the request body
     expect(req.request.body).toEqual({
-      name: 'Christmas sale',
-      percent: '22.00',
+      discount_name: 'Christmas sale',
+      discount_percent: '22.00',
       id: '1'
     });
-    
+
   })
 });

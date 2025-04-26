@@ -26,8 +26,8 @@ describe('ViewInvoicePageComponent', () => {
         subtotal: '0.00',
         taxPercent: '0.00',
         totalDiscount: '0.00',
-        "grandtotal" : 'O.00'
-      }     
+        grandTotal : 'O.00'
+      }
     }
 
     paramMapSubject = new Subject();
@@ -36,7 +36,7 @@ describe('ViewInvoicePageComponent', () => {
             get: (key: string) => '123' // Mock paramMap to return '123' for 'id'
           }),
           queryParams: of({ email: '', fname: '', lname: '', phoneNo: '' }),
-          
+
         };
 
     await TestBed.configureTestingModule({

@@ -38,94 +38,94 @@ describe('CreateDiscountsPageComponent', () => {
       const compiled = fixture.debugElement.nativeElement;
       const inputs = compiled.querySelectorAll('input')
       const submitButton = compiled.querySelector('button')
-      const name = inputs[0]
-      const percent = inputs[1]
-  
-      expect(name).toBeTruthy()
-      expect(percent).toBeTruthy()
+      const discount_name = inputs[0]
+      const discount_discount_percent = inputs[1]
+
+      expect(discount_name).toBeTruthy()
+      expect(discount_discount_percent).toBeTruthy()
       expect(submitButton).toBeTruthy()
     })
-  
+
     it('should be invalid without a name', async () => {
       const compiled = fixture.debugElement.nativeElement;
       const submitButton = await loader.getHarness(MatButtonHarness);
       const inputs = compiled.querySelectorAll('input')
-      const name = inputs[0]
-      const percent = inputs[1]
-      name.value = ""
-      name.dispatchEvent(new Event('input'));
-      percent.value = "20.00"
-      percent.dispatchEvent(new Event('input'));
+      const discount_name = inputs[0]
+      const discount_percent = inputs[1]
+      discount_name.value = ""
+      discount_name.dispatchEvent(new Event('input'));
+      discount_percent.value = "20.00"
+      discount_percent.dispatchEvent(new Event('input'));
       await submitButton.click()
       fixture.detectChanges()
-  
+
       const error = compiled.querySelector('mat-error')
-  
+
       expect(error.textContent).toEqual("Name is required")
-      
+
     })
-  
-    it('should be invalid without a percent', async () => {
+
+    it('should be invalid without a discount_percent', async () => {
       const compiled = fixture.debugElement.nativeElement;
       const submitButton = await loader.getHarness(MatButtonHarness);
       const inputs = compiled.querySelectorAll('input')
-      const name = inputs[0]
-      const percent = inputs[1]
-      name.value = "Christmas sale"
-      name.dispatchEvent(new Event('input'));
-      percent.value = ""
-      percent.dispatchEvent(new Event('input'));
+      const discount_name = inputs[0]
+      const discount_percent = inputs[1]
+      discount_name.value = "Christmas sale"
+      discount_name.dispatchEvent(new Event('input'));
+      discount_percent.value = ""
+      discount_percent.dispatchEvent(new Event('input'));
       await submitButton.click()
       fixture.detectChanges()
-  
+
       const error = compiled.querySelector('mat-error')
       expect(error.textContent).toEqual("Discount percent is required")
-      
+
     })
-  
-    it('should be invalid with an invalid percent', async () => {
+
+    it('should be invalid with an invalid discount_percent', async () => {
       const compiled = fixture.debugElement.nativeElement;
       const submitButton = await loader.getHarness(MatButtonHarness);
       const inputs = compiled.querySelectorAll('input')
-      const name = inputs[0]
-      const percent = inputs[1]
-      name.value = "Christmas sale"
-      name.dispatchEvent(new Event('input'));
-      percent.value = "223222"
-      percent.dispatchEvent(new Event('input'));
+      const discount_name = inputs[0]
+      const discount_percent = inputs[1]
+      discount_name.value = "Christmas sale"
+      discount_name.dispatchEvent(new Event('input'));
+      discount_percent.value = "223222"
+      discount_percent.dispatchEvent(new Event('input'));
       await submitButton.click()
       fixture.detectChanges()
-  
+
       const error = compiled.querySelector('mat-error')
-  
+
       expect(error.textContent).toEqual("Discount percent must be xx.xx")
     })
-  
+
     it('should call to the endpoint when a valid submit happens', async() => {
       const compiled = fixture.debugElement.nativeElement;
       const submitButton = await loader.getHarness(MatButtonHarness);
       const inputs = compiled.querySelectorAll('input')
-      const name = inputs[0]
-      const percent = inputs[1]
-      name.value = "Christmas sale"
-      name.dispatchEvent(new Event('input'));
-      percent.value = "22.00"
-      percent.dispatchEvent(new Event('input'));
+      const discount_name = inputs[0]
+      const discount_percent = inputs[1]
+      discount_name.value = "Christmas sale"
+      discount_name.dispatchEvent(new Event('input'));
+      discount_percent.value = "22.00"
+      discount_percent.dispatchEvent(new Event('input'));
       await submitButton.click()
       fixture.detectChanges()
-  
+
       const error = compiled.querySelector('mat-error')
-  
+
       expect(error).toBeFalsy()
-  
+
       const req = httpMock.expectOne('default/api/create/discount');
       expect(req.request.method).toBe('POST');
-      
+
       // Verify the request body
       expect(req.request.body).toEqual({
-        name: 'Christmas sale',
-        percent: '22.00',
+        discount_name: 'Christmas sale',
+        discount_percent: '22.00',
       });
-      
+
     })
 });
