@@ -7,6 +7,7 @@ from hsabackend.models.job import Job
 from django.db.models import Q
 from hsabackend.models.customer import Customer
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+from django.core.exceptions import ValidationError
 
 @api_view(["POST"])
 def create_request(request, id):
@@ -24,8 +25,7 @@ def create_request(request, id):
 
     data = request.data
 
-    # 2) build the Request instance (job left as None)
-    req = ServiceRequest(
+    req = Request(
         requester_first_name = data.get("requester_first_name", "").strip(),
         requester_last_name  = data.get("requester_last_name",  "").strip(),
         requester_email      = data.get("requester_email",      "").strip(),
@@ -37,17 +37,14 @@ def create_request(request, id):
         description          = data.get("description",          "").strip(),
         availability         = data.get("availability",         "").strip(),
         organization         = org,
-        job                  = None,
     )
 
-    # 3) validate & save
     try:
         req.full_clean()
         req.save()
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
-    # 4) return the new id + full JSON
     return Response(
         {
             "message": "Request created successfully",
@@ -129,5 +126,5 @@ def approve_request(request, id):
         description = "",
         customer = cust
     )
-    new_job.save() # don't need to validate when based off a valid request
+    new_job.save()
     return Response({"message": "Request approved successfully"}, status=status.HTTP_200_OK)

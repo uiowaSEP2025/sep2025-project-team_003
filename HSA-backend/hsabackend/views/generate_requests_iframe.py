@@ -18,6 +18,7 @@ def getHTMLForm(request, id):
         request,
         "requests/requests.html",
         {
+            "url": "http://localhost:8000/api/create/request/" + str(id),
             "org_id":      id,
             "services":    services,
             "contractors": contractors,

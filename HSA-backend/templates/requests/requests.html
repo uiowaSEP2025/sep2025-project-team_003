@@ -266,7 +266,64 @@
   </div>
 
   <script>
-    // populated later
-</script>
+    // helper to pull CSRF token from cookie
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        document.cookie.split(';').forEach(cookie => {
+          const [key, val] = cookie.trim().split('=');
+          if (key === name) cookieValue = decodeURIComponent(val);
+        });
+      }
+      return cookieValue;
+    }
+
+    document.getElementById('request-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const csrftoken = getCookie('csrftoken');
+
+      // build payload
+      const payload = {
+        requester_first_name: form.requester_first_name.value.trim(),
+        requester_last_name:  form.requester_last_name.value.trim(),
+        requester_email:      form.requester_email.value.trim(),
+        requester_city:       form.requester_city.value.trim(),
+        requester_state:      form.requester_state.value.trim(),
+        requester_zip:        form.requester_zip.value.trim(),
+        requester_address:    form.requester_address.value.trim(),
+        requester_phone:      form.requester_phone.value.replace(/\D/g, '').trim(),
+        description:          form.description.value.trim(),
+        availability:         form.availability.value.trim(),
+        organization:         document.getElementById('org-id').value,
+        job:                  null
+      };
+
+      try {
+        const resp = await fetch("{{ url }}", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!resp.ok) {
+          const err = await resp.text();
+          throw new Error(`Server responded ${resp.status}: ${err}`);
+        }
+
+        // on success: maybe redirect or clear form
+        const data = await resp.json();
+        console.log('Created!', data);
+        // e.g. window.location.href = `/requests/${data.id}/`;
+      } catch (err) {
+        console.error('Submission failed:', err);
+        alert('Error submitting request. See console for details.');
+      }
+    });
+  </script>
 </body>
 </html>
