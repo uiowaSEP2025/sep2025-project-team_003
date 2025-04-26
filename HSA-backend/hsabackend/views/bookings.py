@@ -179,7 +179,7 @@ def edit_event(request, id):
     if not booking_serializer.is_valid():
         return Response({"errors": booking_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-    booking = booking_serializer.save()
+    booking_serializer.save()
 
     return Response({"message": "Event edited successfully"}, status=status.HTTP_200_OK)
 

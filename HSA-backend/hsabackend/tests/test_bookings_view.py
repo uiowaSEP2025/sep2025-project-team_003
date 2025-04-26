@@ -5,7 +5,7 @@ from unittest.mock import Mock
 from unittest.mock import patch
 from django.contrib.auth.models import User
 from hsabackend.models.organization import Organization
-from hsabackend.views.bookings import get_booking_data, delete_event
+from hsabackend.views.bookings import get_booking_data, delete_event, edit_event
 
 class GetBookingsData(APITestCase):
 
@@ -77,7 +77,51 @@ class CreateBooking(APITestCase):
     pass
 
 class UpdateBooking(APITestCase):
-    pass
+    
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_bad_date(self,orgg):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        
+        org = Organization()
+        org.is_onboarding = False
+        orgg.return_value = org
+
+        factory = APIRequestFactory()
+        request = factory.post('api/edit/booking/1')
+        request.user = mock_user  
+        response = edit_event(request, 1)
+
+        assert response.status_code == 400
+
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_start_after_end(self,orgg):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        
+        org = Organization()
+        org.is_onboarding = False
+        orgg.return_value = org
+
+        factory = APIRequestFactory()
+        request = factory.post('api/edit/booking/1?startTime=2023-04-25T14:30:00&endTime=2022-04-25T14:30:00')
+        request.user = mock_user  
+        response = edit_event(request, 1)
+
+        assert response.status_code == 400
+
+    def test_job_dosent_exist(self):
+        pass
+
+    def test_event_dosent_exist(self):
+        pass
+
+    def test_event_serializer_invalid(self):
+        pass
+
+    def test_save_ok(self):
+        pass
+
 
 class DeleteBooking(APITestCase):
     @patch('hsabackend.views.bookings.Booking.objects.filter')
