@@ -187,7 +187,7 @@ def edit_event(request, id):
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
 def delete_event(request, id):
-    org = Organization.objects.get(owning_User=request.user)
+    org = request.org
     event_object = Booking.objects.filter(pk=id, organization=org)
 
     if not event_object.exists():
