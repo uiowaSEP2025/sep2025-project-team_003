@@ -11,7 +11,6 @@ from django.db.models import QuerySet
 from hsabackend.models.contractor import Contractor
 from hsabackend.models.job import Job
 from hsabackend.models.job_contractor import JobContractor
-from django.core.exceptions import ValidationError
 
 class contractorViewTest(APITestCase):
     def test_get_job_contractor_table_data_unauth(self):
