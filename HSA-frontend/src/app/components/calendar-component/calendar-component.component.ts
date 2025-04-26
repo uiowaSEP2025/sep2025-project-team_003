@@ -32,7 +32,7 @@ export class CalendarComponentComponent implements AfterViewInit {
     showMonths: 3,
     cellWidth: 25,
     cellHeight: 25,
-    onVisibleRangeChanged: args => { 
+    onVisibleRangeChanged: args => {
       this.events = []
       this.loadEvents();
     }
@@ -48,10 +48,10 @@ export class CalendarComponentComponent implements AfterViewInit {
     onTimeRangeSelected: this.onTimeRangeSelected.bind(this),
     onBeforeEventRender: this.onBeforeEventRender.bind(this),
     onEventClick: this.onEventClick.bind(this),
-    
+
     //handling drag event
     eventMoveHandling: "Update",
-    onEventMove: (args) => { 
+    onEventMove: (args) => {
       this.onChangeViaDragAndResize(args)
     },
 
@@ -71,7 +71,7 @@ export class CalendarComponentComponent implements AfterViewInit {
 
     //handling drag event
     eventMoveHandling: "Update",
-    onEventMove: (args) => { 
+    onEventMove: (args) => {
       this.onChangeViaDragAndResize(args)
     },
 
@@ -83,9 +83,9 @@ export class CalendarComponentComponent implements AfterViewInit {
   };
 
   constructor(
-    private calendarDataService: BookingService, 
-    private jobService: JobService, 
-    public dialog: MatDialog, 
+    private calendarDataService: BookingService,
+    private jobService: JobService,
+    public dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {
     this.viewWeek();
@@ -98,7 +98,7 @@ export class CalendarComponentComponent implements AfterViewInit {
   eventHTML(eventName: string, endDate: string, customerName: string, typeOfEvent: string) {
     return `<div style="margin-top: 20px;">
               <b>${eventName}</b>
-              <br> 
+              <br>
               <b style='color:#9e1414;'>End: ${endDate}</b>
               <br>
               <b>Customer: ${customerName}</b>
@@ -184,13 +184,13 @@ export class CalendarComponentComponent implements AfterViewInit {
           };
 
           const dialogRef = this.dialog.open(ViewJobDialogComponentComponent, {
-            width: 'auto', 
-            maxWidth: '90vw', 
-            height: 'auto', 
+            width: 'auto',
+            maxWidth: '90vw',
+            height: 'auto',
             maxHeight: '90vh',
             data: infoData
           });
-      
+
           dialogRef.afterClosed().subscribe(result => {});
         }
       },
@@ -214,8 +214,8 @@ export class CalendarComponentComponent implements AfterViewInit {
             data: messageData
           });
 
-          
-      
+
+
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
               //call the api to delete booking model here
@@ -255,9 +255,9 @@ export class CalendarComponentComponent implements AfterViewInit {
     }
 
     const dialogRef = this.dialog.open(BookingDialogComponentComponent, {
-      width: '800px', 
-      maxWidth: '90vw', 
-      height: 'auto', 
+      width: '800px',
+      maxWidth: '90vw',
+      height: 'auto',
       maxHeight: '90vh',
       data: slotData
     });
@@ -310,9 +310,9 @@ export class CalendarComponentComponent implements AfterViewInit {
               error: (error) => {}
             })
 
-            
-            
-            
+
+
+
           }
         })
       }
@@ -334,9 +334,9 @@ export class CalendarComponentComponent implements AfterViewInit {
     }
 
     const dialogRef = this.dialog.open(BookingDialogComponentComponent, {
-      width: '800px', 
-      maxWidth: '90vw', 
-      height: 'auto', 
+      width: '800px',
+      maxWidth: '90vw',
+      height: 'auto',
       maxHeight: '90vh',
       data: currentEventData
     });
@@ -344,15 +344,15 @@ export class CalendarComponentComponent implements AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         const dp = args.control
-        this.jobs = this.jobs.filter((item) => item.data.id !== args.e.data.tags.jobID) 
-        
+        this.jobs = this.jobs.filter((item) => item.data.id !== args.e.data.tags.jobID)
+
         this.jobService.getSpecificJobData(result.tags.jobID).subscribe({
           next: (response) => {
             this.jobs.push(response)
             let jobInfo = response.data
 
             const endDate = jobInfo["endDate"].split("-").slice(1).join("/");
-        
+
             const updateEventData = new DayPilot.Event({
               id: args.e.data.id,
               text: result.eventName,
@@ -381,7 +381,7 @@ export class CalendarComponentComponent implements AfterViewInit {
               jobID: result.tags.jobID
             }
 
-            //call the api to save booking model here
+            //call the api to save a booking model here
             this.calendarDataService.editEvent(eventEditRequest).subscribe({
               next: (response) => {
                 this.snackBar.open('Event Edited!', '', {

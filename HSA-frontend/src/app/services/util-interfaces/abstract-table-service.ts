@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { TableApiResponse } from "../../interfaces/table.api.interface";
+import { TableApiResponse } from "../../interfaces/api-responses/table.api.interface";
 
 export abstract class AbstractTableService {
     // Abstract method (does not have a body)
