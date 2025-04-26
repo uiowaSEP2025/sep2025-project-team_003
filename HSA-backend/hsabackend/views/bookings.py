@@ -10,7 +10,6 @@ from hsabackend.models.job_service import JobService
 from hsabackend.models.job_material import JobMaterial
 from hsabackend.models.job_contractor import JobContractor
 from hsabackend.serializers.booking_serializer import BookingSerializer
-from django.db.models import Q
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 from hsabackend.utils.api_validators import parse_and_return_int
 
@@ -26,8 +25,7 @@ def get_booking_data(request):
     if not fromDateString or not toDateString:
         return Response({"message": "missing a starting date or ending date"}, status=status.HTTP_400_BAD_REQUEST)
     try:
-        fromDateTimeObject = timezone.make_aware(
-            parse_datetime(fromDateString))
+        fromDateTimeObject = timezone.make_aware(parse_datetime(fromDateString))
         toDateTimeObject = timezone.make_aware(parse_datetime(toDateString))
     except Exception:
         return Response({"message": "Cannot parse date time"}, status=status.HTTP_400_BAD_REQUEST)
@@ -43,8 +41,6 @@ def get_booking_data(request):
         start_time__gte=fromDateTimeObject,
         end_time__lte=toDateTimeObject
     ).distinct()
-
-    print(bookings.query)
 
     serializer = BookingSerializer(bookings, many=True)
 
@@ -87,7 +83,6 @@ def get_booking_data(request):
         'event_data': serializer.data,
         'job_data': jobs
     }
-    print(res)
     return Response(res, status=status.HTTP_200_OK)
 
 
