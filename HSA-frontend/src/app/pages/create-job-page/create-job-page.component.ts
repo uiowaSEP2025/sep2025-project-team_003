@@ -83,10 +83,10 @@ export class CreateJobPageComponent {
     public dialog: MatDialog,
     private jobService: JobService,
     private jobTemplateService: JobTemplateService,
-    private stringFormatter: StringFormatter, 
+    private stringFormatter: StringFormatter,
     private jobFormBuilder: FormBuilder,
     private snackBar: MatSnackBar,
-  ) { 
+  ) {
     this.activatedRoute.paramMap.subscribe(params => {
       this.jobID = Number(params.get('id'));
     })
@@ -115,7 +115,7 @@ export class CreateJobPageComponent {
 
     if (!startDate) {
       return { noStartDate: true };
-    } 
+    }
 
     if (!endDate) {
       return { noEndDate: true };
@@ -138,10 +138,10 @@ export class CreateJobPageComponent {
     };
 
     const firstDialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData,
       disableClose: true,
     });
@@ -149,16 +149,16 @@ export class CreateJobPageComponent {
     firstDialogRef.afterClosed().subscribe(result => {
       if (result.length !== 0) {
         let data = result.selectedItems[0];
-        
+
         this.jobForm.patchValue({
           jobDescription: data.jobDescription
         });
-      
+
         this.services.services = []
         data.services.services.forEach((element: { [x: string]: any; }) => {
           this.services = { services: [...this.services.services, element] };
         });
-      
+
         this.selectedServices = result.selectedItems;
 
         this.materials.materials = []
@@ -188,10 +188,10 @@ export class CreateJobPageComponent {
     };
 
     const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -217,10 +217,10 @@ export class CreateJobPageComponent {
     };
 
     const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -251,10 +251,10 @@ export class CreateJobPageComponent {
     }
 
     const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -280,10 +280,10 @@ export class CreateJobPageComponent {
     }
 
     const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -335,7 +335,7 @@ export class CreateJobPageComponent {
       }
       case 'contractor': {
         let popOutID = data["Contractor ID"];
-        
+
         if (joinRelationID !== 0) {
           this.deletedJobContractors.push(joinRelationID);
         } else {
@@ -345,9 +345,9 @@ export class CreateJobPageComponent {
         this.contractors.contractors = this.contractors.contractors.filter((item: { contractorID: any; }) => item.contractorID !== popOutID);
         this.onChangeUpdateButton();
         return this.contractors;
-      }  
+      }
     };
-    
+
   }
 
   onChangeUpdateButton() {
@@ -365,7 +365,7 @@ export class CreateJobPageComponent {
     || this.deletedJobMaterials !== 0
     || this.selectedContractors.length !== 0
     || this.deletedJobContractors !== 0
-    
+
     this.isAllowedTemplate = this.isUpdatedField
 
     return this.isUpdatedField;
@@ -376,7 +376,7 @@ export class CreateJobPageComponent {
       const dialogRef = this.dialog.open(AddConfirmDialogComponentComponent, {
         data: "job creation"
       });
-  
+
       dialogRef.afterClosed().subscribe((result:any) => {
         if (result) {
           this.onSubmit();
@@ -390,10 +390,10 @@ export class CreateJobPageComponent {
       }
 
       const dialogRef = this.dialog.open(CreateTemplateConfirmDialogComponentComponent, {
-        width: 'auto', 
-        maxWidth: '90vw', 
-        height: 'auto', 
-        maxHeight: '90vh', 
+        width: 'auto',
+        maxWidth: '90vw',
+        height: 'auto',
+        maxHeight: '90vh',
         data: templateCreateDialogData,
       });
 
@@ -407,10 +407,10 @@ export class CreateJobPageComponent {
 
           let materialsField: { id: any, unitsUsed: any, pricePerUnit: any} [] = []
           result.materials.materials.forEach((element: any) => {
-            materialsField.push({ 
+            materialsField.push({
               "id": element["materialID"],
               "unitsUsed": element["unitsUsed"],
-              "pricePerUnit": element["pricePerUnit"] 
+              "pricePerUnit": element["pricePerUnit"]
             })
           })
 
@@ -433,7 +433,7 @@ export class CreateJobPageComponent {
           })
         }
       })
-    }  
+    }
   }
 
   onSubmit() {
@@ -449,14 +449,14 @@ export class CreateJobPageComponent {
       servicesField.push({ "id": element["serviceID"] })
     })
 
-    
+
 
     let materialsField: { id: any, unitsUsed: any, pricePerUnit: any} [] = []
     this.materials.materials.forEach((element: any) => {
-      materialsField.push({ 
+      materialsField.push({
         "id": element["materialID"],
         "unitsUsed": element["unitsUsed"],
-        "pricePerUnit": element["pricePerUnit"] 
+        "pricePerUnit": element["pricePerUnit"]
       })
     })
 
@@ -465,7 +465,7 @@ export class CreateJobPageComponent {
     this.contractors.contractors.forEach((element: any) => {
       contractorsField.push({ "id": element["contractorID"] })
     })
-    
+
     const requestJson = {
       jobStatus: this.status,
       startDate: this.stringFormatter.dateFormatter(this.jobForm.get('startDate')?.value),
@@ -478,7 +478,10 @@ export class CreateJobPageComponent {
       address: this.jobForm.get('requestorAddress')?.value,
       contractors: contractorsField as [],
       services: servicesField as [],
-      materials: materialsField as []
+      materials: materialsField as [],
+      useHourlyRate: false, //TODO add form inputs for this
+      minutesWorked: 0,
+      hourlyRate: 0,
     }
 
     this.jobService.createJob(requestJson).subscribe(

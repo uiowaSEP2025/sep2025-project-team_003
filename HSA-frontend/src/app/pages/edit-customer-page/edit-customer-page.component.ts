@@ -12,11 +12,11 @@ import { MatCardModule } from '@angular/material/card';
 @Component({
   selector: 'app-edit-customer-page',
   imports: [
-    MatFormFieldModule, 
-    ReactiveFormsModule, 
-    MatInputModule, 
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule,
     MatButtonModule,
-    MatCardModule, 
+    MatCardModule,
     FormsModule
   ],
   templateUrl: './edit-customer-page.component.html',
@@ -39,7 +39,7 @@ export class EditCustomerPageComponent implements OnInit {
   matcher = new GenericFormErrorStateMatcher()
 
   ngOnInit() {
-    // pass existing field in as a query param
+    // pass an existing field in as a query param
     this.activatedRoute.queryParams.subscribe(params => {
       this.email = params['email'];
       this.firstName = params['first_name'];
@@ -73,10 +73,10 @@ export class EditCustomerPageComponent implements OnInit {
     }
     const args = {
       id: this.custId,
-      firstn: this.firstNameControl.value,
-      lastn: this.lastNameControl.value,
+      first_name: this.firstNameControl.value,
+      last_name: this.lastNameControl.value,
       email: this.emailControl.value,
-      phoneno: this.phoneControl.value,
+      phone: this.phoneControl.value,
       notes: this.phoneControl.value
     }
     this.customerService.editCustomer(args).subscribe(

@@ -51,6 +51,8 @@ export class EditMaterialPageComponent implements OnInit {
     } else {
       this.materialService.editMaterial({
         name: this.materialForm.controls["materialName"].value,
+        description: '', // TODO Add descriptions to materials
+        default_cost: 0,
         id: this.materialID
       }).subscribe({
         next: () => {

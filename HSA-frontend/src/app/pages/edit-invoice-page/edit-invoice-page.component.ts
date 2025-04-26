@@ -60,10 +60,10 @@ export class EditInvoicePageComponent implements OnInit {
     ])
 
     matcher = new GenericFormErrorStateMatcher()
-  
-  
-  constructor(private quoteService: QuoteService, private activatedRoute: ActivatedRoute, 
-    private invoiceService: InvoiceService, private stringFormatter: StringFormatter, 
+
+
+  constructor(private quoteService: QuoteService, private activatedRoute: ActivatedRoute,
+    private invoiceService: InvoiceService, private stringFormatter: StringFormatter,
     private router: Router) { }
 
     private fixBackendTaxPercentage(tax: string): string {
@@ -129,9 +129,9 @@ export class EditInvoicePageComponent implements OnInit {
         const data = {
           quoteIDs: this.selectedQuotes,
           status: this.status,
-          issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
-          dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
-          tax: this.taxAmount.value.toString()
+          dateIssued: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
+          dateDue: this.stringFormatter.dateFormatter(this.range.controls.due.value),
+          salesTaxPercent: this.taxAmount.value.toString()
         }
         this.invoiceService.updateInvoice(this.invoiceID, data).subscribe(
           {next: (response) => {
@@ -172,13 +172,13 @@ export class EditInvoicePageComponent implements OnInit {
       this.openDialog()
       return;
     }
-    
+
     const data = {
       quoteIDs: this.selectedQuotes,
       status: this.status,
-      issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value) ,
-      dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
-      tax: this.taxAmount.value.toString()
+      dateIssued: this.stringFormatter.dateFormatter(this.range.controls.issued.value) ,
+      dateDue: this.stringFormatter.dateFormatter(this.range.controls.due.value),
+      salesTaxPercent: this.taxAmount.value.toString()
     }
     this.invoiceService.updateInvoice(this.invoiceID, data).subscribe(
       {next: (response) => {

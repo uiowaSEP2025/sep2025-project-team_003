@@ -6,6 +6,9 @@ import { environment } from '../../environments/environment';
 import { JobDataInterface } from '../interfaces/api-responses/job.api.data.interface';
 import { Job, JobParams } from '../interfaces/job.interface';
 import { TableApiResponse } from '../interfaces/api-responses/table.api.interface';
+import {Service} from '../interfaces/service.interface';
+import {Material} from '../interfaces/material.interface';
+import {Contractor} from '../interfaces/contractor.interface';
 
 interface JobCreatePostData {
   jobStatus: string | null,
@@ -36,8 +39,9 @@ interface JobEditPostData {
   state: string | null,
   zip: string | null,
   address: string | null,
-  services: [] | null,
-  materials: [] | null,
+  services: Service[]
+  materials: Material[]
+  contractors: Contractor[]
   useHourlyRate: boolean | null,
   minutesWorked: number | null,
   hourlyRate: number | null
