@@ -180,7 +180,6 @@ def generate_table_for_specific_job(pdf: FPDF, jobid: int, num_jobs: int, idx: i
 
         total = Decimal(0)
         for mat in materials:
-            print(JobMaterialSerializer(mat).data)
             material_row = table.row()
             material_row.cell(mat.material.name)
             material_row.cell(format_currency(mat.unit_price))

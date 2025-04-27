@@ -99,8 +99,6 @@ class JobSerializer(serializers.ModelSerializer):
         representation['requestorState'] = instance.job_state
         representation['requestorZip'] = instance.job_zip
 
-        print(representation)
-
         return representation
 
     def create(self, validated_data):
