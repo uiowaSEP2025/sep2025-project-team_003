@@ -9,6 +9,17 @@ from .service_serializer import ServiceSerializer
 from ..models.job import Job
 
 
+class JobTableSerializer(serializers.ModelSerializer):
+    customer = CustomerSerializer(read_only=True)
+    class Meta:
+        model = Job
+        fields = ['id','description', 'customer', 'job_status', 'start_date', 'end_date']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['customer'] = f"{instance.customer.first_name} {instance.customer.last_name}"
+        return representation
+
 class JobSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer(read_only=True)
     services = ServiceSerializer(many=True, read_only=True)
@@ -21,23 +32,74 @@ class JobSerializer(serializers.ModelSerializer):
         model = Job
         fields = "__all__"
 
+    def services_representation(self, instance):
+        services_temp = instance.services.all()
+        services_data = ServiceSerializer(services_temp, many=True).data
+        services_json = []
+        for i in services_data:
+            services_json.append({
+                "serviceID": i['id'],
+                "serviceName": i['name'],
+                "serviceDescription": i['description']
+                            })
+        return {"services": services_json}
+
+    def contractors_representation(self, instance):
+        contractors_temp = instance.contractors.all()
+        contractors_data = ContractorSerializer(contractors_temp, many=True).data
+        contractors_json = []
+        for i in contractors_data:
+            contractors_json.append({
+                "contractorID": i['id'],
+                "contractorName": i['first_name'] + " " + i['last_name'],
+                "contractorPhoneNo": i['phone'],
+                "contractorEmail": i['email']
+            })
+        return {"contractors": contractors_json}
+
+    def materials_representation(self, instance):
+        material_temp = instance.materials.all()
+        materials_data = MaterialSerializer(material_temp, many=True).data
+        materials_json = []
+        for i in materials_data:
+            i['unit_price'] = 0
+            i['quantity'] = 0
+
+            materials_json.append({
+                "materialID": i['id'],
+                "materialName": i['name'],
+                "unitsUsed": i['quantity'],
+                "pricePerUnit": i['unit_price']
+            })
+        return {"materials": materials_json}
+
     def to_representation(self, instance):
         """
         Override to_representation to provide a simplified representation for list views
         """
-        representation = super().to_representation(instance)
+        representation = {}
 
         # Add a simplified customer name for display in tables
         if instance.customer:
-            representation['customer_name'] = f"{instance.customer.first_name} {instance.customer.last_name}"
+            representation['customerName'] = f"{instance.customer.first_name} {instance.customer.last_name}"
 
         # Truncate description if it's too long
-        if 'description' in representation and representation['description']:
-            description = representation['description']
+        if instance.description:
+            description = instance.description
             if len(description) > 50:
-                representation['description_display'] = description[:50] + "..."
+                representation['description'] = description[:50] + "..."
             else:
-                representation['description_display'] = description
+                representation['description'] = description
+        representation['id'] = instance.id
+        representation['jobStatus'] = instance.job_status
+        representation['startDate'] = instance.start_date
+        representation['endDate'] = instance.end_date
+        representation['requestorAddress'] = instance.job_address
+        representation['requestorCity'] = instance.job_city
+        representation['requestorState'] = instance.job_state
+        representation['requestorZip'] = instance.job_zip
+
+        print(representation)
 
         return representation
 

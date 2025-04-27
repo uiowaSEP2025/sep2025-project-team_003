@@ -9,7 +9,16 @@ class ServiceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Service
-        fields = "__all__"
+        fields = ['id', 'name','description','default_fee', 'organization']
+    def to_representation(self, instance):
+        """
+        Override to_representation to provide a simplified representation for list views
+        """
+        representation = super().to_representation(instance)
+        representation['serviceName'] = instance.name
+        representation['serviceDescription'] = instance.description
+        representation['defaultFee'] = instance.default_fee
+        return representation
 
     def create(self, validated_data):
         """

@@ -7,7 +7,7 @@ class JobContractorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Job
-        fields = ['contractors']
+        fields = ['contractor']
 
     def to_representation(self, instance):
         """

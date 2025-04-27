@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from hsabackend.models.invoice import Invoice
 from hsabackend.models.job import JobsServices, JobsMaterials, Job
 from hsabackend.models.organization import Organization
+from hsabackend.serializers.job_material_serializer import JobMaterialSerializer
 from hsabackend.serializers.job_service_serializer import JobServiceSerializer
 from hsabackend.utils.string_formatters import format_currency, format_title_case, format_phone_number_with_parens, \
     format_maybe_null_date, format_percent, format_tax_percent
@@ -122,17 +123,17 @@ def generate_pdf_customer_org_header(pdf: FPDF, org: Organization, job: Job, typ
 
     pdf.ln(5)  # 5 is the space between lines
 
-    pdf.cell(col_width, 10, f"{job.invoice.customer.last_name}, {job.invoice.customer.first_name}", align="L")
+    pdf.cell(col_width, 10, f"{job.customer.last_name}, {job.customer.first_name}", align="L")
     pdf.cell(col_width, 10, f"{org.org_email}", align="R")
 
     pdf.ln(5)
 
-    pdf.cell(col_width, 10, f"{job.invoice.customer.email}", align="L")
+    pdf.cell(col_width, 10, f"{job.customer.email}", align="L")
     pdf.cell(col_width, 10, f"{format_phone_number_with_parens(org.org_phone)}", align="R")
 
     pdf.ln(5)
 
-    pdf.cell(col_width, 10, f"CUSTOMER ID: {job.invoice.customer.pk}", align="L")
+    pdf.cell(col_width, 10, f"CUSTOMER ID: {job.customer.pk}", align="L")
 
     pdf.ln(10)
 
@@ -169,7 +170,7 @@ def generate_table_for_specific_job(pdf: FPDF, jobid: int, num_jobs: int, idx: i
 
     with pdf.table(line_height=4, padding=2, text_align=("LEFT", "LEFT", "LEFT", "LEFT", "LEFT"),
                    borders_layout="SINGLE_TOP_LINE", cell_fill_color=greyscale, cell_fill_mode="ROWS") as table:
-        materials = JobsMaterials.objects.filter(job=jobid)
+        materials = JobsMaterials.objects.select_related("material").filter(job=jobid)
 
         header = table.row()
         header.cell("Material Name")
@@ -179,13 +180,13 @@ def generate_table_for_specific_job(pdf: FPDF, jobid: int, num_jobs: int, idx: i
 
         total = Decimal(0)
         for mat in materials:
+            print(JobMaterialSerializer(mat).data)
             material_row = table.row()
-            json = mat.invoice_material_row()
-            material_row.cell(json["material name"])
-            material_row.cell(format_currency(json["per unit"]))
-            material_row.cell(str(json["units used"]))
-            total += json["total"]
-            material_row.cell(format_currency(json["total"]))
+            material_row.cell(mat.material.name)
+            material_row.cell(format_currency(mat.unit_price))
+            material_row.cell(str(mat.quantity))
+            total += mat.total_cost
+            material_row.cell(format_currency(mat.total_cost))
 
         total_row = table.row()
         total_row.cell("Materials Total")

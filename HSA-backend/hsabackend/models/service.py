@@ -10,12 +10,12 @@ class Service(models.Model):
     default_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True)
 
     def __str__(self):
-        return f"<Service, service_name: {self.service_name}, owning_org: {self.organization}>"
+        return f"<Service, service_name: {self.name}, owning_org: {self.organization}>"
     
     def json(self):
         return {
             'id': self.pk,
-            'name': self.service_name,
-            'description': self.service_description,
+            'name': self.name,
+            'description': self.description,
             'default_fee': self.default_fee,
         }

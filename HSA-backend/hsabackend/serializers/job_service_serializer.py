@@ -4,10 +4,11 @@ from .service_serializer import ServiceSerializer
 
 class JobServiceSerializer(serializers.ModelSerializer):
     service = ServiceSerializer(read_only=True)
+    fee = serializers.DecimalField(decimal_places=2, max_digits=10)
 
     class Meta:
         model = Job
-        fields = ['services']
+        fields = ['service', 'fee']
 
     def to_representation(self, instance):
         """

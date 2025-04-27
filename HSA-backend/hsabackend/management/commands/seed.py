@@ -6,6 +6,7 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 
+from hsabackend.models.customer import Customer
 from hsabackend.models.material import Material
 from hsabackend.models.organization import Organization
 from hsabackend.models.service import Service
@@ -89,31 +90,31 @@ class Command(BaseCommand):
             org_2 = Organization.objects.filter(owning_user=usr1.id).first()
 
             service_data = [
-                {"service_name": "Window Cleaning",
-                 "service_description": "Cleaning of windows for residential and commercial properties.",
+                {"name": "Window Cleaning",
+                 "description": "Cleaning of windows for residential and commercial properties.",
                  "default_fee": 0,
                  "organization": org_1},
-                {"service_name": "Pest Control",
-                 "service_description": "Extermination and prevention of pests.",
+                {"name": "Pest Control",
+                 "description": "Extermination and prevention of pests.",
                  "default_fee": 0,
                  "organization": org_1},
-                {"service_name": "Handyman Services",
-                 "service_description": "General repair and maintenance services.",
+                {"name": "Handyman Services",
+                 "description": "General repair and maintenance services.",
                  "default_fee": 0,
                  "organization": org_1},
                 ]
 
             service_data1 = [
-                {"service_name": "Window Cleaning",
-                 "service_description": "Cleaning of windows for residential and commercial properties. (test user)",
+                {"name": "Window Cleaning",
+                 "description": "Cleaning of windows for residential and commercial properties. (test user)",
                  "default_fee": 0,
                  "organization": org_2},
-                {"service_name": "Pest Control",
-                 "service_description": "Extermination and prevention of pests. (test user)",
+                {"name": "Pest Control",
+                 "description": "Extermination and prevention of pests. (test user)",
                  "default_fee": 0,
                  "organization": org_2},
-                {"service_name": "Handyman Services",
-                 "service_description": "General repair and maintenance services. (test user)",
+                {"name": "Handyman Services",
+                 "description": "General repair and maintenance services. (test user)",
                  "default_fee": 0,
                  "organization": org_2},
                 ]
@@ -149,12 +150,14 @@ class Command(BaseCommand):
                     "organization": org_2
                 }
 
-                customerserializer = CustomerSerializer(data=customer_data)
-                customerserializer.is_valid(raise_exception=True)
-                customerserializer.create(customer_data)
-                customerserializer2 = CustomerSerializer(data=customer_data_2)
-                customerserializer2.is_valid(raise_exception=True)
-                customerserializer2.create(customer_data)
+                customer_serializer = CustomerSerializer(data=customer_data)
+                customer_serializer.is_valid(raise_exception=True)
+                customer_serializer.create(customer_data)
+                customer_serializer2 = CustomerSerializer(data=customer_data_2)
+                customer_serializer2.is_valid(raise_exception=True)
+                customer_serializer2.create(customer_data_2)
+
+
 
                 contractor_data = {
                     "first_name": f"First{i}Con",
@@ -188,14 +191,14 @@ class Command(BaseCommand):
 
             for i in range(5):
                 material_data = {
-                    "material_name": f"{material_names[i]} devuser",
-                    "material_description": f"Sample description for {material_names[i]}",
+                    "name": f"{material_names[i]} devuser",
+                    "description": f"Sample description for {material_names[i]}",
                     "default_cost": random_currency(1,500),
                     "organization": org_1
                 }
                 material_data_2 = {
-                    "material_name": f"{material_names[i]} testuser",
-                    "material_description": f"Sample description for {material_names[i]} (test user)",
+                    "name": f"{material_names[i]} testuser",
+                    "description": f"Sample description for {material_names[i]} (test user)",
                     "default_cost": random_currency(1,500),
                     "organization": org_2
                 }
@@ -367,7 +370,8 @@ class Command(BaseCommand):
             services_2 = Service.objects.filter(organization=org_2).all()
             materials_1 = Material.objects.filter(organization=org_1).all()
             materials_2 = Material.objects.filter(organization=org_2).all()
-
+            customer_1 = Customer.objects.filter(organization=org_1).all()
+            customer_2 = Customer.objects.filter(organization=org_2).all()
             # Generate 5 mock Job instances
             for i in range(5):
 
@@ -375,6 +379,8 @@ class Command(BaseCommand):
                 service_seed_2 = random.choice(services_2)
                 material_seed_1 = random.choice(materials_1)
                 material_seed_2 = random.choice(materials_2)
+                customer_seed_1 = random.choice(customer_1)
+                customer_seed_2 = random.choice(customer_2)
 
 
                 job_data = {
@@ -391,7 +397,8 @@ class Command(BaseCommand):
                     "minutes_worked": random.randint(60, 540),
                     "hourly_rate": random_currency(10, 50),
                     "services": [service_seed_1],
-                    "materials": [material_seed_1]
+                    "materials": [material_seed_1],
+                    "customer": customer_seed_1,
                 }
 
                 job_data_2 = {
@@ -408,7 +415,8 @@ class Command(BaseCommand):
                     "minutes_worked": random.randint(60, 540),
                     "hourly_rate": random_currency(10, 50),
                     "services": [service_seed_2],
-                    "materials": [material_seed_2]
+                    "materials": [material_seed_2],
+                    "customer": customer_seed_2,
                 }
 
                 job_serializer = JobSerializer(data=job_data)

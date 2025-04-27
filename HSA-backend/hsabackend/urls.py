@@ -94,7 +94,7 @@ urlpatterns = [
     path("api/delete/job/<int:job_id>", delete_job),
 
 
-    path("api/generate/quote/<int:quote_id>", generate_quote_pdf),
+    path("api/generate/quote/<int:job_id>", generate_quote_pdf),
 
     # job_templates
     path("api/get/jobtemplates", get_job_template_table_data),

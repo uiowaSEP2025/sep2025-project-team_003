@@ -15,13 +15,13 @@ from hsabackend.utils.pdf_helpers import generate_pdf_customer_org_header, gener
 
 
 @api_view(["GET"])
-@check_authenticated_and_onboarded
+@check_authenticated_and_onboarded()
 def generate_quote_pdf(request, job_id):
     return generate_pdf(request, job_id, "quote")
 
 
 @api_view(["POST"])
-@check_authenticated_and_onboarded
+@check_authenticated_and_onboarded()
 def send_quote_pdf_to_customer_email(request, id):
     org = Organization.objects.get(owning_User=request.user.pk)
     try:

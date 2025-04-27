@@ -4,7 +4,6 @@ from hsabackend.models.booking import Booking
 from hsabackend.serializers.job_serializer import JobSerializer
 from hsabackend.serializers.organization_serializer import OrganizationSerializer
 
-
 class BookingSerializer(serializers.ModelSerializer):
     organization = OrganizationSerializer(read_only=True)
     job = JobSerializer(read_only=True)
