@@ -5,7 +5,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import {MatDatepickerInputHarness} from '@angular/material/datepicker/testing';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { DateRange } from '../../pages/invoices/edit-invoice-page/edit-invoice-page.component';
+import { DateRange } from '../../pages/edit-invoice-page/edit-invoice-page.component';
 
 describe('InvoiceDatePickerComponent', () => {
   let component: InvoiceDatePickerComponent;

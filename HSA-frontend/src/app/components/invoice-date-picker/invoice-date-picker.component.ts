@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatError } from '@angular/material/form-field';
 import { CommonModule } from '@angular/common';
-import { DateRange } from '../../pages/invoices/edit-invoice-page/edit-invoice-page.component';
+import { DateRange } from '../../pages/edit-invoice-page/edit-invoice-page.component';
 import { FormGroup } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { OnInit } from '@angular/core';

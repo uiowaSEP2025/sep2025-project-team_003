@@ -6,9 +6,6 @@ import { environment } from '../../environments/environment';
 import { JobDataInterface } from '../interfaces/api-responses/job.api.data.interface';
 import { Job, JobParams } from '../interfaces/job.interface';
 import { TableApiResponse } from '../interfaces/api-responses/table.api.interface';
-import {Service} from '../interfaces/service.interface';
-import {Material} from '../interfaces/material.interface';
-import {Contractor} from '../interfaces/contractor.interface';
 
 interface JobCreatePostData {
   jobStatus: string | null,
@@ -22,10 +19,7 @@ interface JobCreatePostData {
   address: string | null,
   contractors: [] | null,
   services: [] | null,
-  materials: [] | null,
-  useHourlyRate: boolean | null,
-  minutesWorked: number | null,
-  hourlyRate: number | null
+  materials: [] | null
 }
 
 interface JobEditPostData {
@@ -39,17 +33,27 @@ interface JobEditPostData {
   state: string | null,
   zip: string | null,
   address: string | null,
-  services: Service[]
-  materials: Material[]
-  contractors: Contractor[]
-  useHourlyRate: boolean | null,
-  minutesWorked: number | null,
-  hourlyRate: number | null
 }
 
 interface JobDeletePostData {
   id: number | null,
 }
+
+interface JobServiceCreatePostData {
+  jobID: number | null,
+  services: [] | null
+}
+
+interface JobMaterialCreatePostData {
+  jobID: number | null,
+  materials: [] | null
+}
+
+interface JobContractorCreatePostData {
+  jobID: number | null,
+  contractors: [] | null
+}
+
 interface JobJoinCreatePostData {
   type: string,
   id: number | null,
@@ -88,7 +92,7 @@ export class JobService {
 
     return this.http.get<StandardApiResponse>(this.apiGetUrl, { params: httpParams });
   }
-
+  
    public getExcludedJob(params?: JobParams): Observable<TableApiResponse<Job>> {
     let httpParams = new HttpParams();
 
@@ -128,6 +132,19 @@ export class JobService {
   public getSpecificJobData(id: number | null): Observable<JobDataInterface> {
     return this.http.get<JobDataInterface>(this.apiGetSpecificUrl + `/${id}`);
   }
+
+  public getJobService(id: number, params?: Record<string, string | number>): Observable<StandardApiResponse> {
+    let httpParams = new HttpParams();
+
+    if (params) {
+      Object.keys(params).forEach(key => {
+        httpParams = httpParams.append(key, params[key])
+      })
+    }
+
+    return this.http.get<StandardApiResponse>(this.apiGetUrl + `/${id}/services`, { params: httpParams });
+  }
+
   public createJobJoin(data: JobJoinCreatePostData): Observable<StandardApiResponse> {
     return this.http.post<StandardApiResponse>(this.apiCreateUrl + `/${data.id}/${data.type}`, data.addedItems);
   }

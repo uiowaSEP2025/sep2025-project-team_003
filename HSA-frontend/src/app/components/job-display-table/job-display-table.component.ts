@@ -69,7 +69,7 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['dataSource']) {
       const newValue = changes['dataSource'].currentValue;
-      
+
       if (newValue && 'services' in newValue) {
         this.updateServiceTable();
       } else if (newValue && 'materials' in newValue) {
@@ -82,6 +82,7 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
 
   updateServiceTable() {
     if (this.dataSource) {
+      console.log(this.dataSource.services)
       this.displayServices = this.dataSource.services.map(
         (service) => ({
           "Service ID": service.serviceID,
@@ -90,7 +91,7 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
         })
       )
     }
-    
+
     this.displayedServiceColumns = ["Service ID", "Service Name", "Service Description"]
     this.displayedServiceColumns = this.isEditRow === true ? [...this.displayedServiceColumns, "Actions"] : this.displayedServiceColumns
   }
@@ -122,7 +123,7 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
         })
       )
     }
-    
+
     this.displayedContractorColumns = ["Contractor ID", "Contractor Name", "Contractor Phone No", "Contractor Email"]
     this.displayedContractorColumns = this.isEditRow === true ? [...this.displayedContractorColumns, "Actions"] : this.displayedContractorColumns
   }

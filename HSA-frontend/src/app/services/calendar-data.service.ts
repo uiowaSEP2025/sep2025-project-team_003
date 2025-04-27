@@ -1,10 +1,10 @@
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
 import {DayPilot} from "@daypilot/daypilot-lite-angular";
-import {HttpClient} from "@angular/common/http";
-import {environment} from "../../environments/environment";
-import {StandardApiResponse} from "../interfaces/api-responses/standard-api-response.interface";
-import {BookingFetchResponse} from "../interfaces/api-responses/bookingJob.api.interface";
+import {HttpClient, HttpParams} from "@angular/common/http";
+import { environment } from "../../environments/environment";
+import { StandardApiResponse } from "../interfaces/api-responses/standard-api-response.interface";
+import { BookingFetchResponse } from "../interfaces/api-responses/bookingJob.api.interface";
 
 interface BookingCreatePostData {
   eventName: string | null
@@ -99,12 +99,13 @@ export class BookingService {
   }
 
   getColors(): any[] {
-    return [
+    const colors = [
       {name: "Green", id: BookingService.colors.green},
       {name: "Yellow", id: BookingService.colors.yellow},
       {name: "Red", id: BookingService.colors.red},
       {name: "Gray", id: BookingService.colors.gray},
       {name: "Blue", id: BookingService.colors.blue},
     ];
+    return colors;
   }
 }

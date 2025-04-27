@@ -7,6 +7,6 @@ export interface Material {
 export interface MaterialParams {
   excludeIDs?: number[];
   search: string,
-  pageSize: number,
+  pagesize: number,
   offset: number,
 }

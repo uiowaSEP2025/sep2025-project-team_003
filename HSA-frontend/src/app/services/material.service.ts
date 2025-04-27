@@ -7,23 +7,17 @@ import { TableApiResponse } from '../interfaces/api-responses/table.api.interfac
 import { Material, MaterialParams } from '../interfaces/material.interface';
 
 interface MaterialCreatePostData {
-  name: string | null,
-  description: string | null,
-  default_cost: number | null,
+  material_name: string | null
 }
 
 interface MaterialEditPostData {
   id: number | null,
-  name: string | null
-  description: string | null,
-  default_cost: number | null,
+  material_name: string | null
 }
 
 interface MaterialDeletePostData {
   id: number | null,
-  name: string | null
-  description: string | null,
-  default_cost: number | null,
+  material_name: string | null
 }
 
 @Injectable({
@@ -50,7 +44,7 @@ export class MaterialService {
 
     return this.http.get<TableApiResponse<Material>>(this.apiGetUrl, { params: httpParams });
   }
-
+  
   public getExcludedMaterial(params?: MaterialParams): Observable<TableApiResponse<Material>> {
     let httpParams = new HttpParams();
 

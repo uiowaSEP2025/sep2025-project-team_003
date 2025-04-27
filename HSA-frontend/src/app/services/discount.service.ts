@@ -3,22 +3,23 @@ import { StandardApiResponse } from '../interfaces/api-responses/standard-api-re
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { Customer, CustomerParams } from '../interfaces/customer.interface';
 import { TableApiResponse } from '../interfaces/api-responses/table.api.interface';
 
 interface getTableResponse {
     "id": number,
-    "discount_name": string
-    "discount_percent": string
+    "discount_name": string 
+    "discount_percent": string 
 }
 
 interface createDiscountInterface {
-  discount_name:string | null,
-  discount_percent: string | null
+    name:string | null,
+    percent: string | null
 }
 
 interface editDiscountInterface {
-  discount_name:string | null,
-  discount_percent: string | null,
+  name:string | null,
+  percent: string | null,
   id: string | null
 }
 
@@ -53,12 +54,12 @@ export class DiscountsService {
   public deleteDiscount(id: any) {
     id = id.id
     return this.http.post<StandardApiResponse>(`${this.apiDeleteUrl}/${id}`, null);
-
+    
   }
 
   public editDiscount(data: editDiscountInterface) {
     return this.http.post<StandardApiResponse>(`${this.apiEditUrl}/${data.id}`, data);
   }
-
-
+  
+  
 }

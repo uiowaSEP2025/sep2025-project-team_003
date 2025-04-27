@@ -4,7 +4,7 @@ export interface InvoiceQuoteDisplayInterface {
     "subtotal": string,
     "taxPercent": string,
     "totalDiscount": string,
-    "grandTotal" : string,
+    "grandtotal" : string,
 }
 
 export interface QuoteJSON{

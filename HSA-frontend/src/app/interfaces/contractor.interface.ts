@@ -8,6 +8,6 @@ export interface Contractor extends PersonalInformationHelper {
 export interface ContractorParams {
   excludeIDs?: number[];
   search: string,
-  pageSize: number,
+  pagesize: number,
   offset: number,
 }

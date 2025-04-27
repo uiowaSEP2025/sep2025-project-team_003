@@ -11,6 +11,6 @@ export interface Job {
 export interface JobParams {
   excludeIDs?: number[];
   search: string,
-  pageSize: number,
+  pagesize: number,
   offset: number,
 }
