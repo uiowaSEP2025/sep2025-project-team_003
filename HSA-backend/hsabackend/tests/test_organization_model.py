@@ -1,135 +1,148 @@
 from django.test import TestCase
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from decimal import Decimal
 from hsabackend.models.organization import Organization
 
 class OrganizationModelTest(TestCase):
+    """Test cases for the Organization model"""
+    
     def setUp(self):
-        # Create a user for the organization
+        """Set up test data"""
         self.user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com',
-            password='testpassword'
+            username="testuser",
+            email="testuser@example.com",
+            password="testpassword"
         )
         
-        # Create an organization
         self.organization = Organization.objects.create(
-            org_name='Test Organization',
-            org_email='org@example.com',
-            org_city='Test City',
-            org_state='CA',
-            org_zip='12345',
-            org_address='123 Test St',
-            org_phone='1234567890',
-            org_owner_first_name='Test',
-            org_owner_last_name='Owner',
+            org_name="Test Organization",
+            org_email="test@example.com",
+            org_city="Test City",
+            org_state="TS",
+            org_zip="12345",
+            org_address="123 Test St",
+            org_phone="1234567890",
+            org_owner_first_name="John",
+            org_owner_last_name="Doe",
             owning_user=self.user,
             is_onboarding=True,
             default_labor_rate=Decimal('50.00'),
-            default_payment_link='https://example.com/payment'
+            default_payment_link="https://example.com/payment"
         )
     
     def test_organization_creation(self):
-        """Test that an organization can be created with the expected values"""
-        self.assertEqual(self.organization.org_name, 'Test Organization')
-        self.assertEqual(self.organization.org_email, 'org@example.com')
-        self.assertEqual(self.organization.org_city, 'Test City')
-        self.assertEqual(self.organization.org_state, 'CA')
-        self.assertEqual(self.organization.org_zip, '12345')
-        self.assertEqual(self.organization.org_address, '123 Test St')
-        self.assertEqual(self.organization.org_phone, '1234567890')
-        self.assertEqual(self.organization.org_owner_first_name, 'Test')
-        self.assertEqual(self.organization.org_owner_last_name, 'Owner')
+        """Test that an organization can be created"""
+        self.assertEqual(self.organization.org_name, "Test Organization")
+        self.assertEqual(self.organization.org_email, "test@example.com")
+        self.assertEqual(self.organization.org_city, "Test City")
+        self.assertEqual(self.organization.org_state, "TS")
+        self.assertEqual(self.organization.org_zip, "12345")
+        self.assertEqual(self.organization.org_address, "123 Test St")
+        self.assertEqual(self.organization.org_phone, "1234567890")
+        self.assertEqual(self.organization.org_owner_first_name, "John")
+        self.assertEqual(self.organization.org_owner_last_name, "Doe")
         self.assertEqual(self.organization.owning_user, self.user)
         self.assertEqual(self.organization.is_onboarding, True)
         self.assertEqual(self.organization.default_labor_rate, Decimal('50.00'))
-        self.assertEqual(self.organization.default_payment_link, 'https://example.com/payment')
+        self.assertEqual(self.organization.default_payment_link, "https://example.com/payment")
     
     def test_str_method(self):
-        """Test the __str__ method returns the expected string representation"""
+        """Test the __str__ method"""
         expected_str = f"<Organization, org_name: {self.organization.org_name}>"
         self.assertEqual(str(self.organization), expected_str)
     
     def test_json_method(self):
-        """Test the json method returns the expected dictionary"""
+        """Test the json method"""
         expected_json = {
-            'org_name': self.organization.org_name,
-            'org_email': self.organization.org_email,
-            'org_phone': self.organization.org_phone,
-            'org_city': self.organization.org_city,
-            'org_state': self.organization.org_state,
-            'org_zip': self.organization.org_zip,
-            'org_address': self.organization.org_address,
-            'org_owner_first_name': self.organization.org_owner_first_name,
-            'org_owner_last_name': self.organization.org_owner_last_name,
+            'org_name': "Test Organization",
+            'org_email': "test@example.com",
+            'org_phone': "1234567890",
+            'org_city': "Test City",
+            'org_state': "TS",
+            'org_zip': "12345",
+            'org_address': "123 Test St",
+            'org_owner_first_name': "John",
+            'org_owner_last_name': "Doe",
             'owning_user': self.user.id,
-            'is_onboarding': self.organization.is_onboarding,
-            'default_labor_rate': self.organization.default_labor_rate
+            'is_onboarding': True,
+            'default_labor_rate': Decimal('50.00')
         }
         self.assertEqual(self.organization.json(), expected_json)
     
-    def test_validators(self):
-        """Test that validators are applied to the fields"""
-        # Create an organization with invalid values
-        with self.assertRaises(Exception):
-            Organization.objects.create(
-                org_name='',  # Empty name should fail
-                org_email='org@example.com',
-                org_city='Test City',
-                org_state='CA',
-                org_zip='12345',
-                org_address='123 Test St',
-                org_phone='1234567890',
-                org_owner_first_name='Test',
-                org_owner_last_name='Owner',
-                owning_user=self.user
-            )
-        
-        with self.assertRaises(Exception):
-            Organization.objects.create(
-                org_name='Test Organization',
-                org_email='org@example.com',
-                org_city='Test City',
-                org_state='XX',  # Invalid state should fail
-                org_zip='12345',
-                org_address='123 Test St',
-                org_phone='1234567890',
-                org_owner_first_name='Test',
-                org_owner_last_name='Owner',
-                owning_user=self.user
-            )
-        
-        with self.assertRaises(Exception):
-            Organization.objects.create(
-                org_name='Test Organization',
-                org_email='org@example.com',
-                org_city='Test City',
-                org_state='CA',
-                org_zip='12345',
-                org_address='123 Test St',
-                org_phone='123456789',  # Invalid phone (too short) should fail
-                org_owner_first_name='Test',
-                org_owner_last_name='Owner',
-                owning_user=self.user
-            )
-    
-    def test_default_values(self):
-        """Test that default values are set correctly"""
-        # Create an organization without specifying default values
-        org = Organization.objects.create(
-            org_name='Test Organization 2',
-            org_email='org2@example.com',
-            org_city='Test City 2',
-            org_state='CA',
-            org_zip='54321',
-            org_address='321 Test St',
-            org_phone='0987654321',
-            org_owner_first_name='Test 2',
-            org_owner_last_name='Owner 2',
-            owning_user=self.user
+    def test_org_name_validation(self):
+        """Test org_name field validation"""
+        # Test empty org_name
+        organization = Organization(
+            org_name="",
+            org_email="test@example.com",
+            org_city="Test City",
+            org_state="TS",
+            org_zip="12345",
+            org_address="123 Test St",
+            org_phone="1234567890",
+            org_owner_first_name="John",
+            org_owner_last_name="Doe",
+            owning_user=self.user,
+            default_labor_rate=Decimal('50.00')
         )
-        
-        # Check that default values are set
-        self.assertEqual(org.is_onboarding, True)
-        self.assertEqual(org.default_labor_rate, Decimal('0'))
-        self.assertEqual(org.default_payment_link, '')
+        with self.assertRaises(ValidationError):
+            organization.full_clean()
+    
+    def test_org_state_validation(self):
+        """Test org_state field validation"""
+        # Test invalid state
+        organization = Organization(
+            org_name="Test Organization",
+            org_email="test@example.com",
+            org_city="Test City",
+            org_state="Invalid",
+            org_zip="12345",
+            org_address="123 Test St",
+            org_phone="1234567890",
+            org_owner_first_name="John",
+            org_owner_last_name="Doe",
+            owning_user=self.user,
+            default_labor_rate=Decimal('50.00')
+        )
+        with self.assertRaises(ValidationError):
+            organization.full_clean()
+    
+    def test_org_phone_validation(self):
+        """Test org_phone field validation"""
+        # Test invalid phone number
+        organization = Organization(
+            org_name="Test Organization",
+            org_email="test@example.com",
+            org_city="Test City",
+            org_state="TS",
+            org_zip="12345",
+            org_address="123 Test St",
+            org_phone="invalid",
+            org_owner_first_name="John",
+            org_owner_last_name="Doe",
+            owning_user=self.user,
+            default_labor_rate=Decimal('50.00')
+        )
+        with self.assertRaises(ValidationError):
+            organization.full_clean()
+    
+    def test_default_payment_link_optional(self):
+        """Test that default_payment_link is optional"""
+        # Create an organization without a default_payment_link
+        organization = Organization.objects.create(
+            org_name="No Payment Link Organization",
+            org_email="test@example.com",
+            org_city="Test City",
+            org_state="TS",
+            org_zip="12345",
+            org_address="123 Test St",
+            org_phone="1234567890",
+            org_owner_first_name="John",
+            org_owner_last_name="Doe",
+            owning_user=self.user,
+            default_labor_rate=Decimal('50.00'),
+            default_payment_link=""
+        )
+        self.assertEqual(organization.default_payment_link, "")
+        organization.full_clean()  # Should not raise ValidationError

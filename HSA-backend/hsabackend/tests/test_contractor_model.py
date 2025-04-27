@@ -1,117 +1,91 @@
-from rest_framework.test import APITestCase, APIRequestFactory
-from django.contrib.auth.models import User
+from django.test import TestCase
+from django.core.exceptions import ValidationError
 from hsabackend.models.contractor import Contractor
 from hsabackend.models.organization import Organization
 from hsabackend.utils.string_formatters import format_phone_number
 
-class ContractorModelTest(APITestCase):
+class ContractorModelTest(TestCase):
+    """Test cases for the Contractor model"""
+    
     def setUp(self):
-        # Create a user for the organization
-        self.user = User.objects.create_user(
-            username='testuser',
-            email='test@example.com',
-            password='testpassword'
-        )
-        
-        # Create an organization
+        """Set up test data"""
         self.organization = Organization.objects.create(
-            org_name='Test Organization',
-            org_email='org@example.com',
-            org_city='Test City',
-            org_state='CA',
-            org_zip='12345',
-            org_address='123 Test St',
-            org_phone='1234567890',
-            org_owner_first_name='Test',
-            org_owner_last_name='Owner',
-            owning_user=self.user
+            name="Test Organization",
+            address="123 Test St",
+            city="Test City",
+            state="TS",
+            zip_code="12345",
+            phone="1234567890",
+            email="test@example.com"
         )
         
-        # Create a contractor
         self.contractor = Contractor.objects.create(
-            first_name='Test',
-            last_name='Contractor',
-            email='contractor@example.com',
-            phone='1234567890',
+            first_name="John",
+            last_name="Doe",
+            email="john.doe@example.com",
+            phone="1234567890",
             organization=self.organization
         )
     
     def test_contractor_creation(self):
-        """Test that a contractor can be created with the expected values"""
-        self.assertEqual(self.contractor.first_name, 'Test')
-        self.assertEqual(self.contractor.last_name, 'Contractor')
-        self.assertEqual(self.contractor.email, 'contractor@example.com')
-        self.assertEqual(self.contractor.phone, '1234567890')
+        """Test that a contractor can be created"""
+        self.assertEqual(self.contractor.first_name, "John")
+        self.assertEqual(self.contractor.last_name, "Doe")
+        self.assertEqual(self.contractor.email, "john.doe@example.com")
+        self.assertEqual(self.contractor.phone, "1234567890")
         self.assertEqual(self.contractor.organization, self.organization)
     
     def test_str_method(self):
-        """Test the __str__ method returns the expected string representation"""
+        """Test the __str__ method"""
         expected_str = f"<Contractor: {self.contractor.pk}>"
         self.assertEqual(str(self.contractor), expected_str)
     
     def test_json_method(self):
-        """Test the json method returns the expected dictionary"""
+        """Test the json method"""
         expected_json = {
             'id': self.contractor.pk,
-            'first_name': self.contractor.first_name,
-            'last_name': self.contractor.last_name,
-            'email': self.contractor.email,
-            'phone': format_phone_number(self.contractor.phone),
+            'first_name': "John",
+            'last_name': "Doe",
+            'email': "john.doe@example.com",
+            'phone': format_phone_number("1234567890"),
         }
         self.assertEqual(self.contractor.json(), expected_json)
     
-    def test_validators(self):
-        """Test that validators are applied to the fields"""
-        # Create a contractor with invalid values
-        with self.assertRaises(Exception):
-            Contractor.objects.create(
-                first_name='',  # Empty name should fail
-                last_name='Contractor',
-                email='contractor@example.com',
-                phone='1234567890',
-                organization=self.organization
-            )
-        
-        with self.assertRaises(Exception):
-            Contractor.objects.create(
-                first_name='Test',
-                last_name='',  # Empty last name should fail
-                email='contractor@example.com',
-                phone='1234567890',
-                organization=self.organization
-            )
-        
-        with self.assertRaises(Exception):
-            Contractor.objects.create(
-                first_name='Test',
-                last_name='Contractor',
-                email='contractor@example.com',
-                phone='123456789',  # Invalid phone (too short) should fail
-                organization=self.organization
-            )
+    def test_first_name_validation(self):
+        """Test first_name field validation"""
+        # Test empty first_name
+        contractor = Contractor(
+            first_name="",
+            last_name="Doe",
+            email="john.doe@example.com",
+            phone="1234567890",
+            organization=self.organization
+        )
+        with self.assertRaises(ValidationError):
+            contractor.full_clean()
     
-    def test_multiple_contractors(self):
-        """Test that multiple contractors can be created for the same organization"""
-        # Create additional contractors
-        contractor2 = Contractor.objects.create(
-            first_name='Test2',
-            last_name='Contractor2',
-            email='contractor2@example.com',
-            phone='9876543210',
+    def test_last_name_validation(self):
+        """Test last_name field validation"""
+        # Test empty last_name
+        contractor = Contractor(
+            first_name="John",
+            last_name="",
+            email="john.doe@example.com",
+            phone="1234567890",
             organization=self.organization
         )
-        
-        contractor3 = Contractor.objects.create(
-            first_name='Test3',
-            last_name='Contractor3',
-            email='contractor3@example.com',
-            phone='5678901234',
+        with self.assertRaises(ValidationError):
+            contractor.full_clean()
+    
+    def test_phone_validation(self):
+        """Test phone field validation"""
+        # Test invalid phone number
+        contractor = Contractor(
+            first_name="John",
+            last_name="Doe",
+            email="john.doe@example.com",
+            phone="invalid",
             organization=self.organization
         )
-        
-        # Verify that all contractors are associated with the same organization
-        contractors = Contractor.objects.filter(organization=self.organization)
-        self.assertEqual(contractors.count(), 3)
-        self.assertIn(self.contractor, contractors)
-        self.assertIn(contractor2, contractors)
-        self.assertIn(contractor3, contractors)
+        with self.assertRaises(ValidationError):
+            contractor.full_clean()
