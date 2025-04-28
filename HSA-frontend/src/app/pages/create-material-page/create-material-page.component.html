@@ -17,7 +17,17 @@
         <mat-error>Material Name is required</mat-error>
       }
     </mat-form-field>
-
+    <mat-form-field>
+      <mat-label>Description</mat-label>
+      <textarea
+        formControlName = "materialDescription"
+        matInput
+      ></textarea>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Default Cost</mat-label>
+      <input formControlName="materialDefaultCost" matInput>
+    </mat-form-field>
     <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
       <button mat-flat-button type="submit">Add</button>
       <button mat-stroked-button (click)="navigateToPage('materials')">Cancel</button>
