@@ -29,10 +29,14 @@ export class EditMaterialPageComponent implements OnInit {
     this.materialForm = this.materialFormBuilder.group({
       materialName: ['', Validators.required],
       materialDescription: [''],
+      materialDefaultCost: [''],
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      this.materialForm.controls['materialName'].setValue(params['material_name']);
+      console.log(params);
+      this.materialForm.controls['materialName'].setValue(params['name']);
+      this.materialForm.controls['materialDescription'].setValue(params['description']);
+      this.materialForm.controls['materialDefaultCost'].setValue(params['default_cost']);
     })
 
     this.currentMaterialName = this.materialForm.controls['materialName'].value;
