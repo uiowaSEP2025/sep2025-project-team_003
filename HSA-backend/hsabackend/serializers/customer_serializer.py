@@ -6,7 +6,7 @@ from hsabackend.serializers.organization_serializer import OrganizationSerialize
 class CustomerTableSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ["id","first_name","last_name","email","phone"]
+        fields = ["id","first_name","last_name","email","phone", "notes"]
 
 class CustomerSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(min_length=1, max_length=50, required=True)
@@ -16,12 +16,13 @@ class CustomerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Customer
-        fields = ["id","first_name","last_name","email","phone"]
+        fields = ["id","first_name","last_name","email","phone", "notes"]
 
     def create(self, validated_data):
         """
         Create and return a new Customer instance, given the validated data.
         """
+        validated_data['phone'] = (validated_data['phone']).replace("-","")
         return Customer.objects.create(**validated_data)
 
     def update(self, instance, validated_data):

@@ -59,7 +59,8 @@ def get_table_data(request, object_type, exclude=False):
     paginator = CustomPagination()
 
     if exclude:
-        exclude_ids = [int(excluded_id) for excluded_id in request.GET.getlist('excludeIDs', [])]
+        excluded_ids_str = request.GET.getlist('excludeIDs', [])
+        exclude_ids = [int(id) for id in excluded_ids_str]
 
     match object_type:
         case "job_template":
@@ -372,27 +373,37 @@ def get_individual_data(request, object_id, object_type):
             )
 
 def create_individual_data(request, object_type):
+    data = request.data
     match object_type:
         case "discount":
-            serializer = DiscountSerializer(data=request.data)
+            serializer = DiscountSerializer(data=data)
         case "job_template":
-            serializer = JobTemplateSerializer(data=request.data)
+            serializer = JobTemplateSerializer(data=data)
         case "contractor":
-            serializer = ContractorSerializer(data=request.data)
+            serializer = ContractorSerializer(data=data)
         case "customer":
-            serializer = CustomerSerializer(data=request.data)
+            customer_data = {
+                "first_name": data.get("firstn"),
+                "last_name": data.get("lastn"),
+                "email": data.get("email"),
+                "phone": data.get("phoneno"),
+                "notes": data.get("notes"),
+                "organization": request.organization,
+            }
+            data = customer_data
+            serializer = CustomerSerializer(data=data)
         case "job":
-            serializer = JobSerializer(data=request.data)
+            serializer = JobSerializer(data=data)
         case "service":
-            serializer = ServiceSerializer(data=request.data)
+            serializer = ServiceSerializer(data=data)
         case "material":
-            serializer = MaterialSerializer(data=request.data)
+            serializer = MaterialSerializer(data=data)
         case "request":
-            serializer = RequestSerializer(data=request.data)
+            serializer = RequestSerializer(data=data)
         case "invoice":
-            serializer = InvoiceSerializer(data=request.data)
+            serializer = InvoiceSerializer(data=data)
         case "booking":
-            serializer = BookingSerializer(data=request.data)
+            serializer = BookingSerializer(data=data)
 
         case _:
             return Response(
@@ -402,7 +413,7 @@ def create_individual_data(request, object_type):
                 status=status.HTTP_400_BAD_REQUEST
             )
     if serializer.is_valid():
-        serializer.create(request.data)
+        serializer.create(data)
         return Response(
             serializer.data, status=status.HTTP_201_CREATED)
     else:
@@ -428,8 +439,9 @@ def update_individual_data(request, object_id, object_type):
                 "phone": data.get("phoneno"),
                 "notes": data.get("notes"),
             }
+            data = customer_data
             query_object = Customer.objects.filter(organization=request.organization.pk, pk=object_id).first()
-            serializer = CustomerSerializer(query_object, data=customer_data)
+            serializer = CustomerSerializer(query_object, data=data)
         case "job":
             job_data = {
                 "job_address": data.get("address"),
@@ -440,8 +452,9 @@ def update_individual_data(request, object_id, object_type):
                 "job_state": data.get("state"),
                 "job_zip": data.get("zip"),
             }
+            data = job_data
             query_object = Job.objects.filter(organization=request.organization.pk, pk=object_id).first()
-            serializer = JobSerializer(query_object, data=job_data)
+            serializer = JobSerializer(query_object, data=data)
         case "service":
             query_object = Service.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = ServiceSerializer(query_object, data=data)

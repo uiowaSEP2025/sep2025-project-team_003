@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.fields import HiddenField
 
 from .contractor_serializer import ContractorSerializer
 from .customer_serializer import CustomerSerializer
@@ -79,6 +80,7 @@ class JobSerializer(serializers.ModelSerializer):
         # Add a simplified customer name for display in tables
         if instance.customer:
             representation['customerName'] = f"{instance.customer.first_name} {instance.customer.last_name}"
+            representation['customerID'] = instance.customer.id
 
         # Truncate description if it's too long
         if instance.description:
