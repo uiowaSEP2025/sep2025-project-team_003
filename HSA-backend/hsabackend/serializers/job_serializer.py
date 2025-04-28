@@ -6,7 +6,7 @@ from .invoice_serializer import InvoiceSerializer
 from .material_serializer import MaterialSerializer
 from .organization_serializer import OrganizationSerializer
 from .service_serializer import ServiceSerializer
-from ..models.job import Job
+from ..models.job import Job, JobsServices, JobsMaterials
 
 
 class JobTableSerializer(serializers.ModelSerializer):
@@ -34,14 +34,14 @@ class JobSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def services_representation(self, instance):
-        services_temp = instance.services.all()
-        services_data = ServiceSerializer(services_temp, many=True).data
+        services_data = JobsServices.objects.select_related("service").filter(job=instance.pk)
         services_json = []
         for i in services_data:
             services_json.append({
-                "serviceID": i['id'],
-                "serviceName": i['name'],
-                "serviceDescription": i['description']
+                "serviceID": i.service.id,
+                "serviceName": i.service.name,
+                "serviceDescription": i.service.description,
+                "fee": i.fee
                             })
         return {"services": services_json}
 
@@ -59,18 +59,14 @@ class JobSerializer(serializers.ModelSerializer):
         return {"contractors": contractors_json}
 
     def materials_representation(self, instance):
-        material_temp = instance.materials.all()
-        materials_data = MaterialSerializer(material_temp, many=True).data
+        materials = JobsMaterials.objects.select_related("material").filter(job=instance.id)
         materials_json = []
-        for i in materials_data:
-            i['unit_price'] = 0
-            i['quantity'] = 0
-
+        for i in materials:
             materials_json.append({
-                "materialID": i['id'],
-                "materialName": i['name'],
-                "unitsUsed": i['quantity'],
-                "pricePerUnit": i['unit_price']
+                "materialID": i.material.id,
+                "materialName": i.material.name,
+                "unitsUsed": i.quantity,
+                "pricePerUnit": i.unit_price
             })
         return {"materials": materials_json}
 

@@ -8,8 +8,10 @@ from rest_framework.response import Response
 from hsabackend.models.invoice import Invoice
 from hsabackend.models.job import JobsServices, JobsMaterials, Job
 from hsabackend.models.organization import Organization
+from hsabackend.models.service import Service
 from hsabackend.serializers.job_material_serializer import JobMaterialSerializer
 from hsabackend.serializers.job_service_serializer import JobServiceSerializer
+from hsabackend.serializers.service_serializer import ServiceSerializer
 from hsabackend.utils.string_formatters import format_currency, format_title_case, format_phone_number_with_parens, \
     format_maybe_null_date, format_percent, format_tax_percent
 
@@ -151,21 +153,29 @@ def generate_pdf_customer_org_header(pdf: FPDF, org: Organization, job: Job, typ
 def generate_table_for_specific_job(pdf: FPDF, jobid: int, num_jobs: int, idx: int):
     greyscale = 215  # higher no --> lighter grey
     pdf.set_x(10)
-    pdf.multi_cell(100, text=f"Job #{idx + 1} of {num_jobs}", align="L")
+    if num_jobs == 1:
+        header_text = ""
+    else:
+        header_text = f"Job #{idx + 1} of {num_jobs}"
+    pdf.multi_cell(100, text=header_text, align="L")
     with pdf.table(line_height=4, padding=2, text_align=("LEFT", "LEFT", "LEFT", "LEFT", "LEFT"),
                    borders_layout="SINGLE_TOP_LINE", cell_fill_color=greyscale, cell_fill_mode="ROWS") as table:
         header = table.row()
-        services = JobsServices.objects.select_related("service").filter(
-            job=jobid
-        )
-        service_serializer = JobServiceSerializer(services, many=True)
-        header.cell("Services Rendered", colspan=3, align="C")
-        services_data = service_serializer.data
-        for service in services_data:
+        services = JobsServices.objects.select_related("service").filter(job=jobid)
+        header.cell("Job Description",align="L")
+        header.cell("Services Rendered", align="L")
+        header.cell("Service Fees", align="R")
+        services_total = Decimal(0)
+        for service in services:
             service_row = table.row()
-            service_row.cell(service["service_name"])
-            service_row.cell(service["service_description"])
-            service_row.cell(service["fee"])
+            service_row.cell(service.service.name, align="L")
+            service_row.cell(service.service.description, align="L")
+            service_row.cell(format_currency(service.fee), align="R")
+            services_total += service.fee
+        services_total_row = table.row()
+        services_total_row.cell("Services Subtotal")
+        services_total_row.cell("")
+        services_total_row.cell(format_currency(services_total), align="R")
     pdf.ln(5)
 
     with pdf.table(line_height=4, padding=2, text_align=("LEFT", "LEFT", "LEFT", "LEFT", "LEFT"),
@@ -176,22 +186,31 @@ def generate_table_for_specific_job(pdf: FPDF, jobid: int, num_jobs: int, idx: i
         header.cell("Material Name")
         header.cell("Per Unit")
         header.cell("Units Used")
-        header.cell("Total")
+        header.cell("Materials Cost", align="R")
 
-        total = Decimal(0)
+        mat_total = Decimal(0)
         for mat in materials:
             material_row = table.row()
             material_row.cell(mat.material.name)
             material_row.cell(format_currency(mat.unit_price))
             material_row.cell(str(mat.quantity))
-            total += mat.total_cost
-            material_row.cell(format_currency(mat.total_cost))
+            mat_total += mat.total_cost
+            material_row.cell(format_currency(mat.total_cost), align="R")
 
+        mat_total_row = table.row()
+        mat_total_row.cell("Materials Subtotal")
+        mat_total_row.cell("")
+        mat_total_row.cell("")
+        mat_total_row.cell(format_currency(mat_total), align="R")
+
+        pdf.ln(5)
+    with pdf.table(line_height=4, padding=2, text_align=("LEFT", "LEFT", "LEFT", "LEFT", "LEFT"),
+                    borders_layout="SINGLE_TOP_LINE", cell_fill_color=greyscale, cell_fill_mode="ROWS") as table:
         total_row = table.row()
-        total_row.cell("Materials Total")
+        total_row.cell("Total")
         total_row.cell("")
         total_row.cell("")
-        total_row.cell(format_currency(total))
+        total_row.cell(format_currency(services_total + mat_total), align="R")
 
 def generate_signature_page(pdf: FPDF):
     # Add a new page for signature and legal statement

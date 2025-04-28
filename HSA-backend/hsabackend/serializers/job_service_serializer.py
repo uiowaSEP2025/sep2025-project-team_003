@@ -1,10 +1,12 @@
 from rest_framework import serializers
-from ..models.job import Job, JobsServices
+
 from .service_serializer import ServiceSerializer
+from ..models.job import JobsServices
+
 
 class JobServiceSerializer(serializers.ModelSerializer):
     fee = serializers.DecimalField(decimal_places=2, max_digits=10)
-
+    service = ServiceSerializer(read_only=True)
     class Meta:
         model = JobsServices
         fields = ['job','service', 'fee']

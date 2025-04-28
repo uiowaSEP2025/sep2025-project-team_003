@@ -12,11 +12,11 @@ import { MatCardModule } from '@angular/material/card';
 @Component({
   selector: 'app-edit-customer-page',
   imports: [
-    MatFormFieldModule, 
-    ReactiveFormsModule, 
-    MatInputModule, 
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule,
     MatButtonModule,
-    MatCardModule, 
+    MatCardModule,
     FormsModule
   ],
   templateUrl: './edit-customer-page.component.html',
@@ -77,7 +77,7 @@ export class EditCustomerPageComponent implements OnInit {
       lastn: this.lastNameControl.value,
       email: this.emailControl.value,
       phoneno: this.phoneControl.value,
-      notes: this.phoneControl.value
+      notes: this.notesControl.value
     }
     this.customerService.editCustomer(args).subscribe(
       {

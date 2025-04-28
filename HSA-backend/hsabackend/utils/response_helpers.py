@@ -421,11 +421,27 @@ def update_individual_data(request, object_id, object_type):
             query_object = Contractor.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = ContractorSerializer(query_object, data=data)
         case "customer":
+            customer_data = {
+                "first_name": data.get("firstn"),
+                "last_name": data.get("lastn"),
+                "email": data.get("email"),
+                "phone": data.get("phoneno"),
+                "notes": data.get("notes"),
+            }
             query_object = Customer.objects.filter(organization=request.organization.pk, pk=object_id).first()
-            serializer = CustomerSerializer(query_object, data=data)
+            serializer = CustomerSerializer(query_object, data=customer_data)
         case "job":
+            job_data = {
+                "job_address": data.get("address"),
+                "job_city": data.get("city"),
+                "job_description": data.get("description"),
+                "start_date": data.get("startDate"),
+                "end_date": data.get("endDate"),
+                "job_state": data.get("state"),
+                "job_zip": data.get("zip"),
+            }
             query_object = Job.objects.filter(organization=request.organization.pk, pk=object_id).first()
-            serializer = JobSerializer(query_object, data=data)
+            serializer = JobSerializer(query_object, data=job_data)
         case "service":
             query_object = Service.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = ServiceSerializer(query_object, data=data)
