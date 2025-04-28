@@ -376,6 +376,12 @@ def create_individual_data(request, object_type):
     data = request.data
     match object_type:
         case "discount":
+            discount_data = {
+                "discount_name": data.get("name"),
+                "discount_percent": data.get("percent"),
+                "organization": request.organization
+            }
+            data = discount_data
             serializer = DiscountSerializer(data=data)
         case "job_template":
             serializer = JobTemplateSerializer(data=data)
@@ -412,6 +418,13 @@ def create_individual_data(request, object_type):
             data = service_data
             serializer = ServiceSerializer(data=data)
         case "material":
+            material_data = {
+                "name": data.get('material_name'),
+                "description": data.get('description'),
+                "default_cost": data.get('default_cost'),
+                "organization": request.organization,
+            }
+            data = material_data
             serializer = MaterialSerializer(data=data)
         case "request":
             serializer = RequestSerializer(data=data)
@@ -438,6 +451,11 @@ def update_individual_data(request, object_id, object_type):
     data = request.data
     match object_type:
         case "discount":
+            discount_data = {
+                "discount_name": data.get("name"),
+                "discount_percent": data.get("percent")
+            }
+            data = discount_data
             query_object = Discount.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = DiscountSerializer(query_object, data=data)
         case "job_template":
@@ -483,6 +501,12 @@ def update_individual_data(request, object_id, object_type):
             query_object = Service.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = ServiceSerializer(query_object, data=data)
         case "material":
+            material_data = {
+                "name": data.get('material_name'),
+                "description": data.get('description'),
+                "default_cost": data.get('default_cost'),
+            }
+            data = material_data
             query_object = Material.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = MaterialSerializer(query_object, data=data)
         case "request":

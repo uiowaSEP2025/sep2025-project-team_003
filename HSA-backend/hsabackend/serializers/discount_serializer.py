@@ -5,13 +5,12 @@ from hsabackend.serializers.organization_serializer import OrganizationSerialize
 
 
 class DiscountSerializer(serializers.ModelSerializer):
-    organization = OrganizationSerializer(read_only=True)
     discount_name = serializers.CharField(min_length=1, max_length=100, required=True)
     discount_percent = serializers.DecimalField(max_digits=5, decimal_places=2, required=True)
 
     class Meta:
         model = Discount
-        fields = "__all__"
+        fields = ['discount_name','id','discount_percent']
 
     def create(self, validated_data):
         """
