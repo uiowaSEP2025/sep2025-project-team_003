@@ -8,7 +8,7 @@ class MaterialSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Material
-        fields = ["id", "name", "default_cost"]
+        fields = ["id", "name", "description", "default_cost"]
 
     def create(self, validated_data):
         """
