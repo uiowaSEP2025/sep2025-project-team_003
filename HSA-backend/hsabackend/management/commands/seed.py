@@ -96,30 +96,30 @@ class Command(BaseCommand):
             service_data = [
                 {"name": "Window Cleaning",
                  "description": "Cleaning of windows for residential and commercial properties.",
-                 "default_fee": 0,
+                 "default_fee": random_currency(0,1000),
                  "organization": org_1},
                 {"name": "Pest Control",
                  "description": "Extermination and prevention of pests.",
-                 "default_fee": 0,
+                 "default_fee": random_currency(0,1000),
                  "organization": org_1},
                 {"name": "Handyman Services",
                  "description": "General repair and maintenance services.",
-                 "default_fee": 0,
+                 "default_fee": random_currency(0,1000),
                  "organization": org_1},
                 ]
 
             service_data1 = [
                 {"name": "Window Cleaning",
                  "description": "Cleaning of windows for residential and commercial properties. (test user)",
-                 "default_fee": 0,
+                 "default_fee": random_currency(0,1000),
                  "organization": org_2},
                 {"name": "Pest Control",
                  "description": "Extermination and prevention of pests. (test user)",
-                 "default_fee": 0,
+                 "default_fee": random_currency(0,1000),
                  "organization": org_2},
                 {"name": "Handyman Services",
                  "description": "General repair and maintenance services. (test user)",
-                 "default_fee": 0,
+                 "default_fee": random_currency(0,1000),
                  "organization": org_2},
                 ]
 

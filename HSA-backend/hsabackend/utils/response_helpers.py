@@ -380,6 +380,14 @@ def create_individual_data(request, object_type):
         case "job_template":
             serializer = JobTemplateSerializer(data=data)
         case "contractor":
+            contractor_data = {
+                'first_name': data.get('firstName'),
+                'last_name': data.get('lastName'),
+                'email': data.get('email'),
+                'phone': data.get('phone').replace("-",""),
+                'organization': request.organization,
+            }
+            data = contractor_data
             serializer = ContractorSerializer(data=data)
         case "customer":
             customer_data = {
@@ -395,6 +403,13 @@ def create_individual_data(request, object_type):
         case "job":
             serializer = JobSerializer(data=data)
         case "service":
+            service_data = {
+                "name": data.get('service_name'),
+                "description": data.get('service_description'),
+                "default_fee": data.get('default_fee'),
+                "organization": request.organization,
+            }
+            data = service_data
             serializer = ServiceSerializer(data=data)
         case "material":
             serializer = MaterialSerializer(data=data)
@@ -459,6 +474,12 @@ def update_individual_data(request, object_id, object_type):
             query_object = Job.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = JobSerializer(query_object, data=data)
         case "service":
+            service_data = {
+                "name": data.get('service_name'),
+                "description": data.get('service_description'),
+                "default_fee": data.get('default_fee'),
+            }
+            data = service_data
             query_object = Service.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = ServiceSerializer(query_object, data=data)
         case "material":

@@ -5,11 +5,10 @@ from hsabackend.serializers.organization_serializer import OrganizationSerialize
 
 
 class MaterialSerializer(serializers.ModelSerializer):
-    organization = OrganizationSerializer(read_only=True)
 
     class Meta:
         model = Material
-        fields = "__all__"
+        fields = ["id", "name", "default_cost"]
 
     def create(self, validated_data):
         """

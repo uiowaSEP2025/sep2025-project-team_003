@@ -81,17 +81,19 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
   }
 
   updateServiceTable() {
+    console.log(this.dataSource)
     if (this.dataSource) {
       this.displayServices = this.dataSource.services.map(
         (service) => ({
           "Service ID": service.serviceID,
           "Service Name": service.serviceName,
-          "Service Description": service.serviceDescription
+          "Service Description": service.serviceDescription,
+          "Service Fee": service.fee
         })
       )
     }
 
-    this.displayedServiceColumns = ["Service ID", "Service Name", "Service Description"]
+    this.displayedServiceColumns = ["Service ID", "Service Name", "Service Description", "Service Fee"]
     this.displayedServiceColumns = this.isEditRow === true ? [...this.displayedServiceColumns, "Actions"] : this.displayedServiceColumns
   }
 
