@@ -27,6 +27,7 @@ export class CreateServicePageComponent {
     this.serviceForm = this.serviceFormBuilder.group({
       serviceName: ['', Validators.required],
       serviceDescription: [''],
+      serviceDefaultFee: [''],
     });
   }
 
@@ -38,6 +39,7 @@ export class CreateServicePageComponent {
       const data = {
         service_name: this.serviceForm.controls["serviceName"].value,
         service_description: this.serviceForm.controls["serviceDescription"].value,
+        default_fee: this.serviceForm.controls["serviceDefaultFee"].value,
       }
       this.serviceService.createService(data).subscribe({
         next: () => {
