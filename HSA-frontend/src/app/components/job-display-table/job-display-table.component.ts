@@ -82,7 +82,6 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
 
   updateServiceTable() {
     if (this.dataSource) {
-      console.log(this.dataSource.services)
       this.displayServices = this.dataSource.services.map(
         (service) => ({
           "Service ID": service.serviceID,
