@@ -211,7 +211,7 @@ def generate_signature_page(pdf: FPDF):
     pdf.line(left_margin, current_y, right_margin, current_y)
 
 def generate_pdf(request, job_id, type_enum="invoice"):
-    org = request.org
+    org = request.organization
 
     if type_enum == "quote":
         object_select = Job.objects.select_related("customer").filter(

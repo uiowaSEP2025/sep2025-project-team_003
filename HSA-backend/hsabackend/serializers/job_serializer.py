@@ -27,6 +27,7 @@ class JobSerializer(serializers.ModelSerializer):
     contractors = ContractorSerializer(many=True, read_only=True)
     invoice = InvoiceSerializer(read_only=True)
     organization = OrganizationSerializer(read_only=True)
+    fee = serializers.DecimalField(decimal_places=2, max_digits=10, allow_null=True, default=0)
 
     class Meta:
         model = Job

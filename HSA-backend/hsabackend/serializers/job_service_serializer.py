@@ -3,71 +3,34 @@ from ..models.job import Job, JobsServices
 from .service_serializer import ServiceSerializer
 
 class JobServiceSerializer(serializers.ModelSerializer):
-    service = ServiceSerializer(read_only=True)
     fee = serializers.DecimalField(decimal_places=2, max_digits=10)
 
     class Meta:
-        model = Job
-        fields = ['service', 'fee']
-
-    def to_representation(self, instance):
-        """
-        Override to_representation to include service details
-        """
-        representation = super().to_representation(instance)
-
-        # Include service details if available
-        if hasattr(instance, 'service') and instance.service:
-            representation['service_name'] = instance.service.name
-            representation['service_description'] = instance.service.description
-
-        return representation
+        model = JobsServices
+        fields = ['job','service', 'fee']
 
     def create(self, validated_data):
         """
-        Create and return a new Job instance with services, given the validated data.
+        Create and return a new JobServices instance with services, given the validated data.
         """
-        services_data = validated_data.pop('services', [])
-        job = Job.objects.create(**validated_data)
-
-        # Add services to the job
-        for service_data in services_data:
-            service = service_data.get('service')
-            fee = service_data.get('fee', service.default_fee)
-
-            JobsServices.objects.create(
+        service = validated_data.pop('service')
+        job = validated_data.pop('job')
+        fee = validated_data.pop('fee', service.default_fee)
+        request = JobsServices.objects.create(
                 job=job,
                 service=service,
                 fee=fee,
-            )
+        )
 
-        return job
+        return request
 
     def update(self, instance, validated_data):
         """
         Update and return an existing Job instance with services, given the validated data.
         """
-        services_data = validated_data.pop('services', None)
-
-        # Update job fields
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-
-        # Update services if provided
-        if services_data is not None:
-            # Clear existing services
-            JobsServices.objects.filter(job=instance).delete()
-
-            # Add new services
-            for service_data in services_data:
-                service = service_data.get('service')
-                fee = service_data.get('fee', service.default_fee)
-
-                JobsServices.objects.create(
-                    job=instance,
-                    service=service,
-                    fee=fee,
-                )
+        instance.job = validated_data.get('job', instance.job)
+        instance.service = validated_data.get('service', instance.service)
+        instance.fee = validated_data.get('fee', instance.fee)
 
         instance.save()
         return instance

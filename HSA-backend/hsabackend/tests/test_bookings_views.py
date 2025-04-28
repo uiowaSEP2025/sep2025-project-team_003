@@ -27,7 +27,7 @@ class BookingsViewsTest(TestCase):
             org_name="Test Organization",
             org_email="test@example.com",
             org_city="Test City",
-            org_state="TS",
+            org_state="AZ",
             org_zip="12345",
             org_address="123 Test St",
             org_phone="1234567890",
@@ -46,7 +46,8 @@ class BookingsViewsTest(TestCase):
             job_city="Test City",
             job_state="TS",
             job_zip="12345",
-            job_address="456 Test Ave"
+            job_address="456 Test Ave",
+            hourly_rate=50.00,
         )
         
         # Create a booking

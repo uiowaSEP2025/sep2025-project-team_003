@@ -15,7 +15,7 @@ def create_invoice(request):
     return create_individual_data(request, "invoice")
 
     # json = request.data
-    # org = request.org
+    # org = request.organization
     #
     # customer_id = json.get("customerID", None)
     # if not isinstance(customer_id, int):
@@ -89,7 +89,7 @@ def get_invoices(request):
 @check_authenticated_and_onboarded()
 def update_invoice(request, invoice_id):
     return update_individual_data(request, invoice_id, "invoice")
-    # org = request.org
+    # org = request.organization
     # json = request.data
     #
     # job_ids = json.get("jobIDs",[])
@@ -180,7 +180,7 @@ def get_invoice(request, invoice_id):
 @check_authenticated_and_onboarded()
 def get_data_for_invoice(request, invoice_id):
     """gets all the data for the invoice detailed view"""
-    org = request.org
+    org = request.organization
     invoice_qs = Invoice.objects.filter(
         customer__organization=org.pk,
         pk = invoice_id

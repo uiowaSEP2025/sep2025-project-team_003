@@ -22,14 +22,14 @@ from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 @api_view(["GET"])
 @check_authenticated_and_onboarded(require_onboarding=False)
 def get_organization(request):
-    org = request.org
+    org = request.organization
     serializer = OrganizationSerializer(org)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
 def edit_organization(request):
-    org = request.org
+    org = request.organization
     org_data = {
         "org_name": request.data.get("orgName", ""),
         "org_email": request.data.get("orgEmail", ""),
@@ -58,7 +58,7 @@ def edit_organization(request):
 @api_view(["POST"])
 @check_authenticated_and_onboarded(require_onboarding=False)
 def complete_onboarding(request):
-    org = request.org
+    org = request.organization
 
     if not org.is_onboarding:
         return Response({"message": "Already onboarded"}, status=status.HTTP_400_BAD_REQUEST)
@@ -159,9 +159,9 @@ def complete_onboarding(request):
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded(require_onboarding=False)
-def createOrganization(request):
+def create_organization(request):
     # users can only have a single organization
-    org_count = Organization.objects.filter(owning_User=request.user.pk).count()
+    org_count = Organization.objects.filter(owning_user=request.user.pk).count()
     if org_count > 0:
         return Response({"errors": "This user already has an organization"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -192,15 +192,15 @@ def createOrganization(request):
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded(require_onboarding=False)
-def deleteOrganization(request):
+def delete_organization(request):
     try:
-        org_count = Organization.objects.filter(owning_User=request.user.pk).count()
+        org_count = Organization.objects.filter(owning_user=request.user.pk).count()
         if org_count <= 1:
             return Response({"errors": "All users must have at least 1 org; You only have 1 or less orgs, cannot delete."}, status=status.HTTP_400_BAD_REQUEST)
         
-        # code coverage here is wanky due to the fact that the delete path will never get walked under normal app circumstances.
+        # code coverage here is wanky because the delete path will never get walked under normal app circumstances.
         # because a user should never be left without an org.
-        Organization.objects.filter(owning_User=request.user.pk).delete()
+        Organization.objects.filter(owning_user=request.user.pk).delete()
         return Response({"message": "Organization deleted"}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error":f"An error occurred trying to delete organization. Please contact admin. Error: {e}"}, status=status.HTTP_400_BAD_REQUEST)

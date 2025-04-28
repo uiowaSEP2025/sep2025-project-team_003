@@ -6,14 +6,18 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 
+from hsabackend.models.contractor import Contractor
 from hsabackend.models.customer import Customer
+from hsabackend.models.job import Job, JobsServices, JobsMaterials
 from hsabackend.models.material import Material
 from hsabackend.models.organization import Organization
 from hsabackend.models.service import Service
+from hsabackend.serializers.booking_serializer import BookingSerializer
 from hsabackend.serializers.contractor_serializer import ContractorSerializer
 from hsabackend.serializers.customer_serializer import CustomerSerializer
 from hsabackend.serializers.discount_serializer import DiscountSerializer
 from hsabackend.serializers.job_serializer import JobSerializer
+from hsabackend.serializers.job_template_serializer import JobTemplateSerializer
 from hsabackend.serializers.material_serializer import MaterialSerializer
 from hsabackend.serializers.organization_serializer import OrganizationSerializer
 from hsabackend.serializers.service_serializer import ServiceSerializer
@@ -179,7 +183,7 @@ class Command(BaseCommand):
                 contractor_serializer.create(contractor_data)
                 contractor_serializer2 = ContractorSerializer(data=contractor_data_2)
                 contractor_serializer2.is_valid(raise_exception=True)
-                contractor_serializer2.create(contractor_data)
+                contractor_serializer2.create(contractor_data_2)
 
             material_names = [
                 "Steel Beam",
@@ -372,6 +376,8 @@ class Command(BaseCommand):
             materials_2 = Material.objects.filter(organization=org_2).all()
             customer_1 = Customer.objects.filter(organization=org_1).all()
             customer_2 = Customer.objects.filter(organization=org_2).all()
+            contractor_1 = Contractor.objects.filter(organization=org_1).all()
+            contractor_2 = Contractor.objects.filter(organization=org_2).all()
             # Generate 5 mock Job instances
             for i in range(5):
 
@@ -381,6 +387,8 @@ class Command(BaseCommand):
                 material_seed_2 = random.choice(materials_2)
                 customer_seed_1 = random.choice(customer_1)
                 customer_seed_2 = random.choice(customer_2)
+                contractor_seed_1 = random.choice(contractor_1)
+                contractor_seed_2 = random.choice(contractor_2)
 
 
                 job_data = {
@@ -393,12 +401,29 @@ class Command(BaseCommand):
                     "job_state": mock_requests_data_1[i]["requester_state"],
                     "job_zip": mock_requests_data_1[i]["requester_zip"],
                     "job_address": mock_requests_data_1[i]["requester_address"],
-                    "use_hourly_rate": True,
+                    "use_hourly_rate": random.choice([True, False]),
                     "minutes_worked": random.randint(60, 540),
                     "hourly_rate": random_currency(10, 50),
                     "services": [service_seed_1],
                     "materials": [material_seed_1],
                     "customer": customer_seed_1,
+                    "contractors": [contractor_seed_1],
+                }
+
+                job_template_data = {
+                    "name": "example template " + str(i),
+                    "description": random.choice(job_descriptions),
+                    "organization": org_1,
+                    "services": [service_seed_1],
+                    "materials": [material_seed_1],
+                }
+
+                job_template_data_2 = {
+                    "name": "example template " + str(i),
+                    "description": random.choice(job_descriptions),
+                    "organization": org_2,
+                    "services": [service_seed_2],
+                    "materials": [material_seed_2],
                 }
 
                 job_data_2 = {
@@ -411,13 +436,15 @@ class Command(BaseCommand):
                     "job_state": mock_requests_data_2[i]["requester_state"],
                     "job_zip": mock_requests_data_2[i]["requester_zip"],
                     "job_address": mock_requests_data_2[i]["requester_address"],
-                    "use_hourly_rate": True,
+                    "use_hourly_rate": random.choice([True, False]),
                     "minutes_worked": random.randint(60, 540),
                     "hourly_rate": random_currency(10, 50),
                     "services": [service_seed_2],
                     "materials": [material_seed_2],
                     "customer": customer_seed_2,
+                    "contractors": [contractor_seed_2],
                 }
+
 
                 job_serializer = JobSerializer(data=job_data)
                 job_serializer.is_valid(raise_exception=True)
@@ -425,6 +452,27 @@ class Command(BaseCommand):
                 job_serializer2 = JobSerializer(data=job_data_2)
                 job_serializer2.is_valid(raise_exception=True)
                 job_serializer2.create(job_data_2)
+
+                job_template_serializer = JobTemplateSerializer(data=job_template_data)
+                job_template_serializer.is_valid(raise_exception=True)
+                job_template_serializer.create(job_template_data)
+                job_template_serializer2 = JobTemplateSerializer(data=job_template_data_2)
+                job_template_serializer2.is_valid(raise_exception=True)
+                job_template_serializer2.create(job_template_data_2)
+
+            job_services = JobsServices.objects.all()
+            for job_service in job_services:
+                job_service.fee = random_currency(10, 50)
+                job_service.save()
+
+            job_materials = JobsMaterials.objects.all()
+            for job_material in job_materials:
+                job_material.quantity = random.randint(1, 10)
+                job_material.unit_price = random_currency(10, 50)
+                job_material.save()
+
+
+
 
 
 
@@ -449,6 +497,40 @@ class Command(BaseCommand):
                 discount_serializer2 = DiscountSerializer(data=discount_data_2)
                 discount_serializer2.is_valid(raise_exception=True)
                 discount_serializer2.create(discount_data_2)
+
+            jobs_1 = Job.objects.filter(organization=org_1).all()
+            jobs_2 = Job.objects.filter(organization=org_2).all()
+
+            colors = ["#6aa84f","#f1c232","#cc4125","#808080","#2e78d6"]
+            status_choices = ['pending', 'accepted', 'rejected', 'cancelled']
+
+            for i in range(5):
+                booking_data = {
+                    "event_name": f"Event {i}",
+                    "back_color": random.choice(colors),
+                    "booking_type": "job",
+                    "status": random.choice(status_choices),
+                    "organization": org_1,
+                    "job": random.choice(jobs_1),
+                    "start_time": timezone.now() + timezone.timedelta(days=i),
+                    "end_time": timezone.now() + + timezone.timedelta(days=i, hours=random.randint(1, 10))
+                }
+                booking_data_2 = {
+                    "event_name": f"Event {i}",
+                    "back_color": random.choice(colors),
+                    "booking_type": "job",
+                    "status": random.choice(status_choices),
+                    "organization": org_2,
+                    "job": random.choice(jobs_2),
+                    "start_time": timezone.now() + timezone.timedelta(days=i),
+                    "end_time": timezone.now() + timezone.timedelta(days=i , hours=random.randint(1, 10))
+                }
+                booking_serializer = BookingSerializer(data=booking_data)
+                booking_serializer.is_valid(raise_exception=True)
+                booking_serializer.create(booking_data)
+                booking_serializer2 = BookingSerializer(data=booking_data_2)
+                booking_serializer2.is_valid(raise_exception=True)
+                booking_serializer2.create(booking_data_2)
 
             self.stdout.write(self.style.SUCCESS("Database seeded successfully!"))
 

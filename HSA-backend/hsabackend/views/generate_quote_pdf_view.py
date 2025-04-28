@@ -8,7 +8,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from hsabackend.models.job import Job
-from hsabackend.models.organization import Organization
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 from hsabackend.utils.pdf_helpers import generate_pdf_customer_org_header, generate_table_for_specific_job, \
     generate_pdf, generate_signature_page
@@ -23,10 +22,9 @@ def generate_quote_pdf(request, job_id):
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
 def send_quote_pdf_to_customer_email(request, id):
-    org = Organization.objects.get(owning_User=request.user.pk)
     try:
         job = Job.objects.select_related("customer") \
-            .get(pk=id, customer__organization=org.pk)
+            .get(pk=id, customer__organization=request.organization.pk)
     except Job.DoesNotExist:
         return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -34,7 +32,7 @@ def send_quote_pdf_to_customer_email(request, id):
     pdf.add_page()
     pdf.set_font('Times', size=12)
 
-    generate_pdf_customer_org_header(pdf, org, job, "quote")
+    generate_pdf_customer_org_header(pdf, request.organization, job, "quote")
     generate_table_for_specific_job(pdf, job.pk, 1, 1)
     generate_signature_page(pdf)
 

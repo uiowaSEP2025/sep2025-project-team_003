@@ -15,6 +15,7 @@ class BookingSerializer(serializers.ModelSerializer):
         """
         Create and return a new Booking instance, given the validated data.
         """
+
         return Booking.objects.create(**validated_data)
 
     def update(self, instance, validated_data):

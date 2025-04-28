@@ -27,7 +27,7 @@ def add_orgs(u1,u2):
         org_address = "123 main st",
         org_owner_first_name = "Dev",
         org_owner_last_name = "User",
-        owning_User = u1,
+        owning_user = u1,
         org_phone = "1234567890",
         is_onboarding = False
         )
@@ -40,7 +40,7 @@ def add_orgs(u1,u2):
         org_address = "123 main st",
         org_owner_first_name = "Test",
         org_owner_last_name = "User",
-        owning_User = u2,
+        owning_user = u2,
         org_phone = "1234567890"
         )
     return org,org1

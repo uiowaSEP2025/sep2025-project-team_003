@@ -25,6 +25,7 @@ from hsabackend.serializers.invoice_serializer import InvoiceSerializer
 from hsabackend.serializers.job_serializer import JobSerializer, JobTableSerializer
 from hsabackend.serializers.job_template_serializer import JobTemplateSerializer
 from hsabackend.serializers.material_serializer import MaterialSerializer
+from hsabackend.serializers.organization_serializer import OrganizationSerializer
 from hsabackend.serializers.request_serializer import RequestSerializer
 from hsabackend.serializers.service_serializer import ServiceSerializer
 
@@ -54,7 +55,6 @@ class CustomPagination(PageNumberPagination):
 
 
 def get_table_data(request, object_type, exclude=False):
-    org = Organization.objects.filter(pk=request.org.pk).first()
     search = request.query_params.get('search', '')
     paginator = CustomPagination()
 
@@ -63,7 +63,7 @@ def get_table_data(request, object_type, exclude=False):
 
     match object_type:
         case "job_template":
-            queryset = JobTemplate.objects.filter(organization=org).order_by('name')
+            queryset = JobTemplate.objects.filter(organization=request.organization.pk).order_by('name')
             if search:
                 queryset = queryset.filter(
                     Q(name__icontains=search) |
@@ -74,7 +74,7 @@ def get_table_data(request, object_type, exclude=False):
             serializer = JobTemplateSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
         case "contractor":
-            queryset = Contractor.objects.filter(organization=org).order_by('first_name')
+            queryset = Contractor.objects.filter(organization=request.organization.pk).order_by('first_name')
             if search:
                 queryset = queryset.filter(
                     Q(first_name__icontains=search) | Q(last_name__icontains=search)
@@ -87,7 +87,7 @@ def get_table_data(request, object_type, exclude=False):
             serializer = ContractorTableSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
         case "customer":
-            queryset = Customer.objects.filter(organization=org).order_by('first_name')
+            queryset = Customer.objects.filter(organization=request.organization.pk).order_by('first_name')
             if search:
                 queryset = queryset.filter(
                     Q(first_name__icontains=search) | Q(last_name__icontains=search)
@@ -98,7 +98,7 @@ def get_table_data(request, object_type, exclude=False):
             serializer = CustomerTableSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
         case "job":
-            queryset = Job.objects.filter(organization=org).order_by('start_date')
+            queryset = Job.objects.filter(organization=request.organization.pk).order_by('start_date')
             if search:
                 queryset = queryset.filter(
                     Q(customer__first_name__icontains=search) |
@@ -114,11 +114,11 @@ def get_table_data(request, object_type, exclude=False):
             serializer = JobTableSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
         case "service":
-            queryset = Service.objects.filter(organization=org).order_by('service_name')
+            queryset = Service.objects.filter(organization=request.organization.pk).order_by('name')
             if search:
                 queryset = queryset.filter(
-                    Q(service_name__icontains=search) |
-                    Q(service_description__icontains=search) |
+                    Q(name__icontains=search) |
+                    Q(description__icontains=search) |
                     Q(default_fee__icontains=search)
                 )
             if exclude:
@@ -127,10 +127,12 @@ def get_table_data(request, object_type, exclude=False):
             serializer = ServiceSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
         case "material":
-            queryset = Material.objects.filter(organization=org).order_by('material_name')
+            queryset = Material.objects.filter(organization=request.organization.pk).order_by('name')
             if search:
                 queryset = queryset.filter(
-                    Q(material_name__icontains=search)
+                    Q(name__icontains=search) |
+                    Q(description__icontains=search) |
+                    Q(default_fee__icontains=search)
                 )
             if exclude:
                 queryset = queryset.exclude(id__in=exclude_ids) if exclude_ids else queryset.exclude(id__in=[])
@@ -139,7 +141,7 @@ def get_table_data(request, object_type, exclude=False):
             return paginator.get_paginated_response(serializer.data)
 
         case "request":
-            queryset = Request.objects.filter(organization=org).order_by('requester_first_name')
+            queryset = Request.objects.filter(organization=request.organization.pk).order_by('requester_first_name')
             if search:
                 queryset = queryset.filter(
                 Q(requester_first_name__icontains=search) |
@@ -153,7 +155,6 @@ def get_table_data(request, object_type, exclude=False):
                 Q(description__icontains=search) |
                 Q(availability__icontains=search) |
                 Q(request_status__icontains=search) |
-                Q(organization__icontains=search) |
                 Q(job__icontains=search)
                 )
             if exclude:
@@ -162,7 +163,7 @@ def get_table_data(request, object_type, exclude=False):
             serializer = RequestSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
         case "invoice":
-            queryset = Invoice.objects.filter(customer__organization=org).order_by('date_issued')
+            queryset = Invoice.objects.filter(customer__organization=request.organization.pk).order_by('date_issued')
             if search:
                 queryset = queryset.filter(
                     Q(date_issued__icontains=search) |
@@ -190,58 +191,47 @@ def get_table_data(request, object_type, exclude=False):
                 to_date_time_object = timezone.make_aware(parse_datetime(to_date_string))
             except Exception:
                 return Response({"message": "Cannot parse date time"}, status=status.HTTP_400_BAD_REQUEST)
-            queryset = Booking.objects.filter(organization=org).order_by('start_time')
+            queryset = Booking.objects.filter(organization=request.organization.pk).order_by('start_time')
             queryset = queryset.filter(
                     Q(start_time__gte=from_date_time_object) &
                     Q(end_time__lte=to_date_time_object)
             )
             serializer = BookingSerializer(queryset, many=True)
 
-            jobs = []
-
-            for event in serializer.data:
-                job_id = event["job"]
-
-                try:
-                    job = Job.objects.get(pk=job_id, organization=org)
-                except Job.DoesNotExist:
-                    return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
-
-                job_services = JobsServices.objects.filter(job=job.pk)
-                job_materials = JobsMaterials.objects.filter(job=job.pk)
-                job_contractors = job.contractors
-
-                job_services_data = []
-                for service in job_services:
-                    job_services_data.append(service.json())
-
-                job_materials_data = []
-                for material in job_materials:
-                    job_materials_data.append(material.json())
-
-                job_contractors_data = []
-                for contractor in job_contractors:
-                    job_contractors_data.append(contractor.json())
-
-                job_data = {
-                    'data': job.json(),
-                    'services': job_services_data,
-                    'materials': job_materials_data,
-                    'contractors': job_contractors_data
+            raw_data = serializer.data
+            job_data = []
+            event_data = []
+            for event in raw_data:
+                event_entry = {
+                    "id": event["id"],
+                    "event_name": event["event_name"],
+                    "start_time": event["start_time"],
+                    "end_time": event["end_time"],
+                    "job": event["job"]["id"],
+                    "booking_type": event["booking_type"],
+                    "status": event["status"],
+                    "back_color": event["back_color"]
                 }
+                event_data.append(event_entry)
+            for event in raw_data:
+                temp_job = event["job"]
+                job_entry = {
+                    "data":
+                {
+                    "endDate": temp_job['endDate'],
+                    "description": temp_job['description'],
+                    "customerName": temp_job['customerName']
+                }
+                }
+                job_data.append(job_entry)
 
-                jobs.append(job_data)
-
-
-            res = {
-                'event_data': serializer.data,
-                'job_data': jobs
-            }
-
-            return Response(res, status=status.HTTP_200_OK)
+            return Response({
+                "event_data": event_data,
+                "job_data": job_data,
+            }, status=status.HTTP_200_OK)
 
         case "discount":
-            queryset = Discount.objects.filter(organization=org).order_by('discount_name')
+            queryset = Discount.objects.filter(organization=request.organization.pk).order_by('discount_name')
             if search:
                 queryset = queryset.filter(
                     Q(discount_name__icontains=search) |
@@ -261,12 +251,11 @@ def get_table_data(request, object_type, exclude=False):
             )
 
 def get_individual_data(request, object_id, object_type):
-    org = Organization.objects.filter(pk=request.org.pk).first()
     match object_type:
 
         case "discount":
             try:
-                query = Discount.objects.get(pk=object_id, organization=org)
+                query = Discount.objects.get(pk=object_id, organization=request.organization.pk)
             except Discount.DoesNotExist:
                 return Response({"message": "The job template does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -277,7 +266,7 @@ def get_individual_data(request, object_id, object_type):
 
         case "job_template":
             try:
-                query = JobTemplate.objects.get(pk=object_id, organization=org)
+                query = JobTemplate.objects.get(pk=object_id, organization=request.organization.pk)
             except JobTemplate.DoesNotExist:
                 return Response({"message": "The job template does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -288,7 +277,7 @@ def get_individual_data(request, object_id, object_type):
 
         case "contractor":
             try:
-                query = Contractor.objects.get(pk=object_id, organization=org)
+                query = Contractor.objects.get(pk=object_id, organization=request.organization.pk)
             except Contractor.DoesNotExist:
                 return Response({"message": "The contractor does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -298,7 +287,7 @@ def get_individual_data(request, object_id, object_type):
             return Response(serializer.data, status=status.HTTP_200_OK)
         case "customer":
             try:
-                query = Customer.objects.get(pk=object_id, organization=org)
+                query = Customer.objects.get(pk=object_id, organization=request.organization.pk)
             except Customer.DoesNotExist:
                 return Response({"message": "The customer does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -308,7 +297,7 @@ def get_individual_data(request, object_id, object_type):
             return Response(serializer.data, status=status.HTTP_200_OK)
         case "job":
             try:
-                query = Job.objects.get(pk=object_id, organization=org)
+                query = Job.objects.get(pk=object_id, organization=request.organization.pk)
             except Job.DoesNotExist:
                 return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -324,7 +313,7 @@ def get_individual_data(request, object_id, object_type):
                             }, status=status.HTTP_200_OK)
         case "service":
             try:
-                query = Service.objects.get(pk=object_id, organization=org)
+                query = Service.objects.get(pk=object_id, organization=request.organization.pk)
             except Service.DoesNotExist:
                 return Response({"message": "The service does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -335,7 +324,7 @@ def get_individual_data(request, object_id, object_type):
 
         case "material":
             try:
-                query = Material.objects.get(pk=object_id, organization=org)
+                query = Material.objects.get(pk=object_id, organization=request.organization.pk)
             except Material.DoesNotExist:
                 return Response({"message": "The material does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -346,7 +335,7 @@ def get_individual_data(request, object_id, object_type):
 
         case "request":
             try:
-                query = Request.objects.get(pk=object_id, organization=org)
+                query = Request.objects.get(pk=object_id, organization=request.organization.pk)
             except Request.DoesNotExist:
                 return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -356,7 +345,7 @@ def get_individual_data(request, object_id, object_type):
             return Response(serializer.data, status=status.HTTP_200_OK)
         case "invoice":
             try:
-                query = Invoice.objects.get(pk=object_id, customer__organization=org)
+                query = Invoice.objects.get(pk=object_id, customer__organization=request.organization.pk)
             except Invoice.DoesNotExist:
                 return Response({"message": "The invoice does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -366,7 +355,7 @@ def get_individual_data(request, object_id, object_type):
             return Response(serializer.data, status=status.HTTP_200_OK)
         case "booking":
             try:
-                query = Booking.objects.get(pk=object_id, organization=org)
+                query = Booking.objects.get(pk=object_id, organization=request.organization.pk)
             except Booking.DoesNotExist:
                 return Response({"message": "The booking does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -383,22 +372,13 @@ def get_individual_data(request, object_id, object_type):
             )
 
 def create_individual_data(request, object_type):
-    org = Organization.objects.filter(pk=request.org.pk).first()
-    request.data["organization"] = org
     match object_type:
         case "discount":
             serializer = DiscountSerializer(data=request.data)
         case "job_template":
             serializer = JobTemplateSerializer(data=request.data)
         case "contractor":
-            data = {
-                "first_name": request.data.get('firstName'),
-                "last_name": request.data.get('lastName'),
-                "email": request.data.get('email'),
-                "phone": (request.data.get('phone')).replace("-", ""),
-                "organization": request.data.get('organization')
-            }
-            serializer = ContractorSerializer(data=data, partial=True)
+            serializer = ContractorSerializer(data=request.data)
         case "customer":
             serializer = CustomerSerializer(data=request.data)
         case "job":
@@ -413,6 +393,7 @@ def create_individual_data(request, object_type):
             serializer = InvoiceSerializer(data=request.data)
         case "booking":
             serializer = BookingSerializer(data=request.data)
+
         case _:
             return Response(
                 data={
@@ -420,45 +401,45 @@ def create_individual_data(request, object_type):
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
-    if serializer.is_valid(raise_exception=True):
-        serializer.create(data)
+    if serializer.is_valid():
+        serializer.create(request.data)
         return Response(
             serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def update_individual_data(request, object_id, object_type):
     data = request.data
-    org = Organization.objects.filter(pk=request.org.pk).first()
     match object_type:
         case "discount":
-            query_object = Discount.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = Discount.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = DiscountSerializer(query_object, data=data)
         case "job_template":
-            query_object = JobTemplate.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = JobTemplate.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = JobTemplateSerializer(query_object, data=data)
         case "contractor":
-            query_object = Contractor.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = Contractor.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = ContractorSerializer(query_object, data=data)
         case "customer":
-            query_object = Customer.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = Customer.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = CustomerSerializer(query_object, data=data)
         case "job":
-            query_object = Job.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = Job.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = JobSerializer(query_object, data=data)
         case "service":
-            query_object = Service.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = Service.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = ServiceSerializer(query_object, data=data)
         case "material":
-            query_object = Material.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = Material.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = MaterialSerializer(query_object, data=data)
         case "request":
-            query_object = Request.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = Request.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = RequestSerializer(query_object, data=data)
         case "invoice":
-            query_object = Invoice.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = Invoice.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = InvoiceSerializer(query_object, data=data)
         case "booking":
-            query_object = Booking.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = Booking.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = BookingSerializer(query_object, data=data)
         case _:
             return Response(
@@ -469,33 +450,32 @@ def update_individual_data(request, object_id, object_type):
             )
     if serializer.is_valid():
         serializer.update(query_object, data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def delete_object(request, object_id, object_type):
-    org = Organization.objects.filter(pk=request.org.pk).first()
     match object_type:
         case "discount":
-            query_object = Discount.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = Discount.objects.filter(organization=request.organization.pk, pk=object_id).first()
         case "job_template":
-            query_object = JobTemplate.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = JobTemplate.objects.filter(organization=request.organization.pk, pk=object_id).first()
         case "contractor":
-            query_object = Contractor.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = Contractor.objects.filter(organization=request.organization.pk, pk=object_id).first()
         case "customer":
-            query_object = Customer.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = Customer.objects.filter(organization=request.organization.pk, pk=object_id).first()
         case "job":
-            query_object = Job.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = Job.objects.filter(organization=request.organization.pk, pk=object_id).first()
         case "service":
-            query_object = Service.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = Service.objects.filter(organization=request.organization.pk, pk=object_id).first()
         case "material":
-            query_object = Material.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = Material.objects.filter(organization=request.organization.pk, pk=object_id).first()
         case "request":
-            query_object = Request.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = Request.objects.filter(organization=request.organization.pk, pk=object_id).first()
         case "invoice":
-            query_object = Invoice.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = Invoice.objects.filter(organization=request.organization.pk, pk=object_id).first()
         case "booking":
-            query_object = Booking.objects.filter(organization=org.pk, pk=object_id).first()
+            query_object = Booking.objects.filter(organization=request.organization.pk, pk=object_id).first()
         case _:
             return Response(
                 data={
@@ -503,7 +483,12 @@ def delete_object(request, object_id, object_type):
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
-    query_object.delete()
-    return Response({
-        "message": object_type + " deleted successfully"
-    }, status=status.HTTP_200_OK)
+    try:
+        query_object.delete()
+        return Response({
+            "message": object_type + " deleted successfully"
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            "message": "Error deleting " + object_type + ": " + str(e)
+        }, status=status.HTTP_400_BAD_REQUEST)

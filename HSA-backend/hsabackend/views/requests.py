@@ -22,7 +22,7 @@ def delete_request(request,request_id):
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
 def approve_request(request, id):
-    org = request.org
+    org = request.organization
     req = Request.objects.filter(pk=id, organization=org)
     if not req.exists():
         return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)

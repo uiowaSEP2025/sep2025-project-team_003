@@ -93,7 +93,8 @@ class ContractorsViewsTest(TestCase):
             'first_name': 'John',
             'last_name': 'Doe',
             'email': 'john.doe@example.com',
-            'phone': '9876543210'
+            'phone': '9876543210',
+            'organization' : self.organization.pk
         }
         
         response = self.client.post(self.create_contractor_url, contractor_data, format='json')
@@ -172,4 +173,4 @@ class ContractorsViewsTest(TestCase):
         # Try to delete a nonexistent contractor
         nonexistent_url = reverse('delete_contractor', args=[999])
         response = self.client.post(nonexistent_url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

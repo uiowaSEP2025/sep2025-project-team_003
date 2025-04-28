@@ -44,7 +44,7 @@ class JobTemplateSerializer(serializers.ModelSerializer):
         request = JobTemplate.objects.create(**validated_data)
 
         if services_temp:
-            request.service.set(services_temp)
+            request.services.set(services_temp)
         if materials_temp:
             request.materials.set(materials_temp)
 

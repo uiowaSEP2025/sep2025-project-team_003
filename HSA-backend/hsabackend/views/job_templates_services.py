@@ -11,7 +11,7 @@ from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
 def get_job_template_service_table_data(request, id):
-    org = request.org
+    org = request.organization
 
     try:
         job_template = JobTemplate.objects.get(organization=org.pk, id=id)
@@ -47,7 +47,7 @@ def get_job_template_service_table_data(request, id):
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
 def create_job_template_service(request, id):
-    org = request.org
+    org = request.organization
 
     try:
         job_template_object = JobTemplate.objects.get(organization=org.pk, id=id)

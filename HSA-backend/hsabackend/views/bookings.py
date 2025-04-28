@@ -18,7 +18,7 @@ from hsabackend.utils.response_helpers import get_table_data
 def get_booking_data(request):
     return get_table_data(request, "booking")
 
-    # org = request.org
+    # org = request.organization
     # from_date_string = request.query_params.get('from', '')
     # to_date_string= request.query_params.get('to', '')
     #
@@ -81,7 +81,7 @@ def get_booking_data(request):
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
 def create_event(request):
-    org = Organization.objects.get(owning_User=request.user)
+    org = Organization.objects.get(owning_user=request.user)
     job_id = request.data.get('jobID')
 
     try:
@@ -108,8 +108,10 @@ def create_event(request):
         'booking_type': request.data.get('bookingType', ''),
         'back_color': request.data.get('backColor', ''),
         'status': 'pending',
-        'organization': org.pk,
-        'job': job_object.pk
+        'organization': org,
+        'job': job_object,
+        'job_id': job_id,
+        'organization_id': org.pk,
     }
 
     # Create and validate event
@@ -118,15 +120,15 @@ def create_event(request):
     if not booking_serializer.is_valid():
         return Response({"errors": booking_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-    booking_serializer.save()
+    booking_serializer.create(event_data)
 
     return Response({"message": "Event created successfully", "data": booking_serializer.data}, status=status.HTTP_201_CREATED)
 
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
-def edit_event(request, id):
-    org = Organization.objects.get(owning_User=request.user)
+def edit_event(request, booking_id):
+    org = Organization.objects.get(owning_user=request.user)
     job_id = request.data.get('jobID')
 
     try:
@@ -148,7 +150,7 @@ def edit_event(request, id):
     
     # Find the event model
     try:
-        event_object = Booking.objects.get(organization=org, pk=id)
+        event_object = Booking.objects.get(organization=org, pk=booking_id)
     except Booking.DoesNotExist:
         return Response({"errors": "Event not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -176,9 +178,9 @@ def edit_event(request, id):
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
-def delete_event(request, id):
-    org = Organization.objects.get(owning_User=request.user)
-    event_object = Booking.objects.filter(pk=id, organization=org)
+def delete_event(request, booking_id):
+    org = Organization.objects.get(owning_user=request.user)
+    event_object = Booking.objects.filter(pk=booking_id, organization=org)
 
     if not event_object.exists():
         return Response({"message": "The event does not exist"}, status=status.HTTP_404_NOT_FOUND)

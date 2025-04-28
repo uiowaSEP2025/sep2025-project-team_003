@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from hsabackend.models.contractor import Contractor
@@ -9,16 +10,29 @@ class ContractorModelTest(TestCase):
     
     def setUp(self):
         """Set up test data"""
-        self.organization = Organization.objects.create(
-            name="Test Organization",
-            address="123 Test St",
-            city="Test City",
-            state="TS",
-            zip_code="12345",
-            phone="1234567890",
-            email="test@example.com"
+        # Create a user
+        self.user = User.objects.create_user(
+            username="testuser",
+            email="testuser@example.com",
+            password="testpassword"
         )
-        
+
+        # Create an organization
+        self.organization = Organization.objects.create(
+            org_name="Test Organization",
+            org_email="test@example.com",
+            org_city="Test City",
+            org_state="AZ",
+            org_zip="12345",
+            org_address="123 Test St",
+            org_phone="1234567890",
+            org_owner_first_name="John",
+            org_owner_last_name="Doe",
+            owning_user=self.user,
+            is_onboarding=False,
+            default_labor_rate=50.00
+        )
+
         self.contractor = Contractor.objects.create(
             first_name="John",
             last_name="Doe",
