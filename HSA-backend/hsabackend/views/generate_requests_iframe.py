@@ -6,6 +6,17 @@ from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from django.views.decorators.clickjacking import xframe_options_exempt
+import os
+ 
+def get_url():
+    if "ENV" not in os.environ:
+        return "http://localhost:8000"
+    if os.environ["ENV"] == "DEV":
+        return "https://hsa.ssankey.com"
+    if os.environ["ENV"] == "PROD":
+        return "https://hsa-app.starlitex.com"
+    else:
+        raise RuntimeError("The enviornment for the backend was not set correctly")
 
 @xframe_options_exempt
 @api_view(["GET"])
@@ -18,7 +29,7 @@ def getHTMLForm(request, id):
         request,
         "requests/requests.html",
         {
-            "url": "http://localhost:8000/api/create/request/" + str(id),
+            "url": f"{get_url()}/api/create/request/{id}",
             "org_id":      id,
             "services":    services,
             "contractors": contractors,
