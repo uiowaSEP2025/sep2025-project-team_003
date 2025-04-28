@@ -409,19 +409,28 @@ def create_individual_data(request, object_type):
         case "job":
             serializer = JobSerializer(data=data)
         case "service":
+            if data.get('default_fee') == '' or data.get('default_fee') is None:
+                default_fee = 0
+            else:
+                default_fee = data.get('default_fee')
             service_data = {
                 "name": data.get('service_name'),
                 "description": data.get('service_description'),
-                "default_fee": data.get('default_fee'),
+                "default_fee": default_fee,
                 "organization": request.organization,
             }
             data = service_data
             serializer = ServiceSerializer(data=data)
         case "material":
+            if data.get('default_cost') == '' or data.get('default_cost') is None:
+                default_cost = 0
+            else:
+                default_cost = data.get('default_fee')
+
             material_data = {
                 "name": data.get('material_name'),
                 "description": data.get('description'),
-                "default_cost": data.get('default_cost'),
+                "default_cost": default_cost,
                 "organization": request.organization,
             }
             data = material_data
@@ -492,19 +501,26 @@ def update_individual_data(request, object_id, object_type):
             query_object = Job.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = JobSerializer(query_object, data=data)
         case "service":
+            if data.get('default_fee') == '' or data.get('default_fee') is None:
+                default_fee = 0
+            else:
+                default_fee = data.get('default_fee')
             service_data = {
                 "name": data.get('service_name'),
                 "description": data.get('service_description'),
-                "default_fee": data.get('default_fee'),
+                "default_fee": default_fee,
+                "organization": request.organization,
             }
             data = service_data
             query_object = Service.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = ServiceSerializer(query_object, data=data)
         case "material":
+            default_cost = data.get('default_cost')
+            default_cost = float(default_cost) if default_cost else 0
             material_data = {
                 "name": data.get('material_name'),
                 "description": data.get('description'),
-                "default_cost": data.get('default_cost'),
+                "default_cost": default_cost,
             }
             data = material_data
             query_object = Material.objects.filter(organization=request.organization.pk, pk=object_id).first()

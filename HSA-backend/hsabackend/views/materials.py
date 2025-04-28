@@ -23,11 +23,11 @@ def get_material_excluded_table_data(request):
 @api_view(["POST"])
 @check_authenticated_and_onboarded(require_onboarding=False)
 def create_material(request):
-    create_individual_data(request, "material")
+    return create_individual_data(request, "material")
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
 def edit_material(request, material_id):
-    update_individual_data(request, material_id, "material")
+    return update_individual_data(request, material_id, "material")
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded(require_onboarding=False)
