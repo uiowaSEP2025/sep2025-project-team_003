@@ -27,6 +27,7 @@ export class EditCustomerPageComponent implements OnInit {
   firstName!: string
   lastName!: string
   phoneNo!: string
+  notes!: string
   custId: number | null = null
 
   constructor(private activatedRoute: ActivatedRoute, private customerService: CustomerService, private router: Router) { }
@@ -39,16 +40,18 @@ export class EditCustomerPageComponent implements OnInit {
   matcher = new GenericFormErrorStateMatcher()
 
   ngOnInit() {
-    // pass existing field in as a query param
+    // pass an existing field in as a query param
     this.activatedRoute.queryParams.subscribe(params => {
       this.email = params['email'];
       this.firstName = params['first_name'];
       this.lastName = params['last_name'];
-      this.phoneNo = params['phone_no'];
+      this.phoneNo = params['phone'];
+      this.notes = params['notes'];
       this.firstNameControl.setValue(this.firstName);
       this.lastNameControl.setValue(this.lastName);
       this.emailControl.setValue(this.email);
       this.phoneControl.setValue(this.phoneNo);
+      this.notesControl.setValue(this.notes);
     });
 
     this.activatedRoute.paramMap.subscribe(params => {
