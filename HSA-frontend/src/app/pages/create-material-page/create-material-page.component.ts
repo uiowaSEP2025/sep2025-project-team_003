@@ -27,6 +27,7 @@ export class CreateMaterialPageComponent {
     this.materialForm = this.materialFormBuilder.group({
       materialName: ['', Validators.required],
       materialDescription: [''],
+      materialDefaultCost: [''],
     });
   }
 
@@ -36,7 +37,9 @@ export class CreateMaterialPageComponent {
       return;
     } else {
       this.materialService.createMaterial({
-        material_name: this.materialForm.controls["materialName"].value
+        material_name: this.materialForm.controls["materialName"].value,
+        description: this.materialForm.controls["materialDescription"].value,
+        default_cost: this.materialForm.controls["materialDefaultCost"].value,
       }).subscribe({
         next: () => {
           this.snackBar.open('Create material successfully', '', {

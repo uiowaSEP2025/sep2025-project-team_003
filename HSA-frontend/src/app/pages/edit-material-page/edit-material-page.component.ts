@@ -55,7 +55,9 @@ export class EditMaterialPageComponent implements OnInit {
     } else {
       this.materialService.editMaterial({
         material_name: this.materialForm.controls["materialName"].value,
-        id: this.materialID
+        id: this.materialID,
+        description: this.materialForm.controls["materialDescription"].value,
+        default_cost: this.materialForm.controls["materialDefaultCost"].value,
       }).subscribe({
         next: () => {
           this.snackBar.open(`Edit ${this.currentMaterialName} material to ${this.materialForm.controls["materialName"].value} successfully`, '', {
