@@ -5,20 +5,11 @@ from hsabackend.serializers.organization_serializer import OrganizationSerialize
 
 
 class ServiceSerializer(serializers.ModelSerializer):
-    organization = OrganizationSerializer(read_only=True)
+
 
     class Meta:
         model = Service
-        fields = ['id', 'name','description','default_fee', 'organization']
-    def to_representation(self, instance):
-        """
-        Override to_representation to provide a simplified representation for list views
-        """
-        representation = super().to_representation(instance)
-        representation['serviceName'] = instance.name
-        representation['serviceDescription'] = instance.description
-        representation['defaultFee'] = instance.default_fee
-        return representation
+        fields = ['id', 'name','description','default_fee']
 
     def create(self, validated_data):
         """

@@ -96,20 +96,17 @@ class BookingsViewsTest(TestCase):
     def test_create_event_authenticated(self):
         """Test that authenticated users can create events"""
         self.client.force_authenticate(user=self.user)
-        
-        # Prepare event data
-        start_time = timezone.now() + timedelta(days=1)
-        end_time = start_time + timedelta(hours=2)
+
         
         event_data = {
             'eventName': 'New Test Booking',
-            'startTime': start_time.isoformat(),
-            'endTime': end_time.isoformat(),
+            'startTime': "2025-05-01T13:30:00",
+            'endTime': "2025-05-01T15:00:00",
             'bookingType': 'job',
             'backColor': '#6aa84f',
             'jobID': self.job.pk
         }
-        
+
         response = self.client.post(self.create_event_url, event_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         
@@ -121,15 +118,11 @@ class BookingsViewsTest(TestCase):
     def test_create_event_invalid_data(self):
         """Test that events cannot be created with invalid data"""
         self.client.force_authenticate(user=self.user)
-        
-        # Prepare invalid event data (end time before start time)
-        start_time = timezone.now() + timedelta(days=1)
-        end_time = start_time - timedelta(hours=2)
-        
+
         event_data = {
             'eventName': 'Invalid Test Booking',
-            'startTime': start_time.isoformat(),
-            'endTime': end_time.isoformat(),
+            'startTime': "2025-05-01T15:00:00",
+            'endTime': "2025-05-01T13:30:00",
             'bookingType': 'job',
             'backColor': '#6aa84f',
             'jobID': self.job.pk
@@ -156,8 +149,8 @@ class BookingsViewsTest(TestCase):
         
         event_data = {
             'eventName': 'Updated Test Booking',
-            'startTime': start_time.isoformat(),
-            'endTime': end_time.isoformat(),
+            'startTime': "2025-05-01T13:30:00",
+            'endTime': "2025-05-01T15:00:00",
             'bookingType': 'quote',
             'backColor': '#ff0000',
             'status': 'accepted',

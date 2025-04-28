@@ -443,14 +443,17 @@ def update_individual_data(request, object_id, object_type):
             query_object = Customer.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = CustomerSerializer(query_object, data=data)
         case "job":
+            customer_temp = Customer.objects.filter(organization=request.organization.pk, pk=data.get('customerID')).first()
             job_data = {
+                "job_status": data.get("jobStatus"),
                 "job_address": data.get("address"),
                 "job_city": data.get("city"),
-                "job_description": data.get("description"),
+                "description": data.get("description"),
                 "start_date": data.get("startDate"),
                 "end_date": data.get("endDate"),
                 "job_state": data.get("state"),
                 "job_zip": data.get("zip"),
+                "customer": customer_temp
             }
             data = job_data
             query_object = Job.objects.filter(organization=request.organization.pk, pk=object_id).first()
