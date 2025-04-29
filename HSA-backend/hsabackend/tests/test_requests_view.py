@@ -5,7 +5,7 @@ from unittest.mock import patch
 from django.contrib.auth.models import User
 from rest_framework.test import APIRequestFactory
 from rest_framework import status
-from hsabackend.views.requests import get_org_request_data, delete_request, approve_request
+from hsabackend.views.requests import get_org_request_data, delete_request, approve_request, create_request
 from hsabackend.models.organization import Organization
 from django.db.models import QuerySet
 from django.db.models import Q
@@ -21,6 +21,72 @@ class RequestView(APITestCase):
         response = get_org_request_data(request)
         
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    @patch('hsabackend.views.requests.Organization.objects.get')
+    def test_create_request_org_not_found(self, mock_get):
+        mock_get.side_effect = Organization.DoesNotExist
+
+        factory = APIRequestFactory()
+        req = factory.post('/api/request/create/999', {}, format='json')
+        resp = create_request(req, 999)
+
+        assert resp.status_code == status.HTTP_404_NOT_FOUND
+        assert resp.data['message'] == "Organization 999 not found"
+
+    @patch('hsabackend.views.requests.Request')
+    @patch('hsabackend.views.requests.Organization.objects.get')
+    def test_create_request_success(self, mock_get_org, mock_request_cls):
+        """
+        Given valid payload and existing Organization, the view should:
+        - instantiate Request(...)
+        - call full_clean()
+        - call save()
+        - return HTTP 201 with the new request's ID and JSON data
+        """
+        org = Organization(pk=1)
+        mock_get_org.return_value = org
+
+        mock_req = mock_request_cls.return_value
+        mock_req.id = 42
+        mock_req.json.return_value = {
+            "requester_first_name": "Alice",
+            "requester_last_name":  "Smith",
+            "requester_email":      "alice@example.com",
+            "requester_city":       "Springfield",
+            "requester_state":      "IL",
+            "requester_zip":        "62704",
+            "requester_address":    "123 Main St",
+            "requester_phone":      "5551234",
+            "description":          "Need service",
+            "availability":         "Mondays",
+            "organization":         1
+        }
+
+        payload = {
+            "requester_first_name": "Alice",
+            "requester_last_name":  "Smith",
+            "requester_email":      "alice@example.com",
+            "requester_city":       "Springfield",
+            "requester_state":      "IL",
+            "requester_zip":        "62704",
+            "requester_address":    "123 Main St",
+            "requester_phone":      "555-1234",
+            "description":          "Need service",
+            "availability":         "Mondays"
+        }
+
+        factory = APIRequestFactory()
+        request = factory.post('/api/request/create/1', payload, format='json')
+
+        response = create_request(request, 1)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.data['message'] == "Request created successfully"
+        assert response.data['id'] == 42
+        assert response.data['data'] == mock_req.json()
+
+        mock_req.full_clean.assert_called_once()
+        mock_req.save.assert_called_once()
 
     @patch('hsabackend.views.customers.Organization.objects.get')
     def test_get_request_table_data_invalid(self,get):
