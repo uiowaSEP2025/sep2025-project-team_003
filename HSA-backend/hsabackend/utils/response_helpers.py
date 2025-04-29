@@ -139,7 +139,7 @@ def get_table_data(request, object_type, exclude=False):
                 queryset = queryset.exclude(id__in=exclude_ids) if exclude_ids else queryset.exclude(id__in=[])
             page = paginator.paginate_queryset(queryset, request)
             serializer = MaterialSerializer(page, many=True)
-            return paginator.get_paginated_response(serializer.data)
+            return paginator.get_paginated_response(serializer.to_representation(queryset))
 
         case "request":
             queryset = Request.objects.filter(organization=request.organization.pk).order_by('requester_first_name')

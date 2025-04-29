@@ -10,6 +10,11 @@ class MaterialSerializer(serializers.ModelSerializer):
         model = Material
         fields = ["id", "name", "description", "default_cost"]
 
+        def to_representation(self, instance):
+            representation = super().to_representation(instance)
+            representation['materialName'] = instance.name
+            return representation
+
     def create(self, validated_data):
         """
         Create and return a new Material instance, given the validated data.

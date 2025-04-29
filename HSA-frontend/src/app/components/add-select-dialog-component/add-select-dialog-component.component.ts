@@ -202,7 +202,7 @@ export class AddSelectDialogComponentComponent {
     this.selectedItems = this.selectedServices;
     this.selectedServicesIsError = this.selectedServices.length === 0 ? true : false;
     this.isNotSelectedItems = this.selectedServices.length === 0 ? true : false;
-    
+
   }
 
   setSelectedMaterials(materials: number[]) {
@@ -214,14 +214,15 @@ export class AddSelectDialogComponentComponent {
     if (this.selectedMaterialsIsError === false) {
       let previousMaterialInputFields = this.materialInputFields;
       this.materialInputFields = [];
+      console.log(this.selectedMaterials);
       this.selectedMaterials.forEach((element: any) => {
         if (previousMaterialInputFields.some((item) => item.id === element)) {
           let specificEntry = previousMaterialInputFields.find((item) => item.id === element);
-          this.materialInputFields.push({"id": element, "unitsUsed": specificEntry!["unitsUsed"], "pricePerUnit": specificEntry!["pricePerUnit"]});
+          this.materialInputFields.push({"id": element, "unitsUsed": specificEntry!["unitsUsed"], "materialDescription": specificEntry!['description'], "pricePerUnit": specificEntry!["pricePerUnit"]});
         } else {
           this.materialInputFields.push({"id": element, "unitsUsed": 0, "pricePerUnit": 0.00});
         }
-        
+
       });
     } else {
       this.materialInputFields = [];
@@ -248,10 +249,10 @@ export class AddSelectDialogComponentComponent {
     this.selectedItems.forEach((element : number) => {
       if (this.typeOfDialog === 'template') {
         const secondDialogRef = this.dialog.open(ApplyTemplateConfirmDialogComponentComponent, {
-          width: 'auto', 
-          maxWidth: '90vw', 
-          height: 'auto', 
-          maxHeight: '90vh', 
+          width: 'auto',
+          maxWidth: '90vw',
+          height: 'auto',
+          maxHeight: '90vh',
           data: element,
           disableClose: false
         });
@@ -283,14 +284,14 @@ export class AddSelectDialogComponentComponent {
 
     if (this.typeOfDialog !== 'template') {
       this.dialogRef.close({
-        selectedItems: this.typeOfDialog === 'job' 
+        selectedItems: this.typeOfDialog === 'job'
           ? this.selectedJob[0]
-           :this.typeOfDialog === 'customer' 
+           :this.typeOfDialog === 'customer'
             ? this.selectedCustomer[0]
-            : this.typeOfDialog === 'service' 
-              ? this.selectedServices 
-              : this.typeOfDialog === 'contractor' 
-                ? this.selectedContractors 
+            : this.typeOfDialog === 'service'
+              ? this.selectedServices
+              : this.typeOfDialog === 'contractor'
+                ? this.selectedContractors
                 : this.materialInputFields,
           itemsInfo: itemsInfo
         }
@@ -300,12 +301,12 @@ export class AddSelectDialogComponentComponent {
 
   getUnitsUsedValue(id: number): number | string {
     const entry = this.materialInputFields.find(item => item.id === id);
-    return entry?.['unitsUsed'] ?? ''; 
+    return entry?.['unitsUsed'] ?? '';
   }
 
   getPricePerUnitValue(id: number): number | string {
     const entry = this.materialInputFields.find(item => item.id === id);
-    return entry?.['pricePerUnit'] ?? ''; 
+    return entry?.['pricePerUnit'] ?? '';
   }
 
   getButtonAction(): string {

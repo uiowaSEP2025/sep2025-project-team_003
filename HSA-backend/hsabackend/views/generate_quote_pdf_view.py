@@ -21,10 +21,10 @@ def generate_quote_pdf(request, job_id):
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
-def send_quote_pdf_to_customer_email(request, id):
+def send_quote_pdf_to_customer_email(request, job_id):
     try:
         job = Job.objects.select_related("customer") \
-            .get(pk=id, customer__organization=request.organization.pk)
+            .get(pk=job_id, customer__organization=request.organization.pk)
     except Job.DoesNotExist:
         return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
 

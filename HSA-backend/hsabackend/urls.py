@@ -13,7 +13,7 @@ from hsabackend.views.customers import get_customer_excluded_table_data, get_cus
     edit_customer, delete_customer
 from hsabackend.views.discounts import get_discounts, edit_discount, create_discount, delete_discount
 from hsabackend.views.generate_invoice_pdf_view import generate_pdf
-from hsabackend.views.generate_quote_pdf_view import generate_quote_pdf
+from hsabackend.views.generate_quote_pdf_view import generate_quote_pdf, send_quote_pdf_to_customer_email
 from hsabackend.views.invoices import create_invoice, get_invoices, delete_invoice, update_invoice, \
     get_data_for_invoice, get_invoice
 from hsabackend.views.job_templates import get_job_template_table_data, get_job_template_individual_data, \
@@ -95,6 +95,8 @@ urlpatterns = [
 
 
     path("api/generate/quote/<int:job_id>", generate_quote_pdf, name='generate_quote_pdf'),
+
+    path("api/send/quote/<int:job_id>", send_quote_pdf_to_customer_email, name='send_quote_pdf_to_customer_email'),
 
     # job_templates
     path("api/get/jobtemplates", get_job_template_table_data, name='get_job_template_table_data'),

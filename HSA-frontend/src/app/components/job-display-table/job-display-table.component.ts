@@ -69,7 +69,6 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['dataSource']) {
       const newValue = changes['dataSource'].currentValue;
-
       if (newValue && 'services' in newValue) {
         this.updateServiceTable();
       } else if (newValue && 'materials' in newValue) {
@@ -81,7 +80,6 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
   }
 
   updateServiceTable() {
-    console.log(this.dataSource)
     if (this.dataSource) {
       this.displayServices = this.dataSource.services.map(
         (service) => ({
