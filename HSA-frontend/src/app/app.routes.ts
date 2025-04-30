@@ -31,7 +31,7 @@ import { Error500PageComponent } from './pages/error-500-page/error-500-page.com
 import { RequestPasswordResetPageComponent } from './pages/request-password-reset-page/request-password-reset-page.component';
 import { PasswordResetPageComponent } from './pages/password-reset-page/password-reset-page.component';
 import { BookingPageComponent } from './pages/booking-page/booking-page.component';
-
+import { QuoteSignComponent } from './pages/quote-sign/quote-sign.component'
 
 export const routes: Routes = [
   {
@@ -114,6 +114,9 @@ export const routes: Routes = [
       },
       {
         path: 'booking', component: BookingPageComponent
+      },
+      {
+        path: 'signquote', component: QuoteSignComponent
       },
     ]
   },

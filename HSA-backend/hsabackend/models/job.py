@@ -23,6 +23,9 @@ class Job(models.Model):
     requestor_zip = models.CharField(max_length=10, validators=[isNonEmpty])
     requestor_address = models.CharField(max_length=100, validators=[isNonEmpty])
 
+    quote_s3_link = models.CharField(max_length=100, blank=True)
+    quote_sign_pin = models.CharField(max_length=10, blank=True)
+
     def __str__(self):
         return f"<Job, organization: {self.organization}, description: {self.description}>"
     

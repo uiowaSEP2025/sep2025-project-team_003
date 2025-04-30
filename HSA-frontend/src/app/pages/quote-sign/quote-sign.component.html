@@ -1,0 +1,20 @@
+<div class="quote-sign-container">
+    <h1>Sign Your Quote</h1>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="quote-sign-form">
+      <div class="form-group">
+        <label for="quoteId">Quote ID</label>
+        <input id="quoteId" formControlName="quoteId" placeholder="Enter Quote ID" />
+      </div>
+      <div class="form-group">
+        <label for="pin">One-time PIN</label>
+        <input id="pin" type="password" formControlName="pin" placeholder="Enter PIN" />
+      </div>
+      <button type="submit" [disabled]="form.invalid" class="btn-submit">Fetch & Sign</button>
+    </form>
+  
+    <ngx-extended-pdf-viewer *ngIf="pdfBlobUrl"
+                             [src]="pdfBlobUrl$"
+                             useBrowserLocale="true"
+                             height="80vh"
+                             class="pdf-viewer">
+    </ngx-extended-pdf-viewer>
