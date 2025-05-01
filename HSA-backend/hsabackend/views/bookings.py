@@ -136,12 +136,12 @@ def create_event(request):
 def edit_event(request, id):
     org = Organization.objects.get(owning_User=request.user)
     job_id = request.data.get('jobID')
-
     try:
         startTimeString = request.data.get('startTime', '')
         endTimeString = request.data.get('endTime', '')
         startTimeObject = timezone.make_aware(parse_datetime(startTimeString))
         endTimeObject = timezone.make_aware(parse_datetime(endTimeString))
+    
     except Exception:
         return Response({"message": "Cannot parse date time"}, status=status.HTTP_400_BAD_REQUEST)
 
