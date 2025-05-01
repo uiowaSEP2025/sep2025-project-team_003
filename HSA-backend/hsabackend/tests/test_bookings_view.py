@@ -5,7 +5,7 @@ from unittest.mock import Mock
 from unittest.mock import patch
 from django.contrib.auth.models import User
 from hsabackend.models.organization import Organization
-from hsabackend.views.bookings import get_booking_data, delete_event, edit_event
+from hsabackend.views.bookings import get_booking_data, delete_event, edit_event, create_event
 from hsabackend.models.job import Job
 from hsabackend.models.booking import Booking
 
@@ -92,7 +92,7 @@ class CreateBooking(APITestCase):
         factory = APIRequestFactory()
         request = factory.post('api/create/booking')
         request.user = mock_user
-        response = edit_event(request, 1)
+        response = create_event(request)
 
         assert response.status_code == 400
 
@@ -116,18 +116,94 @@ class CreateBooking(APITestCase):
             "jobID": 42
         })
         request.user = mock_user
-        response = edit_event(request, 1)
+        response = create_event(request)
 
         assert response.status_code == 400
 
-    def test_job_not_found(self):
-        pass
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    @patch('hsabackend.views.bookings.Job.objects.get')
+    def test_job_not_found(self, job, orgg):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
 
-    def test_booking_serializer_invalid(self):
-        pass
+        org = Organization()
+        org.is_onboarding = False
+        orgg.return_value = org
+        job.side_effect = Job.DoesNotExist
 
-    def test_boking_serializer_valid(self):
-        pass
+        factory = APIRequestFactory()
+        request = factory.post('api/edit/booking/1', {
+            "eventName": "Team Sync",
+            "startTime": "2021-05-25T14:30:00",
+            "endTime": "2023-04-25T15:30:00",
+            "bookingType": "internal",
+            "backColor": "#FF5733",
+            "status": "confirmed",
+            "jobID": 42
+        })
+        request.user = mock_user
+        response = create_event(request)
+
+        assert response.status_code == 400 # this is because the user needs to give valid job id
+
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    @patch('hsabackend.views.bookings.Job.objects.get')
+    @patch('hsabackend.views.bookings.BookingSerializer')
+    def test_booking_serializer_invalid(self, booking, job, orgg):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        mock_booking = Mock()
+        booking.return_value = mock_booking
+        mock_booking.is_valid.return_value = False
+
+        org = Organization()
+        org.is_onboarding = False
+        orgg.return_value = org
+        job.return_value = Job()
+
+        factory = APIRequestFactory()
+        request = factory.post('api/edit/booking/1', {
+            "eventName": "Team Sync",
+            "startTime": "2021-05-25T14:30:00",
+            "endTime": "2023-04-25T15:30:00",
+            "bookingType": "internal",
+            "backColor": "#FF5733",
+            "status": "confirmed",
+            "jobID": 42
+        })
+        request.user = mock_user
+        response = create_event(request)
+        assert response.status_code == 400
+
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    @patch('hsabackend.views.bookings.Job.objects.get')
+    @patch('hsabackend.views.bookings.BookingSerializer')
+    def test_booking_serializer_valid(self, booking, job, orgg):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        org = Organization()
+        org.is_onboarding = False
+        orgg.return_value = org
+        job.return_value = Job()
+
+        factory = APIRequestFactory()
+        request = factory.post('api/edit/booking/1', {
+            "eventName": "Team Sync",
+            "startTime": "2021-05-25T14:30:00",
+            "endTime": "2023-04-25T15:30:00",
+            "bookingType": "internal",
+            "backColor": "#FF5733",
+            "status": "confirmed",
+            "jobID": 42
+        })
+        request.user = mock_user
+        response = create_event(request)
+
+        booking.is_valid.return_value = True
+
+        assert response.status_code == 201
 
 
 class UpdateBooking(APITestCase):
