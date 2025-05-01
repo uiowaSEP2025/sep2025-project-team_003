@@ -7,6 +7,53 @@ from hsabackend.models.job import Job
 from django.db.models import Q
 from hsabackend.models.customer import Customer
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+from django.core.exceptions import ValidationError
+
+@api_view(["POST"])
+def create_request(request, id):
+    """
+    Public: create a new Request for org=id.
+    Rate-limit this endpoint via DRF throttling or similar!
+    """
+    try:
+        org = Organization.objects.get(pk=id)
+    except Organization.DoesNotExist:
+        return Response(
+            {"message": f"Organization {id} not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    data = request.data
+
+    req = Request(
+        requester_first_name = data.get("requester_first_name", "").strip(),
+        requester_last_name  = data.get("requester_last_name",  "").strip(),
+        requester_email      = data.get("requester_email",      "").strip(),
+        requester_city       = data.get("requester_city",       "").strip(),
+        requester_state      = data.get("requester_state",      "").strip(),
+        requester_zip        = data.get("requester_zip",        "").strip(),
+        requester_address    = data.get("requester_address",    "").strip(),
+        requester_phone      = data.get("requester_phone",      "").replace("-", "").strip(),
+        description          = data.get("description",          "").strip(),
+        availability         = data.get("availability",         "").strip(),
+        organization         = org,
+    )
+
+    try:
+        req.full_clean()
+        req.save()
+    except ValidationError as e:
+        return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(
+        {
+            "message": "Request created successfully",
+            "id":      req.id,
+            "data":    req.json(),
+        },
+        status=status.HTTP_201_CREATED
+    )
+
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
@@ -41,7 +88,7 @@ def get_org_request_data(request):
         'totalCount': count
     }    
     return Response(res, status=status.HTTP_200_OK)
-    
+
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
 def delete_request(request,id):
@@ -79,5 +126,5 @@ def approve_request(request, id):
         description = "",
         customer = cust
     )
-    new_job.save() # don't need to validate when based off a valid request
+    new_job.save()
     return Response({"message": "Request approved successfully"}, status=status.HTTP_200_OK)

@@ -42,4 +42,5 @@ su-exec postgres createdb -O ${DATABASE_USERNAME} ${DATABASE_NAME}
 # Run Django migrations
 python manage.py migrate
 
-python manage.py test -v 2
+python -m coverage run manage.py test -v 2
+python -m coverage report -m
