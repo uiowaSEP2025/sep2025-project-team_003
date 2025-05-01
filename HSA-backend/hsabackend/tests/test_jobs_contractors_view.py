@@ -58,9 +58,9 @@ class contractorViewTest(APITestCase):
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
-    @patch('hsabackend.views.jobs.Job.objects.get')
-    @patch('hsabackend.views.jobs.Organization.objects.get')
-    def test_get_job_table_data_valid_empty_query(self, org, job):
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    @patch('hsabackend.views.jobs_contractors.Job.objects.get')
+    def test_get_job_table_data_valid_empty_query(self, job, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
         job.return_value = Job()
