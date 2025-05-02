@@ -125,19 +125,18 @@ def approve_request(request, id):
             new_cust.full_clean()
             new_cust.save()
 
-            # edit the job status to pending? Not create new job on approval
-    except ValidationError as e:
-        print(e)
-        return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+            new_job = Job(
+                requestor_city = req.requestor_city,
+                requestor_state = req.requestor_state,
+                requestor_zip = req.requestor_zip,
+                requestor_address = req.requestor_address,
+                description = "",
+                customer = new_cust,
+                organization = org,
+            )
 
-    # this part should be on the create request
-    # new_job = Job(
-    #     requestor_city = the_req.requestor_city,
-    #     requestor_state = the_req.requestor_state,
-    #     requestor_zip = the_req.requestor_zip,
-    #     requestor_address = the_req.requestor_address,
-    #     description = "",
-    #     customer = cust
-    # )
-    # new_job.save() # don't need to validate when based off a valid request
-    return Response({"message": "Request approved successfully"}, status=status.HTTP_200_OK)
+            new_job.save()
+    except ValidationError as e:
+        return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+    
+    return Response({"message": "Request approved successfully", "data": new_job.json()}, status=status.HTTP_200_OK)

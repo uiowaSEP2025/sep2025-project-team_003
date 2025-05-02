@@ -183,9 +183,14 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
               this.snackBar.open(isApproved ? 'Approved successfully' : 'Denied successfully', '', {
                 duration: 3000
               });
+              
+              if (isApproved) {
+                this.redirectEdit(response.data.id, response.data);
+              } else {
+                window.location.reload();
+              }
             }
           })
-        window.location.reload();
       }
     })
   }

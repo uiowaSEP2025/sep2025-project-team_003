@@ -30,7 +30,7 @@
         <mat-tab [label]="'Pending'">
           <div class="large-box mat-elevation-z4">
             <app-table-component 
-              editRedirect="" 
+              editRedirect="/jobs/edit" 
               [fetchedData]="pendingRequests" 
               [deleteRequest]="requestService.deleteRequest.bind(requestService)" 
               [approveRequest]="requestService.approveDenyRequest.bind(requestService)"

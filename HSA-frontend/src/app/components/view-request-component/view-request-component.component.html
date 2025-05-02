@@ -38,7 +38,10 @@
         <button mat-flat-button style="background-color: rgb(196, 24, 24); color: black" (click)="openApprovalDialog(false)">Deny</button>
       }
     </div>
-    <button mat-stroked-button (click)="onReturn()">Return</button>
+    <div class="items-center">
+      <button mat-stroked-button (click)="onReturn()">Return</button>
+      <button mat-flat-button (click)="onRedirectToBooking()">Booking</button>
+    </div>
   </mat-dialog-actions>
 </div>
   

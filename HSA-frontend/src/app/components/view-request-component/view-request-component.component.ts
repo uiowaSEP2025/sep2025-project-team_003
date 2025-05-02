@@ -79,11 +79,12 @@ export class ViewRequestComponentComponent {
       })
     }
 
-  onApprove() {
-
+  onRedirectToBooking() {
+    this.dialogRef.close(false);
+    this.navigateToPage('booking');
   }
 
-  onDeny() {
-
+  navigateToPage(pagePath: string) {
+    this.router.navigate([`/${pagePath}`]);
   }
 }

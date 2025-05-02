@@ -37,13 +37,13 @@ export class RequestDashboardPageComponent {
 
   ngOnInit(): void {
     this.loadApprovedDataToTable("", 5, 0, "approved");
-    this.loadPendingDataToTable("", 5, 0, "received")
   }
 
   loadApprovedDataToTable(searchTerm: string, pageSize: number, offSet: number, status?: string) {
     this.requestService.getFilteredRequest({ status: status, search: searchTerm, pagesize: pageSize, offset: offSet}).subscribe({
       next: (response) => {
         this.approvedRequests = response
+        this.loadPendingDataToTable("", 5, 0, "received");
       },
       error: (error) => {
       }

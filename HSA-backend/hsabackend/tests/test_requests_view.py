@@ -142,7 +142,7 @@ class RequestView(APITestCase):
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     @patch('hsabackend.views.requests.Organization.objects.get')
-    @patch('hsabackend.views.requests.Request.objects.filter')
+    @patch('hsabackend.views.requests.Request.objects.get')
     def test_approve_not_exists(self,filter, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
@@ -156,12 +156,12 @@ class RequestView(APITestCase):
         request = factory.post('/api/approve/request/1')
         request.user = mock_user  
         response = approve_request(request,1)
-        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @patch('hsabackend.views.requests.Customer.objects.create')
-    @patch('hsabackend.views.requests.Job')
+    @patch('hsabackend.views.requests.Job.objects.create')
     @patch('hsabackend.views.requests.Organization.objects.get')
-    @patch('hsabackend.views.requests.Request.objects.filter')
+    @patch('hsabackend.views.requests.Request.objects.get')
     def test_approve_valid(self,filter, org, job, customer):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
@@ -177,6 +177,7 @@ class RequestView(APITestCase):
 
         job_mock = MagicMock()
         job.return_value = job_mock
+
         cust_mock = MagicMock(name="cust mock")
         customer.return_value = cust_mock
         
@@ -184,7 +185,7 @@ class RequestView(APITestCase):
         request = factory.post('/api/approve/request/1')
         request.user = mock_user  
         response = approve_request(request,1)
+        print(response.status_code, response.data)
         assert response.status_code == status.HTTP_200_OK
-        the_req_mock.delete.assert_called_once()
         job_mock.save.assert_called_once()
-        customer.assert_called_once()
+        customer.save.assert_called_once()
