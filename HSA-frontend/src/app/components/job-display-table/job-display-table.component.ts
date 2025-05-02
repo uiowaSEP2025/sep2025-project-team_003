@@ -128,6 +128,8 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
     this.displayedContractorColumns = this.isEditRow === true ? [...this.displayedContractorColumns, "Actions"] : this.displayedContractorColumns
   }
 
+
+
   openDeleteDialog(args: any, typeOfTable: string) {
     const dialogRef = this.dialog.open(DeleteDialogComponentComponent, {
       width: '300px',
@@ -142,8 +144,9 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
       case 'service': {
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            const jobServiceEntry = this.dataSource.services.filter((item: { id: any; }) => item.id === args["Service ID"])[0] as any
-            this.popOutEntry(typeOfTable, args, jobServiceEntry.id, jobServiceEntry.id)
+            const jobServiceEntry = this.dataSource.services.findIndex((item: { id: any; }) => item.id === args["Service ID"])
+            this.popOutEntry(typeOfTable, args, jobServiceEntry, jobServiceEntry)
+            this.dataSource.services.splice(jobServiceEntry, 1)[0];
             this.displayServices = this.dataSource.services?.map(
               (service) => ({
                 "Service ID": service.id,
