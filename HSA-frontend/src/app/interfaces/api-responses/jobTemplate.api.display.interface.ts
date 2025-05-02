@@ -5,9 +5,9 @@ export interface JobTemplateDisplayInterface {
 }
 
 export interface ServiceJSON{
-    "serviceID": string,
-    "serviceName": string,
-    "serviceDescription": string,
+    "id": string,
+    "name": string,
+    "description": string,
     "fee": number
 }
 
