@@ -1,20 +1,59 @@
-<div class="quote-sign-container">
+<!-- 1) Initial form: only shown while pdfBlobUrl$ is null -->
+<ng-container *ngIf="!(pdfBlobUrl$ | async) as pdfUrl">
+  <div class="quote-sign-container">
     <h1>Sign Your Quote</h1>
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="quote-sign-form">
+
+    <form
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      class="quote-sign-form">
+
       <div class="form-group">
         <label for="quoteId">Quote ID</label>
-        <input id="quoteId" formControlName="quoteId" placeholder="Enter Quote ID" />
+        <input
+          id="quoteId"
+          formControlName="quoteId"
+          placeholder="Enter Quote ID" />
       </div>
+
       <div class="form-group">
         <label for="pin">One-time PIN</label>
-        <input id="pin" type="password" formControlName="pin" placeholder="Enter PIN" />
+        <input
+          id="pin"
+          type="password"
+          formControlName="pin"
+          placeholder="Enter PIN" />
       </div>
-      <button type="submit" [disabled]="form.invalid" class="btn-submit">Fetch & Sign</button>
+
+      <button
+        type="submit"
+        [disabled]="form.invalid"
+        class="btn-submit">
+        Fetch &amp; Sign
+      </button>
     </form>
-  
-    <ngx-extended-pdf-viewer *ngIf="pdfBlobUrl"
-                             [src]="pdfBlobUrl$"
-                             useBrowserLocale="true"
-                             height="80vh"
-                             class="pdf-viewer">
+  </div>
+</ng-container>
+
+<!-- 2) PDF editor + Submit button: only shown once pdfBlobUrl$ yields a string -->
+<ng-container *ngIf="(pdfBlobUrl$ | async) as blobUrl">
+  <div class="pdf-container">
+    <ngx-extended-pdf-viewer
+      [src]="blobUrl"
+      useBrowserLocale="true"
+      height="80vh"
+      class="pdf-fullscreen">
     </ngx-extended-pdf-viewer>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="(pdfBlobUrl$ | async) as blobUrl">
+
+  <div class="submit-wrapper">
+    <button
+      class="btn-submit-big"
+      (click)="onConfirmSubmit()">
+      Submit
+    </button>
+  </div>
+</ng-container>

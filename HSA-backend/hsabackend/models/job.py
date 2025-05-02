@@ -22,9 +22,17 @@ class Job(models.Model):
     requestor_state = models.CharField(max_length=50, validators=[isNonEmpty, validate_state])
     requestor_zip = models.CharField(max_length=10, validators=[isNonEmpty])
     requestor_address = models.CharField(max_length=100, validators=[isNonEmpty])
+    
+    quote_choices = [
+        ('not-created-yet', 'not-created-yet'),
+        ('created', 'created'),
+        ('approved','approved'),
+        ('denied', 'denied')
+    ]
 
     quote_s3_link = models.CharField(max_length=100, blank=True)
     quote_sign_pin = models.CharField(max_length=10, blank=True)
+    quote_status = models.CharField(max_length=50, choices=quote_choices, default="not-created-yet")
 
     def __str__(self):
         return f"<Job, organization: {self.organization}, description: {self.description}>"
@@ -42,7 +50,8 @@ class Job(models.Model):
             'requestorAddress': self.requestor_address,
             "requestorCity": self.requestor_city,
             "requestorState": self.requestor_state,
-            "requestorZip": self.requestor_zip
+            "requestorZip": self.requestor_zip,
+            'quote_s3_link': self.quote_s3_link or 'NA',
         }
     
     def json_simplify(self):

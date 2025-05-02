@@ -32,6 +32,7 @@ import { RequestPasswordResetPageComponent } from './pages/request-password-rese
 import { PasswordResetPageComponent } from './pages/password-reset-page/password-reset-page.component';
 import { BookingPageComponent } from './pages/booking-page/booking-page.component';
 import { QuoteSignComponent } from './pages/quote-sign/quote-sign.component'
+import { QuotesDashboardPageComponent } from './pages/quotes-dashboard-page/quotes-dashboard-page.component';
 
 export const routes: Routes = [
   {
@@ -117,6 +118,9 @@ export const routes: Routes = [
       },
       {
         path: 'signquote', component: QuoteSignComponent
+      },
+      {
+        path: 'quotes', component: QuotesDashboardPageComponent
       },
     ]
   },
