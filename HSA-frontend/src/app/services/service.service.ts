@@ -31,7 +31,7 @@ export class ServiceService {
   private apiCreateUrl = `${environment.apiUrl}/api/create/service`;
   private apiEditUrl = `${environment.apiUrl}/api/edit/service`;
   private apiDeleteUrl = `${environment.apiUrl}/api/delete/service`;
-  
+
 
   constructor(private http: HttpClient) {}
 
@@ -71,7 +71,7 @@ export class ServiceService {
 
     return this.http.get<TableApiResponse<Service>>(this.apiGetExcludedUrl, { params: httpParams });
   }
-  
+
 
   public createService(data:ServiceCreatePostData): Observable<StandardApiResponse> {
     return this.http.post<StandardApiResponse>(this.apiCreateUrl, data);

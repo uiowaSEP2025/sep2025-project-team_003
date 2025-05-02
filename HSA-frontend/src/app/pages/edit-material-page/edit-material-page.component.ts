@@ -33,7 +33,6 @@ export class EditMaterialPageComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      console.log(params);
       this.materialForm.controls['materialName'].setValue(params['name']);
       this.materialForm.controls['materialDescription'].setValue(params['description']);
       this.materialForm.controls['materialDefaultCost'].setValue(params['default_cost']);

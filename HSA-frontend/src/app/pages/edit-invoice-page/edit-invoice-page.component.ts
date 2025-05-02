@@ -82,7 +82,6 @@ export class EditInvoicePageComponent implements OnInit {
 
 
     this.activatedRoute.queryParams.subscribe(params => {
-      console.log(params);
       this.initialStatus = params['status'];
       this.status = params['status'];
       this.dueDate = params['date_due'];

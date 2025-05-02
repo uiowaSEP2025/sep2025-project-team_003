@@ -359,7 +359,6 @@ export class EditJobPageComponent {
   }
 
   onUpdateConfirmDialog() {
-    console.log(this.selectedServices);
     const dialogRef = this.dialog.open(UpdateConfirmDialogComponentComponent, {
       data: "job updating"
     });
@@ -395,8 +394,6 @@ export class EditJobPageComponent {
         materials: this.selectedMaterials,
         contractors: this.selectedContractors,
       };
-      console.log("JOBJSON!!!!")
-      console.log(editJobRequestJson);
 
       this.tracker.startRequest();
       this.jobService.editJob(editJobRequestJson).subscribe(

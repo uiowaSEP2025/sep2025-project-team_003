@@ -125,7 +125,8 @@ export class AddSelectDialogComponentComponent {
 
 
   loadServicesToTable(searchTerm: string, pageSize: number, offSet: number) {
-    this.serviceService.getExcludedService({ excludeIDs: this.getIDsFromData(this.data.dialogData.services, 'serviceID'), search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
+    console.log(this.data);
+    this.serviceService.getExcludedService({ excludeIDs: this.getIDsFromData(this.data.dialogData.services, 'id'), search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
       next: (response) => {
         this.dialogData = response;
         this.allDataEntries = [...new Set([...this.allDataEntries, ...this.dialogData.data])];
@@ -257,7 +258,6 @@ export class AddSelectDialogComponentComponent {
 
   setMaterialInput(inputField: InputFieldDictionary[]) {
     this.materialInputFields = inputField;
-    console.log(inputField);
   }
 
   setServiceInput(inputField: InputFieldDictionary[]) {

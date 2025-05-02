@@ -131,15 +131,12 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       }
     }
 
-    console.log(this.serviceFeeField)
 
     if (this.serviceFeeField === true) {
       if (!this.headersWithActions.includes('Service Fee')) {
         this.headersWithActions = [...this.headersWithActions, 'Service Fee']
       }
     }
-    console.log(this.headersWithActions)
-
     if (this.fetchedData !== undefined) {
       if (this.fetchedData.length !== 0) {
         if (this.fetchedData.data !== undefined) {
