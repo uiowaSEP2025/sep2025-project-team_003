@@ -18,6 +18,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './invoice-date-picker.component.html',
   providers: [provideNativeDateAdapter()],
   styleUrl: './invoice-date-picker.component.scss',
+  standalone: true
 })
 export class InvoiceDatePickerComponent implements OnInit{
   @Input({ required: true }) formControll!: FormGroup<DateRange> // extra l to avoid name conflict

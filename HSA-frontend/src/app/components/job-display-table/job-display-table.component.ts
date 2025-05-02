@@ -31,6 +31,7 @@ interface ContractorRowItem {
   selector: 'app-job-display-table',
   imports: [MatTableModule, MatIcon],
   templateUrl: './job-display-table.component.html',
+  standalone: true,
   styleUrl: './job-display-table.component.scss'
 })
 
@@ -69,7 +70,6 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['dataSource']) {
       const newValue = changes['dataSource'].currentValue;
-      
       if (newValue && 'services' in newValue) {
         this.updateServiceTable();
       } else if (newValue && 'materials' in newValue) {
@@ -86,12 +86,13 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
         (service) => ({
           "Service ID": service.serviceID,
           "Service Name": service.serviceName,
-          "Service Description": service.serviceDescription
+          "Service Description": service.serviceDescription,
+          "Service Fee": service.fee
         })
       )
     }
-    
-    this.displayedServiceColumns = ["Service ID", "Service Name", "Service Description"]
+
+    this.displayedServiceColumns = ["Service ID", "Service Name", "Service Description", "Service Fee"]
     this.displayedServiceColumns = this.isEditRow === true ? [...this.displayedServiceColumns, "Actions"] : this.displayedServiceColumns
   }
 
@@ -122,7 +123,7 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
         })
       )
     }
-    
+
     this.displayedContractorColumns = ["Contractor ID", "Contractor Name", "Contractor Phone No", "Contractor Email"]
     this.displayedContractorColumns = this.isEditRow === true ? [...this.displayedContractorColumns, "Actions"] : this.displayedContractorColumns
   }

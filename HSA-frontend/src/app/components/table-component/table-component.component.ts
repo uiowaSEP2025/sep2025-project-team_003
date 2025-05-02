@@ -37,6 +37,7 @@ import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.c
     LoadingFallbackComponent
   ],
   templateUrl: './table-component.component.html',
+  standalone: true,
   styleUrl: './table-component.component.scss'
 })
 export class TableComponentComponent implements AfterViewInit, OnChanges, OnDestroy, OnInit {
@@ -52,6 +53,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   @Input() materialInputFields: InputFieldDictionary[] = []
   @Input() setCheckedIds: ((checkedIds: number[]) => void) | null = null;
   @Input() setMaterialInputFields: ((inputFields: InputFieldDictionary[]) => void) | null = null;
+  @Input() setServiceInputFields: ((inputFields: InputFieldDictionary[]) => void) | null = null;
   @Input() hideSearch: boolean = false
   @Input() clickableRows: boolean = false
   @Input() onRowClick: any = null // if clickable rows is enabled this the function that handles the click
@@ -70,13 +72,14 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   pageSize: number | null = null
   dataSize: number | null = null
   checkedRowIndexes = new Set<number>();
-  
+
   headersWithActions = [...this.headers, 'Actions']
   editRedirect = input.required<string>()
   isDataNotAvailable: boolean = false
 
   data = new MatTableDataSource(this.fetchedData ?? []);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+
 
   ngAfterViewInit() {
     if (this.dataSubscription) {
@@ -107,7 +110,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   ngOnInit(): void {
-    
+
     this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
       return !this.hideValues.includes(header)
     }) // this has to be here to allow default headers change. On init is ran
@@ -115,7 +118,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
 
     if (this.checkbox !== 'none') {
       if (!this.headersWithActions.includes('Checkbox')) {
-        
+
         this.headersWithActions = ['Checkbox', ...this.headersWithActions]
       }
     }
@@ -125,13 +128,13 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
         this.headersWithActions = [...this.headersWithActions, 'Unit Used', 'Price Per Unit']
       }
     }
-  
+
     if (this.fetchedData !== undefined) {
       if (this.fetchedData.length !== 0) {
         if (this.fetchedData.data !== undefined) {
           this.isDataNotAvailable = this.fetchedData.data.length === 0
         }
-      }  
+      }
     }
   }
 
@@ -243,7 +246,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       const number = isNaN(parsedNumber) ? 0: parsedNumber
       let currentUnitsUsedDict = this.materialInputFields
       let specificEntry = currentUnitsUsedDict.find((item) => item.id === id)
-      
+
       if (specificEntry) {
         specificEntry['unitsUsed'] = number
       }
@@ -258,7 +261,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       const number = isNaN(parsedNumber) ? 0: parsedNumber
       let currentUnitsUsedDict = this.materialInputFields
       let specificEntry = currentUnitsUsedDict.find((item) => item.id === id)
-      
+
       if (specificEntry) {
         specificEntry['pricePerUnit'] = number
       }
@@ -266,7 +269,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       this.setMaterialInputFields!(currentUnitsUsedDict)
     }
   }
-  
+
 
   ngOnDestroy() {
     if (this.searchSubscription) {
@@ -288,11 +291,11 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
 
   getUnitsUsedValue(id: number): number | string {
     const entry = this.materialInputFields.find(item => item.id === id);
-    return entry?.['unitsUsed'] ?? ''; 
+    return entry?.['unitsUsed'] ?? '';
   }
 
   getPricePerUnitValue(id: number): number | string {
     const entry = this.materialInputFields.find(item => item.id === id);
-    return entry?.['pricePerUnit'] ?? ''; 
+    return entry?.['pricePerUnit'] ?? '';
   }
 }

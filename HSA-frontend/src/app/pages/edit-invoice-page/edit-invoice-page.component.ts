@@ -29,11 +29,12 @@ export interface DateRange {
 
 @Component({
   selector: 'app-edit-invoice-page',
-  imports: [TableComponentComponent, MatError, MatButtonModule, MatSelectModule,
+  imports: [MatError, MatButtonModule, MatSelectModule,
     FormsModule, MatInputModule, MatFormFieldModule, MatCardModule,
     InvoiceDatePickerComponent, ReactiveFormsModule],
   templateUrl: './edit-invoice-page.component.html',
   providers: [],
+  standalone: true,
   styleUrl: './edit-invoice-page.component.scss'
 })
 export class EditInvoicePageComponent implements OnInit {
@@ -46,7 +47,7 @@ export class EditInvoicePageComponent implements OnInit {
   dueDate!: string
   status!: 'issued' | 'created' | 'paid'// also serves as a form control
   initialStatus!: string
-  tax!: number
+  taxPercent!: number
   readonly range: FormGroup<DateRange> = new FormGroup({
     issued: new FormControl<Date | null>(null),
     due: new FormControl<Date | null>(null),
@@ -60,10 +61,10 @@ export class EditInvoicePageComponent implements OnInit {
     ])
 
     matcher = new GenericFormErrorStateMatcher()
-  
-  
-  constructor(private quoteService: QuoteService, private activatedRoute: ActivatedRoute, 
-    private invoiceService: InvoiceService, private stringFormatter: StringFormatter, 
+
+
+  constructor(private quoteService: QuoteService, private activatedRoute: ActivatedRoute,
+    private invoiceService: InvoiceService, private stringFormatter: StringFormatter,
     private router: Router) { }
 
     private fixBackendTaxPercentage(tax: string): string {
@@ -79,15 +80,17 @@ export class EditInvoicePageComponent implements OnInit {
       this.invoiceID = Number(params.get('id'));
     })
 
+
     this.activatedRoute.queryParams.subscribe(params => {
+      console.log(params);
       this.initialStatus = params['status'];
       this.status = params['status'];
-      this.dueDate = params['due_date'];
-      this.issuanceDate = params['issuance_date'];
+      this.dueDate = params['date_due'];
+      this.issuanceDate = params['date_issued'];
       this.customerName = params['customer'];
-      this.tax = parseInt(this.fixBackendTaxPercentage(params['tax']));
+      this.taxPercent = parseInt(this.fixBackendTaxPercentage(params['sales_tax_percent']));
     })
-    this.taxAmount.setValue(this.tax.toFixed(2))
+    this.taxAmount.setValue(this.taxPercent.toFixed(2))
 
     if (this.issuanceDate !== "N/A") {
       const split =  this.issuanceDate.split('-')
@@ -104,19 +107,6 @@ export class EditInvoicePageComponent implements OnInit {
       const day = split[2]
       this.range.controls.due.setValue(new Date(parseInt(year), parseInt(month) - 1, parseInt(day)))
     }
-    this.loadQuotesToTable("", 5, 0);
-  }
-
-  setSelectedQuotes(newQuotes: number[]) {
-    if (newQuotes.length === 0) {
-      this.selectedQuotesIsError = true
-      this.selectedQuotes = [...newQuotes]
-    }
-    else {
-      this.selectedQuotesIsError = false
-      this.selectedQuotes = [...newQuotes]
-    }
-
   }
 
   openDialog(): void {
@@ -129,9 +119,9 @@ export class EditInvoicePageComponent implements OnInit {
         const data = {
           quoteIDs: this.selectedQuotes,
           status: this.status,
-          issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
-          dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
-          tax: this.taxAmount.value.toString()
+          dateIssued: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
+          dateDue: this.stringFormatter.dateFormatter(this.range.controls.due.value),
+          taxPercent: this.taxAmount.value.toString()
         }
         this.invoiceService.updateInvoice(this.invoiceID, data).subscribe(
           {next: (response) => {
@@ -144,15 +134,6 @@ export class EditInvoicePageComponent implements OnInit {
   }
 
 
-  loadQuotesToTable(searchTerm: string, pageSize: number, offSet: number) {
-    this.quoteService.getQuotesByInvoice(this.invoiceID, { search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
-      next: (response) => {
-        this.quotes = response
-      },
-      error: (error) => {
-      }
-    })
-  }
 
   onSubmit() {
     if (!this.taxAmount.valid) {
@@ -172,13 +153,13 @@ export class EditInvoicePageComponent implements OnInit {
       this.openDialog()
       return;
     }
-    
+
     const data = {
       quoteIDs: this.selectedQuotes,
       status: this.status,
-      issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value) ,
-      dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
-      tax: this.taxAmount.value.toString()
+      dateIssued: this.stringFormatter.dateFormatter(this.range.controls.issued.value) ,
+      dateDue: this.stringFormatter.dateFormatter(this.range.controls.due.value),
+      taxPercent: this.taxAmount.value.toString()
     }
     this.invoiceService.updateInvoice(this.invoiceID, data).subscribe(
       {next: (response) => {

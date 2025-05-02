@@ -56,7 +56,7 @@ export class AddSelectDialogComponentComponent {
   selectedContractors: any = []
   selectedContractorsIsError: boolean = false
   materialInputFields: InputFieldDictionary[]
-  setMaterialInputFields: any
+  serviceInputFields: InputFieldDictionary[]
   @ViewChild(TableComponentComponent) tableComponent!: TableComponentComponent;
 
   constructor(
@@ -76,6 +76,7 @@ export class AddSelectDialogComponentComponent {
     this.searchHint = this.data.searchHint;
     this.headers = this.data.headers;
     this.materialInputFields = this.data.materialInputFields;
+    this.serviceInputFields = this.data.serviceInputFields;
   }
 
   ngOnInit() {
@@ -202,7 +203,22 @@ export class AddSelectDialogComponentComponent {
     this.selectedItems = this.selectedServices;
     this.selectedServicesIsError = this.selectedServices.length === 0 ? true : false;
     this.isNotSelectedItems = this.selectedServices.length === 0 ? true : false;
-    
+    if (this.selectedServicesIsError === false) {
+      const previousServicesInputFields = this.serviceInputFields;
+      this.serviceInputFields = [];
+      this.selectedServices.forEach((element: any) => {
+        if (previousServicesInputFields.some((item) => item.id === element)) {
+          const specificEntry = previousServicesInputFields.find((item) => item.id === element);
+          this.serviceInputFields.push({"id": element, "description": specificEntry!["description"], "name": specificEntry!['name'], "fee": specificEntry!["fee"]});
+        } else {
+          const service = this.allDataEntries.filter((item: { [x: string]: number; }) => item['id'] === element)[0];
+          this.serviceInputFields.push({"id": element, "description": service.description, "fee": service.default_fee});
+        }
+
+      });
+    } else {
+      this.serviceInputFields = [];
+    }
   }
 
   setSelectedMaterials(materials: number[]) {
@@ -216,12 +232,13 @@ export class AddSelectDialogComponentComponent {
       this.materialInputFields = [];
       this.selectedMaterials.forEach((element: any) => {
         if (previousMaterialInputFields.some((item) => item.id === element)) {
-          let specificEntry = previousMaterialInputFields.find((item) => item.id === element);
-          this.materialInputFields.push({"id": element, "unitsUsed": specificEntry!["unitsUsed"], "pricePerUnit": specificEntry!["pricePerUnit"]});
+          const specificEntry = previousMaterialInputFields.find((item) => item.id === element);
+          this.materialInputFields.push({"id": element, "unitsUsed": specificEntry!["unitsUsed"], "materialName": specificEntry!['materialName'], "pricePerUnit": specificEntry!["pricePerUnit"]});
         } else {
-          this.materialInputFields.push({"id": element, "unitsUsed": 0, "pricePerUnit": 0.00});
+          const material = this.allDataEntries.filter((item: { [x: string]: number; }) => item['id'] === element)[0];
+          this.materialInputFields.push({"id": element, "unitsUsed": 0, "pricePerUnit": material.default_cost});
         }
-        
+
       });
     } else {
       this.materialInputFields = [];
@@ -239,6 +256,10 @@ export class AddSelectDialogComponentComponent {
     this.materialInputFields = inputField;
   }
 
+  setServiceInput(inputField: InputFieldDictionary[]) {
+    this.serviceInputFields = inputField;
+  }
+
   onCancel(): void {
     this.dialogRef.close([]);
   }
@@ -248,10 +269,10 @@ export class AddSelectDialogComponentComponent {
     this.selectedItems.forEach((element : number) => {
       if (this.typeOfDialog === 'template') {
         const secondDialogRef = this.dialog.open(ApplyTemplateConfirmDialogComponentComponent, {
-          width: 'auto', 
-          maxWidth: '90vw', 
-          height: 'auto', 
-          maxHeight: '90vh', 
+          width: 'auto',
+          maxWidth: '90vw',
+          height: 'auto',
+          maxHeight: '90vh',
           data: element,
           disableClose: false
         });
@@ -271,41 +292,45 @@ export class AddSelectDialogComponentComponent {
         itemsInfo.push(
           { id: 0,
             materialID: materialEntry['id'],
-            materialName: materialEntry['material_name'],
+            materialName: materialEntry.name,
             unitsUsed: materialInputEntry['unitsUsed'],
             pricePerUnit: materialInputEntry['pricePerUnit']
           }
         );
-      } else {
+      }
+      else if (this.typeOfDialog === 'service') {
+        let serviceEntry = this.allDataEntries.filter((item: { [x: string]: number; }) => item['id'] === element)[0];
+        const serviceInputEntry: InputFieldDictionary = this.selectedServices.filter((item: InputFieldDictionary) => item['id'] === element)[0];
+        itemsInfo.push(
+          {
+            id: 0,
+            serviceID: serviceEntry['id'],
+            serviceName: serviceEntry.name,
+            fee: serviceInputEntry['fee']
+          }
+        )
+      }
+
+      else {
         itemsInfo.push(this.allDataEntries.filter((item: { [x: string]: number; }) => item['id'] === element)[0]);
       }
     });
 
     if (this.typeOfDialog !== 'template') {
       this.dialogRef.close({
-        selectedItems: this.typeOfDialog === 'job' 
+        selectedItems: this.typeOfDialog === 'job'
           ? this.selectedJob[0]
-           :this.typeOfDialog === 'customer' 
+           :this.typeOfDialog === 'customer'
             ? this.selectedCustomer[0]
-            : this.typeOfDialog === 'service' 
-              ? this.selectedServices 
-              : this.typeOfDialog === 'contractor' 
-                ? this.selectedContractors 
+            : this.typeOfDialog === 'service'
+              ? this.selectedServices
+              : this.typeOfDialog === 'contractor'
+                ? this.selectedContractors
                 : this.materialInputFields,
           itemsInfo: itemsInfo
         }
       );
     }
-  }
-
-  getUnitsUsedValue(id: number): number | string {
-    const entry = this.materialInputFields.find(item => item.id === id);
-    return entry?.['unitsUsed'] ?? ''; 
-  }
-
-  getPricePerUnitValue(id: number): number | string {
-    const entry = this.materialInputFields.find(item => item.id === id);
-    return entry?.['pricePerUnit'] ?? ''; 
   }
 
   getButtonAction(): string {

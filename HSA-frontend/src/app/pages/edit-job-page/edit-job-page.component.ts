@@ -40,11 +40,11 @@ interface State {
     provideNativeDateAdapter()
   ],
   imports: [
-    LoadingFallbackComponent, 
-    CommonModule, 
-    MatButtonModule, 
-    MatIconModule, 
-    JobDisplayTableComponent, 
+    LoadingFallbackComponent,
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    JobDisplayTableComponent,
     MatCardModule,
     MatListModule,
     MatDividerModule,
@@ -78,6 +78,7 @@ export class EditJobPageComponent {
   deletedJobMaterials: any = []
   deletedJobContractors: any = []
   materialInputFields: InputFieldDictionary[] = []
+  serviceInputFields: InputFieldDictionary[] = []
   status: 'created' | 'in-progress' | 'completed' = 'created'
   customerID: number = 0
   description: string = ''
@@ -88,12 +89,12 @@ export class EditJobPageComponent {
   jobForm: FormGroup;
   states: any = []
   isUpdatedField: boolean = false
-  
+
   constructor (
     private jobService: JobService,
     private stringFormatter: StringFormatter,
-    private activatedRoute:ActivatedRoute, 
-    private router: Router, 
+    private activatedRoute:ActivatedRoute,
+    private router: Router,
     private tracker: RequestTrackerService,
     private jobFormBuilder: FormBuilder,
     private http: HttpClient,
@@ -134,7 +135,7 @@ export class EditJobPageComponent {
           requestorZip: this.jobData?.data.requestorZip,
           requestorStateSelect: this.jobData?.data.requestorState,
         });
-        
+
         this.customerID = this.jobData?.data.customerID;
         this.customers = this.jobData?.data.customerName;
         this.services = this.jobData.services;
@@ -154,7 +155,7 @@ export class EditJobPageComponent {
 
     if (!startDate) {
       return { noStartDate: true };
-    } 
+    }
 
     if (!endDate) {
       return { noEndDate: true };
@@ -174,13 +175,14 @@ export class EditJobPageComponent {
       searchHint: 'Search by customer name',
       headers: ['First Name','Last Name', 'Email', 'Phone No'],
       materialInputFields: this.materialInputFields,
+      serviceInputFields: this.serviceInputFields,
     };
 
     const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -203,13 +205,14 @@ export class EditJobPageComponent {
       searchHint: 'Search by material name',
       headers: ['Service Name', 'Service Description'],
       materialInputFields: this.materialInputFields,
+      serviceInputFields: this.serviceInputFields,
     };
 
     const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -219,11 +222,11 @@ export class EditJobPageComponent {
           let info: any = {};
           info['id'] = 0;
           info['serviceID'] = element['id'];
-          info['serviceName'] = element['service_name'];
-          info['serviceDescription'] = element['service_description'];
+          info['serviceName'] = element['name'];
+          info['serviceDescription'] = element['description'];
           this.services = { services: [...this.services.services, info] };
         });
-      
+
         this.selectedServices = result.selectedItems;
         this.onChangeUpdateButton()
       }
@@ -237,13 +240,14 @@ export class EditJobPageComponent {
       searchHint: 'Search by material name or description',
       headers: ['Checkbox', 'Material Name', 'Material Description'],
       materialInputFields: this.materialInputFields,
+      serviceInputFields: this.serviceInputFields,
     }
 
     const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -266,13 +270,14 @@ export class EditJobPageComponent {
       searchHint: 'Search by contractor name or description',
       headers: ['Checkbox', 'Contractor Name', 'Phone Number', 'Email'],
       materialInputFields: this.materialInputFields,
+      serviceInputFields: this.serviceInputFields,
     }
 
     const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -344,7 +349,7 @@ export class EditJobPageComponent {
       }
       case 'contractor': {
         let popOutID = data["Contractor ID"];
-        
+
         if (joinRelationID !== 0) {
           this.deletedJobContractors.push(joinRelationID);
         } else {
@@ -354,9 +359,9 @@ export class EditJobPageComponent {
         this.contractors.contractors = this.contractors.contractors.filter((item: { contractorID: any; }) => item.contractorID !== popOutID);
         this.onChangeUpdateButton();
         return this.contractors;
-      }  
+      }
     };
-    
+
   }
 
   onUpdateConfirmDialog() {
@@ -366,9 +371,66 @@ export class EditJobPageComponent {
 
     dialogRef.afterClosed().subscribe((result:any) => {
       if (result) {
-        this.onSubmit();
+        this.onSubmitV2();
       }
     });
+  }
+
+  onSubmitV2() {
+    let onSubmitSucessful = true;
+    let errorMessage = '';
+    if (this.jobForm.invalid) {
+      this.snackBar.open('Invalid fields, please revise the form and resubmit', '', {
+        duration: 3000
+      });
+    } else {
+      //call edit job api
+      const editJobRequestJson = {
+        id: this.jobID,
+        jobStatus: this.jobForm.get('jobStatus')?.value,
+        startDate: this.stringFormatter.dateFormatter(this.jobForm.get('startDate')?.value),
+        endDate: this.stringFormatter.dateFormatter(this.jobForm.get('endDate')?.value),
+        description: this.jobForm.get('jobDescription')?.value,
+        customerID: this.selectedCustomer === 0 ? this.customerID : this.selectedCustomer,
+        city: this.jobForm.get('requestorCity')?.value,
+        state: this.jobForm.get('requestorStateSelect')?.value,
+        zip: this.jobForm.get('requestorZip')?.value,
+        address: this.jobForm.get('requestorAddress')?.value,
+        services: this.selectedServices,
+        materials: this.selectedMaterials,
+        contractors: this.selectedContractors,
+      };
+      console.log(editJobRequestJson);
+
+      this.tracker.startRequest();
+      this.jobService.editJob(editJobRequestJson).subscribe(
+        {
+          next: (response) => {
+            onSubmitSucessful = true;
+            this.tracker.endRequest();
+          },
+          error: (error) => {
+            onSubmitSucessful = false;
+            errorMessage = error.status + " " + error.statusText;
+            this.tracker.endRequest();
+          }
+        }
+      );
+      this.tracker.completionNotifier.pipe(take(1)).subscribe(() => {
+        //Wait for all requests to make through
+        if (onSubmitSucessful === true) {
+          this.snackBar.open('Job edit successfully', '', {
+            duration: 3000
+          });
+        } else {
+          this.snackBar.open('There is an error in the server, please try again later. Error: ' + errorMessage, '', {
+            duration: 3000
+          });
+        }
+      });
+
+      this.resetAllParameters()
+    }
   }
 
   onSubmit() {
@@ -424,7 +486,7 @@ export class EditJobPageComponent {
 
       let deletedMaterialsField: { id: any; } [] = [];
       this.deletedJobMaterials = Array.from(new Set(this.deletedJobMaterials))
-      
+
       this.deletedJobMaterials.forEach((element: any) => {
         deletedMaterialsField.push({ "id": element });
       });
@@ -446,7 +508,7 @@ export class EditJobPageComponent {
         id: this.jobID,
         deletedItems: { "jobContractors" : deletedContractorsField }
       };
-      
+
       if (deletedServicesField.length !== 0) {
         this.tracker.startRequest();
         this.jobService.deleteJobJoin(deleteJobServicesRequestJson).subscribe(
@@ -463,7 +525,7 @@ export class EditJobPageComponent {
           }
         );
       }
-      
+
       if (deletedMaterialsField.length !== 0) {
         this.tracker.startRequest();
         this.jobService.deleteJobJoin(deleteJobMaterialsRequestJson).subscribe(
@@ -480,7 +542,7 @@ export class EditJobPageComponent {
           }
         );
       }
-      
+
       if (deletedContractorsField.length !== 0) {
         this.tracker.startRequest();
         this.jobService.deleteJobJoin(deleteJobContractorsRequestJson).subscribe(
@@ -546,7 +608,7 @@ export class EditJobPageComponent {
           );
         }
       });
-      
+
       this.tracker.completionNotifier.pipe(take(1)).subscribe(() => {
         if (selectedMaterialsField.length !== 0) {
           this.tracker.startRequest();
@@ -565,7 +627,7 @@ export class EditJobPageComponent {
           );
         }
       })
-      
+
       this.tracker.completionNotifier.pipe(take(1)).subscribe(() => {
         if (selectedContractorsField.length !== 0) {
           this.tracker.startRequest();

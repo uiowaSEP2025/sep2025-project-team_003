@@ -114,7 +114,7 @@ export class BookingDialogComponentComponent implements OnInit {
         this.jobID = result.id
         this.eventForm.get('jobID')?.setValue(result)
         this.eventForm.get('jobID')!.markAsUntouched()
-        this.eventForm.get('jobDescription')!.setValue(result.desc) 
+        this.eventForm.get('jobDescription')!.setValue(result.desc)
       }
     })
   }

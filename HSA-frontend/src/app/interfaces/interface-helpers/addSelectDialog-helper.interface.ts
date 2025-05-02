@@ -6,4 +6,5 @@ export interface AddSelectDialogData {
     searchHint: string;
     headers: string[]
     materialInputFields: InputFieldDictionary[]
+    serviceInputFields: InputFieldDictionary[]
 }

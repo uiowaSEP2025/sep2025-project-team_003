@@ -22,7 +22,7 @@ import { LoadingFallbackComponent } from '../../components/loading-fallback/load
 export class MaterialsPageComponent implements OnInit {
   materials: any = null
   materialService: MaterialService
-  @ViewChild(TableComponentComponent) tableComponent!: TableComponentComponent 
+  @ViewChild(TableComponentComponent) tableComponent!: TableComponentComponent
 
   constructor(private router: Router, materialService: MaterialService) {
     this.materialService = materialService

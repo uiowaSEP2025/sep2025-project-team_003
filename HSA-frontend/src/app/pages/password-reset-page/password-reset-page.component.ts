@@ -30,7 +30,7 @@ export class PasswordResetPageComponent implements OnInit {
     confirmPassword: new FormControl('',)
   }, validateConfirmMatchesAndNotNull);
 
-  constructor(private activatedRoute: ActivatedRoute, private passwordReset: ConfirmPasswordResetServiceService, 
+  constructor(private activatedRoute: ActivatedRoute, private passwordReset: ConfirmPasswordResetServiceService,
     private router: Router, private snackBar: MatSnackBar) { }
 
 

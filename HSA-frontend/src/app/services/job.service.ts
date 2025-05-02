@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 import { JobDataInterface } from '../interfaces/api-responses/job.api.data.interface';
 import { Job, JobParams } from '../interfaces/job.interface';
 import { TableApiResponse } from '../interfaces/api-responses/table.api.interface';
-import JobSimplified from '../interfaces/jobData.interface';
+import JobSimplified from '../interfaces/job_data.interface';
 
 interface JobCreatePostData {
   jobStatus: string | null,
@@ -84,7 +84,7 @@ export class JobService {
 
     return this.http.get<StandardApiResponse>(this.apiGetUrl, { params: httpParams });
   }
-  
+
    public getExcludedJob(params?: JobParams): Observable<TableApiResponse<Job>> {
     let httpParams = new HttpParams();
 

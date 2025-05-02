@@ -20,10 +20,15 @@
 
     <mat-form-field>
       <mat-label>Description</mat-label>
-      <textarea 
-        matInput 
+      <textarea
+        matInput
         formControlName="serviceDescription"
         ></textarea>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Default Fee</mat-label>
+      <input type="number" placeholder="0"  matInput formControlName="serviceDefaultFee">
     </mat-form-field>
 
     <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">

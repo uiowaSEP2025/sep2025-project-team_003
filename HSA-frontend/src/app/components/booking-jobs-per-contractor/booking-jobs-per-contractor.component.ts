@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { TableComponentComponent } from '../table-component/table-component.component';
-import JobSimplified from '../../interfaces/jobData.interface';
+import JobSimplified from '../../interfaces/job_data.interface';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { JobService } from '../../services/job.service';
 import { TableApiResponse } from '../../interfaces/api-responses/table.api.interface';
@@ -24,16 +24,16 @@ export class BookingJobsPerContractorComponent implements OnInit {
   ngOnInit(): void {
     this.loadData("", 5, 0)
   }
-  
+
   setSelectedJob(jobs: number[]) {
     this.job = [...jobs]
   }
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: dialogInput, 
+  constructor(@Inject(MAT_DIALOG_DATA) public data: dialogInput,
   private jobservice: JobService,
-  private dialogRef: MatDialogRef<BookingJobsPerContractorComponent>) {} 
+  private dialogRef: MatDialogRef<BookingJobsPerContractorComponent>) {}
 
-  loadData(search: string, pageSize: number, offSet: number) { 
+  loadData(search: string, pageSize: number, offSet: number) {
     const contractorId = this.data.contractorId
       this.jobservice.getJobsByContractor(contractorId, search, pageSize, offSet).subscribe({
       next: (res) => {
@@ -56,5 +56,5 @@ export class BookingJobsPerContractorComponent implements OnInit {
   closeDialog() {
     this.dialogRef.close(null);
   }
-  
+
 }

@@ -1,9 +1,17 @@
 import { InvoiceQuoteDisplayInterface } from "./invoice.quote.display.interface"
 export interface InvoiceDataInterface {
-    id: number, 
+    id: number,
     status: 'created' | 'issued' | 'paid',
-    issuanceDate: string
-    dueDate: string ,
-    customer: string,
+    dateIssued: string
+    dateDue: string ,
+    customer: {
+      email: string,
+      first_name: string,
+      id: number,
+      last_name: string,
+      notes: string,
+      phone: string,
+    },
     quotes: InvoiceQuoteDisplayInterface
+    jobs: number[]
 }

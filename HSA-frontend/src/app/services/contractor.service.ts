@@ -55,17 +55,17 @@ export class ContractorService {
 
     return this.http.get<TableApiResponse<Contractor>>(this.apiGetUrl, { params: httpParams });
   }
-  
+
   public getExcludedContractor(params?: ContractorParams): Observable<TableApiResponse<Contractor>> {
       let httpParams = new HttpParams();
-  
+
       // Add query parameters
       if (params?.excludeIDs) {
         params.excludeIDs.forEach(id => {
           httpParams = httpParams.append('excludeIDs', id.toString());
         });
       }
-  
+
       if (params) {
         Object.keys(params).forEach(key => {
           if (key !== 'excludeIDs') {
@@ -76,7 +76,7 @@ export class ContractorService {
           }
         });
       }
-  
+
       return this.http.get<TableApiResponse<Contractor>>(this.apiGetExcludedUrl, { params: httpParams });
     }
 

@@ -17,11 +17,11 @@ import { QuoteDialogComponent } from '../../components/quote-dialog/quote-dialog
 @Component({
   selector: 'app-view-job-page',
   imports: [
-    LoadingFallbackComponent, 
-    CommonModule, 
-    MatButtonModule, 
-    MatIconModule, 
-    JobDisplayTableComponent, 
+    LoadingFallbackComponent,
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    JobDisplayTableComponent,
     MatCardModule,
     MatListModule,
     MatDividerModule,

@@ -2,16 +2,17 @@
   <div class="main-heading">
     @if (materials === null) {
       <app-loading-fallback stringToDisplay="Loading materials"></app-loading-fallback>
-    } 
+    }
     @else {
       <h1>
         <span>Materials</span>
       </h1>
       <app-table-component editRedirect="/materials/edit" [fetchedData]="materials"
         [deleteRequest]="materialService.deleteMaterial.bind(materialService)"
-        [loadDataToTable]="this.loadDataToTable.bind(this)" [hideValues]="['Id']" searchHint="Search by material name"
-        [headers]="['Material Name']" [width]="'40vw'"></app-table-component>
-  
+        [loadDataToTable]="this.loadDataToTable.bind(this)" [hideValues]="['Id']"
+        searchHint="Search by material name"
+          [headers]="['Material Name']" [width]="'40vw'"></app-table-component>
+
       <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
         <button mat-fab extended class="m-10" id="add-material-button" (click)="navigateToPage('materials/create')">
           <mat-icon>note_add</mat-icon>

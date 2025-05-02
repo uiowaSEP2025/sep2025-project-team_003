@@ -67,6 +67,7 @@ export class OnboardingPageComponent implements OnInit {
   selectedMaterials: any = []
   selectedContractors: any = []
   materialInputFields: InputFieldDictionary[] = []
+  serviceInputFields: InputFieldDictionary[] = []
   deletedCustomers: any = []
   deletedJobServices: any = []
   deletedJobMaterials: any = []
@@ -82,14 +83,14 @@ export class OnboardingPageComponent implements OnInit {
   @ViewChild('stepper') stepper!: MatStepper;
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private buttonFormBuilder: FormBuilder,
     private serviceFormBuilder: FormBuilder,
     private materialFormBuilder: FormBuilder,
     private customerFormBuilder: FormBuilder,
     private contractorFormBuilder: FormBuilder,
     private organizationService: OrganizationService,
-    private stringFormatter: StringFormatter, 
+    private stringFormatter: StringFormatter,
     private jobFormBuilder: FormBuilder,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
@@ -123,7 +124,7 @@ export class OnboardingPageComponent implements OnInit {
     })
 
     this.states = StateList.getStates()
-    
+
     this.jobGeneralForm = this.jobFormBuilder.group({
       customerName: ['', Validators.required],
       startDate: ['', Validators.required],
@@ -169,10 +170,10 @@ export class OnboardingPageComponent implements OnInit {
           this.buttonForm.patchValue({
             exampleConfirmation: isYes
           })
-      
+
           this.buttonForm.markAsTouched();
           this.stepper.next()
-      
+
           this.isExamplePrefilled = true
           this.prefillInfo()
         }
@@ -181,7 +182,7 @@ export class OnboardingPageComponent implements OnInit {
       this.buttonForm.patchValue({
         exampleConfirmation: isYes
       })
-      
+
       this.isExamplePrefilled = false
       this.buttonForm.markAsTouched();
       this.stepper.next()
@@ -243,7 +244,7 @@ export class OnboardingPageComponent implements OnInit {
   }
 
   onSubmitContractorCreation() {
-    if (this.contractorForm.get('firstName')?.value !== "" 
+    if (this.contractorForm.get('firstName')?.value !== ""
     && this.contractorForm.get('lastName')?.value !== ""
     && this.contractorForm.get('email')?.value !== ""
     && this.contractorForm.get('phone')?.value !== ""
@@ -263,9 +264,9 @@ export class OnboardingPageComponent implements OnInit {
     } else {
       this.firstContractor = null
       this.contractors.contractors = []
-      
 
-      if (this.contractorForm.get('firstName')?.value === "" 
+
+      if (this.contractorForm.get('firstName')?.value === ""
       && this.contractorForm.get('lastName')?.value === ""
       && this.contractorForm.get('email')?.value === ""
       && (this.contractorForm.get('phone')?.value === ""
@@ -282,7 +283,7 @@ export class OnboardingPageComponent implements OnInit {
     }
   }
 
-  
+
   onSubmitJobGeneral() {
     if (this.jobGeneralForm.invalid) {
       this.jobGeneralForm.markAllAsTouched();
@@ -345,7 +346,7 @@ export class OnboardingPageComponent implements OnInit {
 
     if (!startDate) {
       return { noStartDate: true };
-    } 
+    }
 
     if (!endDate) {
       return { noEndDate: true };
@@ -353,7 +354,7 @@ export class OnboardingPageComponent implements OnInit {
 
     return endDate >= startDate ? null : { endDateBefore: true };
   }
-  
+
   openAddCustomerDialog() {
     this.customers = {
       customers: [this.firstCustomer]
@@ -365,13 +366,14 @@ export class OnboardingPageComponent implements OnInit {
       searchHint: 'Search by customer name',
       headers: ['First Name','Last Name', 'Email', 'Phone No'],
       materialInputFields: this.materialInputFields,
+      serviceInputFields: this.serviceInputFields,
     };
 
     const dialogRef = this.dialog.open(OnboardingSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -394,13 +396,14 @@ export class OnboardingPageComponent implements OnInit {
       searchHint: 'Search by material name',
       headers: ['Service Name', 'Service Description'],
       materialInputFields: this.materialInputFields,
+      serviceInputFields: this.serviceInputFields,
     };
 
     const dialogRef = this.dialog.open(OnboardingSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -414,7 +417,7 @@ export class OnboardingPageComponent implements OnInit {
           info['serviceDescription'] = element['service_description'];
           this.services = { services: [info] };
         });
-        
+
         this.isLockedServiceStep = true;
         this.selectedServices = result.selectedItems;
       }
@@ -428,13 +431,14 @@ export class OnboardingPageComponent implements OnInit {
       searchHint: 'Search by material name or description',
       headers: ['Checkbox', 'Material Name', 'Material Description'],
       materialInputFields: this.materialInputFields,
+      serviceInputFields: this.serviceInputFields,
     }
 
     const dialogRef = this.dialog.open(OnboardingSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -461,13 +465,14 @@ export class OnboardingPageComponent implements OnInit {
       searchHint: 'Search by contractor name or description',
       headers: ['Checkbox', 'Contractor Name', 'Phone Number', 'Email'],
       materialInputFields: this.materialInputFields,
+      serviceInputFields: this.serviceInputFields,
     }
 
     const dialogRef = this.dialog.open(OnboardingSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -521,7 +526,7 @@ export class OnboardingPageComponent implements OnInit {
       }
       case 'contractor': {
         let popOutID = data["Contractor ID"];
-        
+
         if (joinRelationID !== 0) {
           this.deletedJobContractors.push(joinRelationID);
         } else {
@@ -531,9 +536,9 @@ export class OnboardingPageComponent implements OnInit {
         this.contractors.contractors = this.contractors.contractors.filter((item: { contractorID: any; }) => item.contractorID !== popOutID);
         this.isLockedContractorStep = this.contractors.contractors.length !== 0
         return this.contractors;
-      }  
+      }
     };
-    
+
   }
 
   onCreateConfirmDialog(type: string) {
@@ -542,13 +547,13 @@ export class OnboardingPageComponent implements OnInit {
         width: "400px",
         data: `job creation. ${this.isExamplePrefilled ? "(Example data will not be saved)" : ""}`
       });
-  
+
       dialogRef.afterClosed().subscribe((result:any) => {
         if (result) {
           this.onSubmit();
         }
       });
-    }  
+    }
   }
 
   onSubmit() {
@@ -589,30 +594,30 @@ export class OnboardingPageComponent implements OnInit {
       }
 
       let servicesField: { id: any; } [] = []
-      if (this.services.services.length !== 0) {  
+      if (this.services.services.length !== 0) {
         this.services.services.forEach((element: any) => {
           servicesField.push({ "id": element["serviceID"] })
         })
       }
-  
+
       let materialsField: { id: any, unitsUsed: any, pricePerUnit: any} [] = []
       if (this.materials.materials.length !== 0) {
         this.materials.materials.forEach((element: any) => {
-          materialsField.push({ 
+          materialsField.push({
             "id": element["materialID"],
             "unitsUsed": element["unitsUsed"],
-            "pricePerUnit": element["pricePerUnit"] 
+            "pricePerUnit": element["pricePerUnit"]
           });
         });
       }
-  
+
       let contractorsField: { id: any; } [] = []
       if (this.contractors.contractors.length !== 0) {
         this.contractors.contractors.forEach((element: any) => {
           contractorsField.push({ "id": element["contractorID"] })
         });
       }
-      
+
       jobCreateRequest = {
         jobStatus: this.status,
         startDate: this.stringFormatter.dateFormatter(this.jobGeneralForm.get('startDate')?.value),

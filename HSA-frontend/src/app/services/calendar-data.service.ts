@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
 import {DayPilot} from "@daypilot/daypilot-lite-angular";
-import {HttpClient, HttpParams} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import { environment } from "../../environments/environment";
 import { StandardApiResponse } from "../interfaces/api-responses/standard-api-response.interface";
 import { BookingFetchResponse } from "../interfaces/api-responses/bookingJob.api.interface";

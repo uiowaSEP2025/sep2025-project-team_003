@@ -5,20 +5,20 @@
 			<app-loading-fallback stringToDisplay="Loading the job"></app-loading-fallback>
 		}
 		@else {
-			<app-table-component 
+			<app-table-component
 				[loadDataToTable]="
 					typeOfDialog === 'template'
 					? this.loadJobTemplatesToTable.bind(this)
-					: typeOfDialog === 'job' 
-						? this.loadJobsToTable.bind(this) 
-						: typeOfDialog === 'customer' 
-							? this.loadCustomersToTable.bind(this) 
-							: typeOfDialog === 'service' 
-								? this.loadServicesToTable.bind(this) 
-								: typeOfDialog === 'material' 
+					: typeOfDialog === 'job'
+						? this.loadJobsToTable.bind(this)
+						: typeOfDialog === 'customer'
+							? this.loadCustomersToTable.bind(this)
+							: typeOfDialog === 'service'
+								? this.loadServicesToTable.bind(this)
+								: typeOfDialog === 'material'
 									? this.loadMaterialsToTable.bind(this)
-									: this.loadContractorsToTable.bind(this)" 
-				editRedirect="" 
+									: this.loadContractorsToTable.bind(this)"
+				editRedirect=""
 				[hideValues]="['Actions', 'Id']"
 				[fetchedData]="this.dialogData"
 				[checkbox]="this.typeOfDialog === 'customer' || this.typeOfDialog === 'job' || this.typeOfDialog === 'template' ? 'single' : 'multiple'"
@@ -27,41 +27,42 @@
 				[checkedIds]="
 					typeOfDialog === 'template'
 					? this.selectedTemplate
-					: typeOfDialog === 'job' 
+					: typeOfDialog === 'job'
 						? this.selectedJob
-						: typeOfDialog === 'customer' 
-							? this.selectedCustomer 
-							: typeOfDialog === 'service' 
-								? this.selectedServices 
-								: typeOfDialog === 'material' 
+						: typeOfDialog === 'customer'
+							? this.selectedCustomer
+							: typeOfDialog === 'service'
+								? this.selectedServices
+								: typeOfDialog === 'material'
 									? this.selectedMaterials
 									: this.selectedContractors"
 				[materialInputFields]="this.materialInputFields"
 				[setCheckedIds]="
 					typeOfDialog === 'template'
 					? this.setSelectedJobTemplate.bind(this)
-					: typeOfDialog === 'job' 
-						? this.setSelectedJob.bind(this) 
-						: typeOfDialog === 'customer' 
-							? this.setSelectedCustomer.bind(this) 
-							: typeOfDialog === 'service' 
-								? this.setSelectedServices.bind(this) 
-								: typeOfDialog === 'material' 
+					: typeOfDialog === 'job'
+						? this.setSelectedJob.bind(this)
+						: typeOfDialog === 'customer'
+							? this.setSelectedCustomer.bind(this)
+							: typeOfDialog === 'service'
+								? this.setSelectedServices.bind(this)
+								: typeOfDialog === 'material'
 									? this.setSelectedMaterials.bind(this)
 									: this.setSelectedContractors.bind(this)"
 				[setMaterialInputFields]="this.setMaterialInput.bind(this)"
+        [setServiceInputFields]="this.setServiceInput.bind(this)"
 				[searchHint]="this.searchHint"
 				[width]="'700vw'"
-			></app-table-component> 
+			></app-table-component>
 		}
 	</mat-dialog-content>
 	<mat-dialog-actions>
 		<button data-testid="cancel" mat-stroked-button (click)="onCancel()">Cancel</button>
-		<button 
+		<button
 			[attr.data-testid]="getButtonAction()"
-			mat-flat-button 
-			type="submit" 
-			[disabled]="isNotSelectedItems" 
+			mat-flat-button
+			type="submit"
+			[disabled]="isNotSelectedItems"
 			(click)="onConfirm()"
 			>
 			{{ getButtonAction() | titlecase }}

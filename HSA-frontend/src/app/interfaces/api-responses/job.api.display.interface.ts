@@ -5,6 +5,7 @@ export interface JobDisplayInterface {
 }
 
 export interface ServiceJSON{
+    "fee": number,
     "serviceID": string,
     "serviceName": string,
     "serviceDescription": string

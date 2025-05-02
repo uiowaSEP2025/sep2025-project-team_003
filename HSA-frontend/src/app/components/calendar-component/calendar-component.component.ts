@@ -61,7 +61,7 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
     cellWidth: 25,
     cellHeight: 25,
     onVisibleRangeChanged: args => {
-      
+
       this.loadEvents();
     }
   };
@@ -138,7 +138,7 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   eventHTML(eventName: string, endDate: string, customerName: string, typeOfEvent: string) {
     return `<div style="margin-top: 20px;">
               <b>${eventName}</b>
-              <br> 
+              <br>
               <b style='color:#9e1414;'>End: ${endDate}</b>
               <br>
               <b>Customer: ${customerName}</b>
@@ -148,10 +148,6 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   }
 
   loadEvents(): void {
-    /*There is no way to test this fn, somehow, this.nav.control is null in only the test.
-    if any1 has a fix, feel free to try. 1.5 hrs wasted on this -alex
-    
-    */
     const from = this.nav.control.visibleStart();
     const to = this.nav.control.visibleEnd();
 

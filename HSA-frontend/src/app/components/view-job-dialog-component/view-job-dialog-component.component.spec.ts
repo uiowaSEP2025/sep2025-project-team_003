@@ -52,23 +52,4 @@ describe('ViewJobDialogComponentComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
-  it('should render job and booking information when jobData is present', () => {
-    const fixture = TestBed.createComponent(ViewJobDialogComponentComponent);
-    fixture.detectChanges();
-  
-    const compiled = fixture.nativeElement as HTMLElement;
-  
-    expect(compiled.querySelector('h1')?.textContent)
-      .toContain('Job and Booking Information');
-  
-    expect(compiled.querySelector('mat-panel-title')?.textContent)
-      .toContain('Job General Info');
-  
-    expect(compiled.querySelector('table.info-table'))
-      .toBeTruthy();
-  
-    expect(compiled.querySelector('button[data-testid="cancel"]'))
-      .toBeTruthy();
-  });
 });

@@ -28,11 +28,13 @@ export class EditServicePageComponent {
     this.serviceForm = this.serviceFormBuilder.group({
       serviceName: ['', Validators.required],
       serviceDescription: [''],
+      serviceDefaultFee: [''],
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      this.serviceForm.controls['serviceName'].setValue(params['service_name']);
-      this.serviceForm.controls['serviceDescription'].setValue(params['service_description']);
+      this.serviceForm.controls['serviceName'].setValue(params['name']);
+      this.serviceForm.controls['serviceDescription'].setValue(params['description']);
+      this.serviceForm.controls['serviceDefaultFee'].setValue(params['default_fee']);
     })
 
     this.activatedRoute.paramMap.subscribe(params => {
@@ -49,8 +51,9 @@ export class EditServicePageComponent {
       const data = {
         id: this.serviceID,
         service_name: this.serviceForm.controls['serviceName'].value,
-        service_description: this.serviceForm.controls['serviceDescription'].value
-      }
+        service_description: this.serviceForm.controls['serviceDescription'].value,
+        default_fee: this.serviceForm.controls['serviceDefaultFee'].value,
+    }
       this.serviceService.editService(data).subscribe(
         {next: (response) => {
           this.router.navigate(['/services']);

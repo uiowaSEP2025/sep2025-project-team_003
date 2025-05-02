@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.component';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,33 +16,34 @@ import { JobDataInterface } from '../../interfaces/api-responses/job.api.data.in
   imports: [
     CommonModule,
     MatDialogModule,
-    LoadingFallbackComponent, 
+    LoadingFallbackComponent,
     MatButtonModule,
-    MatIconModule, 
-    JobDisplayTableComponent, 
+    MatIconModule,
+    JobDisplayTableComponent,
     MatCardModule,
     MatListModule,
     MatDividerModule,
     MatExpansionModule
   ],
   templateUrl: './view-job-dialog-component.component.html',
+  standalone: true,
   styleUrl: './view-job-dialog-component.component.scss'
 })
-export class ViewJobDialogComponentComponent implements OnInit {
+export class ViewJobDialogComponentComponent  {
   jobData: JobDataInterface | null = null;
   bookingData: any;
 
   constructor (
     public dialogRef: MatDialogRef<ViewJobDialogComponentComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any ) 
+    @Inject(MAT_DIALOG_DATA) public data: any
+
+  )
   {
     this.jobData = this.data.jobInfo
     this.bookingData = this.data.bookingInfo
   }
 
-  ngOnInit() {
-    
-  }
+
 
   onCancel(): void {
     this.dialogRef.close(false);
