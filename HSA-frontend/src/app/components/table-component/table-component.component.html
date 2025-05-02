@@ -33,11 +33,11 @@
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
-            } 
+            }
             @else if (header === "Checkbox") {
               <mat-checkbox [attr.data-testid]="'checkbox-' + element.id"
-                [checked]="shouldCheckCheckbox(element.id)" 
-                (change)="handleCheckBoxClick(element.id)" 
+                [checked]="shouldCheckCheckbox(element.id)"
+                (change)="handleCheckBoxClick(element.id)"
                 (change)="handleCheckedRowIndex(element.id)"
               ></mat-checkbox>
             }
@@ -56,18 +56,33 @@
             }
             @else if (header === "Price Per Unit") {
               <mat-form-field floatLabel="always">
-                <input 
+                <input
                   [disabled]="!checkedRowIndexes.has(element.id)"
                   matInput
-                  type="text" 
-                  class="right-align" 
+                  type="text"
+                  class="right-align"
                   placeholder="0.00"
                   [value]="getPricePerUnitValue(element.id)"
                   (input)="handlePricePerUnitField(element.id, $event)"
                 />
                 <span matTextPrefix>$&nbsp;</span>
               </mat-form-field>
-              
+
+            }
+
+            @else if (header === "Service Fee") {
+              <mat-form-field floatLabel="always">
+                <input
+                  [disabled]="!checkedRowIndexes.has(element.id)"
+                  matInput
+                  type="text"
+                  class="right-align"
+                  placeholder="0.00"
+                  [value]="getFeeValue(element.id)"
+                  (input)="handleServiceFeeField(element.id, $event)"
+                />
+                <span matTextPrefix>$&nbsp;</span>
+              </mat-form-field>
             }
             @else  {
               {{ element[stringFormatter.formatCamelToSnake(header)] }}
@@ -75,7 +90,7 @@
           </td>
         </ng-container>
         }
-    
+
         <tr mat-header-row *matHeaderRowDef="headersWithActions"></tr>
         <tr mat-row class="{{clickableRows ? 'cursor-pointer darkenOnHover' : ''}}" (click)="rowClick(row)" *matRowDef="let row; columns: headersWithActions;"></tr>
       </table>
