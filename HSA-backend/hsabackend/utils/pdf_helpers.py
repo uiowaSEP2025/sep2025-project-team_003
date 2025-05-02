@@ -1,3 +1,4 @@
+import decimal
 import io
 from decimal import Decimal
 
@@ -280,7 +281,7 @@ def generate_pdf(request, job_id, type_enum="invoice"):
             subtotal_before_discount_row.cell("")
             subtotal_before_discount_row.cell("")
             subtotal_before_discount_row.cell("")
-            subtotal_before_discount_row.cell(str(format_currency(subtotal_before_discount)))
+            subtotal_before_discount_row.cell(str(format_currency(decimal.Decimal(subtotal_before_discount))))
 
 
             if discount_aggregate != 0:

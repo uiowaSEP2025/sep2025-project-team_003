@@ -81,9 +81,9 @@ def services_representation(instance):
     services_json = []
     for i in services_data:
         services_json.append({
-            "serviceID": i.service.id,
-            "serviceName": i.service.name,
-            "serviceDescription": i.service.description,
+            "id": i.service.id,
+            "name": i.service.name,
+            "description": i.service.description,
             "fee": i.fee
                         })
     return {"services": services_json}

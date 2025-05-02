@@ -1,3 +1,5 @@
+import decimal
+
 from django.db import models
 from hsabackend.models.customer import Customer
 from hsabackend.models.discount import Discount
@@ -46,11 +48,11 @@ class Invoice(models.Model):
 
     @property
     def taxable_amount(self):
-        return self.subtotal_after_discount * self.sales_tax_percent
+        return decimal.Decimal(self.subtotal_after_discount) * self.sales_tax_percent
 
     @property
     def total(self):
-        return self.subtotal_after_discount + self.taxable_amount
+        return decimal.Decimal(self.subtotal_after_discount) + self.taxable_amount
 
 
     def __str__(self):

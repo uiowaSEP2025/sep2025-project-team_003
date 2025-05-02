@@ -202,8 +202,8 @@ export class EditJobPageComponent {
     const dialogData: AddSelectDialogData = {
       typeOfDialog: 'service',
       dialogData: this.services,
-      searchHint: 'Search by material name',
-      headers: ['Service Name', 'Service Description'],
+      searchHint: 'Search by service name',
+      headers: ['Service Name', 'Service Description', 'Default Fee', 'Service Fee'],
       materialInputFields: this.materialInputFields,
       serviceInputFields: this.serviceInputFields,
     };
@@ -216,19 +216,13 @@ export class EditJobPageComponent {
       data: dialogData
     });
 
-    dialogRef.afterClosed().subscribe((result: any) => {
+    dialogRef.afterClosed().subscribe((result:any) => {
       if (result.length !== 0) {
-        result.itemsInfo.forEach((element: { [x: string]: any; }) => {
-          let info: any = {};
-          info['id'] = 0;
-          info['serviceID'] = element['id'];
-          info['serviceName'] = element['name'];
-          info['serviceDescription'] = element['description'];
-          this.services = { services: [...this.services.services, info] };
+        result.itemsInfo.forEach((element: any) => {
+          this.services = { services: [...this.services.services, element] };
         });
-
-        this.selectedServices = result.selectedItems;
-        this.onChangeUpdateButton()
+        this.selectedServices = result.itemsInfo;
+        this.onChangeUpdateButton();
       }
     });
   }
@@ -365,6 +359,7 @@ export class EditJobPageComponent {
   }
 
   onUpdateConfirmDialog() {
+    console.log(this.selectedServices);
     const dialogRef = this.dialog.open(UpdateConfirmDialogComponentComponent, {
       data: "job updating"
     });
@@ -400,6 +395,7 @@ export class EditJobPageComponent {
         materials: this.selectedMaterials,
         contractors: this.selectedContractors,
       };
+      console.log("JOBJSON!!!!")
       console.log(editJobRequestJson);
 
       this.tracker.startRequest();
@@ -560,8 +556,8 @@ export class EditJobPageComponent {
         );
       }
 
-      //call create on join relations
-      let selectedServicesField: { id: any; } [] = [];
+      //call creates on join relations
+      const selectedServicesField: { id: any; } [] = [];
       this.selectedServices.forEach((element: any) => {
         selectedServicesField.push({ "id": element });
       });
@@ -572,7 +568,7 @@ export class EditJobPageComponent {
         addedItems: { "services" : selectedServicesField }
       };
 
-      let selectedMaterialsField = this.selectedMaterials;
+      const selectedMaterialsField = this.selectedMaterials;
       const createJobMaterialsRequestJson = {
         type: 'material',
         id: this.jobID,

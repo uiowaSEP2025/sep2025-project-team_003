@@ -30,6 +30,7 @@ export class AddSelectDialogComponentComponent {
   checkedIds: number[] | null = null
   isNotSelectedItems: boolean = true
   isMaterial: boolean = false
+  isService: boolean = false
   typeOfDialog: string = ''
   dialogData: any = null
   allDataEntries: any[] = []
@@ -71,6 +72,7 @@ export class AddSelectDialogComponentComponent {
     private jobTemplateService: JobTemplateService,
   ) {
     this.isMaterial = this.data.typeOfDialog === 'material' ? true : false;
+    this.isService = this.data.typeOfDialog === 'service' ? true : false;
     this.typeOfDialog = this.data.typeOfDialog;
     this.dialogData = this.data.dialogData;
     this.searchHint = this.data.searchHint;
@@ -201,18 +203,19 @@ export class AddSelectDialogComponentComponent {
   setSelectedServices(services: number[]) {
     this.selectedServices = [...services];
     this.selectedItems = this.selectedServices;
-    this.selectedServicesIsError = this.selectedServices.length === 0 ? true : false;
-    this.isNotSelectedItems = this.selectedServices.length === 0 ? true : false;
-    if (this.selectedServicesIsError === false) {
-      const previousServicesInputFields = this.serviceInputFields;
+    this.selectedServicesIsError = this.selectedServices.length === 0;
+    this.isNotSelectedItems = this.selectedServices.length === 0;
+
+    if (!this.selectedServicesIsError) {
+      const previousServiceInputFields = this.serviceInputFields;
       this.serviceInputFields = [];
       this.selectedServices.forEach((element: any) => {
-        if (previousServicesInputFields.some((item) => item.id === element)) {
-          const specificEntry = previousServicesInputFields.find((item) => item.id === element);
-          this.serviceInputFields.push({"id": element, "description": specificEntry!["description"], "name": specificEntry!['name'], "fee": specificEntry!["fee"]});
+        if (previousServiceInputFields.some((item) => item.id === element)) {
+          const specificEntry = previousServiceInputFields.find((item) => item.id === element);
+          this.serviceInputFields.push({"id": element, "name": specificEntry!["name"], "description": specificEntry!['description'], "fee": specificEntry!["fee"]});
         } else {
           const service = this.allDataEntries.filter((item: { [x: string]: number; }) => item['id'] === element)[0];
-          this.serviceInputFields.push({"id": element, "description": service.description, "fee": service.default_fee});
+          this.serviceInputFields.push({"id": element, "fee": service.default_fee});
         }
 
       });
@@ -254,6 +257,7 @@ export class AddSelectDialogComponentComponent {
 
   setMaterialInput(inputField: InputFieldDictionary[]) {
     this.materialInputFields = inputField;
+    console.log(inputField);
   }
 
   setServiceInput(inputField: InputFieldDictionary[]) {
@@ -299,16 +303,17 @@ export class AddSelectDialogComponentComponent {
         );
       }
       else if (this.typeOfDialog === 'service') {
-        let serviceEntry = this.allDataEntries.filter((item: { [x: string]: number; }) => item['id'] === element)[0];
-        const serviceInputEntry: InputFieldDictionary = this.selectedServices.filter((item: InputFieldDictionary) => item['id'] === element)[0];
+        const serviceEntry = this.allDataEntries.filter((item: { [x: string]: number; }) => item['id'] === element)[0];
+        const serviceInputEntry: InputFieldDictionary = this.serviceInputFields.filter((item: InputFieldDictionary) => item['id'] === element)[0];
         itemsInfo.push(
           {
-            id: 0,
+            id: serviceEntry['id'],
             serviceID: serviceEntry['id'],
-            serviceName: serviceEntry.name,
+            name: serviceEntry.name,
+            description: serviceEntry.description,
             fee: serviceInputEntry['fee']
           }
-        )
+        );
       }
 
       else {
@@ -320,7 +325,7 @@ export class AddSelectDialogComponentComponent {
       this.dialogRef.close({
         selectedItems: this.typeOfDialog === 'job'
           ? this.selectedJob[0]
-           :this.typeOfDialog === 'customer'
+          :this.typeOfDialog === 'customer'
             ? this.selectedCustomer[0]
             : this.typeOfDialog === 'service'
               ? this.selectedServices

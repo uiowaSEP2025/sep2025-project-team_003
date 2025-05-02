@@ -84,9 +84,9 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
     if (this.dataSource) {
       this.displayServices = this.dataSource.services.map(
         (service) => ({
-          "Service ID": service.serviceID,
-          "Service Name": service.serviceName,
-          "Service Description": service.serviceDescription,
+          "Service ID": service.id,
+          "Service Name": service.name,
+          "Service Description": service.description,
           "Service Fee": service.fee
         })
       )
@@ -142,13 +142,14 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
       case 'service': {
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            let jobServiceEntry = this.dataSource.services.filter((item: { serviceID: any; }) => item.serviceID === args["Service ID"])[0] as any
-            this.popOutEntry(typeOfTable, args, jobServiceEntry.id, jobServiceEntry.serviceID)
+            const jobServiceEntry = this.dataSource.services.filter((item: { id: any; }) => item.id === args["Service ID"])[0] as any
+            this.popOutEntry(typeOfTable, args, jobServiceEntry.id, jobServiceEntry.id)
             this.displayServices = this.dataSource.services?.map(
               (service) => ({
-                "Service ID": service.serviceID,
-                "Service Name": service.serviceName,
-                "Service Description": service.serviceDescription
+                "Service ID": service.id,
+                "Service Name": service.name,
+                "Service Description": service.description,
+                "Service Fee": service.fee,
               })
             )
           }

@@ -10,7 +10,7 @@ from hsabackend.models.contractor import Contractor
 from hsabackend.models.customer import Customer
 from hsabackend.models.discount import Discount
 from hsabackend.models.invoice import Invoice
-from hsabackend.models.job import Job
+from hsabackend.models.job import Job, JobsServices, JobsMaterials
 from hsabackend.models.job_template import JobTemplate
 from hsabackend.models.material import Material
 from hsabackend.models.request import Request
@@ -22,6 +22,7 @@ from hsabackend.serializers.discount_serializer import DiscountSerializer
 from hsabackend.serializers.invoice_serializer import InvoiceSerializer, InvoiceTableSerializer
 from hsabackend.serializers.job_serializer import JobSerializer, JobTableSerializer, JobBookingDataSerializer, \
     services_representation, materials_representation, contractors_representation
+from hsabackend.serializers.job_service_serializer import JobServiceSerializer
 from hsabackend.serializers.job_template_serializer import JobTemplateSerializer
 from hsabackend.serializers.material_serializer import MaterialSerializer
 from hsabackend.serializers.request_serializer import RequestSerializer
@@ -415,6 +416,24 @@ def create_individual_data(request, object_type):
             data = customer_data
             serializer = CustomerSerializer(data=data)
         case "job":
+            contractor_ids = []
+            for contractor in data.get('contractors'):
+                contractor_ids.append(contractor.get('id'))
+            material_ids = []
+            for material in data.get('materials'):
+                material_ids.append(material.get('id'))
+            contractors_temp = Contractor.objects.filter(organization=request.organization.pk, pk__in=contractor_ids).all()
+            materials_temp = Material.objects.filter(organization=request.organization.pk, pk__in=material_ids).all()
+            job_data = {
+                "job_status": data.get("jobStatus"),
+                "job_address": data.get("address"),
+                "job_city": data.get("city"),
+                "description": data.get("description"),
+                "start_date": data.get("startDate"),
+                "end_date": data.get("endDate"),
+                "job_state": data.get("state"),
+                "job_zip": data.get("zip"),
+            }
             serializer = JobSerializer(data=data)
         case "service":
             try:
@@ -520,13 +539,10 @@ def update_individual_data(request, object_id, object_type):
             for service in data.get('services'):
                 service_ids.append(service.get('id'))
                 service_list.append(service)
-            contractor_ids = []
-            for contractor in data.get('contractors'):
-                contractor_ids.append(contractor.get('id'))
             customer_temp = Customer.objects.filter(organization=request.organization.pk, pk=data.get('customerID')).first()
             materials_temp = Material.objects.filter(organization=request.organization.pk, pk__in=material_ids).all()
             services_temp = Service.objects.filter(organization=request.organization.pk, pk__in=service_ids).all()
-            contractors_temp = Contractor.objects.filter(organization=request.organization.pk, pk__in=contractor_ids).all()
+            contractors_temp = Contractor.objects.filter(organization=request.organization.pk, pk__in=data.get('contractors')).all()
             job_data = {
                 "job_status": data.get("jobStatus"),
                 "job_address": data.get("address"),
@@ -593,11 +609,31 @@ def update_individual_data(request, object_id, object_type):
             )
     if serializer.is_valid():
         serializer.update(query_object, data)
+        if object_type == "job":
+            update_job_joins(query_object, service_list, material_list)
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-def update_job_joins(job_id, services, materials):
+
+class JobsMaterialSerializer:
+    pass
+
+
+def update_job_joins(job, services, materials):
+    org_id = job.organization.pk
+
+    for service in services:
+        temp_service = Service.objects.get(organization=org_id, pk=service.get('id'))
+        job_service = JobsServices.objects.get(job=job, service=temp_service)
+        job_service.fee = service.get('fee')
+        job_service.save()
+    for material in materials:
+        temp_material = Material.objects.get(organization=org_id, pk=material.get('id'))
+        job_material = JobsMaterials.objects.get(job=job, material=temp_material)
+        job_material.quantity = material.get('unitsUsed')
+        job_material.unit_cost = material.get('pricePerUnit')
+        job_material.save()
     return
 
 

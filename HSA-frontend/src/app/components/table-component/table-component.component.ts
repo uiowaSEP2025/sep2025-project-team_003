@@ -51,11 +51,13 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   @Input() pricePerUnitField: boolean = false;
   @Input() checkedIds: number[] | null = null;
   @Input() materialInputFields: InputFieldDictionary[] = []
+  @Input() serviceInputFields: InputFieldDictionary[] = []
   @Input() setCheckedIds: ((checkedIds: number[]) => void) | null = null;
   @Input() setMaterialInputFields: ((inputFields: InputFieldDictionary[]) => void) | null = null;
   @Input() setServiceInputFields: ((inputFields: InputFieldDictionary[]) => void) | null = null;
   @Input() hideSearch: boolean = false
   @Input() clickableRows: boolean = false
+  @Input() serviceFeeField = false;
   @Input() onRowClick: any = null // if clickable rows is enabled this the function that handles the click
   @Input() headers = ['header1', 'header2', 'header3', 'header4'] // headers to render before fetching the data
   // note: headers are decided based on backend json keys
@@ -79,6 +81,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
 
   data = new MatTableDataSource(this.fetchedData ?? []);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+
 
 
   ngAfterViewInit() {
@@ -113,9 +116,8 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
 
     this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
       return !this.hideValues.includes(header)
-    }) // this has to be here to allow default headers change. On init is ran
-    // when inputs are recieved
-
+    }) // this has to be here to allow default headers change. On init is run
+    // when inputs are received
     if (this.checkbox !== 'none') {
       if (!this.headersWithActions.includes('Checkbox')) {
 
@@ -128,6 +130,15 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
         this.headersWithActions = [...this.headersWithActions, 'Unit Used', 'Price Per Unit']
       }
     }
+
+    console.log(this.serviceFeeField)
+
+    if (this.serviceFeeField === true) {
+      if (!this.headersWithActions.includes('Service Fee')) {
+        this.headersWithActions = [...this.headersWithActions, 'Service Fee']
+      }
+    }
+    console.log(this.headersWithActions)
 
     if (this.fetchedData !== undefined) {
       if (this.fetchedData.length !== 0) {
@@ -196,6 +207,10 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
 
         if (this.unitUsedField === true) {
           this.headersWithActions = [...this.headersWithActions, 'Unit Used', 'Price Per Unit']
+        }
+
+        if (this.serviceFeeField === true) {
+          this.headersWithActions = [...this.headersWithActions, 'Service Fee']
         }
       }
     }
@@ -270,6 +285,21 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
     }
   }
 
+  handleServiceFeeField(id: number, event: Event) {
+    if (this.serviceFeeField === true) {
+      const parsedNumber = parseFloat((event.target as HTMLInputElement).value);
+      const number = isNaN(parsedNumber) ? 0: parsedNumber
+      let currentFeeUsedDict = this.serviceInputFields
+      let specificEntry = currentFeeUsedDict.find((item) => item.id === id)
+
+      if (specificEntry) {
+        specificEntry['fee'] = number
+      }
+
+      this.setMaterialInputFields!(currentFeeUsedDict)
+    }
+  }
+
 
   ngOnDestroy() {
     if (this.searchSubscription) {
@@ -297,5 +327,10 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   getPricePerUnitValue(id: number): number | string {
     const entry = this.materialInputFields.find(item => item.id === id);
     return entry?.['pricePerUnit'] ?? '';
+  }
+
+  getFeeValue(id: number): number | string {
+    const entry = this.serviceInputFields.find(item => item.id === id);
+    return entry?.['fee'] ?? '';
   }
 }

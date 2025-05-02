@@ -13,7 +13,7 @@
               <mat-expansion-panel-header>
                 <mat-panel-title> General Info </mat-panel-title>
               </mat-expansion-panel-header>
-              <form class="parent" [formGroup]="jobForm" (ngSubmit)="onSubmit()">
+              <form class="parent" [formGroup]="jobForm" (ngSubmit)="onSubmitV2()">
                 <table class="info-table">
                     <tr>
                       <td>Customer</td>
@@ -41,6 +41,7 @@
                             <mat-option value="created">created</mat-option>
                             <mat-option value="in-progress">in-progress</mat-option>
                             <mat-option value="completed">completed</mat-option>
+                            <mat-option value="rejected">rejected</mat-option>
                         </mat-select>
                         </mat-form-field>
                       </td>
