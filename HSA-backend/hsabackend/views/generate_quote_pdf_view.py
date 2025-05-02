@@ -287,9 +287,43 @@ def send_quote_pdf_to_customer_email(request, id):
 
     return Response({"message": f"Quote PDF sent to {to_email}"}, status=status.HTTP_200_OK)
 
+@api_view(["GET"])
+def get_list_of_quotes_by_org(request):
+    """
+    GET /api/quotes/list/?filterby=<status>
+    Returns a list of jobs (quotes) associated with the authenticated user's organization,
+    optionally filtered by quote_status (created, accepted, rejected).
+    """
+    try:
+        org = Organization.objects.get(owning_User=request.user.pk)
+    except Organization.DoesNotExist:
+        return Response({"message": "Organization not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    filterby = request.query_params.get("filterby", None)
+
+    jobs = Job.objects.select_related("customer").filter(customer__organization=org)
+
+    if filterby:
+        filterby = filterby.lower()
+        if filterby not in {"created", "accepted", "rejected"}:
+            return Response({"message": "Invalid filter"}, status=status.HTTP_400_BAD_REQUEST)
+        jobs = jobs.filter(quote_status=filterby)
+
+    result = []
+    for job in jobs:
+        result.append({
+            "job_id": job.pk,
+            "customer_name": f"{job.customer.first_name} {job.customer.last_name}",
+            "quote_status": job.quote_status,
+            "quote_s3_link": job.quote_s3_link,
+            "start_date": format_maybe_null_date(job.start_date),
+            "end_date": format_maybe_null_date(job.end_date),
+        })
+    print(result)
+
+    return Response({"data":result}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
-@check_authenticated_and_onboarded
 def retrieve_quote(request, id):
     """
     GET /api/quotes/<id>/retrieve/
@@ -329,6 +363,7 @@ def retrieve_quote(request, id):
 
     # 5. Generate presigned URL
     try:
+        print(key)
         presigned_url = s3.generate_presigned_url(
             ClientMethod="get_object",
             Params={"Bucket": bucket, "Key": key},
@@ -344,7 +379,6 @@ def retrieve_quote(request, id):
     return Response({"url": presigned_url}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
-@check_authenticated_and_onboarded
 def accept_reject_quote(request, id):
     """
     POST /api/quotes/<id>/accept_reject/
