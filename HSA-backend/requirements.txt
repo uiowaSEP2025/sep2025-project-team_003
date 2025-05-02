@@ -14,7 +14,7 @@ cryptography==44.0.2
 cucumber-expressions==18.0.1
 cucumber-tag-expressions==6.1.2
 defusedxml==0.7.1
-Django==5.1.5
+Django==5.2
 django-cors-headers==4.7.0
 django-extensions==3.2.3
 django-sslserver==0.22

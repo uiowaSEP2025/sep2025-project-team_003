@@ -8,7 +8,7 @@ from django.urls import path, re_path, include
 import hsabackend.views.index as hview
 from hsabackend.views.bookings import create_event, delete_event, edit_event, get_booking_data
 from hsabackend.views.contractors import get_contractor_excluded_table_data, get_contractor_table_data, \
-    create_contractor, edit_contractor, delete_contractor
+    create_contractor, edit_contractor, delete_contractor, get_all_contractors_for_org
 from hsabackend.views.customers import get_customer_excluded_table_data, get_customer_table_data, create_customer, \
     edit_customer, delete_customer
 from hsabackend.views.discounts import get_discounts, edit_discount, create_discount, delete_discount
@@ -60,6 +60,7 @@ urlpatterns = [
     path("api/delete/customer/<int:customer_id>", delete_customer, name='delete_customer'),
 
     # contractor
+    path("api/get/all/contractors", get_all_contractors_for_org, name='get_all_contractors_for_org'),
     path("api/get/contractors", get_contractor_table_data, name='get_contractor_table_data'),
     path("api/get/contractors/exclude", get_contractor_excluded_table_data, name='get_contractor_excluded_table_data'),
     path("api/create/contractor", create_contractor, name='create_contractor'),
