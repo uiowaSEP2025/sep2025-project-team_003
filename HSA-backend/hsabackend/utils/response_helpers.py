@@ -448,9 +448,9 @@ def create_individual_data(request, object_type):
             customer = Customer.objects.get(organization=request.organization.pk, pk=data.get('customerID'))
             invoice_data = {
                 "customer": customer,
-                "date_issued": data.get("issuedDate"),
-                "date_due": data.get("dueDate"),
-                "sales_tax_percent": data.get("tax"),
+                "date_issued": data.get("dateIssued"),
+                "date_due": data.get("dateDue"),
+                "sales_tax_percent": data.get("taxPercent"),
                 "payment_link": request.organization.default_payment_link,
             }
             data = invoice_data
@@ -473,9 +473,11 @@ def create_individual_data(request, object_type):
                 job_object = Job.objects.get(organization=request.organization.pk, pk=job)
                 job_object.invoice = result
                 job_object.save()
-
+            response = InvoiceSerializer(result).data
+        else:
+            response = serializer.data
         return Response(
-            serializer.data, status=status.HTTP_201_CREATED)
+            response, status=status.HTTP_201_CREATED)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

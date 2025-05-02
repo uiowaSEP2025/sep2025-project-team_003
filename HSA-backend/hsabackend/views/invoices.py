@@ -13,7 +13,6 @@ from hsabackend.utils.response_helpers import get_table_data, get_individual_dat
 @check_authenticated_and_onboarded()
 def create_invoice(request):
     return create_individual_data(request, "invoice")
-
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
 def get_invoices(request):
