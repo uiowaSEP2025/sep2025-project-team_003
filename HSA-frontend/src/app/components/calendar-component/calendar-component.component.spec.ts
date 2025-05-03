@@ -31,7 +31,6 @@ fdescribe('CalendarComponentComponent', () => {
     component = fixture.componentInstance;
     component.contractorNames = [{ name: "alex", id: 1 }, { name: "alex1", id: 1 }];
     loader = TestbedHarnessEnvironment.loader(fixture);
-    component.loadEvents = () => { };
     component.ngOnChanges();
     fixture.detectChanges();
   });
@@ -58,12 +57,8 @@ fdescribe('CalendarComponentComponent', () => {
       expect(weekButton).toBeTruthy();
     })
 
-    it('should have the correct contractors in the select', () => {
-
-    })
+    
   })
 
-  it('refetch on contractor change', () => { })
-
-
+  // select harness can not be aquired due to the daypilot, it times out the test
 });
