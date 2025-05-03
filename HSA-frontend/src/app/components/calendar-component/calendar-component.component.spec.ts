@@ -9,7 +9,7 @@ import { MatSelectHarness } from '@angular/material/select/testing';
 import { By } from '@angular/platform-browser';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
-fdescribe('CalendarComponentComponent', () => {
+describe('CalendarComponentComponent', () => {
   let component: CalendarComponentComponent;
   let fixture: ComponentFixture<CalendarComponentComponent>;
   let loader: HarnessLoader;

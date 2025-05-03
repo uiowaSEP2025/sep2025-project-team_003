@@ -70,6 +70,7 @@ export class BookingDialogComponentComponent implements OnInit {
       endTime: [null]
     })
 
+
     this.typeOfDialog = this.data.typeOfDialog
     this.colors = this.colorService.getColors()
 
