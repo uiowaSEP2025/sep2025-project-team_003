@@ -89,7 +89,9 @@ export class BookingDialogComponentComponent implements OnInit {
         jobID: this.data.jobID,
         status: this.data.status,
         jobDescription: this.data.jobDescription,
-        color: this.data.backColor
+        color: this.data.backColor,
+        startTime: this.stringFormatter.formatDateToHHMM(new Date(this.data.startTime)),
+        endTime: this.stringFormatter.formatDateToHHMM(new Date(this.data.endTime)),
       });
 
       this.currentColor = this.data.backColor
@@ -108,7 +110,6 @@ export class BookingDialogComponentComponent implements OnInit {
 
     this.eventForm.get('endTime')?.valueChanges.subscribe((endTime: string) => {
       const startTime = this.eventForm.get('startTime')?.value;
-      console.log(startTime, endTime)
 
       const start = parseTimeToDate(startTime)
       const end = parseTimeToDate(endTime)
