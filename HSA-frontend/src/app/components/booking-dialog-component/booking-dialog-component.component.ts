@@ -14,7 +14,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { generateTimes } from '../../utils/generate-time-utils';
 import { StringFormatter } from '../../utils/string-formatter';
-import parseTimeToDate  from '../../utils/date-parse-from-HHMM';
+import parseTimeToDate from '../../utils/date-parse-from-HHMM';
 
 
 @Component({
@@ -76,18 +76,6 @@ export class BookingDialogComponentComponent implements OnInit {
     this.startTimes = generateTimes(false, this.data.startTime).map(date => this.stringFormatter.formatDateToHHMM(date));
     this.endTimes = generateTimes(true, this.data.endTime).map(date => this.stringFormatter.formatDateToHHMM(date));
 
-    this.eventForm.get('startTime')?.valueChanges.subscribe((startTime: string | null) => {
-      const endTime = this.eventForm.get('endTime')?.value;
-      
-      if (startTime !== null && endTime != null) {
-        const start = parseTimeToDate(startTime)
-        const end = parseTimeToDate(endTime)
-        if (start >= end) {
-          console.log('bad')
-        }
-      }
-    });
-
     if (this.typeOfDialog === "create") {
       this.eventForm.patchValue({
         startTime: this.stringFormatter.formatDateToHHMM(new Date(this.data.startTime)),
@@ -107,6 +95,30 @@ export class BookingDialogComponentComponent implements OnInit {
       this.currentColor = this.data.backColor
       this.eventForm.markAllAsTouched();
     }
+
+    this.eventForm.get('startTime')?.valueChanges.subscribe((startTime: string) => {
+      const endTime = this.eventForm.get('endTime')?.value;
+      const start = parseTimeToDate(startTime)
+      const end = parseTimeToDate(endTime)
+      if (start >= end) {
+        const startIdx = this.endTimes.indexOf(startTime)
+        this.eventForm.get('endTime')?.setValue(this.endTimes[startIdx + 1])
+      }
+    });
+
+    this.eventForm.get('endTime')?.valueChanges.subscribe((endTime: string) => {
+      const startTime = this.eventForm.get('startTime')?.value;
+      console.log(startTime, endTime)
+
+      const start = parseTimeToDate(startTime)
+      const end = parseTimeToDate(endTime)
+      if (start >= end) {
+        const endIdx = this.startTimes.indexOf(endTime)
+        this.eventForm.get('startTime')?.setValue(this.startTimes[endIdx - 1])
+      }
+    });
+
+    
   }
 
 
