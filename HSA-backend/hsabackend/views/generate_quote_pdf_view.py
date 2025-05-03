@@ -194,13 +194,11 @@ def sign_the_quote(request, id):
     Expects JSON body: { "quote_pdf_base64": "<base64-string>" }
     Decodes and uploads the signed PDF to S3 (public), marks the job pending, and returns the link.
     """
-    # 1. Fetch the job
     try:
         job = Job.objects.get(pk=id)
     except Job.DoesNotExist:
         return Response({"message": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    # 2. Decode base64 PDF
     b64 = request.data.get("signed_pdf_base64")
     if not b64:
         return Response({"message": "Missing PDF data"}, status=status.HTTP_400_BAD_REQUEST)
@@ -210,7 +208,6 @@ def sign_the_quote(request, id):
     except (TypeError, ValueError):
         return Response({"message": "Invalid base64 data"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # 3. Prepare S3 client
     bucket = os.environ.get("AWS_BUCKET")
     if not bucket:
         return Response({"message": "AWS_BUCKET not configured"}, status=status.HTTP_400_BAD_REQUEST)
@@ -223,11 +220,9 @@ def sign_the_quote(request, id):
     else:
         s3 = boto3.client("s3")
 
-    # 4. Generate a unique key
     timestamp = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
     key = f"quotes/quote_{job.pk}_signed_{timestamp}.pdf"
 
-    # 5. Upload with public-read ACL
     try:
         s3.put_object(
             Bucket=bucket,
@@ -237,10 +232,8 @@ def sign_the_quote(request, id):
             ACL="public-read"
         )
     except Exception as e:
-        print(e)
         return Response({"message": f"S3 upload failed: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    # 7. Update job
     job.quote_s3_link = key
     job.quote_status = "created"
     job.save(update_fields=["quote_s3_link", "quote_status"])
@@ -284,16 +277,11 @@ def send_quote_pdf_to_customer_email(request, id):
     msg.attach_alternative(html_content, "text/html")
     msg.attach(f"quote_job_{job.pk}.pdf", pdf_bytes, "application/pdf")
     msg.send()
-
     return Response({"message": f"Quote PDF sent to {to_email}"}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
 def get_list_of_quotes_by_org(request):
-    """
-    GET /api/quotes/list/?filterby=<status>
-    Returns a list of jobs (quotes) associated with the authenticated user's organization,
-    optionally filtered by quote_status (created, accepted, rejected).
-    """
+
     try:
         org = Organization.objects.get(owning_User=request.user.pk)
     except Organization.DoesNotExist:
@@ -319,35 +307,27 @@ def get_list_of_quotes_by_org(request):
             "start_date": format_maybe_null_date(job.start_date),
             "end_date": format_maybe_null_date(job.end_date),
         })
-    print(result)
 
     return Response({"data":result}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
 def retrieve_quote(request, id):
-    """
-    GET /api/quotes/<id>/retrieve/
-    Returns a presigned URL for the signed quote PDF.
-    """
-    # 1. Fetch the org for the logged-in user
+
     try:
         org = Organization.objects.get(owning_User=request.user.pk)
     except Organization.DoesNotExist:
         return Response({"message": "Organization not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    # 2. Fetch the job, ensure it’s in this org
     try:
         job = Job.objects.select_related("customer__organization") \
             .get(pk=id, customer__organization=org)
     except Job.DoesNotExist:
         return Response({"message": "Job not found or access denied"}, status=status.HTTP_404_NOT_FOUND)
 
-    # 3. Make sure we have a stored S3 key/link
     key = job.quote_s3_link
     if not key:
         return Response({"message": "No signed quote available"}, status=status.HTTP_404_NOT_FOUND)
 
-    # 4. Build S3 client (allow custom endpoint)
     bucket = os.environ.get("AWS_BUCKET")
     if not bucket:
         return Response({"message": "AWS_BUCKET not configured"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -361,9 +341,7 @@ def retrieve_quote(request, id):
     else:
         s3 = boto3.client("s3")
 
-    # 5. Generate presigned URL
     try:
-        print(key)
         presigned_url = s3.generate_presigned_url(
             ClientMethod="get_object",
             Params={"Bucket": bucket, "Key": key},
@@ -375,7 +353,6 @@ def retrieve_quote(request, id):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-    # 6. Return it
     return Response({"url": presigned_url}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
@@ -384,7 +361,6 @@ def accept_reject_quote(request, id):
     POST /api/quotes/<id>/accept_reject/
     Body: { "decision": "accept" | "reject" }
     """
-    # 1. Find the org and job, ensure access
     try:
         org = Organization.objects.get(owning_User=request.user.pk)
     except Organization.DoesNotExist:
@@ -396,14 +372,12 @@ def accept_reject_quote(request, id):
     except Job.DoesNotExist:
         return Response({"message": "Job not found or access denied"}, status=status.HTTP_404_NOT_FOUND)
 
-    # 2. Only allow transitions from 'created'
     if job.quote_status != "created":
         return Response(
             {"message": f"Cannot {request.data.get('decision')} when quote_status is '{job.quote_status}'"},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # 3. Parse decision
     decision = str(request.data.get("decision", "")).lower()
     if decision not in ("accept", "reject"):
         return Response(
@@ -411,7 +385,6 @@ def accept_reject_quote(request, id):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # 4. Update status and prepare email
     customer_email = job.customer.email
     from_email = os.environ.get("EMAIL_HOST_USER") or settings.DEFAULT_FROM_EMAIL
 
@@ -424,7 +397,7 @@ def accept_reject_quote(request, id):
             "We’ll be in touch shortly to schedule the work.\n\n"
             "Best,\nHSA Team"
         )
-    else:  # reject
+    else:  
         job.quote_status = "rejected"
         job.quote_s3_link = None
         subject = f"Quote #{job.pk} Rejected"
@@ -439,11 +412,9 @@ def accept_reject_quote(request, id):
 
     job.save(update_fields=["quote_status", "quote_s3_link"] if decision == "reject" else ["quote_status"])
 
-    # 5. Send notification email
     msg = EmailMultiAlternatives(subject, text, from_email, [customer_email])
     msg.send()
 
-    # 6. Return the new status
     return Response(
         {"quote_status": job.quote_status},
         status=status.HTTP_200_OK
