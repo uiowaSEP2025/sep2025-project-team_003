@@ -61,7 +61,7 @@ class materialViewTest(APITestCase):
 
 
     @patch('hsabackend.views.jobs.Job.objects.get')
-    @patch('hsabackend.views.jobs.Organization.objects.get')
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
     def test_get_job_table_data_valid_empty_query(self, org, job):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True

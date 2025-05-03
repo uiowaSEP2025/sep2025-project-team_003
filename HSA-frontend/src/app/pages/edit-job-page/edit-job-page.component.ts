@@ -591,7 +591,8 @@ export class EditJobPageComponent {
           this.snackBar.open('Job edit successfully', '', {
             duration: 3000
           });
-        } else {
+        this.navigateToPage('jobs') }
+        else {
           this.snackBar.open('There is an error in the server, please try again later. Error: ' + errorMessage, '', {
             duration: 3000
           });

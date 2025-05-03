@@ -30,3 +30,10 @@ def password_strength_validator(password: str) -> dict | None:
         return None
     
     return password
+
+def parse_and_return_int(value):
+    try:
+        res = int(value)
+        return res
+    except ValueError:
+        return None

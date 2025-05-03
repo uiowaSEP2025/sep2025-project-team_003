@@ -1,11 +1,23 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from hsabackend.models.organization import Organization
 from hsabackend.models.contractor import Contractor
 from django.db.models import Q
 from django.core.exceptions import ValidationError
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+
+@api_view(["GET"])
+@check_authenticated_and_onboarded()
+def get_all_contractors_for_org(request):
+    org = request.org
+    contractors = Contractor.objects.filter(organization=org.pk)
+
+    res = []
+    for contractor in contractors:
+        res.append(contractor.name_id_json())
+
+    return Response(res, status=status.HTTP_200_OK)
+
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()

@@ -6,6 +6,11 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Contractor, ContractorParams } from '../interfaces/contractor.interface';
 import { environment } from '../../environments/environment';
 
+export interface ContractorNameId {
+  name: string,
+  id: number
+}
+
 interface ContractorCreatePostData {
   firstName: string | null
   lastName: string | null
@@ -26,12 +31,17 @@ interface ContractorDeletePostData {
 })
 export class ContractorService {
   private apiGetUrl = `${environment.apiUrl}/api/get/contractors`;
+  private apiGetAllUrl = `${environment.apiUrl}/api/get/all/contractors`;
   private apiGetExcludedUrl = `${environment.apiUrl}/api/get/contractors/exclude`;
   private apiCreateUrl = `${environment.apiUrl}/api/create/contractor`;
   private apiEditUrl = `${environment.apiUrl}/api/edit/contractor`;
   private apiDeleteUrl = `${environment.apiUrl}/api/delete/contractor`;
 
   constructor(private http: HttpClient) {}
+
+  public getAllContractors():Observable<ContractorNameId[]> {
+    return this.http.get<ContractorNameId[]>(this.apiGetAllUrl);
+  }
 
   public getContractor(params?: Record<string, string | number>): Observable<TableApiResponse<Contractor>> {
     let httpParams = new HttpParams();
