@@ -13,7 +13,7 @@ import { FormControl } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ContractorNameId } from '../../services/contractor.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-calendar-component',
@@ -61,8 +61,8 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
     cellWidth: 25,
     cellHeight: 25,
     onVisibleRangeChanged: args => {
-      
-      this.loadEvents();
+
+      // this.loadEvents();
     }
   };
 
@@ -148,13 +148,10 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   }
 
   loadEvents(): void {
-    /*There is no way to test this fn, somehow, this.nav.control is null in only the test.
-    if any1 has a fix, feel free to try. 1.5 hrs wasted on this -alex, i am responsible for this, with 
-    the dropdown addition and the loading fallback
-    
-    */
-    const from = this.nav.control.visibleStart();
-    const to = this.nav.control.visibleEnd();
+    if (this.nav) {
+      // nav is not init when the select change is bound
+      const from = this.nav.control.visibleStart();
+      const to = this.nav.control.visibleEnd();
 
     //load events from booking model
     this.calendarDataService.getEvents(from, to, this.selectControl.value!.id).subscribe({
@@ -191,6 +188,8 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
         }
       }
     });
+    }
+
   }
 
   viewDay(): void {
