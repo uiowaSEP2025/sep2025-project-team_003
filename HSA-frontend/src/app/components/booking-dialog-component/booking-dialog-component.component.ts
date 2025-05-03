@@ -8,8 +8,6 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angu
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTimepickerModule } from '@angular/material/timepicker';
-import { AddSelectDialogData } from '../../interfaces/interface-helpers/addSelectDialog-helper.interface';
-import { AddSelectDialogComponentComponent } from '../add-select-dialog-component/add-select-dialog-component.component';
 import { generateTimes } from '../../utils/generate-time-utils';
 import { StringFormatter } from '../../utils/string-formatter';
 import parseTimeToDate from '../../utils/date-parse-from-HHMM';
@@ -76,6 +74,22 @@ export class BookingDialogComponentComponent implements OnInit {
 
   }
 
+  private selectionToDate(timeString: String): Date {
+    const originalDate = new Date(this.data.startTime);
+
+    const [time, period] = timeString.split(' ');
+    const [hours, minutes] = time.split(':').map(num => parseInt(num, 10));
+
+    let hours24 = hours;
+    if (period === 'PM' && hours !== 12) {
+      hours24 += 12;
+    } else if (period === 'AM' && hours === 12) {
+      hours24 = 0;
+    }
+
+    originalDate.setHours(hours24, minutes, 0, 0);
+    return originalDate;
+  }
   ngOnInit() {
     this.startTimes = generateTimes(false, this.data.startTime).map(date => this.stringFormatter.formatDateToHHMM(date));
     this.endTimes = generateTimes(true, this.data.endTime).map(date => this.stringFormatter.formatDateToHHMM(date));
@@ -123,7 +137,7 @@ export class BookingDialogComponentComponent implements OnInit {
       }
     });
 
-    
+
   }
 
 
@@ -152,12 +166,12 @@ export class BookingDialogComponentComponent implements OnInit {
       data: { contractorId: this.data.contractorId }
     });
 
-    dialogRef.afterClosed().subscribe((result: {id: number, desc: string}) => {
+    dialogRef.afterClosed().subscribe((result: { id: number, desc: string }) => {
       if (result) {
         this.jobID = result.id
         this.eventForm.get('jobID')?.setValue(result.id)
         this.eventForm.get('jobID')!.markAsUntouched()
-        this.eventForm.get('jobDescription')!.setValue(result.desc) 
+        this.eventForm.get('jobDescription')!.setValue(result.desc)
       }
     })
   }
@@ -172,20 +186,20 @@ export class BookingDialogComponentComponent implements OnInit {
       this.snackBar.open('Invalid fields. Please review the form and submit again!', '', {
         duration: 3000
       });
-    } else {
-      this.dialogRef.close({
-        eventName: this.eventForm.get('eventName')?.value,
-        startTime: this.data.startTime,
-        endTime: this.data.endTime,
-        backColor: this.getColorID(),
-        tags: {
-          jobID: this.eventForm.get('jobID')?.value,
-          jobDescription: this.eventForm.get('jobDescription')?.value,
-          bookingType: this.eventForm.get('bookingType')?.value,
-          status: this.eventForm.get('status')?.value,
-        }
-      });
     }
+    this.dialogRef.close({
+      eventName: this.eventForm.get('eventName')?.value,
+      startTime: this.selectionToDate(this.eventForm.get('startTime')!.value),
+      endTime: this.selectionToDate(this.eventForm.get('endTime')!.value),
+      backColor: this.getColorID(),
+      tags: {
+        jobID: this.eventForm.get('jobID')?.value,
+        jobDescription: this.eventForm.get('jobDescription')?.value,
+        bookingType: this.eventForm.get('bookingType')?.value,
+        status: this.eventForm.get('status')?.value,
+      }
+    });
+
   }
 
   getColorID() {

@@ -389,7 +389,6 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
             let jobInfo = response.data
 
             const endDate = jobInfo["endDate"].split("-").slice(1).join("/");
-
             const updateEventData = new DayPilot.Event({
               id: args.e.data.id,
               text: result.eventName,
@@ -406,7 +405,6 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
             });
 
             dp.events.update(updateEventData.data)
-
             const eventEditRequest = {
               id: args.e.data.id,
               eventName: result.eventName,

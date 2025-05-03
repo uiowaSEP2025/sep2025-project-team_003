@@ -8,6 +8,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
+import { MatSelectHarness } from '@angular/material/select/testing';
 
 fdescribe('BookingDialogComponentComponent', () => {
   let component: BookingDialogComponentComponent;
@@ -179,9 +180,40 @@ fdescribe('BookingDialogComponentComponent', () => {
   })
 
   describe("time tests", () => {
-    it('should update the end time on start time change', () => {}) 
+    it('should update the end time on start time change', async () => {
+      const startSelect = await loader.getHarness(MatSelectHarness.with({ selector: '[formControlName="startTime"]' }));
+      const endSelect = await loader.getHarness(MatSelectHarness.with({ selector: '[formControlName="endTime"]' }));
+      await endSelect.open();
+      
+      const endOptions = await endSelect.getOptions();
+      await endOptions[1].click(); 
 
-    it('should update the start time on end time change', () => {}) 
+      await startSelect.open();
+      const startOptions = await startSelect.getOptions();
+      await startOptions[startOptions.length - 1].click();
+
+      const value = await endSelect.getValueText()
+      expect(value).toEqual("11:59 PM")
+    })
+
+    it('should update the start time on end time change', async () => {
+      const startSelect = await loader.getHarness(MatSelectHarness.with({ selector: '[formControlName="startTime"]' }));
+      const endSelect = await loader.getHarness(MatSelectHarness.with({ selector: '[formControlName="endTime"]' }));
+      
+      await startSelect.open();
+      const startOptions = await startSelect.getOptions();
+      await startOptions[startOptions.length - 1].click();
+
+      
+      await endSelect.open();
+      
+      const endOptions = await endSelect.getOptions();
+      await endOptions[0].click(); 
+
+      
+      const value = await startSelect.getValueText()
+      expect(value).toEqual("12:00 AM")
+    })
 
   })
 });
