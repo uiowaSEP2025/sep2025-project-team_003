@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, Input, OnChanges } from '@angular/core';
 import { DayPilot, DayPilotCalendarComponent, DayPilotModule, DayPilotNavigatorComponent } from "@daypilot/daypilot-lite-angular";
 import { BookingService } from '../../services/calendar-data.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,33 +7,61 @@ import { DeleteDialogComponentComponent } from '../delete-dialog-component/delet
 import { JobService } from '../../services/job.service';
 import { ViewJobDialogComponentComponent } from '../view-job-dialog-component/view-job-dialog-component.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSelectModule } from '@angular/material/select';
+import { CommonModule } from '@angular/common';
+import { FormControl } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ContractorNameId } from '../../services/contractor.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
 
 @Component({
   selector: 'app-calendar-component',
   imports: [
     DayPilotModule,
+    MatSelectModule,
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
-  providers:    [
+  providers: [
     BookingService,
   ],
   templateUrl: './calendar-component.component.html',
   styleUrl: './calendar-component.component.scss'
 })
-export class CalendarComponentComponent implements AfterViewInit {
+export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   @ViewChild("day") day!: DayPilotCalendarComponent;
   @ViewChild("week") week!: DayPilotCalendarComponent;
   @ViewChild("navigator") nav!: DayPilotNavigatorComponent;
+  @Input({ required: true }) contractorNames!: ContractorNameId[]
 
   events: DayPilot.EventData[] = [];
   jobs: any[] = [];
   date = DayPilot.Date.today();
+  selectControl: FormControl<ContractorNameId | null> = new FormControl(null);
+
+  clearAllEvents() {
+    // DO NOT SET EVENTS TO [] TO CLEAR EVENTS. THAT DOES NOTHING!
+    //USE THIS INSTEAD!
+    this.events = [];
+    if (this.day && this.day.control) {
+      this.day.control.events.list = [];
+      this.day.control.update();
+    }
+    if (this.week && this.week.control) {
+      this.week.control.events.list = [];
+      this.week.control.update();
+    }
+  }
 
   configNavigator: DayPilot.NavigatorConfig = {
     showMonths: 3,
     cellWidth: 25,
     cellHeight: 25,
-    onVisibleRangeChanged: args => { 
-      this.events = []
+    onVisibleRangeChanged: args => {
+      
       this.loadEvents();
     }
   };
@@ -48,10 +76,10 @@ export class CalendarComponentComponent implements AfterViewInit {
     onTimeRangeSelected: this.onTimeRangeSelected.bind(this),
     onBeforeEventRender: this.onBeforeEventRender.bind(this),
     onEventClick: this.onEventClick.bind(this),
-    
+
     //handling drag event
     eventMoveHandling: "Update",
-    onEventMove: (args) => { 
+    onEventMove: (args) => {
       this.onChangeViaDragAndResize(args)
     },
 
@@ -71,7 +99,7 @@ export class CalendarComponentComponent implements AfterViewInit {
 
     //handling drag event
     eventMoveHandling: "Update",
-    onEventMove: (args) => { 
+    onEventMove: (args) => {
       this.onChangeViaDragAndResize(args)
     },
 
@@ -83,16 +111,28 @@ export class CalendarComponentComponent implements AfterViewInit {
   };
 
   constructor(
-    private calendarDataService: BookingService, 
-    private jobService: JobService, 
-    public dialog: MatDialog, 
-    private snackBar: MatSnackBar
+    private calendarDataService: BookingService,
+    private jobService: JobService,
+    public dialog: MatDialog,
+    private snackBar: MatSnackBar,
   ) {
     this.viewWeek();
+    this.selectControl.valueChanges
+      .subscribe(() => {
+        this.clearAllEvents()
+        this.loadEvents();
+      });
   }
 
   ngAfterViewInit(): void {
     this.loadEvents();
+
+  }
+
+  ngOnChanges(): void {
+    if (this.contractorNames && this.contractorNames.length > 0) {
+      this.selectControl.setValue(this.contractorNames[0]);
+    }
   }
 
   eventHTML(eventName: string, endDate: string, customerName: string, typeOfEvent: string) {
@@ -108,16 +148,19 @@ export class CalendarComponentComponent implements AfterViewInit {
   }
 
   loadEvents(): void {
+    /*There is no way to test this fn, somehow, this.nav.control is null in only the test.
+    if any1 has a fix, feel free to try. 1.5 hrs wasted on this -alex
+    
+    */
     const from = this.nav.control.visibleStart();
     const to = this.nav.control.visibleEnd();
 
     //load events from booking model
-    this.calendarDataService.getEvents(from, to).subscribe({
+    this.calendarDataService.getEvents(from, to, this.selectControl.value!.id).subscribe({
       next: (response) => {
         let allInfo: any = response
         let eventsInfo: any = allInfo["event_data"]
         let jobsInfo: any = allInfo["job_data"]
-
         if (eventsInfo.length !== 0) {
           eventsInfo.forEach((element: any) => {
             let eventFormat = new DayPilot.Event({
@@ -149,13 +192,13 @@ export class CalendarComponentComponent implements AfterViewInit {
     });
   }
 
-  viewDay():void {
+  viewDay(): void {
     this.configNavigator.selectMode = "Day";
     this.configDay.visible = true;
     this.configWeek.visible = false;
   }
 
-  viewWeek():void {
+  viewWeek(): void {
     this.configNavigator.selectMode = "Week";
     this.configDay.visible = false;
     this.configWeek.visible = true;
@@ -173,7 +216,7 @@ export class CalendarComponentComponent implements AfterViewInit {
         fontColor: "#000",
         action: "None",
         toolTip: "Info",
-        onClick: async (args: any)  => {
+        onClick: async (args: any) => {
           const infoData = {
             jobInfo: this.jobs.filter((item) => item.data.id === args.source.data.tags.jobID)[0],
             bookingInfo: {
@@ -184,14 +227,14 @@ export class CalendarComponentComponent implements AfterViewInit {
           };
 
           const dialogRef = this.dialog.open(ViewJobDialogComponentComponent, {
-            width: 'auto', 
-            maxWidth: '90vw', 
-            height: 'auto', 
+            width: 'auto',
+            maxWidth: '90vw',
+            height: 'auto',
             maxHeight: '90vh',
             data: infoData
           });
-      
-          dialogRef.afterClosed().subscribe(result => {});
+
+          dialogRef.afterClosed().subscribe(result => { });
         }
       },
       {
@@ -203,7 +246,7 @@ export class CalendarComponentComponent implements AfterViewInit {
         fontColor: "#000",
         action: "None",
         toolTip: "Delete event",
-        onClick: async (args: any)  => {
+        onClick: async (args: any) => {
           const messageData = {
             id: args.source.data.id,
             eventName: args.source.data.text
@@ -214,12 +257,12 @@ export class CalendarComponentComponent implements AfterViewInit {
             data: messageData
           });
 
-          
-      
+
+
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
               //call the api to delete booking model here
-              this.calendarDataService.deleteEvent({ id: args.source.data.id}).subscribe({
+              this.calendarDataService.deleteEvent({ id: args.source.data.id }).subscribe({
                 next: (response) => {
                   this.snackBar.open('Event Deleted!', '', {
                     duration: 3000
@@ -228,8 +271,8 @@ export class CalendarComponentComponent implements AfterViewInit {
                   dp.events.remove(args.source);
                   this.jobs = this.jobs.filter((item) => item.data.id === args.source.data.tags.jobID)
                 },
-                error: (error) => {}
-            })
+                error: (error) => { }
+              })
             }
           });
         }
@@ -246,20 +289,19 @@ export class CalendarComponentComponent implements AfterViewInit {
   }
 
   async onTimeRangeSelected(args: any) {
-    console.log(typeof args.end.value)
     const slotData = {
       startTime: args.start.value,
       endTime: args.end.value,
-      listOfColor: this.calendarDataService.getColors(),
-      typeOfDialog: "create"
+      typeOfDialog: "create",
+      contractorId: this.selectControl.value?.id
     }
 
     const dialogRef = this.dialog.open(BookingDialogComponentComponent, {
-      width: '800px', 
-      maxWidth: '90vw', 
-      height: 'auto', 
+      width: '800px',
+      maxWidth: '90vw',
+      height: 'auto',
       maxHeight: '90vh',
-      data: slotData
+      data: slotData,
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -307,12 +349,8 @@ export class CalendarComponentComponent implements AfterViewInit {
                   }
                 }));
               },
-              error: (error) => {}
+              error: (error) => { }
             })
-
-            
-            
-            
           }
         })
       }
@@ -327,16 +365,15 @@ export class CalendarComponentComponent implements AfterViewInit {
       jobID: args.e.data.tags.jobID,
       jobDescription: args.e.data.tags.jobDescription,
       bookingType: args.e.data.tags.bookingType,
-      listOfColor: this.calendarDataService.getColors(),
       typeOfDialog: "edit",
       status: args.e.data.tags.status,
       backColor: args.e.data.backColor,
     }
 
     const dialogRef = this.dialog.open(BookingDialogComponentComponent, {
-      width: '800px', 
-      maxWidth: '90vw', 
-      height: 'auto', 
+      width: '800px',
+      maxWidth: '90vw',
+      height: 'auto',
       maxHeight: '90vh',
       data: currentEventData
     });
@@ -344,15 +381,15 @@ export class CalendarComponentComponent implements AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         const dp = args.control
-        this.jobs = this.jobs.filter((item) => item.data.id !== args.e.data.tags.jobID) 
-        
+        this.jobs = this.jobs.filter((item) => item.data.id !== args.e.data.tags.jobID)
+
         this.jobService.getSpecificJobData(result.tags.jobID).subscribe({
           next: (response) => {
             this.jobs.push(response)
             let jobInfo = response.data
 
             const endDate = jobInfo["endDate"].split("-").slice(1).join("/");
-        
+
             const updateEventData = new DayPilot.Event({
               id: args.e.data.id,
               text: result.eventName,
@@ -388,7 +425,7 @@ export class CalendarComponentComponent implements AfterViewInit {
                   duration: 3000
                 });
               },
-              error: (error) => {}
+              error: (error) => { }
             })
           }
         })
@@ -414,7 +451,7 @@ export class CalendarComponentComponent implements AfterViewInit {
           duration: 3000
         });
       },
-      error: (error) => {}
+      error: (error) => { }
     })
   }
 }

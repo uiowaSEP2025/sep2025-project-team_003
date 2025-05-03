@@ -175,100 +175,7 @@ class Command(BaseCommand):
                 m1.save()
 
 
-            mock_requests = [
-                {
-                    "requestor_first_name": "John",
-                    "requestor_last_name": "Doe",
-                    "requestor_email": "johndoe@example.com",
-                    "requestor_city": "New York",
-                    "requestor_state": "NY",
-                    "requestor_zip": "10001",
-                    "requestor_address": "123 Main St",
-                    "requestor_phone_no": "1234567890",
-                    "description": "Request for plumbing services due to a leaky faucet.",
-                    "status": "received",
-                },
-                {
-                    "requestor_first_name": "Jane",
-                    "requestor_last_name": "Smith",
-                    "requestor_email": "janesmith@example.com",
-                    "requestor_city": "Los Angeles",
-                    "requestor_state": "CA",
-                    "requestor_zip": "90001",
-                    "requestor_address": "456 Elm St",
-                    "requestor_phone_no": "9876543210",
-                    "description": "Request for electrical repair for faulty wiring.",
-                    "status": "approved",
-                },
-                {
-                    "requestor_first_name": "Alice",
-                    "requestor_last_name": "Johnson",
-                    "requestor_email": "alicej@example.com",
-                    "requestor_city": "Chicago",
-                    "requestor_state": "IL",
-                    "requestor_zip": "60601",
-                    "requestor_address": "789 Oak St",
-                    "requestor_phone_no": "5551234567",
-                    "description": "Request for HVAC maintenance before winter.",
-                    "status": "received",
-                },
-                {
-                    "requestor_first_name": "Bob",
-                    "requestor_last_name": "Brown",
-                    "requestor_email": "bobbrown@example.com",
-                    "requestor_city": "Houston",
-                    "requestor_state": "TX",
-                    "requestor_zip": "77001",
-                    "requestor_address": "101 Pine St",
-                    "requestor_phone_no": "5557654321",
-                    "description": "Request for landscaping services for backyard renovation.",
-                    "status": "received",
-                },
-                {
-                    "requestor_first_name": "Charlie",
-                    "requestor_last_name": "Davis",
-                    "requestor_email": "charlied@example.com",
-                    "requestor_city": "Phoenix",
-                    "requestor_state": "AZ",
-                    "requestor_zip": "85001",
-                    "requestor_address": "202 Maple St",
-                    "requestor_phone_no": "5559876543",
-                    "description": "Request for pest control due to ant infestation.",
-                    "status": "approved",
-                },
-            ]
-
-            for data in mock_requests:
-                r = Request.objects.create(
-                    requestor_first_name=data["requestor_first_name"],
-                    requestor_last_name=data["requestor_last_name"],
-                    requestor_phone_no=data["requestor_phone_no"],
-                    requestor_email=data["requestor_email"],
-                    requestor_city=data["requestor_city"],
-                    requestor_state=data["requestor_state"],
-                    requestor_zip=data["requestor_zip"],
-                    requestor_address=data["requestor_address"],
-                    description=data["description"],
-                    status=data["status"],
-                    organization=org,
-                )
-                r.save()
-
-                r = Request.objects.create(
-                    requestor_first_name=data["requestor_first_name"] + "test",
-                    requestor_last_name=data["requestor_last_name"] + "test",
-                    requestor_phone_no=data["requestor_phone_no"],
-                    requestor_email=data["requestor_email"],
-                    requestor_city=data["requestor_city"],
-                    requestor_state=data["requestor_state"],
-                    requestor_zip=data["requestor_zip"],
-                    requestor_address=data["requestor_address"],
-                    description=data["description"],
-                    status=data["status"],
-                    organization=org1,
-                )
-                r.save()
-
+        
                         # List of realistic job descriptions
             job_descriptions = [
                 "Install new HVAC system in the office building.",
@@ -307,6 +214,41 @@ class Command(BaseCommand):
                     requestor_address = "2 W Washington St"
                 )
                 j.save()
+
+            j1 = Job.objects.filter(organization=org)
+            j2 = Job.objects.filter(organization=org1)
+
+            Request.objects.create(
+            requester_first_name="John",
+            requester_last_name="Doe",
+            requester_email="john.doe@example.com",
+            requester_city="Springfield",
+            requester_state="CA",
+            requester_zip="12345",
+            requester_address="123 Elm St",
+            requester_phone="1234567890",
+            description="Need help fixing kitchen sink",
+            availability="Weekends",
+            request_status="received",
+            organization=org,
+            job=j1[0]
+        )
+
+            Request.objects.create(
+                requester_first_name="Jane",
+                requester_last_name="Smith",
+                requester_email="jane.smith@example.com",
+                requester_city="Springfield",
+                requester_state="CA",
+                requester_zip="12345",
+                requester_address="456 Oak St",
+                requester_phone="0987654321",
+                description="Need someone to repair bathroom faucet",
+                availability="Weekdays after 5pm",
+                request_status="approved",
+                organization=org1,
+                job=j2[0]
+            )
 
 
             discount_names = ["Summer Sale", "Black Friday", "Holiday Special", "New Year Discount", "Clearance Sale"]

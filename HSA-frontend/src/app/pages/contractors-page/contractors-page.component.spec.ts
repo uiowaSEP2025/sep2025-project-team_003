@@ -4,7 +4,6 @@ import { ContractorsPageComponent } from './contractors-page.component';
 import { Router } from '@angular/router';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
 
 class MockRouter {
   navigate = jasmine.createSpy('navigate');

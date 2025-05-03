@@ -46,7 +46,6 @@ class Job(models.Model):
         return {
             'id': self.pk,
             # cap at 50 so table doesn't stretch
-        
             'description': self.description[:50] + ("..." if len(self.description) > 50 else ""),
             'job_status': self.job_status,
             'start_date': self.start_date,

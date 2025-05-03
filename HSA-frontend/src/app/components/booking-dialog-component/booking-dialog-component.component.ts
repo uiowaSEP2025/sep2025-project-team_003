@@ -7,11 +7,11 @@ import { MatOption, provideNativeDateAdapter } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import {MatTimepickerModule} from '@angular/material/timepicker';
-import { AddSelectDialogData } from '../../interfaces/interface-helpers/addSelectDialog-helper.interface';
-import { AddSelectDialogComponentComponent } from '../add-select-dialog-component/add-select-dialog-component.component';
+import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { BookingJobsPerContractorComponent } from '../booking-jobs-per-contractor/booking-jobs-per-contractor.component';
+import { BookingService } from '../../services/calendar-data.service';
 
 @Component({
   selector: 'app-booking-dialog-component',
@@ -37,7 +37,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class BookingDialogComponentComponent implements OnInit {
   eventForm: FormGroup;
   jobID: number = 0
-  selectedJob: any
   colors: any
   currentColor: any
   typeOfDialog: string
@@ -47,7 +46,8 @@ export class BookingDialogComponentComponent implements OnInit {
     public dialogRef: MatDialogRef<BookingDialogComponentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private eventFormBuilder: FormBuilder,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private colorService: BookingService
   ) {
     this.eventForm = this.eventFormBuilder.group({
       eventName: ['', Validators.required],
@@ -59,7 +59,8 @@ export class BookingDialogComponentComponent implements OnInit {
     })
 
     this.typeOfDialog = this.data.typeOfDialog
-    this.colors = this.data.listOfColor
+    this.colors = this.colorService.getColors()
+
   }
 
   ngOnInit() {
@@ -88,40 +89,32 @@ export class BookingDialogComponentComponent implements OnInit {
     const date = new Date(input);
     let hours = date.getHours();
     const minutes = date.getMinutes();
-  
+
     const ampm = hours >= 12 ? ' PM' : ' AM';
     hours = hours % 12;
     hours = hours ? hours : 12; // the hour '0' should be '12'
-  
+
     const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
-  
+
     return `${hours}:${formattedMinutes}${ampm}`;
   }
 
   openAddJobDialog() {
-    const dialogData: AddSelectDialogData = {
-      typeOfDialog: 'job',
-      dialogData: this.jobID,
-      searchHint: 'Search by job description',
-      headers: ['Description','Job Status', 'Start Date', 'End Date', 'Customer Name'],
-      materialInputFields: [],
-    };
 
-    const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
-      data: dialogData
+    const dialogRef = this.dialog.open(BookingJobsPerContractorComponent, {
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
+      data: { contractorId: this.data.contractorId }
     });
 
-    dialogRef.afterClosed().subscribe((result: any) => {
-      if (result.length !== 0) {
-        let jobEntry = result.itemsInfo[0]
-        this.eventForm.controls['jobID'].setValue(jobEntry.id)
-        this.eventForm.controls['jobDescription'].setValue(jobEntry.description)
-        this.jobID = jobEntry.id;
-        this.selectedJob = jobEntry
+    dialogRef.afterClosed().subscribe((result: {id: number, desc: string}) => {
+      if (result) {
+        this.jobID = result.id
+        this.eventForm.get('jobID')?.setValue(result.id)
+        this.eventForm.get('jobID')!.markAsUntouched()
+        this.eventForm.get('jobDescription')!.setValue(result.desc) 
       }
     })
   }

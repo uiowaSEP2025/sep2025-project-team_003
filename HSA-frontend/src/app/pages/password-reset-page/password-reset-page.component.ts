@@ -42,7 +42,6 @@ export class PasswordResetPageComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.userAccountForm.controls.confirmPassword.value)
     if (!this.userAccountForm.valid) {
       this.userAccountForm.markAllAsTouched()
       return
