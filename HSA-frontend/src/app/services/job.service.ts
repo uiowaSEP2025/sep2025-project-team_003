@@ -74,7 +74,7 @@ export class JobService {
 
   public getJob(params?: Record<string, string | number>): Observable<StandardApiResponse> {
     let httpParams = new HttpParams();
-
+    console.log("fuck")
     // Add query parameters
     if (params) {
       Object.keys(params).forEach(key => {
@@ -133,7 +133,7 @@ export class JobService {
         httpParams = httpParams.append(key, params[key])
       })
     }
-
+    console.log("shit")
     return this.http.get<StandardApiResponse>(this.apiGetUrl + `/${id}/services`, { params: httpParams });
   }
 
