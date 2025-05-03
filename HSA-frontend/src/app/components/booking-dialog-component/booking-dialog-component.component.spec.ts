@@ -151,8 +151,8 @@ fdescribe('BookingDialogComponentComponent', () => {
 
     expect(component.dialogRef.close).toHaveBeenCalledWith({
       eventName: 'demon',
-      startTime: "2025-04-30T10:30:00",
-      endTime: "2025-04-30T15:00:00",
+      startTime: new Date("2025-04-30T10:30:00"),
+      endTime: new Date("2025-04-30T15:00:00"),
       backColor: undefined,
       tags: {
         jobID: '2',
