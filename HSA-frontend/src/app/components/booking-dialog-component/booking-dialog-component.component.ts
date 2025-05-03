@@ -7,11 +7,14 @@ import { MatOption, provideNativeDateAdapter } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import {MatTimepickerModule} from '@angular/material/timepicker';
+import { MatTimepickerModule } from '@angular/material/timepicker';
 import { AddSelectDialogData } from '../../interfaces/interface-helpers/addSelectDialog-helper.interface';
 import { AddSelectDialogComponentComponent } from '../add-select-dialog-component/add-select-dialog-component.component';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { generateTimes } from '../../utils/generate-time-utils';
+import { DatePipe } from '@angular/common';
+
 
 @Component({
   selector: 'app-booking-dialog-component',
@@ -29,7 +32,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     ReactiveFormsModule,
   ],
   providers: [
-    provideNativeDateAdapter()
+    provideNativeDateAdapter(),
+    DatePipe
   ],
   templateUrl: './booking-dialog-component.component.html',
   styleUrl: './booking-dialog-component.component.scss'
@@ -41,6 +45,9 @@ export class BookingDialogComponentComponent implements OnInit {
   colors: any
   currentColor: any
   typeOfDialog: string
+  startTimes: Date[] = generateTimes(false)
+  endTimes: Date[] = generateTimes(true)
+
 
   constructor(
     public dialog: MatDialog,
@@ -55,14 +62,41 @@ export class BookingDialogComponentComponent implements OnInit {
       jobID: ['', Validators.required],
       jobDescription: [''],
       status: ['', Validators.required],
-      color: ['']
+      color: [''],
+      startTime: [new Date()],
+      endTime: [new Date()]
     })
 
     this.typeOfDialog = this.data.typeOfDialog
     this.colors = this.data.listOfColor
+
   }
 
   ngOnInit() {
+
+    this.eventForm.get('startTime')?.valueChanges.subscribe((startTime: Date) => {
+      const endTime = this.eventForm.get('endTime')?.value;
+      if (startTime && endTime && new Date(endTime) <= new Date(startTime)) {
+        const index = this.endTimes.findIndex(endTime => endTime.getTime() === startTime.getTime());
+        const endTime = this.endTimes[index + 1]
+
+
+        this.eventForm.get('endTime')?.setValue(endTime);
+      }
+    });
+
+    this.eventForm.get('endTime')?.valueChanges.subscribe((endTime: Date) => {
+      const startTime = this.eventForm.get('startTime')?.value;
+
+      if (startTime && endTime && new Date(startTime) >= new Date(endTime)) {
+        const index = this.startTimes.findIndex(startTime => startTime.getTime() === endTime.getTime());
+        const startTime = this.startTimes[index - 1];
+
+        this.eventForm.get('startTime')?.setValue(startTime);
+      }
+    });
+
+
     if (this.typeOfDialog === "create") {
       this.eventForm.patchValue({
         startTime: new Date(this.data.startTime),
@@ -88,13 +122,13 @@ export class BookingDialogComponentComponent implements OnInit {
     const date = new Date(input);
     let hours = date.getHours();
     const minutes = date.getMinutes();
-  
+
     const ampm = hours >= 12 ? ' PM' : ' AM';
     hours = hours % 12;
     hours = hours ? hours : 12; // the hour '0' should be '12'
-  
+
     const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
-  
+
     return `${hours}:${formattedMinutes}${ampm}`;
   }
 
@@ -103,15 +137,15 @@ export class BookingDialogComponentComponent implements OnInit {
       typeOfDialog: 'job',
       dialogData: this.jobID,
       searchHint: 'Search by job description',
-      headers: ['Description','Job Status', 'Start Date', 'End Date', 'Customer Name'],
+      headers: ['Description', 'Job Status', 'Start Date', 'End Date', 'Customer Name'],
       materialInputFields: [],
     };
 
     const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 

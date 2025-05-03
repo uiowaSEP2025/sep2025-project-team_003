@@ -82,7 +82,6 @@ export class BookingService {
   constructor(private http : HttpClient) {}
 
   public getEvents(from: DayPilot.Date, to: DayPilot.Date): Observable<BookingFetchResponse> {
-    console.log(from,to)
     return this.http.get<BookingFetchResponse>(this.apiGetUrl + "?from=" + from.toString() + "&to=" + to.toString());
   }
 

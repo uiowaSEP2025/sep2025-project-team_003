@@ -49,17 +49,22 @@
           <tr>
             <td>Start Time</td>
             <td>
-              <span class="text-2xl font-bold text-gray-800">
-                {{ formatTime(data.startTime) }}
-              </span>
+              <mat-form-field appearance="fill">
+                <mat-select formControlName="startTime">
+                  <mat-option *ngFor="let time of startTimes" [value]="time">{{ time | date: 'hh:mm a' }}</mat-option>
+                </mat-select>
+              </mat-form-field>
             </td>
           </tr>
           <tr>
             <td>End Time</td>
             <td>
-              <span class="text-2xl font-bold text-gray-800">
-                {{ formatTime(data.endTime) }}
-              </span>
+              <mat-form-field appearance="fill">
+                <mat-label>End Time</mat-label>
+                <mat-select formControlName="endTime">
+                  <mat-option *ngFor="let time of endTimes" [value]="time">{{ time | date: 'hh:mm a' }}</mat-option>
+                </mat-select>
+              </mat-form-field>
             </td>
           </tr>
           <tr>

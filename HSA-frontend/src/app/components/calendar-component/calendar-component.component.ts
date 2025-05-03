@@ -246,7 +246,6 @@ export class CalendarComponentComponent implements AfterViewInit {
   }
 
   async onTimeRangeSelected(args: any) {
-    console.log(typeof args.end.value)
     const slotData = {
       startTime: args.start.value,
       endTime: args.end.value,
