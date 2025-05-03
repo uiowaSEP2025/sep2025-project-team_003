@@ -41,7 +41,6 @@ export class ViewJobDialogComponentComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.jobData!.services)    
   }
 
   onCancel(): void {
