@@ -57,6 +57,8 @@ export class BookingDialogComponentComponent implements OnInit {
     private stringFormatter: StringFormatter,
     private colorService: BookingService
   ) {
+    const color = this.data.backColor === undefined ? "" : this.data.backColor
+    console.log(color)
     this.eventForm = this.eventFormBuilder.group({
       eventName: ['', Validators.required],
       bookingType: ['', Validators.required],

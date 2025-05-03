@@ -422,6 +422,8 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
                 this.snackBar.open('Event Edited!', '', {
                   duration: 3000
                 });
+                dp.events.update(updateEventData.data);
+
               },
               error: (error) => { }
             })
