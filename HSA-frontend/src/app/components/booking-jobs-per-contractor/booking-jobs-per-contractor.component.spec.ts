@@ -7,6 +7,8 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideHttpClient } from '@angular/common/http';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { TableApiResponse } from '../../interfaces/api-responses/table.api.interface';
+import JobSimplified from '../../interfaces/jobData.interface';
 
 describe('BookingJobsPerContractorComponent', () => {
   let component: BookingJobsPerContractorComponent;
@@ -14,6 +16,7 @@ describe('BookingJobsPerContractorComponent', () => {
   let httpMock: HttpTestingController;
   let mockDialogRef: jasmine.SpyObj<MatDialogRef<BookingJobsPerContractorComponent>>;
   let loader: HarnessLoader;
+
 
   beforeEach(async () => {
     mockDialogRef = jasmine.createSpyObj('MatDialogRef', ['close']);
@@ -32,6 +35,14 @@ describe('BookingJobsPerContractorComponent', () => {
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
     loader = TestbedHarnessEnvironment.loader(fixture);
+    component.jobData = {data: [ {
+      id: 1,
+      description: "Job1",
+      job_status: "complete",
+      start_date: null,
+      end_date: null,
+      customer_name: "string",
+    }], totalCount: 1}
     fixture.detectChanges();
   });
 
@@ -53,9 +64,10 @@ describe('BookingJobsPerContractorComponent', () => {
       })
     ).then(results => results.filter(button => button !== null)); // correctly working async filter
     component.job = [1]
+    component.setSelectedJob([1])
     await filteredButtons[0].click()
     fixture.detectChanges()
-    expect(mockDialogRef.close).toHaveBeenCalledWith(1);
+    expect(mockDialogRef.close).toHaveBeenCalledWith(Object({ id: 1, desc: 'Job1' }));
   })
 
   it('should return null on cancel', async () => {

@@ -66,7 +66,6 @@ describe('BookingDialogComponentComponent', () => {
         return text === 'Submit' ? button : null;
       })
     ).then(results => results.filter(button => button !== null)) // correctly working async filter
-
     const submit = filteredButtons[0]
     await submit.click()
     fixture.detectChanges()
