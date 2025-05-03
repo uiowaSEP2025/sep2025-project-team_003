@@ -23,6 +23,7 @@ from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForI
 from hsabackend.views.generate_invoice_pdf_view import generate_pdf
 from hsabackend.views.generate_quote_pdf_view import generate_quote_pdf, send_quote_pdf_to_customer_email
 from hsabackend.views.organizations import complete_onboarding, createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail
+from hsabackend.views.generate_requests_iframe import getHTMLForm
 from hsabackend.views.discounts import get_discounts, edit_discount, create_discount, delete_discount
 from hsabackend.views.bookings import create_event, delete_event, edit_event, get_booking_data
 from django.http import HttpResponse
@@ -64,7 +65,9 @@ urlpatterns = [
     path("api/get/requests/filter", get_filtered_request_data),
     path("api/get/request/<int:id>", get_individual_request_data),
     path("api/delete/request/<int:id>", delete_request),
+    path("api/create/request/<int:id>", create_request),
     path("api/approve/request/<int:id>", approve_request),
+    path("api/request/genhtml/<int:id>", getHTMLForm),
 
     # service 
     path("api/get/services", get_service_table_data),
