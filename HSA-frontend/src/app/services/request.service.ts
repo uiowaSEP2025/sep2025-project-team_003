@@ -105,7 +105,6 @@ export class RequestService {
   }
 
   public approveDenyRequest(data: RequestDeletePostData, isApproved: boolean): Observable<StandardApiResponse> {
-    console.log(data, isApproved)
     return isApproved
       ? this.http.post<StandardApiResponse>(this.apiApproveUrl + `/${data.id}`, data)
       : this.http.post<StandardApiResponse>(this.apiDenyUrl + `/${data.id}`, data)

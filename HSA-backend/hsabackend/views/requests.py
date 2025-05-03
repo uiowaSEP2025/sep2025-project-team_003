@@ -121,7 +121,6 @@ def approve_request(request, id):
                 notes = "",
                 organization = org
             )
-
             new_cust.full_clean()
             new_cust.save()
 
