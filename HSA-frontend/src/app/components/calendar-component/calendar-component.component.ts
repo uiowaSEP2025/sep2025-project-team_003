@@ -234,7 +234,6 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
             data: infoData
           });
 
-          dialogRef.afterClosed().subscribe(result => { });
         }
       },
       {

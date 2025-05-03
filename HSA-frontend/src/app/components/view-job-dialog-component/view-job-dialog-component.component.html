@@ -15,7 +15,7 @@
             <table class="info-table">
               <tr>
                 <td>Customer</td>
-                <td>{{this.jobData.data.customerName}}</td>
+                <td>{{jobData.data.customerName}}</td>
               </tr>
               <tr>
                 <td>Status</td>
@@ -54,7 +54,7 @@
             </mat-expansion-panel-header>
             <div>
               <app-job-display-table
-                [dataSource]="jobData.services"
+                [dataSource]="servicesMaterialsContractors"
                 [typeToDisplay]="'service'"
               ></app-job-display-table>
             </div>
@@ -70,7 +70,7 @@
             </mat-expansion-panel-header>
             <div>
               <app-job-display-table
-                [dataSource]="jobData.materials"
+                [dataSource]="servicesMaterialsContractors"
                 [typeToDisplay]="'material'"
               ></app-job-display-table>
             </div>
@@ -86,7 +86,7 @@
             </mat-expansion-panel-header>
             <div>
               <app-job-display-table
-                [dataSource]="jobData.contractors"
+                [dataSource]="servicesMaterialsContractors"
                 [typeToDisplay]="'contractor'"
               ></app-job-display-table>
             </div>
