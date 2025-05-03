@@ -13,7 +13,8 @@ import { AddSelectDialogComponentComponent } from '../add-select-dialog-componen
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { generateTimes } from '../../utils/generate-time-utils';
-import { DatePipe } from '@angular/common';
+import { StringFormatter } from '../../utils/string-formatter';
+import parseTimeToDate  from '../../utils/date-parse-from-HHMM';
 
 
 @Component({
@@ -33,7 +34,6 @@ import { DatePipe } from '@angular/common';
   ],
   providers: [
     provideNativeDateAdapter(),
-    DatePipe
   ],
   templateUrl: './booking-dialog-component.component.html',
   styleUrl: './booking-dialog-component.component.scss'
@@ -45,8 +45,8 @@ export class BookingDialogComponentComponent implements OnInit {
   colors: any
   currentColor: any
   typeOfDialog: string
-  startTimes: Date[] = generateTimes(false)
-  endTimes: Date[] = generateTimes(true)
+  startTimes!: String[]
+  endTimes!: String[]
 
 
   constructor(
@@ -54,7 +54,8 @@ export class BookingDialogComponentComponent implements OnInit {
     public dialogRef: MatDialogRef<BookingDialogComponentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private eventFormBuilder: FormBuilder,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private stringFormatter: StringFormatter
   ) {
     this.eventForm = this.eventFormBuilder.group({
       eventName: ['', Validators.required],
@@ -63,43 +64,34 @@ export class BookingDialogComponentComponent implements OnInit {
       jobDescription: [''],
       status: ['', Validators.required],
       color: [''],
-      startTime: [new Date()],
-      endTime: [new Date()]
+      startTime: [null],
+      endTime: [null]
     })
 
     this.typeOfDialog = this.data.typeOfDialog
     this.colors = this.data.listOfColor
-
   }
 
   ngOnInit() {
+    this.startTimes = generateTimes(false, this.data.startTime).map(date => this.stringFormatter.formatDateToHHMM(date));
+    this.endTimes = generateTimes(true, this.data.endTime).map(date => this.stringFormatter.formatDateToHHMM(date));
 
-    this.eventForm.get('startTime')?.valueChanges.subscribe((startTime: Date) => {
+    this.eventForm.get('startTime')?.valueChanges.subscribe((startTime: string | null) => {
       const endTime = this.eventForm.get('endTime')?.value;
-      if (startTime && endTime && new Date(endTime) <= new Date(startTime)) {
-        const index = this.endTimes.findIndex(endTime => endTime.getTime() === startTime.getTime());
-        const endTime = this.endTimes[index + 1]
-
-
-        this.eventForm.get('endTime')?.setValue(endTime);
+      
+      if (startTime !== null && endTime != null) {
+        const start = parseTimeToDate(startTime)
+        const end = parseTimeToDate(endTime)
+        if (start >= end) {
+          console.log('bad')
+        }
       }
     });
-
-    this.eventForm.get('endTime')?.valueChanges.subscribe((endTime: Date) => {
-      const startTime = this.eventForm.get('startTime')?.value;
-
-      if (startTime && endTime && new Date(startTime) >= new Date(endTime)) {
-        const index = this.startTimes.findIndex(startTime => startTime.getTime() === endTime.getTime());
-        const startTime = this.startTimes[index - 1];
-
-        this.eventForm.get('startTime')?.setValue(startTime);
-      }
-    });
-
 
     if (this.typeOfDialog === "create") {
       this.eventForm.patchValue({
-        startTime: new Date(this.data.startTime),
+        startTime: this.stringFormatter.formatDateToHHMM(new Date(this.data.startTime)),
+        endTime: this.stringFormatter.formatDateToHHMM(new Date(this.data.endTime)),
         status: "pending"
       })
     } else {
@@ -117,20 +109,6 @@ export class BookingDialogComponentComponent implements OnInit {
     }
   }
 
-
-  formatTime(input: string): string {
-    const date = new Date(input);
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-
-    const ampm = hours >= 12 ? ' PM' : ' AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-
-    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
-
-    return `${hours}:${formattedMinutes}${ampm}`;
-  }
 
   openAddJobDialog() {
     const dialogData: AddSelectDialogData = {
