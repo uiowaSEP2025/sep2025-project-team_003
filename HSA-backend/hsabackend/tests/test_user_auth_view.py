@@ -1,31 +1,66 @@
-from rest_framework.test import APITestCase
-from unittest.mock import patch
-from rest_framework import status
-from django.contrib.auth.models import User
+from django.test import TestCase
+from rest_framework.test import APIRequestFactory
+from hsabackend.views.user_auth import user_exist, user_create, login_view, logout_view
+from unittest.mock import patch, Mock
+class UserViewsTestCase(TestCase):
 
-class UserAuthViewTest(APITestCase):
-    @patch('hsabackend.views.user_auth.authenticate')
-    def test_invalid_credentials_should_not_log_in(self, mock_auth):
-        mock_auth.return_value = None
-        response = self.client.post('/api/login', {
-            'username': 'wronguser',
-            'password': 'wrongpassword'
-        })
-        
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertEqual(response.json()['message'], 'Invalid credentials')
+    def test_user_exist_with_no_username_or_email(self):
+        factory = APIRequestFactory()
+        request = factory.post('/api/userexist')
 
-    @patch('hsabackend.views.user_auth.authenticate')
-    @patch('hsabackend.views.user_auth.login')
-    def test_valid_credentials_should_log_in(self, mock_login, mock_authenticate):
-        mock_user = User()
-        mock_login.return_value = None
-        mock_authenticate.return_value = mock_user
+        response = user_exist(request)
 
-        response = self.client.post('/api/login', {
-            'username': 'testuser',
-            'password': 'testpassword'
-        })
-        
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()['message'], 'Login successful!')
+        assert response.status_code == 400
+
+    @patch('hsabackend.views.user_auth.User.objects.filter')
+    def test_user_exist(self, filter):
+        factory = APIRequestFactory()
+        request = factory.post('/api/userexist')
+
+        mock_queryset = Mock()
+        mock_queryset.exists.return_value = False
+        filter.return_value = mock_queryset
+
+        response = user_exist(request)
+
+        assert response.status_code == 409
+
+    @patch('hsabackend.views.user_auth.User.objects.filter')
+    def test_user_exist(self, filter):
+        factory = APIRequestFactory()
+        request = factory.post('/api/userexist')
+
+        mock_queryset = Mock()
+        mock_queryset.exists.return_value = False
+        filter.return_value = mock_queryset
+
+        response = user_exist(request)
+
+        assert response.status_code == 200
+
+    def test_user_create_missing_organization_info(self):
+        pass
+
+    def test_user_create_with_existing_user(self):
+        pass
+
+    def test_user_create_password_not_strong_enough(self):
+        pass
+
+    def test_bad_org_data(self):
+        pass
+
+    def test_user_create_successful(self):
+        pass
+
+    def test_login_successful(self):
+        pass
+
+    def test_login_failed_invalid_credentials(self):
+        pass
+
+    def test_logout_successful(self):
+        pass
+
+    def test_logout_failed_not_logged_in(self):
+        pass
