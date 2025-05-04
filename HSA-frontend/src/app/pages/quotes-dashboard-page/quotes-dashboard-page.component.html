@@ -1,0 +1,28 @@
+<div class="filter-buttons">
+    <button (click)="applyFilter('')">All</button>
+    <button (click)="applyFilter('created')">Created</button>
+    <button (click)="applyFilter('accepted')">Accepted</button>
+    <button (click)="applyFilter('rejected')">Rejected</button>
+  </div>
+  
+  <table class="quote-table">
+    <thead>
+      <tr>
+        <th>Job ID</th>
+        <th>Customer</th>
+        <th>Status</th>
+        <th>Start</th>
+        <th>End</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let quote of quotes" (click)="openQuote(quote)">
+        <td>{{ quote.job_id }}</td>
+        <td>{{ quote.customer_name }}</td>
+        <td>{{ quote.quote_status }}</td>
+        <td>{{ quote.start_date || '—' }}</td>
+        <td>{{ quote.end_date || '—' }}</td>
+      </tr>
+    </tbody>
+  </table>
+  

@@ -29,6 +29,11 @@
             "assets": [
               {
                 "glob": "**/*",
+                "input": "node_modules/ngx-extended-pdf-viewer/assets/",
+                "output": "/public/"
+              },              
+              {
+                "glob": "**/*",
                 "input": "public"
               }
             ],

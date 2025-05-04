@@ -34,7 +34,7 @@ from hsabackend.views.job_templates_materials import get_job_template_material_t
 from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice
 from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForInvoiceByInvoice
 from hsabackend.views.generate_invoice_pdf_view import generate_pdf
-from hsabackend.views.generate_quote_pdf_view import generate_quote_pdf, send_quote_pdf_to_customer_email
+from hsabackend.views.generate_quote_pdf_view import generate_quote_pdf, send_quote_pdf_to_customer_email, generate_quote_pdf_as_base64, sign_the_quote, get_list_of_quotes_by_org, retrieve_quote, accept_reject_quote
 from hsabackend.views.organizations import complete_onboarding, createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail
 from hsabackend.views.generate_requests_iframe import getHTMLForm
 from hsabackend.views.discounts import get_discounts, edit_discount, create_discount, delete_discount
@@ -122,6 +122,8 @@ urlpatterns = [
     path("api/delete/job/<int:job_id>/contractor/<int:job_contractor_id>", delete_job_contractor),
     path("api/delete/job/<int:job_id>/contractors", delete_cached_job_contractor),
     path("api/generate/quote/<int:id>", generate_quote_pdf),
+    path('api/ret/quote/<int:id>', generate_quote_pdf_as_base64),
+    path('api/quote/sign/<int:id>', sign_the_quote),
 
     # job_templates
     path("api/get/jobtemplates", get_job_template_table_data),
@@ -160,6 +162,9 @@ urlpatterns = [
     path("api/get/quotesforinvoice/customer/<int:id>", getQuotesForInvoiceByCustomer),
     path("api/get/quotesforinvoice/invoice/<int:id>", getQuotesForInvoiceByInvoice),
     path("api/send/quote/<int:id>", send_quote_pdf_to_customer_email),
+    path("api/manage/quote/<int:id>", accept_reject_quote),
+    path('api/get/quotes', get_list_of_quotes_by_org),
+    path("api/render/quote/<int:id>", retrieve_quote),
 
     # discounts
     path("api/get/discounts", get_discounts),
