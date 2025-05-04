@@ -38,6 +38,7 @@ export class BookingPageComponent implements OnInit {
     this.contractorService.getAllContractors().subscribe({
       next: (res) => {
         this.contractors = res
+        console.log(res)
       }
     })
   }

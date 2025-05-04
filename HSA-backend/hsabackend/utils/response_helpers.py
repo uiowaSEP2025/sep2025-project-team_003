@@ -199,6 +199,7 @@ def get_table_data(request, object_type, exclude=False, customer_id=None):
             serializer = InvoiceTableSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
         case "booking":
+            contractor_id = request.query_params.get('contractor', '')
             from_date_string = request.query_params.get('from', '')
             to_date_string= request.query_params.get('to', '')
             if not from_date_string or not to_date_string:
@@ -208,7 +209,14 @@ def get_table_data(request, object_type, exclude=False, customer_id=None):
                 to_date_time_object = timezone.make_aware(parse_datetime(to_date_string))
             except Exception:
                 return Response({"message": "Cannot parse date time"}, status=status.HTTP_400_BAD_REQUEST)
-            queryset = Booking.objects.filter(organization=request.organization.pk).order_by('start_time')
+            if contractor_id == 'undefined':
+                queryset = Booking.objects.filter(organization=request.organization.pk).order_by('start_time')
+            else:
+                jobs_temp = Job.objects.filter(organization=request.organization.pk, contractors__id=contractor_id).order_by('start_date')
+                jobs = []
+                for job in jobs_temp:
+                    jobs.append(job.id)
+                queryset = Booking.objects.filter(organization=request.organization.pk, job__id__in=jobs).order_by('start_time')
             queryset = queryset.filter(
                     Q(start_time__gte=from_date_time_object) &
                     Q(end_time__lte=to_date_time_object)
