@@ -21,3 +21,5 @@ omit =
   manage.py
   features/environment.py
   hsabackend/signalhandlers/*
+  hsabackend/utils/env_utils.py # used to get backend url
+  hsabackend/utils/password_reset_route_adder.py # used to add rate limiting, this is code ripped from the library
