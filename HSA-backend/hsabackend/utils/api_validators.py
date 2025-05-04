@@ -1,7 +1,7 @@
 from datetime import datetime
 import decimal
 
-def parseAndReturnDate(date: str):
+def parse_and_return_date(date: str):
     try:
         return datetime.strptime(date, "%Y-%m-%d").date()
     except:

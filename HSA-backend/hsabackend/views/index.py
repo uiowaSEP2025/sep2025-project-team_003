@@ -1,4 +1,4 @@
-# This is a standard passforward to render template + {{ baseURL }}
+# This is a standard pass forward to render template + {{ baseURL }}
 from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 

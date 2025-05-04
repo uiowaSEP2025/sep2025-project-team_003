@@ -1,9 +1,12 @@
 from rest_framework import serializers
 
 from hsabackend.models.booking import Booking
-
+from hsabackend.serializers.job_serializer import JobSerializer
+from hsabackend.serializers.organization_serializer import OrganizationSerializer
 
 class BookingSerializer(serializers.ModelSerializer):
+    organization = OrganizationSerializer(read_only=True)
+    job = JobSerializer(read_only=True)
     class Meta:
         model = Booking
         fields = "__all__"
@@ -12,6 +15,7 @@ class BookingSerializer(serializers.ModelSerializer):
         """
         Create and return a new Booking instance, given the validated data.
         """
+
         return Booking.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
@@ -25,6 +29,6 @@ class BookingSerializer(serializers.ModelSerializer):
         instance.booking_type = validated_data.get('booking_type', instance.booking_type)
         instance.back_color = validated_data.get('back_color', instance.back_color)
         instance.status = validated_data.get('status', instance.status)
-        instance.job = validated_data.get('job', instance.job) # jobID
+        instance.job = validated_data.get('job', instance.job)
         instance.save()
         return instance

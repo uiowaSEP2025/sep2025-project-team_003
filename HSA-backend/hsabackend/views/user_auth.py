@@ -77,7 +77,7 @@ def user_create(request):
                 org_phone = organization_info.get("phone", "").replace("-", ""),
                 org_owner_first_name = organization_info.get("ownerFn"),
                 org_owner_last_name = organization_info.get("ownerLn"),
-                owning_User = new_user
+                owning_user = new_user
             )
             new_org.full_clean()
             new_org.save()

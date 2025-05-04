@@ -1,106 +1,98 @@
+from django.db.models import Q
+from django.utils import timezone
+from django.utils.dateparse import parse_datetime
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
-from django.utils.dateparse import parse_datetime
-from django.utils import timezone
-from hsabackend.models.organization import Organization
+
 from hsabackend.models.booking import Booking
-from hsabackend.models.job import Job
-from hsabackend.models.job_service import JobService
-from hsabackend.models.job_material import JobMaterial
-from hsabackend.models.job_contractor import JobContractor
+from hsabackend.models.job import Job, JobsServices, JobsMaterials
+from hsabackend.models.organization import Organization
 from hsabackend.serializers.booking_serializer import BookingSerializer
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
-from hsabackend.utils.api_validators import parse_and_return_int
+from hsabackend.utils.response_helpers import get_table_data
 
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
 def get_booking_data(request):
-    org = request.org
-    fromDateString = request.query_params.get('from', '')
-    toDateString = request.query_params.get('to', '')
-    contractor_id = request.query_params.get('contractor', '')
+    return get_table_data(request, "booking")
 
-    if not fromDateString or not toDateString:
-        return Response({"message": "missing a starting date or ending date"}, status=status.HTTP_400_BAD_REQUEST)
-    try:
-        fromDateTimeObject = timezone.make_aware(parse_datetime(fromDateString))
-        toDateTimeObject = timezone.make_aware(parse_datetime(toDateString))
-    except Exception:
-        return Response({"message": "Cannot parse date time"}, status=status.HTTP_400_BAD_REQUEST)
+    # org = request.organization
+    # from_date_string = request.query_params.get('from', '')
+    # to_date_string= request.query_params.get('to', '')
+    #
+    # if not from_date_string or not to_date_string:
+    #     return Response({"message": "missing a starting date or ending date"}, status=status.HTTP_400_BAD_REQUEST)
+    #
+    # try:
+    #     from_date_time_object = timezone.make_aware(parse_datetime(from_date_string))
+    #     to_date_time_object = timezone.make_aware(parse_datetime(to_date_string))
+    # except Exception:
+    #     return Response({"message": "Cannot parse date time"}, status=status.HTTP_400_BAD_REQUEST)
+    #
+    # bookings = Booking.objects.filter(organization=org.pk).filter(Q(start_time__gte=from_date_time_object) & Q(end_time__lte=to_date_time_object))
+    #
+    # serializer = BookingSerializer(bookings, many=True)
+    #
+    # jobs = []
+    #
+    # for event in serializer.data:
+    #     job_id = event["job"]
+    #
+    #     try:
+    #         job = Job.objects.get(pk=job_id, organization=org)
+    #     except Job.DoesNotExist:
+    #         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    #
+    #     job_services = JobsServices.objects.filter(job=job.pk)
+    #     job_materials = JobsMaterials.objects.filter(job=job.pk)
+    #     job_contractors = job.contractors
+    #
+    #     job_services_data = []
+    #     for service in job_services:
+    #         job_services_data.append(service.json())
+    #
+    #     job_materials_data = []
+    #     for material in job_materials:
+    #         job_materials_data.append(material.json())
+    #
+    #     job_contractors_data = []
+    #     for contractor in job_contractors:
+    #         job_contractors_data.append(contractor.json())
+    #
+    #     job_data = {
+    #         'data': job.json(),
+    #         'services': job_services_data,
+    #         'materials': job_materials_data,
+    #         'contractors': job_contractors_data
+    #     }
+    #
+    #     jobs.append(job_data)
+    #
+    #
+    # res = {
+    #     'event_data': serializer.data,
+    #     'job_data': jobs
+    # }
 
-    contractor_id = parse_and_return_int(contractor_id)
-
-    if not contractor_id:
-        return Response({"message": "Contractor id must be int"}, status=status.HTTP_400_BAD_REQUEST)
-
-    bookings = Booking.objects.filter(
-        organization=org.pk,
-        job__jobcontractor__contractor=contractor_id,
-        start_time__gte=fromDateTimeObject,
-        end_time__lte=toDateTimeObject
-    ).distinct()
-
-    serializer = BookingSerializer(bookings, many=True)
-
-    jobs = []
-
-    for event in serializer.data:
-        job_id = event["job"]
-
-        try:
-            job = Job.objects.get(pk=job_id, organization=org)
-        except Job.DoesNotExist:
-            return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
-
-        job_services = JobService.objects.filter(job=job.pk)
-        job_materials = JobMaterial.objects.filter(job=job.pk)
-        job_contractors = JobContractor.objects.filter(job=job.pk)
-
-        job_services_data = []
-        for service in job_services:
-            job_services_data.append(service.json())
-
-        job_materials_data = []
-        for material in job_materials:
-            job_materials_data.append(material.json())
-
-        job_contractors_data = []
-        for contractor in job_contractors:
-            job_contractors_data.append(contractor.json())
-
-        job_data = {
-            'data': job.json(),
-            'services': job_services_data,
-            'materials': job_materials_data,
-            'contractors': job_contractors_data
-        }
-
-        jobs.append(job_data)
-
-    res = {
-        'event_data': serializer.data,
-        'job_data': jobs
-    }
-    return Response(res, status=status.HTTP_200_OK)
-
+    # return Response(res, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
 def create_event(request):
-    org = Organization.objects.get(owning_User=request.user)
+    org = Organization.objects.get(owning_user=request.user)
     job_id = request.data.get('jobID')
 
     try:
-        startTimeString = request.data.get('startTime', '')
-        endTimeString = request.data.get('endTime', '')
-        startTimeObject = timezone.make_aware(parse_datetime(startTimeString))
-        endTimeObject = timezone.make_aware(parse_datetime(endTimeString))
+        start_time_string = request.data.get('startTime', '')
+        end_time_string = request.data.get('endTime', '')
+        start_time_object = timezone.make_aware(parse_datetime(start_time_string))
+        end_time_object = timezone.make_aware(parse_datetime(end_time_string))
     except Exception:
         return Response({"message": "Cannot parse date time"}, status=status.HTTP_400_BAD_REQUEST)
-
-    if startTimeObject > endTimeObject:
+    
+    if start_time_object > end_time_object:
         return Response({"message": "Start must be before end"}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
@@ -111,13 +103,15 @@ def create_event(request):
     # Prepare event data
     event_data = {
         'event_name': request.data.get('eventName', ''),
-        'start_time': startTimeObject,
-        'end_time': endTimeObject,
+        'start_time': start_time_object,
+        'end_time': end_time_object,
         'booking_type': request.data.get('bookingType', ''),
         'back_color': request.data.get('backColor', ''),
         'status': 'pending',
-        'organization': org.pk,
-        'job': job_object.pk
+        'organization': org,
+        'job': job_object,
+        'job_id': job_id,
+        'organization_id': org.pk,
     }
 
     # Create and validate event
@@ -126,45 +120,45 @@ def create_event(request):
     if not booking_serializer.is_valid():
         return Response({"errors": booking_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-    booking_serializer.save()
+    booking_serializer.create(event_data)
 
     return Response({"message": "Event created successfully", "data": booking_serializer.data}, status=status.HTTP_201_CREATED)
 
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
-def edit_event(request, id):
-    org = Organization.objects.get(owning_User=request.user)
+def edit_event(request, booking_id):
+    org = Organization.objects.get(owning_user=request.user)
     job_id = request.data.get('jobID')
+
     try:
-        startTimeString = request.data.get('startTime', '')
-        endTimeString = request.data.get('endTime', '')
-        startTimeObject = timezone.make_aware(parse_datetime(startTimeString))
-        endTimeObject = timezone.make_aware(parse_datetime(endTimeString))
-    
+        start_time_string = request.data.get('startTime', '')
+        end_time_string = request.data.get('endTime', '')
+        start_time_object = timezone.make_aware(parse_datetime(start_time_string))
+        end_time_object = timezone.make_aware(parse_datetime(end_time_string))
     except Exception:
         return Response({"message": "Cannot parse date time"}, status=status.HTTP_400_BAD_REQUEST)
-
-    if startTimeObject > endTimeObject:
+    
+    if start_time_object > end_time_object:
         return Response({"message": "Start must be before end"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Find job model
+    # Find the job model
     try:
         job_object = Job.objects.get(organization=org, pk=job_id)
     except Job.DoesNotExist:
         return Response({"errors": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    # Find event model
+    
+    # Find the event model
     try:
-        event_object = Booking.objects.get(organization=org, pk=id)
+        event_object = Booking.objects.get(organization=org, pk=booking_id)
     except Booking.DoesNotExist:
         return Response({"errors": "Event not found"}, status=status.HTTP_404_NOT_FOUND)
 
     # Prepare event data
     event_data = {
         'event_name': request.data.get('eventName', ''),
-        'start_time': startTimeObject,
-        'end_time': endTimeObject,
+        'start_time': start_time_object,
+        'end_time': end_time_object,
         'booking_type': request.data.get('bookingType', ''),
         'back_color': request.data.get('backColor', ''),
         'status': request.data.get('status'),
@@ -173,22 +167,20 @@ def edit_event(request, id):
     }
 
     # Edit and validate event
-    booking_serializer = BookingSerializer(
-        event_object, data=event_data, partial=True)
+    booking_serializer = BookingSerializer(event_object, data=event_data, partial=True)
 
     if not booking_serializer.is_valid():
         return Response({"errors": booking_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-    booking_serializer.save()
+    booking = booking_serializer.save()
 
     return Response({"message": "Event edited successfully"}, status=status.HTTP_200_OK)
 
-
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
-def delete_event(request, id):
-    org = request.org
-    event_object = Booking.objects.filter(pk=id, organization=org)
+def delete_event(request, booking_id):
+    org = Organization.objects.get(owning_user=request.user)
+    event_object = Booking.objects.filter(pk=booking_id, organization=org)
 
     if not event_object.exists():
         return Response({"message": "The event does not exist"}, status=status.HTTP_404_NOT_FOUND)

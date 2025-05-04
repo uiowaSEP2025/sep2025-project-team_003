@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from hsabackend.models.job import Job
 from hsabackend.models.organization import Organization
@@ -25,7 +26,7 @@ class Booking(models.Model):
     status = models.CharField(max_length=50, choices=status_choices, default="pending")
     back_color = models.CharField(max_length=50, default='#6aa84f', blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    job = models.ForeignKey(Job, null=True, on_delete=models.CASCADE)
 
     @property
     def booking_date(self):
@@ -38,6 +39,21 @@ class Booking(models.Model):
         time_difference = self.end_time - self.start_time
         return int(time_difference.total_seconds() / 60)
 
+
+    def save(self, *args, **kwargs):
+        """
+        Override the save method to truncate start_time and end_time to the closest minute
+        by setting seconds and microseconds to zero.
+        """
+        if self.start_time:
+            # Truncate to the closest minute by setting seconds and microseconds to 0
+            self.start_time = self.start_time.replace(second=0, microsecond=0)
+
+        if self.end_time:
+            # Truncate to the closest minute by setting seconds and microseconds to 0
+            self.end_time = self.end_time.replace(second=0, microsecond=0)
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return (f"<Booking Details:"
