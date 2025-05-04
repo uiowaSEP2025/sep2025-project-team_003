@@ -28,6 +28,7 @@ import { UpdateConfirmDialogComponentComponent } from '../../../components/updat
 import { RequestTrackerService } from '../../../utils/request-tracker';
 import { take } from 'rxjs/operators';
 import { StateList } from '../../../utils/states-list';
+import { formatPhoneNumber } from '../../../services/format-phone';
 
 interface State {
   name: string,
@@ -283,7 +284,7 @@ export class EditJobPageComponent {
           info['id'] = 0;
           info['contractorID'] = element['id'];
           info['contractorName'] = element['first_name'] + " " + element['last_name'];
-          info['contractorPhoneNo'] = element['phone'];
+          info['contractorPhoneNo'] = formatPhoneNumber(element['phone']);
           info['contractorEmail'] = element['email'];
           this.contractors = { contractors: [...this.contractors.contractors, info] };
         });

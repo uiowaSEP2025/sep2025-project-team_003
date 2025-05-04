@@ -5,6 +5,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { ContractorService } from '../../../services/contractor.service';
 import { Router } from '@angular/router';
+import { formatPhoneNumber } from '../../../services/format-phone';
 
 @Component({
   selector: 'app-create-contractors-page',
@@ -30,6 +31,12 @@ export class CreateContractorsPageComponent {
       return true
     }
     return false
+  }
+
+  formatPhoneInput() {
+    if (this.phoneControl.value) {
+      this.phoneControl.setValue(formatPhoneNumber(this.phoneControl.value));
+    }
   }
 
   onSubmit() {

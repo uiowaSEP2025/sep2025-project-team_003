@@ -43,7 +43,8 @@
           <input matInput
           data-testid="phone-input"
           placeholder="Phone Number"
-          [formControl]="phoneControl" pattern="\d{3}-\d{3}-\d{4}">
+          [formControl]="phoneControl" pattern="\d{3}-\d{3}-\d{4}"
+          (input)="formatPhoneInput()">
           @if (phoneControl.hasError('required')) {
             <mat-error>Phone is <strong>required</strong></mat-error>
           }

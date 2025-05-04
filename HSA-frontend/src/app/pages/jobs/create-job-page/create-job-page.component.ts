@@ -23,6 +23,7 @@ import { AddConfirmDialogComponentComponent } from '../../../components/add-conf
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CreateTemplateConfirmDialogComponentComponent } from '../../../components/create-template-confirm-dialog-component/create-template-confirm-dialog-component.component';
 import { JobTemplateService } from '../../../services/jobTemplate.service';
+import { formatPhoneNumber } from '../../../services/format-phone';
 
 @Component({
   selector: 'app-create-job-page',
@@ -294,7 +295,7 @@ export class CreateJobPageComponent {
           info['id'] = 0;
           info['contractorID'] = element['id'];
           info['contractorName'] = element['first_name'] + " " + element['last_name'];
-          info['contractorPhoneNo'] = element['phone'];
+          info['contractorPhoneNo'] = formatPhoneNumber(element['phone']);
           info['contractorEmail'] = element['email'];
           this.contractors = { contractors: [...this.contractors.contractors, info] };
         });

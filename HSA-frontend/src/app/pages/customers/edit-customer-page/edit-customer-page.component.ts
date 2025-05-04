@@ -73,6 +73,12 @@ export class EditCustomerPageComponent implements OnInit {
     return false
   }
 
+  formatPhoneInput() {
+    if (this.phoneControl.value) {
+      this.phoneControl.setValue(formatPhoneNumber(this.phoneControl.value));
+    }
+  }
+
   handleSave() {
     if (!this.isFormValid()) {
       return

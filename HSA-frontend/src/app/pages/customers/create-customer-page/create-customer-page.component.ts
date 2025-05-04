@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { CustomerService } from '../../../services/customer.service';
 import { Router } from '@angular/router';
+import { formatPhoneNumber } from '../../../services/format-phone';
 
 @Component({
   selector: 'app-create-customer-page',
@@ -33,6 +34,12 @@ export class CreateCustomerPageComponent {
       return true
     }
     return false
+  }
+
+  formatPhoneInput() {
+    if (this.phoneControl.value) {
+      this.phoneControl.setValue(formatPhoneNumber(this.phoneControl.value));
+    }
   }
 
   onSubmit() {
