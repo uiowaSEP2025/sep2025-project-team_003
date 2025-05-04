@@ -28,3 +28,20 @@ print("File processed successfully!")
 print("Moving updated file...")
 shutil.move(file_path, dest_path)
 print("File copied successfully!")
+
+# --- BEGIN MINIMAL ADDITION: copy all files from static/browser/static → static ---
+assets_src  = os.path.abspath(os.path.join("HSA-backend", "static", "browser", "static"))
+assets_dest = os.path.abspath(os.path.join("HSA-backend", "static"))
+
+if os.path.isdir(assets_src):
+    print(f"Copying assets from {assets_src} to {assets_dest}")
+    for root, dirs, files in os.walk(assets_src):
+        rel = os.path.relpath(root, assets_src)
+        target_dir = os.path.join(assets_dest, rel)
+        os.makedirs(target_dir, exist_ok=True)
+        for fname in files:
+            shutil.copy2(os.path.join(root, fname), os.path.join(target_dir, fname))
+    print("All static assets copied.")
+else:
+    print(f"No assets directory at {assets_src}, skipping copy.")
+# --- END MINIMAL ADDITION ---

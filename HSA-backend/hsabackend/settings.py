@@ -198,6 +198,7 @@ STATIC_ROOT = BASE_DIR / '/static' # this is for collectstatic (in case we use i
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static/browser/',
+    BASE_DIR / 'static'
 ]
 
 # Default primary key field type
