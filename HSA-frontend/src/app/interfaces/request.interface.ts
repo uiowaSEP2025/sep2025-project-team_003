@@ -7,3 +7,17 @@ export interface Request extends PersonalInformationHelper {
   requestDetails: string;
   requestStatus: string;
 }
+
+export interface RequestParams {
+  excludeIDs?: number[];
+  search: string,
+  pagesize: number,
+  offset: number,
+}
+
+export interface RequestFilteredParams {
+  status?: string,
+  search: string,
+  pagesize: number,
+  offset: number,
+}

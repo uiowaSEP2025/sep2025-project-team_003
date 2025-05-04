@@ -149,7 +149,7 @@ def get_job_excluded_table_data(request):
         Q(end_date__icontains=search) |
         Q(job_status__icontains=search) |
         Q(description__icontains=search)
-    )[offset:offset + pagesize] if search else Job.objects.filter(organization=org.pk).exclude(id__in=excluded_ids)[offset:offset + pagesize]
+    )[offset:offset + pagesize]
 
     data = []
     for job in jobs:
@@ -162,7 +162,7 @@ def get_job_excluded_table_data(request):
         Q(end_date__icontains=search) |
         Q(job_status__icontains=search) |
         Q(description__icontains=search)
-    ).count() if search else Job.objects.filter(organization=org.pk).exclude(id__in=excluded_ids).count()
+    ).count()
 
     res = {
         'data': data,
@@ -324,9 +324,6 @@ def edit_job(request, id):
     try:
         job = Job.objects.get(pk=id, organization=org)
     except Job.DoesNotExist:
-        return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
-
-    if not job:
         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
     job.job_status = request.data.get('jobStatus', '')
