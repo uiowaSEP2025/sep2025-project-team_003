@@ -14,6 +14,12 @@ class Contractor(models.Model):
     def __str__(self):
         return f"<Contractor: {self.pk}>"
     
+    def name_id_json(self):
+        return {
+            "id": self.pk,
+            "name": f"{self.last_name}, {self.first_name}"
+        }
+
     def json(self):
         return {
             'id': self.pk,
