@@ -108,7 +108,7 @@ export class BookingDialogComponentComponent implements OnInit {
         jobID: this.data.jobID,
         status: this.data.status,
         jobDescription: this.data.jobDescription,
-        color: this.data.backColor,
+        color: this.data.backColor ? this.data.backColor : "",
         startTime: this.stringFormatter.formatDateToHHMM(new Date(this.data.startTime)),
         endTime: this.stringFormatter.formatDateToHHMM(new Date(this.data.endTime)),
       });

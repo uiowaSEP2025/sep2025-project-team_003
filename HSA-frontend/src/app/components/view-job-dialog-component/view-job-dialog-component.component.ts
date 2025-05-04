@@ -69,6 +69,7 @@ export class ViewJobDialogComponentComponent implements OnInit {
         'materials': [],
         'contractors': this.jobData?.contractors!,
     }
+    console.log(data)
   }
 
   ngOnInit() {

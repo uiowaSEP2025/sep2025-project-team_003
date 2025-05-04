@@ -22,23 +22,39 @@ describe('ViewJobDialogComponentComponent', () => {
         { provide: MatDialogRef, useClass: MatDialogRefMock },
         {
           provide: MAT_DIALOG_DATA,
-          useValue: {
+          useValue:  {
             "jobInfo": {
-              "data": {
-                "customerName": "John Doe",
-                "jobStatus": "In Progress",
-                "startDate": "2025-04-15",
-                "endDate": "2025-04-20",
-                "description": "Electrical work for residential home",
-                "requestorAddress": "123 Main St",
-                "requestorCity": "Springfield",
-                "requestorState": "IL",
-                "requestorZip": "62701",
-                "id": "JOB123456"
-              }
+                "data": {
+                    "id": 1,
+                    "jobStatus": "completed",
+                    "startDate": "2025-05-01",
+                    "endDate": "2025-05-14",
+                    "description": "Repair the plumbing system in the residential complex.",
+                    "customerName": "First0 Last0",
+                    "customerID": 1,
+                    "requestorAddress": "2 W Washington St",
+                    "requestorCity": "Iowa City",
+                    "requestorState": "Iowa",
+                    "requestorZip": "52240"
+                },
+                "services": [],
+                "materials": [],
+                "contractors": [
+                    {
+                        "id": 1,
+                        "contractorID": 1,
+                        "contractorName": "First0Con Last0Con",
+                        "contractorPhoneNo": "801-981-8270",
+                        "contractorEmail": "con0@example.com"
+                    }
+                ]
             },
-            bookingInfo: { /* mock your bookingInfo data here */ }
-          }
+            "bookingInfo": {
+                "eventName": "sss",
+                "status": "pending",
+                "bookingType": "quote"
+            }
+        }
         }
       ]
     })
