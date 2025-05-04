@@ -13,7 +13,7 @@ import { FormControl } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ContractorNameId } from '../../services/contractor.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-calendar-component',
@@ -61,8 +61,8 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
     cellWidth: 25,
     cellHeight: 25,
     onVisibleRangeChanged: args => {
-      
-      this.loadEvents();
+
+      // this.loadEvents();
     }
   };
 
@@ -148,12 +148,10 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   }
 
   loadEvents(): void {
-    /*There is no way to test this fn, somehow, this.nav.control is null in only the test.
-    if any1 has a fix, feel free to try. 1.5 hrs wasted on this -alex
-    
-    */
-    const from = this.nav.control.visibleStart();
-    const to = this.nav.control.visibleEnd();
+    if (this.nav) {
+      // nav is not init when the select change is bound
+      const from = this.nav.control.visibleStart();
+      const to = this.nav.control.visibleEnd();
 
     //load events from booking model
     this.calendarDataService.getEvents(from, to, this.selectControl.value!.id).subscribe({
@@ -190,6 +188,8 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
         }
       }
     });
+    }
+
   }
 
   viewDay(): void {
@@ -234,7 +234,6 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
             data: infoData
           });
 
-          dialogRef.afterClosed().subscribe(result => { });
         }
       },
       {
@@ -389,7 +388,6 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
             let jobInfo = response.data
 
             const endDate = jobInfo["endDate"].split("-").slice(1).join("/");
-
             const updateEventData = new DayPilot.Event({
               id: args.e.data.id,
               text: result.eventName,
@@ -406,7 +404,6 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
             });
 
             dp.events.update(updateEventData.data)
-
             const eventEditRequest = {
               id: args.e.data.id,
               eventName: result.eventName,
@@ -424,6 +421,8 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
                 this.snackBar.open('Event Edited!', '', {
                   duration: 3000
                 });
+                dp.events.update(updateEventData.data);
+
               },
               error: (error) => { }
             })

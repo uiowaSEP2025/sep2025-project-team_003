@@ -132,7 +132,6 @@ export class JobService {
         httpParams = httpParams.append(key, params[key])
       })
     }
-    console.log("shit")
     return this.http.get<StandardApiResponse>(this.apiGetUrl + `/${id}/services`, { params: httpParams });
   }
 

@@ -9,7 +9,30 @@ import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { JobDataInterface } from '../../interfaces/api-responses/job.api.data.interface';
+import { ContractorJSON, JobDisplayInterface, MaterialJSON, ServiceJSON } from '../../interfaces/api-responses/job.api.display.interface';
+
+
+
+interface JobData {
+  id: number;
+  jobStatus: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  customerName: string;
+  customerID: number;
+  requestorAddress: string;
+  requestorCity: string;
+  requestorState: string;
+  requestorZip: string;
+}
+
+interface JobDetails {
+  data: JobData;
+  services: ServiceJSON[];  
+  materials: MaterialJSON[];
+  contractors: ContractorJSON[];
+}
 
 @Component({
   selector: 'app-view-job-dialog-component',
@@ -29,8 +52,11 @@ import { JobDataInterface } from '../../interfaces/api-responses/job.api.data.in
   styleUrl: './view-job-dialog-component.component.scss'
 })
 export class ViewJobDialogComponentComponent implements OnInit {
-  jobData: JobDataInterface | null = null;
+  jobData: JobDetails | null = null;
+  servicesMaterialsContractors!: JobDisplayInterface;
   bookingData: any;
+
+
 
   constructor (
     public dialogRef: MatDialogRef<ViewJobDialogComponentComponent>,
@@ -38,10 +64,14 @@ export class ViewJobDialogComponentComponent implements OnInit {
   {
     this.jobData = this.data.jobInfo
     this.bookingData = this.data.bookingInfo
+    this.servicesMaterialsContractors =  {
+        'services': [],
+        'materials': [],
+        'contractors': this.jobData?.contractors!,
+    }
   }
 
   ngOnInit() {
-    
   }
 
   onCancel(): void {
