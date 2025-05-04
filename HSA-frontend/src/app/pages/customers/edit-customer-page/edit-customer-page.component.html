@@ -3,11 +3,11 @@
     <mat-card class="flex p-5 flex-direction: column; items-center">
       <h1>
         <span>Edit customer</span>
-      </h1> 
+      </h1>
       <form class="flex flex-col justify-center">
         <mat-form-field>
           <mat-label>First Name</mat-label>
-          <input matInput 
+          <input matInput
             data-testid="first-name-input"
             [formControl]="firstNameControl" [errorStateMatcher]="matcher"
             placeholder="First Name" [value]="lastName">
@@ -17,7 +17,7 @@
         </mat-form-field>
         <mat-form-field>
           <mat-label>Last Name</mat-label>
-          <input matInput 
+          <input matInput
             data-testid="last-name-input"
             [formControl]="lastNameControl" [errorStateMatcher]="matcher"
             placeholder="Last Name">
@@ -27,7 +27,7 @@
         </mat-form-field>
         <mat-form-field>
           <mat-label>Email</mat-label>
-          <input matInput 
+          <input matInput
             data-testid="email-input"
             [formControl]="emailControl" [errorStateMatcher]="matcher"
             placeholder="Email">
@@ -37,10 +37,10 @@
             @if (emailControl.hasError('email')) {
               <mat-error>Email is <strong>invalid</strong></mat-error>
             }
-        </mat-form-field> 
+        </mat-form-field>
         <mat-form-field class="example-full-width">
           <mat-label>Phone Number</mat-label>
-          <input matInput 
+          <input matInput
           data-testid="phone-input"
           placeholder="Phone Number"
           [formControl]="phoneControl" pattern="(\(\d{3}\)\s?|\d{3}[-.\s])\d{3}[-.\s]?\d{4}">

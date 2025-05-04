@@ -28,6 +28,7 @@ export class EditCustomerPageComponent implements OnInit {
   lastName!: string
   phoneNo!: string
   custId: number | null = null
+  notes!: string
 
   constructor(private activatedRoute: ActivatedRoute, private customerService: CustomerService, private router: Router) { }
 
@@ -38,17 +39,31 @@ export class EditCustomerPageComponent implements OnInit {
   notesControl = new FormControl('')
   matcher = new GenericFormErrorStateMatcher()
 
+  // Format phone number from xxxxxxxxxx to xxx-xxx-xxxx
+  private formatPhoneNumber(phone: string): string {
+    if (!phone) return '';
+    // Remove any non-digit characters
+    const cleaned = phone.replace(/\D/g, '');
+    // Check if we have 10 digits
+    if (cleaned.length === 10) {
+      return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+    }
+    return phone; // Return original if not 10 digits
+  }
+
   ngOnInit() {
     // pass existing field in as a query param
     this.activatedRoute.queryParams.subscribe(params => {
       this.email = params['email'];
       this.firstName = params['first_name'];
       this.lastName = params['last_name'];
-      this.phoneNo = params['phone_no'];
+      this.phoneNo = params['phone'];
+      this.notes = params['notes'];
       this.firstNameControl.setValue(this.firstName);
       this.lastNameControl.setValue(this.lastName);
       this.emailControl.setValue(this.email);
-      this.phoneControl.setValue(this.phoneNo);
+      this.phoneControl.setValue(this.formatPhoneNumber(this.phoneNo));
+      this.notesControl.setValue(this.notes);
     });
 
     this.activatedRoute.paramMap.subscribe(params => {
@@ -77,7 +92,7 @@ export class EditCustomerPageComponent implements OnInit {
       lastn: this.lastNameControl.value,
       email: this.emailControl.value,
       phoneno: this.phoneControl.value,
-      notes: this.phoneControl.value
+      notes: this.notesControl.value
     }
     this.customerService.editCustomer(args).subscribe(
       {
