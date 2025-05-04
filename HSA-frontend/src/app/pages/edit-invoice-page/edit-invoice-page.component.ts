@@ -48,6 +48,8 @@ export class EditInvoicePageComponent implements OnInit {
   status!: 'issued' | 'created' | 'paid'// also serves as a form control
   initialStatus!: string
   taxPercent!: number
+  paymentLink!: string;
+  customerId!: number
   readonly range: FormGroup<DateRange> = new FormGroup({
     issued: new FormControl<Date | null>(null),
     due: new FormControl<Date | null>(null),
@@ -82,12 +84,15 @@ export class EditInvoicePageComponent implements OnInit {
 
 
     this.activatedRoute.queryParams.subscribe(params => {
+      console.log(params)
       this.initialStatus = params['status'];
       this.status = params['status'];
       this.dateDue = params['date_due'];
       this.dateIssued = params['date_issued'];
       this.customerName = params['customer'];
+      this.customerId = params['customer_id'];
       this.taxPercent = parseInt(this.fixBackendTaxPercentage(params['sales_tax_percent']));
+      this.paymentLink = params['payment_link'];
     })
     this.taxAmount.setValue(this.taxPercent.toFixed(2))
 
@@ -120,7 +125,9 @@ export class EditInvoicePageComponent implements OnInit {
           status: this.status,
           dateIssued: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
           dateDue: this.stringFormatter.dateFormatter(this.range.controls.due.value),
-          taxPercent: this.taxAmount.value.toString()
+          taxPercent: this.taxAmount.value.toString(),
+          customerId: this.customerId,
+          paymentLink: this.paymentLink,
         }
         this.invoiceService.updateInvoice(this.invoiceID, data).subscribe(
           {next: (response) => {
@@ -138,11 +145,6 @@ export class EditInvoicePageComponent implements OnInit {
     if (!this.taxAmount.valid) {
       return;
     }
-    if (this.selectedQuotes.length === 0) {
-      this.datePicker?.validate()
-      this.selectedQuotesIsError = true;
-      return;
-    }
     if (this.isDateSelectVisible() && !this.datePicker.validate()) {
       this.selectedQuotesIsError = false;
       return false;
@@ -158,7 +160,9 @@ export class EditInvoicePageComponent implements OnInit {
       status: this.status,
       dateIssued: this.stringFormatter.dateFormatter(this.range.controls.issued.value) ,
       dateDue: this.stringFormatter.dateFormatter(this.range.controls.due.value),
-      taxPercent: this.taxAmount.value.toString()
+      taxPercent: this.taxAmount.value.toString(),
+      customerId: this.customerId,
+      paymentLink: this.paymentLink,
     }
     this.invoiceService.updateInvoice(this.invoiceID, data).subscribe(
       {next: (response) => {

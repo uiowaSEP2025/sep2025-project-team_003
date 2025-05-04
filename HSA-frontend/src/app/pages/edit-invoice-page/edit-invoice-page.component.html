@@ -8,16 +8,27 @@
 
     <mat-form-field class="pt-5">
         <mat-label>Status</mat-label>
-        <mat-select data-testid="status-selector" matNativeControl required [(ngModel)]="status">
+        <mat-select data-testid="status-selector" required [(ngModel)]="status">
             <mat-option value="created">created</mat-option>
             <mat-option value="issued">issued</mat-option>
             <mat-option value="paid">paid</mat-option>
         </mat-select>
     </mat-form-field>
+    <mat-form-field class="pt-5">
+      <mat-label>Payment Link</mat-label>
+      <input matInput [(ngModel)]="paymentLink" type="text">
+
+    </mat-form-field>
+
     @if (isDateSelectVisible()) {
     <app-invoice-date-picker [formControll]="range"
         [dateLabels]="['Issuance date', 'Due date']"></app-invoice-date-picker>
     }
+
+    <app-invoice-date-picker
+      [formControll]="range"
+      [dateLabels]="['Issuance date', 'Due date']"
+    ></app-invoice-date-picker>
 
     <mat-form-field class="pt-10">
         <mat-label>Tax rate</mat-label>

@@ -22,7 +22,8 @@ interface UpdateInvoiceInterface {
   status: "created" | "issued" | "paid",
   dateIssued: string,
   dateDue: string,
-  taxPercent: string
+  taxPercent: string,
+  customerId: number,
 }
 
 @Injectable({
@@ -65,6 +66,7 @@ export class InvoiceService {
 
   public updateInvoice(id: number, data: UpdateInvoiceInterface) {
     data.taxPercent = this.convertTaxInputToMathPercent(data.taxPercent)
+    console.log(data);
     return this.http.post<StandardApiResponse>(`${this.editUrl}/${id}`, data);
   }
 
