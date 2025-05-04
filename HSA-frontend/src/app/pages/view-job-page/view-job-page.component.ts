@@ -47,7 +47,10 @@ export class ViewJobPageComponent  implements OnInit {
 
   openQuoteDialog() {
     this.dialog.open(QuoteDialogComponent, {
-      width: '800px',
+      width: '2400px',
+      maxWidth: '90w',
+      height: 'auto',
+      maxHeight: '95vh',
       data: { jobID: this.jobID }
     });
   }

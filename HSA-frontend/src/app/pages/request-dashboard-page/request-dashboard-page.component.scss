@@ -1,0 +1,54 @@
+.parent {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+button {
+    margin-right: 8px;
+}
+
+header {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.main-heading{
+    max-width: 1600px;
+    text-align: center;
+    margin: auto;
+}
+
+.main-heading h1{
+    font-size: 50px;
+}
+
+.table {
+    background-color:rgb(250, 249, 253);
+    width: 100vw;
+}
+
+.spacer {
+    flex: 1 1 auto;
+    min-height: 20px;
+}
+
+.small-box, .large-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 16px;
+    padding: 16px;
+    border-radius: 8px;
+  }
+  
+  .small-box {
+    height: auto;
+    width: auto;
+  }
+  
+  .large-box {
+    height: auto;
+    width: auto;
+  }
