@@ -1,0 +1,105 @@
+.quote-sign-container {
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.75rem;
+    color: #333;
+  }
+
+  .quote-sign-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+
+      label {
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #555;
+      }
+      input {
+        padding: 0.75rem 1rem;
+        border: 1px solid #ccc;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        transition: border-color 0.2s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #2a9d8f;
+          box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.2);
+        }
+      }
+    }
+
+    .btn-submit {
+      padding: 0.75rem;
+      background: #2a9d8f;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease;
+
+      &:hover:not(:disabled) {
+        background: #23867a;
+        transform: translateY(-1px);
+      }
+
+      &:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+/* new full-screen PDF style */
+.pdf-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  border: none;
+  z-index: 1000;
+}
+
+.submit-wrapper {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(255,255,255,0.9);
+  text-align: center;
+  padding: 1rem 0;
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+  z-index: 2000;
+}
+
+.btn-submit-big {
+  background-color: #28a745;
+  color: white;
+  font-size: 1.25rem;
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+
+.btn-submit-big:hover {
+  background-color: #218838;
+}

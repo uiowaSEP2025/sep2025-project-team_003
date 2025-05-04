@@ -59,3 +59,4 @@ wsproto==1.2.0
 zipp==3.21.0
 django-rest-passwordreset==1.5.0
 django-ratelimit==4.1.0
+boto3==1.38.7

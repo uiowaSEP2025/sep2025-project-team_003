@@ -31,8 +31,9 @@ import { Error500PageComponent } from './pages/general/error-500-page/error-500-
 import { RequestPasswordResetPageComponent } from './pages/authentication/request-password-reset-page/request-password-reset-page.component';
 import { PasswordResetPageComponent } from './pages/authentication/password-reset-page/password-reset-page.component';
 import { BookingPageComponent } from './pages/bookings/booking-page/booking-page.component';
+import { QuoteSignComponent } from './pages/quote-sign/quote-sign.component'
+import { QuotesDashboardPageComponent } from './pages/quotes-dashboard-page/quotes-dashboard-page.component';
 import { RequestDashboardPageComponent } from './pages/request-dashboard-page/request-dashboard-page.component';
-
 
 export const routes: Routes = [
   {
@@ -115,6 +116,12 @@ export const routes: Routes = [
       },
       {
         path: 'booking', component: BookingPageComponent
+      },
+      {
+        path: 'signquote', component: QuoteSignComponent
+      },
+      {
+        path: 'quotes', component: QuotesDashboardPageComponent
       },
       {
         path: 'requests', component: RequestDashboardPageComponent
