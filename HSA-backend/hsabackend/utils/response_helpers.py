@@ -603,7 +603,17 @@ def update_individual_data(request, object_id, object_type):
             query_object = Request.objects.filter(organization=request.organization.pk, pk=object_id).first()
             serializer = RequestSerializer(query_object, data=data)
         case "invoice":
-            query_object = Invoice.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            query_object = Invoice.objects.get(pk=object_id)
+            customer_object = Customer.objects.get(pk=data.get('customerId'))
+            customer_serializer = CustomerSerializer(customer_object).data
+            invoice_data = {
+                "date_issued": data.get("dateIssued"),
+                "date_due": data.get("dateDue"),
+                "sales_tax_percent": data.get("taxPercent"),
+                "payment_link": data.get("paymentLink"),
+                "customer": customer_object,
+            }
+            data = invoice_data
             serializer = InvoiceSerializer(query_object, data=data)
         case "booking":
             query_object = Booking.objects.filter(organization=request.organization.pk, pk=object_id).first()

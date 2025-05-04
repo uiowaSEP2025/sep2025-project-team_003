@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from hsabackend.models.customer import Customer
 from hsabackend.models.job import Job
 from hsabackend.serializers.customer_serializer import CustomerSerializer
 from hsabackend.serializers.discount_serializer import DiscountSerializer
@@ -9,15 +10,18 @@ from hsabackend.utils.get_data_helpers import get_jobs_for_invoice
 class InvoiceTableSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invoice
-        fields = ['id','customer','date_issued','date_due','status']
+        fields = ['id','customer','date_issued','date_due','status', 'sales_tax_percent', 'payment_link']
 
     def to_representation(self, instance):
         representation = {
             "id": instance.id,
             "customer": instance.customer.first_name + " " + instance.customer.last_name,
+            "customer_id": instance.customer.id,
             "date_issued": instance.date_issued,
             "date_due": instance.date_due,
             "status": instance.status,
+            "sales_tax_percent": instance.sales_tax_percent,
+            "payment_link": instance.payment_link,
         }
         return representation
 

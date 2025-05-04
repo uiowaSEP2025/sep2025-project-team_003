@@ -29,10 +29,13 @@ export class EditMaterialPageComponent implements OnInit {
     this.materialForm = this.materialFormBuilder.group({
       materialName: ['', Validators.required],
       materialDescription: [''],
+      materialDefaultCost: [''],
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      this.materialForm.controls['materialName'].setValue(params['material_name']);
+      this.materialForm.controls['materialName'].setValue(params['name']);
+      this.materialForm.controls['materialDescription'].setValue(params['description']);
+      this.materialForm.controls['materialDefaultCost'].setValue(params['default_cost']);
     })
 
     this.currentMaterialName = this.materialForm.controls['materialName'].value;
@@ -51,7 +54,9 @@ export class EditMaterialPageComponent implements OnInit {
     } else {
       this.materialService.editMaterial({
         material_name: this.materialForm.controls["materialName"].value,
-        id: this.materialID
+        id: this.materialID,
+        description: this.materialForm.controls["materialDescription"].value,
+        default_cost: this.materialForm.controls["materialDefaultCost"].value,
       }).subscribe({
         next: () => {
           this.snackBar.open(`Edit ${this.currentMaterialName} material to ${this.materialForm.controls["materialName"].value} successfully`, '', {
