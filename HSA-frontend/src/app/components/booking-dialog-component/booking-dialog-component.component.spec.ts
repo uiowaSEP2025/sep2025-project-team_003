@@ -8,8 +8,9 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
+import { MatSelectHarness } from '@angular/material/select/testing';
 
-describe('BookingDialogComponentComponent', () => {
+fdescribe('BookingDialogComponentComponent', () => {
   let component: BookingDialogComponentComponent;
   let fixture: ComponentFixture<BookingDialogComponentComponent>;
   let loader: HarnessLoader;
@@ -23,14 +24,19 @@ describe('BookingDialogComponentComponent', () => {
       providers: [
         provideAnimationsAsync(),
         provideHttpClient(),
-        provideHttpClientTesting(), 
+        provideHttpClientTesting(),
         {
           provide: MatDialogRef,
           useValue: { close: jasmine.createSpy('close') }
         },
         {
           provide: MAT_DIALOG_DATA,
-          useValue: { eventName: '', bookingType: '', jobID: null, jobDescription: "", status: "complete", backColor: "blue" }
+          useValue: {
+            startTime: "2025-04-30T10:30:00",
+            endTime: "2025-04-30T15:00:00",
+            typeOfDialog: "create",
+            contractorId: 1
+          }
         }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -143,10 +149,10 @@ describe('BookingDialogComponentComponent', () => {
     await submit.click()
     fixture.detectChanges()
 
-    expect(component.dialogRef.close).toHaveBeenCalledWith( {
+    expect(component.dialogRef.close).toHaveBeenCalledWith({
       eventName: 'demon',
-      startTime: undefined,
-      endTime: undefined,
+      startTime: new Date("2025-04-30T10:30:00"),
+      endTime: new Date("2025-04-30T15:00:00"),
       backColor: undefined,
       tags: {
         jobID: '2',
@@ -158,7 +164,7 @@ describe('BookingDialogComponentComponent', () => {
 
   })
 
-  it('should return the correct value on cancel', async  () => {
+  it('should return the correct value on cancel', async () => {
     const filteredButtons = await Promise.all(
       (await loader.getAllHarnesses(MatButtonHarness)).map(async (button) => {
         const text = await button.getText();
@@ -170,6 +176,44 @@ describe('BookingDialogComponentComponent', () => {
     await cancel.click()
 
     expect(component.dialogRef.close).toHaveBeenCalledWith(false);
+
+  })
+
+  describe("time tests", () => {
+    it('should update the end time on start time change', async () => {
+      const startSelect = await loader.getHarness(MatSelectHarness.with({ selector: '[formControlName="startTime"]' }));
+      const endSelect = await loader.getHarness(MatSelectHarness.with({ selector: '[formControlName="endTime"]' }));
+      await endSelect.open();
+      
+      const endOptions = await endSelect.getOptions();
+      await endOptions[1].click(); 
+
+      await startSelect.open();
+      const startOptions = await startSelect.getOptions();
+      await startOptions[startOptions.length - 1].click();
+
+      const value = await endSelect.getValueText()
+      expect(value).toEqual("11:59 PM")
+    })
+
+    it('should update the start time on end time change', async () => {
+      const startSelect = await loader.getHarness(MatSelectHarness.with({ selector: '[formControlName="startTime"]' }));
+      const endSelect = await loader.getHarness(MatSelectHarness.with({ selector: '[formControlName="endTime"]' }));
+      
+      await startSelect.open();
+      const startOptions = await startSelect.getOptions();
+      await startOptions[startOptions.length - 1].click();
+
+      
+      await endSelect.open();
+      
+      const endOptions = await endSelect.getOptions();
+      await endOptions[0].click(); 
+
+      
+      const value = await startSelect.getValueText()
+      expect(value).toEqual("12:00 AM")
+    })
 
   })
 });

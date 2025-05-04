@@ -44,7 +44,6 @@ export class BookingJobsPerContractorComponent implements OnInit {
 
   acceptSelection() {
     const id = this.job[0]
-    console.log(this.job,this.jobData )
     const jobDesc = this.jobData.data.filter((data) => {
       return data.id === id
     })[0].description

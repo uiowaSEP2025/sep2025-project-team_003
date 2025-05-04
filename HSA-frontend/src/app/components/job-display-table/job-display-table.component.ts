@@ -5,7 +5,6 @@ import { MatIcon } from '@angular/material/icon';
 import { DeleteDialogComponentComponent } from '../delete-dialog-component/delete-dialog-component.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { JobTemplateDataInterface } from '../../interfaces/api-responses/jobTemplate.api.data.interface';
 
 interface ServiceRowItem {
   "Service ID": string,

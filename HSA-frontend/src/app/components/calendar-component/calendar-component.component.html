@@ -14,7 +14,7 @@
 	
 			<mat-form-field appearance="fill" class="ml-4">
 				<mat-label>Select a contractor</mat-label>
-				<mat-select [formControl]="selectControl">
+				<mat-select [formControl]="selectControl" data-testid="contractor">
 				  <mat-option *ngFor="let contractor of contractorNames" [value]="contractor">
 					{{ contractor.name }}
 				  </mat-option>
