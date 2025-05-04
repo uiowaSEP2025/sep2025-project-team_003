@@ -39,7 +39,7 @@ class Request(models.Model):
             'requester_zip': self.requester_zip,
             'requester_address': self.requester_address,
             'description': self.description,
-            'status': self.status
+            'status': self.request_status
         }
     
     def json_simplify(self):
