@@ -26,7 +26,7 @@
   <mat-form-field class="example-full-width">
     <mat-label>Phone Number</mat-label>
     <input matInput placeholder="Phone Number" [formControl]="phoneControl"
-      pattern="(\(\d{3}\)\s?|\d{3}[-.\s])\d{3}[-.\s]?\d{4}">
+      pattern="\d{3}-\d{3}-\d{4}">
     @if (phoneControl.hasError('required')) {
     <mat-error>Phone is <strong>required</strong></mat-error>
     }

@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { CustomerService } from '../../../services/customer.service';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
+import { formatPhoneNumber} from '../../../services/format-phone';
 
 @Component({
   selector: 'app-edit-customer-page',
@@ -39,17 +40,7 @@ export class EditCustomerPageComponent implements OnInit {
   notesControl = new FormControl('')
   matcher = new GenericFormErrorStateMatcher()
 
-  // Format phone number from xxxxxxxxxx to xxx-xxx-xxxx
-  private formatPhoneNumber(phone: string): string {
-    if (!phone) return '';
-    // Remove any non-digit characters
-    const cleaned = phone.replace(/\D/g, '');
-    // Check if we have 10 digits
-    if (cleaned.length === 10) {
-      return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
-    }
-    return phone; // Return original if not 10 digits
-  }
+
 
   ngOnInit() {
     // pass existing field in as a query param
@@ -62,7 +53,7 @@ export class EditCustomerPageComponent implements OnInit {
       this.firstNameControl.setValue(this.firstName);
       this.lastNameControl.setValue(this.lastName);
       this.emailControl.setValue(this.email);
-      this.phoneControl.setValue(this.formatPhoneNumber(this.phoneNo));
+      this.phoneControl.setValue(formatPhoneNumber(this.phoneNo));
       this.notesControl.setValue(this.notes);
     });
 

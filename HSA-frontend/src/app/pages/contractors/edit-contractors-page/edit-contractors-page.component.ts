@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { GenericFormErrorStateMatcher } from '../../../utils/generic-form-error-state-matcher';
 import { MatCardModule } from '@angular/material/card';
 import { ContractorService } from '../../../services/contractor.service';
+import {formatPhoneNumber} from '../../../services/format-phone';
 
 @Component({
   selector: 'app-edit-contractors-page',
@@ -46,7 +47,7 @@ export class EditContractorsPageComponent implements OnInit {
       this.firstNameControl.setValue(this.firstName);
       this.lastNameControl.setValue(this.lastName);
       this.emailControl.setValue(this.email);
-      this.phoneControl.setValue(this.phoneNo);
+      this.phoneControl.setValue(formatPhoneNumber(this.phoneNo));
     });
 
     this.activatedRoute.paramMap.subscribe(params => {
