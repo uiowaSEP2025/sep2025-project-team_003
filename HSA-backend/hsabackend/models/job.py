@@ -26,6 +26,13 @@ class Job(models.Model):
         ('denied', 'denied')
     ]
 
+    quote_choices = [
+        ('not-created-yet', 'not-created-yet'),
+        ('created', 'created'),
+        ('approved', 'approved'),
+        ('denied', 'denied')
+    ]
+
     job_status = models.CharField(max_length=50, choices=status_choices, default="created")
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
@@ -43,6 +50,9 @@ class Job(models.Model):
     use_hourly_rate = models.BooleanField(default=False)
     minutes_worked = models.IntegerField(default=0)
     hourly_rate = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
+    quote_s3_link = models.CharField(max_length=100, blank=True, null=True)
+    quote_sign_pin = models.CharField(max_length=10, blank=True, null=True)
+    quote_status = models.CharField(max_length=50, choices=quote_choices, default="not-created-yet")
 
     quote_s3_link = models.CharField(max_length=100, blank=True, null=True)
     quote_sign_pin = models.CharField(max_length=10, blank=True, null=True)
