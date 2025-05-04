@@ -3,6 +3,7 @@ import decimal
 from django.db import models
 from hsabackend.models.customer import Customer
 from hsabackend.models.discount import Discount
+from hsabackend.models.job import Job
 from hsabackend.utils.string_formatters import format_maybe_null_date
 
 class Invoice(models.Model):

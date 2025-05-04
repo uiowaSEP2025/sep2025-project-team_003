@@ -17,9 +17,17 @@ describe('ViewInvoicePageComponent', () => {
     data = {
       id: 1,
       status: "created",
-      issuanceDate: "N/A",
-      dueDate: "N/A",
-      customer: "Alex Guo",
+      dateIssued: "N/A",
+      dateDue: "N/A",
+      customer: {
+        first_name: "Alex",
+        last_name: "Guo",
+        notes: "",
+        email: "",
+        id: 0,
+        phone: ""
+
+      },
       quotes: {
         quotes: [],
         totalMaterialSubtotal: '0.00',
@@ -27,7 +35,8 @@ describe('ViewInvoicePageComponent', () => {
         taxPercent: '0.00',
         totalDiscount: '0.00',
         "grandtotal" : 'O.00'
-      }     
+      },
+      jobs: [0]
     }
 
     paramMapSubject = new Subject();
@@ -36,7 +45,7 @@ describe('ViewInvoicePageComponent', () => {
             get: (key: string) => '123' // Mock paramMap to return '123' for 'id'
           }),
           queryParams: of({ email: '', fname: '', lname: '', phoneNo: '' }),
-          
+
         };
 
     await TestBed.configureTestingModule({

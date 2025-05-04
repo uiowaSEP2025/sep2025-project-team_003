@@ -40,7 +40,7 @@ describe('EditInvoicePageComponent', () => {
     component = fixture.componentInstance;
     loader = TestbedHarnessEnvironment.loader(fixture);
     invoiceService = TestBed.inject(InvoiceService);
-    component.tax = 0.06
+    component.taxPercent = 0.06
     fixture.detectChanges();
   });
 
@@ -57,13 +57,13 @@ describe('EditInvoicePageComponent', () => {
       fixture.detectChanges()
       expect(compiled.textContent).toContain("Choose Dates")
     })
-  
+
     it('should not display date picker when status is created', async () => {
       const compiled = fixture.debugElement.nativeElement;
       fixture.detectChanges()
       expect(compiled.textContent).not.toContain("Choose Dates")
     })
-  
+
     it('should call validate on the view child', async () => {
       const select = (await loader.getAllHarnesses(MatSelectHarness))[0]
       await select.open();
@@ -77,36 +77,36 @@ describe('EditInvoicePageComponent', () => {
         })
       ).then(results => results.filter(button => button !== null)); // correctly working async filter
       spyOn(component.datePicker, 'validate'); // Spy on the function
-  
-      const submit = filteredButtons[0]; 
+
+      const submit = filteredButtons[0];
       await submit.click()
       fixture.detectChanges()
-  
+
       expect(component.datePicker.validate).toHaveBeenCalled(); // Verify the call
     })
-  
+
     it('should show error when no quotes are selected', async () => {
       const compiled = fixture.debugElement.nativeElement;
       fixture.detectChanges()
-  
+
       const filteredButtons = await Promise.all(
         (await loader.getAllHarnesses(MatButtonHarness)).map(async (button) => {
           const text = await button.getText();
           return text === 'Submit' ? button : null;
         })
       ).then(results => results.filter(button => button !== null)); // correctly working async filter
-  
+
       const submit = filteredButtons[0]
       await submit.click()
       fixture.detectChanges()
-      
+
       expect(compiled.textContent).toContain('You must select a quote to include')
     })
-  
+
     it('should call the service when everything is valid', async () => {
       component.selectedQuotes= [2]
       fixture.detectChanges()
-  
+
       const filteredButtons = await Promise.all(
         (await loader.getAllHarnesses(MatButtonHarness)).map(async (button) => {
           const text = await button.getText();
@@ -117,10 +117,10 @@ describe('EditInvoicePageComponent', () => {
       const submit = filteredButtons[0]
       await submit.click()
       fixture.detectChanges()
-  
+
       expect(invoiceService.updateInvoice).toHaveBeenCalled()
-      
-      
+
+
      })
-  
+
 });

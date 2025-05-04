@@ -126,9 +126,9 @@ export class CreateInvoicePageComponent implements OnInit {
       customerID: this.selectedCustomers[0],
       quoteIDs: this.selectedQuotes,
       status: this.status,
-      issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
-      dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
-      tax: this.taxAmount.value.toString()
+      dateIssued: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
+      dateDue: this.stringFormatter.dateFormatter(this.range.controls.due.value),
+      taxPercent: this.taxAmount.value.toString()
     }
     this.invoiceService.createInvoice(json).subscribe(
       {

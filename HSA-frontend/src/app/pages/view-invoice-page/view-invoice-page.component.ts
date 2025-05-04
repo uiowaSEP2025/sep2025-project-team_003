@@ -7,20 +7,25 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { InvoiceQuotesDisplayTableComponent } from '../../components/invoice-quotes-display-table/invoice-quotes-display-table.component';
 import { MatCardModule } from '@angular/material/card';
+import {Job} from '../../interfaces/job.interface';
+import {JobService} from '../../services/job.service';
 
 @Component({
   selector: 'app-view-invoice-page',
-  imports: [LoadingFallbackComponent,CommonModule, MatButtonModule, MatIconModule, InvoiceQuotesDisplayTableComponent, MatCardModule],
+  imports: [LoadingFallbackComponent,CommonModule, MatButtonModule, MatIconModule, MatCardModule],
   templateUrl: './view-invoice-page.component.html',
   styleUrl: './view-invoice-page.component.scss'
 })
 export class ViewInvoicePageComponent implements OnInit{
   invoiceID!: number
   invoiceData: InvoiceDataInterface | null = null;
+  jobsData: Job[] = []
 
-  constructor (private router: Router, private invoiceService: InvoiceService, private activatedRoute:ActivatedRoute) {
+  constructor (private router: Router,
+               private invoiceService: InvoiceService,
+               private activatedRoute:ActivatedRoute,
+               private jobService: JobService) {
     this.activatedRoute.paramMap.subscribe(params => {
       this.invoiceID = Number(params.get('id'));
     })
@@ -32,10 +37,15 @@ export class ViewInvoicePageComponent implements OnInit{
         this.invoiceData = response
       },
       error: (error) => {
+        console.log(error)
       }}
     )
-    
+
+
+
   }
+
+
 
   navigateViewInvoice() {
     window.open(`/api/generate/invoice/${this.invoiceID}`, '_blank');
