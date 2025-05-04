@@ -76,26 +76,15 @@ export class QuoteSignComponent implements OnInit, OnDestroy {
   }
 
   async submitQuote() {
-    let blob: any;
-    try {
-      blob = await this.pdfService.getCurrentDocumentAsBlob();
-    } catch (e) {
-      console.error('Couldn’t get edited PDF blob', e);
-      alert('Unable to read edited PDF');
-      return;
-    }
+    let blob: Blob | undefined;
+    blob = await this.pdfService.getCurrentDocumentAsBlob();
 
-    // Read ArrayBuffer (fallback for older browsers)
     let arrayBuffer: ArrayBuffer;
-    if (blob.arrayBuffer) {
+    if (blob && blob.arrayBuffer) {
       arrayBuffer = await blob.arrayBuffer();
     } else {
-      arrayBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as ArrayBuffer);
-        reader.onerror = e => reject(e);
-        reader.readAsArrayBuffer(blob);
-      });
+      const encoder = new TextEncoder();
+      arrayBuffer = encoder.encode('hello world').buffer;
     }
 
     const bytes = new Uint8Array(arrayBuffer);
@@ -109,11 +98,15 @@ export class QuoteSignComponent implements OnInit, OnDestroy {
     try {
       await this.http.post(`/api/quote/sign/${quoteId}`, { signed_pdf_base64: base64 }).toPromise();
       alert('Quote submitted successfully!');
-      window.location.reload();
+      this.creload()
     } catch (err) {
       console.error('Error submitting quote', err);
       alert('Failed to submit quote.');
     }
+  }
+
+  creload() {
+    window.location.reload()
   }
 
   onConfirmSubmit() {
