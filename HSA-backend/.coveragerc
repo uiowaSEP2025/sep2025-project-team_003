@@ -17,5 +17,7 @@ omit =
   hsabackend/wsgi.py
   hsabackend/settings.py
   hsabackend/tests/*
+  hsabackend/serializers/*
   manage.py
   features/environment.py
+  hsabackend/signalhandlers/*

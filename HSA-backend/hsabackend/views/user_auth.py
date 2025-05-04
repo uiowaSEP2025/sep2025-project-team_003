@@ -82,7 +82,7 @@ def user_create(request):
             new_org.full_clean()
             new_org.save()
 
-    except ValueError as e:
+    except Exception as e:
         return Response({"message": "Invalid values from user inputs"}, status=status.HTTP_400_BAD_REQUEST)
     
     return Response({"message": "Create new user successfully"}, status=status.HTTP_201_CREATED)
