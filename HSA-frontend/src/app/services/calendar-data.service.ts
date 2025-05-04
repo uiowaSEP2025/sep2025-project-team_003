@@ -43,35 +43,6 @@ export class BookingService {
     blue: "#2e78d6",
   };
 
-  // events = [
-  //   {
-  //     id: DayPilot.guid(),
-  //     text: "Event 1",
-  //     start: DayPilot.Date.today().firstDayOfWeek().addHours(10),
-  //     end: DayPilot.Date.today().firstDayOfWeek().addHours(13),
-  //     participants: 2,
-  //     tags: {
-  //       jobID: 1,
-  //       jobDescription: "Hello",
-  //       bookingType: "quote",
-  //     },
-  //     backColor: "#6aa84f"
-  //   },
-  //   {
-  //     id: DayPilot.guid(),
-  //     text: "Event 3",
-  //     start: DayPilot.Date.today().addHours(10),
-  //     end: DayPilot.Date.today().addHours(14),
-  //     participants: 2,
-  //     tags: {
-  //       jobID: 3,
-  //       jobDescription: "Hello",
-  //       bookingType: "quote",
-  //     },
-  //     backColor: "#2e78d6"
-  //   },
-  // ];
-
   private apiGetUrl = `${environment.apiUrl}/api/get/bookings`;
   private apiCreateUrl = `${environment.apiUrl}/api/create/booking`;
   private apiEditUrl = `${environment.apiUrl}/api/edit/booking`;
