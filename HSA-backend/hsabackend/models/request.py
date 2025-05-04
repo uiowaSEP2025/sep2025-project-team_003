@@ -46,7 +46,7 @@ class Request(models.Model):
     def json_simplify(self):
         return {
             'id': self.id,
-            'requestor_name': self.requestor_first_name + " " + self.requestor_last_name,
-            'requestor_email': self.requestor_email,
+            'requester_name': self.requester_first_name + " " + self.requester_last_name,
+            'requester_email': self.requester_email,
             'description': self.description,
         }
