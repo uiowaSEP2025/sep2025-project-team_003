@@ -4,3 +4,4 @@
 .terraform
 terraform.tf*
 __pycache__/
+HSA-frontend/public/static
