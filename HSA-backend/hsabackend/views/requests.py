@@ -120,8 +120,8 @@ def get_filtered_request_data(request):
         requests = Request.objects.filter(organization=org.pk)
         count = Request.objects.filter(organization=org.pk).count()
     else:
-        requests = Request.objects.filter(organization=org.pk).filter(Q(requester_status__icontains=reqStatus))
-        count = Request.objects.filter(organization=org.pk).filter(Q(requester_status__icontains=reqStatus)).count()
+        requests = Request.objects.filter(organization=org.pk).filter(Q(request_status__icontains=reqStatus))
+        count = Request.objects.filter(organization=org.pk).filter(Q(request_status__icontains=reqStatus)).count()
     
     data = []
     for req in requests:

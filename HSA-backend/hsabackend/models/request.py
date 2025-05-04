@@ -3,7 +3,6 @@ from django.db import models
 from hsabackend.models.job import Job
 from hsabackend.models.model_validators import isNonEmpty, validate_state, isValidPhone
 from hsabackend.models.organization import Organization
-from hsabackend.models.service import Service
 
 
 class Request(models.Model):
