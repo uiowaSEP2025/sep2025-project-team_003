@@ -111,15 +111,11 @@ def get_individual_request_data(request, id):
 @check_authenticated_and_onboarded()
 def get_filtered_request_data(request):
     org = request.org
-    reqStatus = request.query_params.get('status', '')
-    if reqStatus == None:
+    reqStatus = request.query_params.get('status', None)
+    if reqStatus == None or reqStatus not in ["received", "approved"]:
         return Response({"message": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
     
-    if reqStatus == 'none':
-        requests = Request.objects.filter(organization=org.pk)
-        count = Request.objects.filter(organization=org.pk).count()
     else:
-        print(reqStatus)
         requests = Request.objects.filter(organization=org.pk).filter(Q(request_status__icontains=reqStatus))
         count = Request.objects.filter(organization=org.pk).filter(Q(request_status__icontains=reqStatus)).count()
     
@@ -155,11 +151,10 @@ def approve_request(request, id):
         with transaction.atomic():
             # Find the request
             req = Request.objects.get(pk=id, organization=org)
-            
             req.request_status = 'approved'
             req.full_clean()
             req.save()
-
+            
             new_cust = Customer(
                 first_name = req.requester_first_name,
                 last_name = req.requester_last_name,
@@ -170,7 +165,6 @@ def approve_request(request, id):
             )
             new_cust.full_clean()
             new_cust.save()
-
             new_job = Job(
                 requestor_city = req.requester_city,
                 requestor_state = req.requester_state,
