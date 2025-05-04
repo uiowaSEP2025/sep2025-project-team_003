@@ -36,7 +36,7 @@ export class BookingPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.contractorService.getAllContractors().subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.contractors = res
         console.log(res)
       }

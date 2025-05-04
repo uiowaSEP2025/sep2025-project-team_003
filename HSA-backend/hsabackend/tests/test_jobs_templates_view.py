@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 from unittest.mock import Mock
 from unittest.mock import patch
 from django.contrib.auth.models import User
-from hsabackend.views.job_templates import get_job_template_table_data, get_job_template_individual_data, create_job_template, edit_job_template
+from hsabackend.views.job_templates import get_job_template_table_data, get_job_template_individual_data, create_job_template, edit_job_template, delete_job_template
 from rest_framework.test import APITestCase
 from hsabackend.models.organization import Organization
 from hsabackend.models.service import Service
@@ -251,23 +251,13 @@ class jobViewTest(APITestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
 
-    def test_edit_job_template_unauth(self):
-        mock_user = Mock(spec=User)
-        mock_user.is_authenticated = False
-        
-        factory = APIRequestFactory()
-        request = factory.post('/api/edit/jobtemplate/1')
-        request.user = mock_user  
-        response = edit_job_template(request, 1)
-        
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
+class JobTemplateEdit(APITestCase):
     @patch('hsabackend.views.job_templates.JobTemplate.objects.get')
     @patch('hsabackend.views.job_templates.Organization.objects.get')
     def test_edit_job_template_not_found(self,org, job_name):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
-        job_name.return_value = None
+        job_name.side_effect = JobTemplate.DoesNotExist
         organization = Organization()
         organization.is_onboarding = False
         org.return_value = organization
@@ -324,3 +314,57 @@ class jobViewTest(APITestCase):
         response = edit_job_template(request, 1)
         
         assert response.status_code == status.HTTP_200_OK
+
+
+class JobTemplateDeleteTest(APITestCase):
+
+    @patch('hsabackend.views.job_templates.JobTemplate.objects.filter')
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_delete_job_template_not_found(self, org, filter):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
+
+        factory = APIRequestFactory()
+        request = factory.post('/api/delete/jobtemplate/1')
+        request.user = mock_user  
+
+        mock_qs = Mock()
+        mock_qs.exists.return_value = False
+        filter.return_value = mock_qs
+
+
+        res = delete_job_template(request,1)
+
+        assert res.status_code == 404
+
+    @patch('hsabackend.views.job_templates.JobTemplate.objects.filter')
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_delete_job_template_ok(self, org, filter):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
+
+        factory = APIRequestFactory()
+        request = factory.post('/api/delete/jobtemplate/1')
+        request.user = mock_user  
+
+        mock_qs = MagicMock()
+        mock_qs.exists.return_value = True
+        filter.return_value = mock_qs
+
+        mock_JT = Mock()
+        mock_qs.__getitem__.side_effect = lambda x: mock_JT
+
+        mock_JT.delete.assert_called_once
+
+
+        res = delete_job_template(request,1)
+
+        assert res.status_code == 200

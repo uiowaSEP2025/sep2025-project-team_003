@@ -61,9 +61,19 @@ class GetBookingsData(APITestCase):
         assert response.status_code == 400
 
     @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
-    def test_get_bookings_ok(self, orgg):
+    @patch('hsabackend.views.bookings.BookingSerializer')
+    @patch('hsabackend.views.bookings.Job.objects.get')
+    @patch('hsabackend.views.bookings.JobService.objects.filter')
+    @patch('hsabackend.views.bookings.JobMaterial.objects.filter')
+    @patch('hsabackend.views.bookings.JobContractor.objects.filter')
+    def test_get_bookings_ok(self, f, d,c,a,mock_serializer, orgg):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
+
+        mock_s = Mock()
+        mock_serializer.return_value = mock_s
+        mock_s.data = [{"job": "job"}]
+
 
         org = Organization()
         org.is_onboarding = False
@@ -76,6 +86,8 @@ class GetBookingsData(APITestCase):
         response = get_booking_data(request)
 
         assert response.status_code == 200
+
+        
 
 
 class CreateBooking(APITestCase):

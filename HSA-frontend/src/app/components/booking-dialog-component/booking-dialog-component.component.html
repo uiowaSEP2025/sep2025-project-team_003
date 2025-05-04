@@ -9,7 +9,7 @@
             <td>JobID*</td>
             <td>
               <div class="customer-box-container">
-                @if (this.eventForm.get('jobID')?.value !== "") {
+                @if (this.eventForm.get('jobID')?.value !== null) {
                 <span class="customer-name-span">
                   {{this.eventForm.get('jobID')?.value}}
                 </span>
@@ -47,19 +47,25 @@
             </td>
           </tr>
           <tr>
-            <td>Start Time</td>
+            <td>Start Time*</td>
             <td>
-              <span class="text-2xl font-bold text-gray-800">
-                {{ formatTime(data.startTime) }}
-              </span>
+              <mat-form-field appearance="fill">
+                <mat-label>Start Time</mat-label>
+                <mat-select formControlName="startTime">
+                  <mat-option *ngFor="let time of startTimes" [value]="time">{{time}}</mat-option>
+                </mat-select>
+              </mat-form-field>
             </td>
           </tr>
           <tr>
-            <td>End Time</td>
+            <td>End Time*</td>
             <td>
-              <span class="text-2xl font-bold text-gray-800">
-                {{ formatTime(data.endTime) }}
-              </span>
+              <mat-form-field appearance="fill">
+                <mat-label>End Time</mat-label>
+                <mat-select formControlName="endTime">
+                  <mat-option *ngFor="let time of endTimes" [value]="time">{{time}}</mat-option>
+                </mat-select>
+              </mat-form-field>
             </td>
           </tr>
           <tr>

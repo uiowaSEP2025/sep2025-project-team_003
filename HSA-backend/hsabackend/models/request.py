@@ -40,5 +40,13 @@ class Request(models.Model):
             'requester_zip': self.requester_zip,
             'requester_address': self.requester_address,
             'description': self.description,
-            'status': self.request_status
+            'status': self.status
+        }
+    
+    def json_simplify(self):
+        return {
+            'id': self.id,
+            'requestor_name': self.requestor_first_name + " " + self.requestor_last_name,
+            'requestor_email': self.requestor_email,
+            'description': self.description,
         }
