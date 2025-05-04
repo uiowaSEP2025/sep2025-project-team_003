@@ -9,11 +9,11 @@
           <table class="info-table">
             <tr>
               <td>Requestor Name</td>
-              <td>{{requestData.data.requestor_name}}</td>
+              <td>{{requestData.data.requester_last_name + ", " + requestData.data.requester_first_name}}</td>
             </tr>
             <tr>
               <td>Requestor Email</td>
-              <td>{{requestData.data.requestor_email}}</td>
+              <td>{{requestData.data.requester_email}}</td>
             </tr>
             <tr>
               <td>Status</td>
@@ -25,7 +25,7 @@
             </tr>
             <tr>
               <td>Address</td>
-              <td>{{requestData.data.requestor_address + ", " + requestData.data.requestor_city + ", " + requestData.data.requestor_state + " " + requestData.data.requestor_zip}}</td>
+              <td><div>{{requestData.data.requester_address + ", " + requestData.data.requester_city + ", " + requestData.data.requester_state + ", " + requestData.data.requester_zip}}</div></td>
             </tr>
           </table>
       </mat-card>
@@ -40,7 +40,6 @@
     </div>
     <div class="items-center">
       <button mat-stroked-button (click)="onReturn()">Return</button>
-      <button mat-flat-button (click)="onRedirectToBooking()">Booking</button>
     </div>
   </mat-dialog-actions>
 </div>
