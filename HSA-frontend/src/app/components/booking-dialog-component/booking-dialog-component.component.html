@@ -9,7 +9,7 @@
             <td>JobID*</td>
             <td>
               <div class="customer-box-container">
-                @if (this.eventForm.get('jobID')?.value !== "") {
+                @if (this.eventForm.get('jobID')?.value !== null) {
                 <span class="customer-name-span">
                   {{this.eventForm.get('jobID')?.value}}
                 </span>
