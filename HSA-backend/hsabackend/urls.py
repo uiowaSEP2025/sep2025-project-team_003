@@ -15,7 +15,9 @@ from hsabackend.views.contractors import (
     get_all_contractors_for_org,
 )
 
-from hsabackend.views.requests import get_filtered_request_data, get_individual_request_data, (
+from hsabackend.views.requests import (
+    get_filtered_request_data, 
+    get_individual_request_data, 
     get_org_request_data,
     delete_request,
     approve_request,
