@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 import decimal
-from hsabackend.utils.api_validators import parse_and_return_decimal, parseAndReturnDate, parse_and_return_int, password_strength_validator
+from hsabackend.utils.api_validators import parse_and_return_decimal, parse_and_return_date, parse_and_return_int, password_strength_validator
 
 # Assuming the functions are in a module named `your_module` (you can change the import accordingly)
 # from your_module import parseAndReturnDate, parse_and_return_decimal, password_strength_validator, parse_and_return_int
@@ -10,11 +10,11 @@ class TestUtils(unittest.TestCase):
 
     # Test for parseAndReturnDate function
     def test_parseAndReturnDate_valid_date(self):
-        self.assertEqual(parseAndReturnDate("2025-05-04"), datetime(2025, 5, 4).date())
+        self.assertEqual(parse_and_return_date("2025-05-04"), datetime(2025, 5, 4).date())
         
     def test_parseAndReturnDate_invalid_date(self):
-        self.assertIsNone(parseAndReturnDate("2025-05-32"))  # Invalid day
-        self.assertIsNone(parseAndReturnDate("invalid-date"))  # Invalid format
+        self.assertIsNone(parse_and_return_date("2025-05-32"))  # Invalid day
+        self.assertIsNone(parse_and_return_date("invalid-date"))  # Invalid format
         
     # Test for parse_and_return_decimal function
     def test_parse_and_return_decimal_valid(self):
