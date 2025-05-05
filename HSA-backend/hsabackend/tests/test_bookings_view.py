@@ -5,7 +5,7 @@ from unittest.mock import Mock
 from unittest.mock import patch
 from django.contrib.auth.models import User
 from hsabackend.models.organization import Organization
-from hsabackend.views.bookings import get_booking_data, delete_event, edit_event, create_event
+from hsabackend.views.bookings import get_booking_data, delete_event, edit_event, create_event, get_ical_for_bookings
 from hsabackend.models.job import Job
 from hsabackend.models.booking import Booking
 
@@ -417,3 +417,92 @@ class DeleteBooking(APITestCase):
         request.user = mock_user
         response = delete_event(request, 1)
         assert response.status_code == 404
+
+
+class TestIcal(APITestCase):
+    
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_missing_from(self, org):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        orgg = Organization()
+        orgg.is_onboarding = False
+        org.return_value = orgg
+
+        factory = APIRequestFactory()
+        request = factory.get(
+            'api/icals/booking?to=2023-04-25T14:30:00&contractor=1')
+        request.user =mock_user
+        res = get_ical_for_bookings(request)
+
+        assert res.status_code == 400
+
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def cant_parse_date(self, org):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        orgg = Organization()
+        orgg.is_onboarding = False
+        org.return_value = orgg
+
+        factory = APIRequestFactory()
+        request = factory.get(
+            'api/icals/booking?from=2023-04-25T14:30:00&to=20235T14:30:00&contractor=1')
+        request.user =mock_user
+        res = get_ical_for_bookings(request)
+
+        assert res.status_code == 400
+
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def bad_contractor_id(self, org):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        orgg = Organization()
+        orgg.is_onboarding = False
+        org.return_value = orgg
+
+        factory = APIRequestFactory()
+        request = factory.get(
+            'api/icals/booking?from=2023-04-25T14:30:00&to=20235T14:30:00&contractor=s')
+        request.user =mock_user
+        res = get_ical_for_bookings(request)
+
+        assert res.status_code == 400
+
+    @patch('hsabackend.views.bookings.Booking.objects.filter')
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_ok(self, org, filter):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        orgg = Organization()
+        orgg.is_onboarding = False
+        org.return_value = orgg
+
+        mock_select_related = Mock(name="select related")
+        filter.return_value = mock_select_related
+
+        mock_distinct = Mock()
+        mock_select_related.select_related.return_value = mock_distinct
+
+        mock_booking = Mock()
+        mock_booking.event_name = ""
+        mock_booking.start_time = ""
+        mock_booking.end_time = ""
+        mock_booking.job.description = ""
+        mock_booking.full_display_address = ""
+
+        mock_qs = []
+        mock_distinct.distinct.return_value = mock_qs
+
+        factory = APIRequestFactory()
+        request = factory.get(
+           'api/icals/booking?from=2023-04-25T14:30:00&to=2023-04-25T14:30:00&contractor=1')
+        request.user =mock_user
+        res = get_ical_for_bookings(request)
+
+        assert res.status_code == 200
+
