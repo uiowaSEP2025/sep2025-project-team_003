@@ -43,7 +43,7 @@ def get_ical_for_bookings(request):
         start_time__gte=fromDateTimeObject,
         end_time__lte=toDateTimeObject
     ).select_related('job').distinct()
-
+    print(bookings)
     c = Calendar()
     for booking in bookings:
         e = Event()
@@ -52,7 +52,6 @@ def get_ical_for_bookings(request):
         e.end = booking.end_time
         e.description = booking.job.description
         e.location = booking.full_display_address
-        print(booking.full_display_address)
         c.events.add(e)
     
     ical_file = BytesIO()
