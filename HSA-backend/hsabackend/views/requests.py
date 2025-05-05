@@ -1,4 +1,5 @@
 from rest_framework import status
+from django.db.models import Q
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -13,6 +14,30 @@ from hsabackend.utils.response_helpers import get_table_data, delete_object, cre
 @check_authenticated_and_onboarded()
 def get_org_request_data(request):
     return get_table_data(request, "request")
+
+@api_view(["GET"])
+@check_authenticated_and_onboarded()
+def get_filtered_request_data(request):
+    org = request.organization
+    reqStatus = request.query_params.get('status', None)
+
+    if reqStatus == None or reqStatus not in ["received", "approved"]:
+        return Response({"message": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    else:
+        requests = Request.objects.filter(organization=org.pk).filter(Q(request_status__icontains=reqStatus))
+        count = Request.objects.filter(organization=org.pk).filter(Q(request_status__icontains=reqStatus)).count()
+    
+    data = []
+    for req in requests:
+        data.append(req.json_simplify())
+
+    res = {
+        'data': data,
+        'totalCount': count
+    }    
+    return Response(res, status=status.HTTP_200_OK)
+
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
 def delete_request(request,request_id):

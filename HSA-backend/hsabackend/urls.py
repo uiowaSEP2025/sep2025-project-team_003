@@ -36,7 +36,7 @@ from hsabackend.views.materials import get_material_excluded_table_data, get_mat
     edit_material, delete_material
 from hsabackend.views.organizations import complete_onboarding, create_organization, get_organization, \
     edit_organization
-from hsabackend.views.requests import get_org_request_data, delete_request, approve_request, create_request
+from hsabackend.views.requests import get_filtered_request_data, get_org_request_data, delete_request, approve_request, create_request
 from hsabackend.views.services import get_service_table_data, get_service_excluded_table_data, create_service, \
     edit_service, delete_service
 from hsabackend.views.user_auth import login_view, logout_view, user_create, user_exist
@@ -77,6 +77,7 @@ urlpatterns = [
 
     # request
     path("api/get/requests", get_org_request_data, name='get_org_request_data'),
+    path("api/get/requests/filter", get_filtered_request_data),
     path("api/delete/request/<int:request_id>", delete_request, name='delete_request'),
     path("api/create/request/<int:request_id>", create_request, name='create_request'),
     path("api/approve/request/<int:request_id>", approve_request, name='approve_request'),
