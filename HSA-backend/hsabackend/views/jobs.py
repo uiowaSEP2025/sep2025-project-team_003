@@ -332,6 +332,9 @@ def edit_job(request, id):
     except Job.DoesNotExist:
         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
+    if job.job_status == "completed":
+        return Response({"message": "Can not edit a completed job"}, status=status.HTTP_400_BAD_REQUEST)
+
     job.job_status = request.data.get('jobStatus', '')
     job.start_date = request.data.get('startDate', '')
     job.end_date = request.data.get('endDate', '')
@@ -359,10 +362,15 @@ def edit_job(request, id):
 @check_authenticated_and_onboarded()
 def delete_job(request, id):
     org = request.org
-    job = Job.objects.filter(pk=id, organization=org)
+    jobs = Job.objects.filter(pk=id, organization=org)
 
-    if not job.exists():
+    if not jobs.exists():
         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
-    job[0].delete()
+    job = job[0]
+
+    if job.job_status == "completed":
+        return Response({"message": "Can not delete a completed job"}, status=status.HTTP_400_BAD_REQUEST)
+
+    job.delete()
     return Response({"message": "Job deleted sucessfully"}, status=status.HTTP_200_OK)
