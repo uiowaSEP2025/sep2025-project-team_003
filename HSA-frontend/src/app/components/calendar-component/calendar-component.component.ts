@@ -62,7 +62,6 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
     cellHeight: 25,
     onVisibleRangeChanged: args => {
 
-      // this.loadEvents();
     }
   };
 
@@ -196,6 +195,7 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
     this.configNavigator.selectMode = "Day";
     this.configDay.visible = true;
     this.configWeek.visible = false;
+    this.clearAllEvents()
     this.loadEvents()
   }
 
@@ -203,6 +203,7 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
     this.configNavigator.selectMode = "Week";
     this.configDay.visible = false;
     this.configWeek.visible = true;
+    this.clearAllEvents()
     this.loadEvents()
   }
 
