@@ -84,6 +84,7 @@ def get_job_table_data(request):
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset', 0)
+    status_query = request.query_params.get('status', '')
 
     if not pagesize or not offset:
         return Response({"message": "missing pagesize or offset"}, status=status.HTTP_400_BAD_REQUEST)
@@ -94,8 +95,12 @@ def get_job_table_data(request):
     except:
         return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
 
+    if status_query not in ['created', 'in-progress', 'completed']:
+        return Response({"message": "Status must be created, in-progress, completed"}, status=status.HTTP_400_BAD_REQUEST)
+
+
     offset = offset * pagesize
-    jobs = Job.objects.filter(organization=org.pk).filter(
+    jobs = Job.objects.filter(organization=org.pk, job_status=status_query).filter(
         Q(customer__first_name__icontains=search) |
         Q(customer__last_name__icontains=search) |
         Q(start_date__icontains=search) |

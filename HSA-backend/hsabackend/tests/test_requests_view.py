@@ -225,5 +225,10 @@ class TestGetFiltered(APITestCase):
         request.user = mock_user  
         request.org = organization
 
+        mock_req = MagicMock()
+        filter1 = MagicMock()
+        filter.return_value = filter1
+        filter1.return_value = [mock_req]
+
         res = get_filtered_request_data(request)
         assert res.status_code == 200

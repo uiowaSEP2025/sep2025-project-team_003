@@ -113,8 +113,7 @@ def get_filtered_request_data(request):
         Q(requester_phone__icontains=search) |
         Q(description__icontains=search)
     ).count()
-    
-    
+
     data = []
     for req in requests:
         data.append(req.json_simplify())

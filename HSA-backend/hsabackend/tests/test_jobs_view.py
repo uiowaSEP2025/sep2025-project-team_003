@@ -308,6 +308,21 @@ class TestGetJobTable(APITestCase):
         response = get_job_table_data(request)
         
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_get_job_table_bad_stat(self,get):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        
+        org = Organization()
+        org.is_onboarding = False
+        get.return_value = org
+        factory = APIRequestFactory()
+        request = factory.get('/api/get/jobs?pagesize=1&offset=2&status=sss')
+        request.user = mock_user  
+        response = get_job_table_data(request)
+        
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
     
     @patch('hsabackend.views.jobs.Job.objects.filter')
     @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
@@ -320,10 +335,9 @@ class TestGetJobTable(APITestCase):
         get.return_value = org
         qs = MagicMock(spec=QuerySet)
         filter.return_value = qs
-        
 
         factory = APIRequestFactory()
-        request = factory.get('/api/get/jobs?search=bob&pagesize=10&offset=10')
+        request = factory.get('/api/get/jobs?search=bob&pagesize=10&offset=10&status=completed')
         request.user = mock_user  
         response = get_job_table_data(request)
         
@@ -343,7 +357,7 @@ class TestGetJobTable(APITestCase):
         filter.return_value = MagicMock(spec=QuerySet)
         
         factory = APIRequestFactory()
-        request = factory.get('/api/get/jobs?search&pagesize=10&offset=10')
+        request = factory.get('/api/get/jobs?search&pagesize=10&offset=10&status=completed')
         request.user = mock_user  
         response = get_job_table_data(request)
         
