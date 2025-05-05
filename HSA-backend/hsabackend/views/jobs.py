@@ -35,7 +35,8 @@ def get_jobs_by_contractor(request):
 
     jobs = Job.objects.filter(
         organization=org.pk,
-        jobcontractor__contractor__id=contractor_id
+        jobcontractor__contractor__id=contractor_id,
+        
     ).filter(
         Q(customer__first_name__icontains=search) |
         Q(customer__last_name__icontains=search) |
@@ -43,7 +44,7 @@ def get_jobs_by_contractor(request):
         Q(end_date__icontains=search) |
         Q(job_status__icontains=search) |
         Q(description__icontains=search)
-    ).distinct()
+    ).exclude(job_status="completed").distinct()
 
     jres = []
 
@@ -52,7 +53,8 @@ def get_jobs_by_contractor(request):
 
     count = Job.objects.filter(
         organization=org.pk,
-        jobcontractor__contractor__id=contractor_id
+        jobcontractor__contractor__id=contractor_id,
+        
     ).filter(
         Q(customer__first_name__icontains=search) |
         Q(customer__last_name__icontains=search) |
@@ -60,7 +62,7 @@ def get_jobs_by_contractor(request):
         Q(end_date__icontains=search) |
         Q(job_status__icontains=search) |
         Q(description__icontains=search)
-    ).count()
+    ).exclude(job_status="completed").distinct().count()
 
     jres = []
 
