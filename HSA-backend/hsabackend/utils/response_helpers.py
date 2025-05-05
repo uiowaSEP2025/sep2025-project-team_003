@@ -4,6 +4,7 @@ from django.utils.dateparse import parse_datetime
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from rest_framework.status import HTTP_400_BAD_REQUEST
 
 from hsabackend.models.booking import Booking
 from hsabackend.models.contractor import Contractor
@@ -403,15 +404,18 @@ def create_individual_data(request, object_type):
         case "job_template":
             serializer = JobTemplateSerializer(data=data)
         case "contractor":
-            contractor_data = {
-                'first_name': data.get('firstName'),
-                'last_name': data.get('lastName'),
-                'email': data.get('email'),
-                'phone': data.get('phone').replace("-",""),
-                'organization': request.organization,
-            }
-            data = contractor_data
-            serializer = ContractorSerializer(data=data)
+            try:
+                contractor_data = {
+                    'first_name': data.get('firstName'),
+                    'last_name': data.get('lastName'),
+                    'email': data.get('email'),
+                    'phone': data.get('phone').replace("-",""),
+                    'organization': request.organization,
+                }
+                data = contractor_data
+                serializer = ContractorSerializer(data=data)
+            except AttributeError:
+                return Response({"message": "unknown error"},status=status.HTTP_400_BAD_REQUEST)
         case "customer":
             customer_data = {
                 "first_name": data.get("firstn"),
@@ -517,13 +521,21 @@ def update_individual_data(request, object_id, object_type):
                 "discount_percent": data.get("percent")
             }
             data = discount_data
-            query_object = Discount.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            query_object = Discount.objects.get(organization=request.organization.pk, pk=object_id)
             serializer = DiscountSerializer(query_object, data=data)
         case "job_template":
-            query_object = JobTemplate.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            query_object = JobTemplate.objects.get(organization=request.organization.pk, pk=object_id)
             serializer = JobTemplateSerializer(query_object, data=data)
         case "contractor":
-            query_object = Contractor.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            contractor_data = {
+                "first_name": data.get("first_name"),
+                "last_name": data.get("last_name"),
+                "email": data.get("email"),
+                "phone": data.get("phone").replace("-",""),
+                "notes": data.get("notes"),
+            }
+            data = contractor_data
+            query_object = Contractor.objects.get(organization=request.organization.pk, pk=object_id)
             serializer = ContractorSerializer(query_object, data=data)
         case "customer":
             customer_data = {
@@ -534,7 +546,7 @@ def update_individual_data(request, object_id, object_type):
                 "notes": data.get("notes"),
             }
             data = customer_data
-            query_object = Customer.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            query_object = Customer.objects.get(organization=request.organization.pk, pk=object_id)
             serializer = CustomerSerializer(query_object, data=data)
         case "job":
             material_ids = []
@@ -547,7 +559,7 @@ def update_individual_data(request, object_id, object_type):
             for service in data.get('services'):
                 service_ids.append(service.get('id'))
                 service_list.append(service)
-            customer_temp = Customer.objects.filter(organization=request.organization.pk, pk=data.get('customerID')).first()
+            customer_temp = Customer.objects.get(organization=request.organization.pk, pk=data.get('customerID'))
             materials_temp = Material.objects.filter(organization=request.organization.pk, pk__in=material_ids).all()
             services_temp = Service.objects.filter(organization=request.organization.pk, pk__in=service_ids).all()
             contractors_temp = Contractor.objects.filter(organization=request.organization.pk, pk__in=data.get('contractors')).all()
@@ -566,7 +578,7 @@ def update_individual_data(request, object_id, object_type):
                 "contractors": contractors_temp,
             }
             data = job_data
-            query_object = Job.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            query_object = Job.objects.get(organization=request.organization.pk, pk=object_id)
             serializer = JobSerializer(query_object, data=data)
         case "service":
             try:
@@ -582,7 +594,7 @@ def update_individual_data(request, object_id, object_type):
                 "organization": request.organization,
             }
             data = service_data
-            query_object = Service.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            query_object = Service.objects.get(organization=request.organization.pk, pk=object_id)
             serializer = ServiceSerializer(query_object, data=data)
         case "material":
             try:
@@ -597,10 +609,10 @@ def update_individual_data(request, object_id, object_type):
                 "default_cost": default_cost,
             }
             data = material_data
-            query_object = Material.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            query_object = Material.objects.get(organization=request.organization.pk, pk=object_id)
             serializer = MaterialSerializer(query_object, data=data)
         case "request":
-            query_object = Request.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            query_object = Request.objects.get(organization=request.organization.pk, pk=object_id)
             serializer = RequestSerializer(query_object, data=data)
         case "invoice":
             query_object = Invoice.objects.get(pk=object_id)
@@ -616,7 +628,7 @@ def update_individual_data(request, object_id, object_type):
             data = invoice_data
             serializer = InvoiceSerializer(query_object, data=data)
         case "booking":
-            query_object = Booking.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            query_object = Booking.objects.get(organization=request.organization.pk, pk=object_id)
             serializer = BookingSerializer(query_object, data=data)
         case _:
             return Response(
@@ -658,25 +670,55 @@ def update_job_joins(job, services, materials):
 def delete_object(request, object_id, object_type):
     match object_type:
         case "discount":
-            query_object = Discount.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            try:
+                query_object = Discount.objects.get(organization=request.organization.pk, pk=object_id)
+            except Discount.DoesNotExist:
+                return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         case "job_template":
-            query_object = JobTemplate.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            try:
+                query_object = JobTemplate.objects.get(organization=request.organization.pk, pk=object_id)
+            except JobTemplate.DoesNotExist:
+                return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         case "contractor":
-            query_object = Contractor.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            try:
+                query_object = Contractor.objects.get(organization=request.organization.pk, pk=object_id)
+            except Contractor.DoesNotExist:
+                return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         case "customer":
-            query_object = Customer.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            try:
+                query_object = Customer.objects.get(organization=request.organization.pk, pk=object_id)
+            except Customer.DoesNotExist:
+                return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         case "job":
-            query_object = Job.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            try:
+                query_object = Job.objects.get(organization=request.organization.pk, pk=object_id)
+            except Job.DoesNotExist:
+                return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         case "service":
-            query_object = Service.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            try:
+                query_object = Service.objects.get(organization=request.organization.pk, pk=object_id)
+            except Service.DoesNotExist:
+                return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         case "material":
-            query_object = Material.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            try:
+                query_object = Material.objects.get(organization=request.organization.pk, pk=object_id)
+            except Material.DoesNotExist:
+                return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         case "request":
-            query_object = Request.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            try:
+                query_object = Request.objects.get(organization=request.organization.pk, pk=object_id)
+            except Request.DoesNotExist:
+                return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         case "invoice":
-            query_object = Invoice.objects.filter(pk=object_id).first()
+            try:
+                query_object = Invoice.objects.get(pk=object_id)
+            except Invoice.DoesNotExist:
+                return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         case "booking":
-            query_object = Booking.objects.filter(organization=request.organization.pk, pk=object_id).first()
+            try:
+                query_object = Booking.objects.get(organization=request.organization.pk, pk=object_id)
+            except Booking.DoesNotExist:
+                return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
         case _:
             return Response(
                 data={
@@ -684,6 +726,7 @@ def delete_object(request, object_id, object_type):
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
+
     try:
         query_object.delete()
         return Response({

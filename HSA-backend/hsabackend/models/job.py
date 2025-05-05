@@ -5,7 +5,7 @@ from django.db import models
 from hsabackend.models.contractor import Contractor
 from hsabackend.models.customer import Customer
 from hsabackend.models.material import Material
-from hsabackend.models.model_validators import isNonEmpty, validate_state
+from hsabackend.models.model_validators import is_non_empty, validate_state
 from hsabackend.models.organization import Organization
 from hsabackend.models.service import Service
 
@@ -26,12 +26,6 @@ class Job(models.Model):
         ('denied', 'denied')
     ]
 
-    quote_choices = [
-        ('not-created-yet', 'not-created-yet'),
-        ('created', 'created'),
-        ('approved', 'approved'),
-        ('denied', 'denied')
-    ]
 
     job_status = models.CharField(max_length=50, choices=status_choices, default="created")
     start_date = models.DateField(null=True)
@@ -43,17 +37,13 @@ class Job(models.Model):
     services = models.ManyToManyField(Service, blank=True, through='JobsServices')
     materials = models.ManyToManyField(Material, blank=True, through='JobsMaterials')
     contractors = models.ManyToManyField(Contractor, blank=True)
-    job_city = models.CharField(max_length=50, validators=[isNonEmpty])
-    job_state = models.CharField(max_length=50, validators=[isNonEmpty, validate_state])
-    job_zip = models.CharField(max_length=10, validators=[isNonEmpty])
-    job_address = models.CharField(max_length=100, validators=[isNonEmpty])
+    job_city = models.CharField(max_length=50, validators=[is_non_empty])
+    job_state = models.CharField(max_length=50, validators=[is_non_empty, validate_state])
+    job_zip = models.CharField(max_length=10, validators=[is_non_empty])
+    job_address = models.CharField(max_length=100, validators=[is_non_empty])
     use_hourly_rate = models.BooleanField(default=False)
     minutes_worked = models.IntegerField(default=0)
     hourly_rate = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
-    quote_s3_link = models.CharField(max_length=100, blank=True, null=True)
-    quote_sign_pin = models.CharField(max_length=10, blank=True, null=True)
-    quote_status = models.CharField(max_length=50, choices=quote_choices, default="not-created-yet")
-
     quote_s3_link = models.CharField(max_length=100, blank=True, null=True)
     quote_sign_pin = models.CharField(max_length=10, blank=True, null=True)
     quote_status = models.CharField(max_length=50, choices=quote_choices, default="not-created-yet")
@@ -189,4 +179,10 @@ class JobsServices(models.Model):
             'id': self.pk,
             'job': self.job.id,
             'service': self.service.id,
+        }
+
+    def get_service_info_for_detailed_invoice(self):
+        return {
+            "service name": self.service.name,
+            "service description": self.service.description
         }

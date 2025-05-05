@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 import decimal
 
-def isValidPhone(phone: str):
+def is_valid_phone(phone: str):
     """Validates a phone number without any separating characters.
     Example: not (123) - 456 - 7890, instead use 1234567890.
     """
@@ -12,7 +12,7 @@ def isValidPhone(phone: str):
             params={"phone": phone},
         )
 
-def isNonEmpty(value: str):
+def is_non_empty(value: str):
     """Validates that a string is not empty."""
     if not value.strip():  # Handles spaces-only input
         raise ValidationError(

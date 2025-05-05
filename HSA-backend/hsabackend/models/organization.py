@@ -4,15 +4,15 @@ from django.contrib.auth.models import User
 
 class Organization(models.Model):
     """The organization managed by a handyman"""
-    org_name = models.CharField(max_length=100, validators=[model_validators.isNonEmpty])
+    org_name = models.CharField(max_length=100, validators=[model_validators.is_non_empty])
     org_email = models.EmailField(max_length=100)
-    org_city = models.CharField(max_length=50, validators=[model_validators.isNonEmpty])
-    org_state = models.CharField(max_length=50, validators=[model_validators.isNonEmpty, model_validators.validate_state])
-    org_zip = models.CharField(max_length=10, validators=[model_validators.isNonEmpty])
-    org_address = models.CharField(max_length=100, validators=[model_validators.isNonEmpty])
-    org_phone = models.CharField(max_length=10, validators=[model_validators.isValidPhone])
-    org_owner_first_name = models.CharField(max_length=100, validators=[model_validators.isNonEmpty])
-    org_owner_last_name = models.CharField(max_length=100, validators=[model_validators.isNonEmpty])
+    org_city = models.CharField(max_length=50, validators=[model_validators.is_non_empty])
+    org_state = models.CharField(max_length=50, validators=[model_validators.is_non_empty, model_validators.validate_state])
+    org_zip = models.CharField(max_length=10, validators=[model_validators.is_non_empty])
+    org_address = models.CharField(max_length=100, validators=[model_validators.is_non_empty])
+    org_phone = models.CharField(max_length=10, validators=[model_validators.is_valid_phone])
+    org_owner_first_name = models.CharField(max_length=100, validators=[model_validators.is_non_empty])
+    org_owner_last_name = models.CharField(max_length=100, validators=[model_validators.is_non_empty])
     owning_user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_onboarding = models.BooleanField(default=True)
     default_labor_rate = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=False)

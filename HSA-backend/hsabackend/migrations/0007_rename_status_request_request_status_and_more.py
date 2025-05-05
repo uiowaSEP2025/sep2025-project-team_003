@@ -64,7 +64,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='request',
             name='availability',
-            field=models.CharField(default=django.utils.timezone.now, max_length=200, validators=[hsabackend.models.model_validators.isNonEmpty]),
+            field=models.CharField(default=django.utils.timezone.now, max_length=200, validators=[hsabackend.models.model_validators.is_non_empty]),
             preserve_default=False,
         ),
         migrations.AddField(
@@ -75,6 +75,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='request',
             name='requester_phone',
-            field=models.CharField(blank=True, max_length=10, validators=[hsabackend.models.model_validators.isValidPhone]),
+            field=models.CharField(blank=True, max_length=10, validators=[hsabackend.models.model_validators.is_valid_phone]),
         ),
     ]

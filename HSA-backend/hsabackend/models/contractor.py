@@ -1,14 +1,14 @@
 from django.db import models
 from hsabackend.models.organization import Organization
-from hsabackend.models.model_validators import isNonEmpty,isValidPhone
+from hsabackend.models.model_validators import is_non_empty,is_valid_phone
 from hsabackend.utils.string_formatters import format_phone_number
 
 class Contractor(models.Model):
     """A person employed by a organization to fulfill a job"""
-    first_name = models.CharField(max_length=50, validators=[isNonEmpty])
-    last_name = models.CharField(max_length=50, validators=[isNonEmpty])
+    first_name = models.CharField(max_length=50, validators=[is_non_empty])
+    last_name = models.CharField(max_length=50, validators=[is_non_empty])
     email = models.EmailField(max_length=100)
-    phone = models.CharField(max_length=10, validators=[isValidPhone])
+    phone = models.CharField(max_length=10, validators=[is_valid_phone])
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
 
     def __str__(self):
