@@ -39,3 +39,8 @@ def format_tax_percent(s: str) -> str:
         return f"{percent[1]}%"
     return f"{percent}%"
 
+def NA_on_empty_string(s: str):
+    if len(s) == 0:
+        return "N/A"
+    else:
+        return s

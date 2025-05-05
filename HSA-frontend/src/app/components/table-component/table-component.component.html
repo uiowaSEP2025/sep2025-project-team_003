@@ -1,4 +1,4 @@
-<div class="mat-elevation-z8 table min-w-lg">
+<div class="mat-elevation-z8 table min-w-lg" data-testid="app-table">
   @if (this.fetchedData === null) {
     <app-loading-fallback stringToDisplay="Loading the table data"></app-loading-fallback>
   } @else {
@@ -12,83 +12,85 @@
       </form>
     }
     <div #tableContainer tabindex="-1" class="table-container">
-      @if (isDataNotAvailable) {
+      @if (isDataNotAvailable()) {
         <p class="empty-message">Nothing to show here</p>
       }
-      <table mat-table [dataSource]="data" [width]="width" [hidden]="isDataNotAvailable">
-        @for (header of headersWithActions; track header) {
-        <ng-container [matColumnDef]="header">
-          <th mat-header-cell *matHeaderCellDef>
-            <ng-container>
-              {{ header === "Checkbox" ? "" : header }}
-            </ng-container>
-          </th>
-          <td mat-cell *matCellDef="let element; let i = $index;">
-            @if (header === "Actions") {
-            <div class="flex gap-2">
-                <button mat-mini-fab click-stop-propagation (click)="redirectEdit(element.id, element)">
-                  <mat-icon>edit</mat-icon>
-                </button>
-              <button mat-mini-fab click-stop-propagation (click)="openDeleteDialog(element)">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-            } 
-            @else if (header === "Checkbox") {
-              <mat-checkbox [attr.data-testid]="'checkbox-' + element.id"
-                [checked]="shouldCheckCheckbox(element.id)" 
-                (change)="handleCheckBoxClick(element.id)" 
-                (change)="handleCheckedRowIndex(element.id)"
-              ></mat-checkbox>
-            }
-            @else if (header === "Unit Used") {
-              <mat-form-field>
-                <input
-                  [disabled]="!checkedRowIndexes.has(element.id)"
-                  matInput
-                  type="number"
-                  required
-                  placeholder="0"
-                  [value]="getUnitsUsedValue(element.id)"
-                  (input)="handleUnitsUsedField(element.id, $event)"
-                >
-              </mat-form-field>
-            }
-            @else if (header === "Price Per Unit") {
-              <mat-form-field floatLabel="always">
-                <input 
-                  [disabled]="!checkedRowIndexes.has(element.id)"
-                  matInput
-                  type="text" 
-                  class="right-align" 
-                  placeholder="0.00"
-                  [value]="getPricePerUnitValue(element.id)"
-                  (input)="handlePricePerUnitField(element.id, $event)"
-                />
-                <span matTextPrefix>$&nbsp;</span>
-              </mat-form-field>
-              
-            }
-            @else if (header === "Approval" && element.status !== "approved" && element.status !== "denied") {
+      @else {
+        <table mat-table [dataSource]="data" [width]="width">
+          @for (header of headersWithActions; track header) {
+          <ng-container [matColumnDef]="header">
+            <th mat-header-cell *matHeaderCellDef>
+              <ng-container>
+                {{ header === "Checkbox" ? "" : header }}
+              </ng-container>
+            </th>
+            <td mat-cell *matCellDef="let element; let i = $index;">
+              @if (header === "Actions") {
               <div class="flex gap-2">
-                <button mat-mini-fab style="background-color: rgb(42, 167, 10);" click-stop-propagation (click)="openApprovalDialog(element, true)">
-                  <mat-icon>done</mat-icon>
+                  <button mat-mini-fab click-stop-propagation (click)="redirectEdit(element.id, element)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                <button mat-mini-fab click-stop-propagation (click)="openDeleteDialog(element)">
+                  <mat-icon>delete</mat-icon>
                 </button>
-              <button mat-mini-fab style="background-color: rgb(196, 24, 24);" click-stop-propagation (click)="openApprovalDialog(element, false)">
-                <mat-icon>close</mat-icon>
-              </button>
-            </div>
-            }
-            @else  {
-              {{ element[stringFormatter.formatCamelToSnake(header)] }}
-            }
-          </td>
-        </ng-container>
-        }
-    
-        <tr mat-header-row *matHeaderRowDef="headersWithActions"></tr>
-        <tr mat-row class="{{clickableRows ? 'cursor-pointer darkenOnHover' : ''}}" (click)="rowClick(row)" *matRowDef="let row; columns: headersWithActions;"></tr>
-      </table>
+              </div>
+              } 
+              @else if (header === "Checkbox") {
+                <mat-checkbox [attr.data-testid]="'checkbox-' + element.id"
+                  [checked]="shouldCheckCheckbox(element.id)" 
+                  (change)="handleCheckBoxClick(element.id)" 
+                  (change)="handleCheckedRowIndex(element.id)"
+                ></mat-checkbox>
+              }
+              @else if (header === "Unit Used") {
+                <mat-form-field>
+                  <input
+                    [disabled]="!checkedRowIndexes.has(element.id)"
+                    matInput
+                    type="number"
+                    required
+                    placeholder="0"
+                    [value]="getUnitsUsedValue(element.id)"
+                    (input)="handleUnitsUsedField(element.id, $event)"
+                  >
+                </mat-form-field>
+              }
+              @else if (header === "Price Per Unit") {
+                <mat-form-field floatLabel="always">
+                  <input 
+                    [disabled]="!checkedRowIndexes.has(element.id)"
+                    matInput
+                    type="text" 
+                    class="right-align" 
+                    placeholder="0.00"
+                    [value]="getPricePerUnitValue(element.id)"
+                    (input)="handlePricePerUnitField(element.id, $event)"
+                  />
+                  <span matTextPrefix>$&nbsp;</span>
+                </mat-form-field>
+                
+              }
+              @else if (header === "Approval" && element.status !== "approved" && element.status !== "denied") {
+                <div class="flex gap-2">
+                  <button mat-mini-fab style="background-color: rgb(42, 167, 10);" click-stop-propagation (click)="openApprovalDialog(element, true)">
+                    <mat-icon>done</mat-icon>
+                  </button>
+                <button mat-mini-fab style="background-color: rgb(196, 24, 24);" click-stop-propagation (click)="openApprovalDialog(element, false)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+              }
+              @else  {
+                {{ element[stringFormatter.formatCamelToSnake(header)] }}
+              }
+            </td>
+          </ng-container>
+          }
+      
+          <tr mat-header-row *matHeaderRowDef="headersWithActions"></tr>
+          <tr mat-row class="{{clickableRows ? 'cursor-pointer darkenOnHover' : ''}}" (click)="rowClick(row)" *matRowDef="let row; columns: headersWithActions;"></tr>
+        </table>
+      }
     </div>
     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons [length]="dataSize"></mat-paginator>
   }

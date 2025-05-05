@@ -2,7 +2,7 @@ from django.db import models
 from hsabackend.models.organization import Organization
 from hsabackend.models.model_validators import isNonEmpty, validate_state
 from hsabackend.models.customer import Customer
-from hsabackend.models.service import Service
+from hsabackend.utils.string_formatters import NA_on_empty_string, format_maybe_null_date
 
 class Job(models.Model):
     """A request for service from a customer to an organization"""
@@ -58,9 +58,9 @@ class Job(models.Model):
         return {
             'id': self.pk,
             # cap at 50 so table doesn't stretch
-            'description': self.description[:50] + ("..." if len(self.description) > 50 else ""),
-            'job_status': self.job_status,
-            'start_date': self.start_date,
-            'end_date': self.end_date,
-            'customer_name': self.customer.first_name + " " + self.customer.last_name,
+            'description': NA_on_empty_string(self.description[:50] + ("..." if len(self.description) > 50 else "")),
+            'job_status': NA_on_empty_string(self.job_status),
+            'start_date': format_maybe_null_date(self.start_date),
+            'end_date': format_maybe_null_date(self.end_date),
+            'customer_name': NA_on_empty_string(self.customer.first_name + " " + self.customer.last_name),
         }

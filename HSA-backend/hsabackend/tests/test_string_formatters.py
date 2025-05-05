@@ -4,7 +4,8 @@ from decimal import Decimal
 from hsabackend.utils.string_formatters import (
     format_title_case, truncate_description_for_table, format_phone_number,
     format_phone_number_with_parens, format_maybe_null_date, format_address,
-    format_date_to_iso_string, format_currency, format_percent, format_tax_percent
+    format_date_to_iso_string, format_currency, format_percent, format_tax_percent, 
+    NA_on_empty_string
 )
 
 class TestFormattingFunctions(unittest.TestCase):
@@ -45,5 +46,8 @@ class TestFormattingFunctions(unittest.TestCase):
         self.assertEqual(format_tax_percent("1.05"), "5%")
         self.assertEqual(format_tax_percent("1.13"), "13%")
 
-if __name__ == "__main__":
-    unittest.main()
+    def test_empty_string(self):
+        self.assertEqual(NA_on_empty_string(""), "N/A")
+
+    def test_non_empty_string(self):
+        self.assertEqual(NA_on_empty_string("hello"), "hello")

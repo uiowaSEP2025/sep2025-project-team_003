@@ -18,7 +18,6 @@ from hsabackend.views.contractors import (
 from hsabackend.views.requests import (
     get_filtered_request_data, 
     get_individual_request_data, 
-    get_org_request_data,
     delete_request,
     approve_request,
     create_request,
@@ -77,7 +76,6 @@ urlpatterns = [
     path("api/delete/contractor/<int:id>", delete_contractor),
 
     # request
-    path("api/get/requests", get_org_request_data),
     path("api/get/requests/filter", get_filtered_request_data),
     path("api/get/request/<int:id>", get_individual_request_data),
     path("api/delete/request/<int:id>", delete_request),

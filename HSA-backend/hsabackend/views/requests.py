@@ -59,40 +59,6 @@ def create_request(request, id):
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
-def get_org_request_data(request):
-    org = request.org
-    search = request.query_params.get('search', '')
-    pagesize = request.query_params.get('pagesize', '')
-    offset = request.query_params.get('offset',0)
-    if not pagesize or not offset:
-        return Response({"message": "missing pagesize or offset"}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        pagesize = int(pagesize)
-        offset = int(offset)
-    except:
-        return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
-    
-    requests = Request.objects.filter(organization=org.pk).filter(
-        Q(name__icontains=search))[offset:offset + pagesize] if search else Request.objects.filter(
-        organization=org.pk)[offset:offset + pagesize]
-
-    data = []
-    for req in requests:
-        data.append(req.json_simplify())
-    
-    count = Request.objects.filter(organization=org.pk).filter(
-        Q(name__icontains=search)).count() if search else Request.objects.filter(
-        organization=org.pk).count()
-    
-    res = {
-        'data': data,
-        'totalCount': count
-    }    
-    return Response(res, status=status.HTTP_200_OK)
-
-@api_view(["GET"])
-@check_authenticated_and_onboarded()
 def get_individual_request_data(request, id):
     org = request.org
 
@@ -112,13 +78,42 @@ def get_individual_request_data(request, id):
 def get_filtered_request_data(request):
     org = request.org
     reqStatus = request.query_params.get('status', None)
-    if reqStatus == None or reqStatus not in ["received", "approved"]:
+    search = request.query_params.get('search', None)
+    pagesize = request.query_params.get('pagesize', None)
+    offset = request.query_params.get('offset', None)
+    
+    if (not pagesize or not offset) or not (pagesize.isdigit() and offset.isdigit()):
         return Response({"message": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
+
+    if reqStatus == None or reqStatus not in ["received", "approved"]:
+        return Response({"message": "Status must be received or approved"}, status=status.HTTP_400_BAD_REQUEST)
     
-    else:
-        requests = Request.objects.filter(organization=org.pk).filter(Q(request_status__icontains=reqStatus))
-        count = Request.objects.filter(organization=org.pk).filter(Q(request_status__icontains=reqStatus)).count()
+    pagesize = int(pagesize)
+    offset = int(offset)
+
+    requests = Request.objects.filter(organization=org.pk, request_status__icontains=reqStatus).filter(
+        Q(requester_first_name__icontains=search) |
+        Q(requester_last_name__icontains=search) |
+        Q(requester_email__icontains=search) |
+        Q(requester_city__icontains=search) |
+        Q(requester_state__icontains=search) |
+        Q(requester_zip__icontains=search) |
+        Q(requester_address__icontains=search) |
+        Q(requester_phone__icontains=search) |
+        Q(description__icontains=search))[offset:offset + pagesize]
     
+    count = Request.objects.filter(organization=org.pk, request_status__icontains=reqStatus).filter(
+        Q(requester_first_name__icontains=search) |
+        Q(requester_last_name__icontains=search) |
+        Q(requester_email__icontains=search) |
+        Q(requester_city__icontains=search) |
+        Q(requester_state__icontains=search) |
+        Q(requester_zip__icontains=search) |
+        Q(requester_address__icontains=search) |
+        Q(requester_phone__icontains=search) |
+        Q(description__icontains=search)
+    ).count()
+
     data = []
     for req in requests:
         data.append(req.json_simplify())
