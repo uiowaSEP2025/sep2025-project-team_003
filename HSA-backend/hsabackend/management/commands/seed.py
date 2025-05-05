@@ -196,7 +196,10 @@ class Command(BaseCommand):
                     requestor_city = "Iowa City",
                     requestor_state = "Iowa",
                     requestor_zip = "52240",
-                    requestor_address = "2 W Washington St"
+                    requestor_address = "2 W Washington St",
+                    flat_fee = 0.00,
+                    hourly_rate = 50.00,
+                    minutes_worked = 100
                 )
                 j.save()
 
@@ -210,7 +213,10 @@ class Command(BaseCommand):
                     requestor_city = "Iowa City",
                     requestor_state = "Iowa",
                     requestor_zip = "52240",
-                    requestor_address = "2 W Washington St"
+                    requestor_address = "2 W Washington St",
+                    flat_fee = 0.00,
+                    hourly_rate = 50.00,
+                    minutes_worked = 100
                 )
                 j.save()
 
@@ -284,7 +290,10 @@ class Command(BaseCommand):
                     requestor_city = "Iowa City",
                     requestor_state = "Iowa",
                     requestor_zip = "52240",
-                    requestor_address = "2 W Washington St"
+                    requestor_address = "2 W Washington St",
+                    flat_fee = 0.00,
+                    hourly_rate = 50.00,
+                    minutes_worked = 100
                 )
             j.save()
 
@@ -292,7 +301,6 @@ class Command(BaseCommand):
             jobs_for_invoice = Job.objects.filter(
                 customer=customers[1],
                 job_status="completed",
-                quote__status="accepted",  # Ensures only jobs with accepted quotes are selected
                 customer__organization=org
             )
 

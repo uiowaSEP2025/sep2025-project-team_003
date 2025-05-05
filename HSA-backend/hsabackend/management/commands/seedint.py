@@ -75,7 +75,10 @@ def add_jobs(c1,o1):
         requestor_city = "Iowa City",
         requestor_state = "Iowa",
         requestor_zip = "52240",
-        requestor_address = "2 W Washington St"
+        requestor_address = "2 W Washington St",
+        flat_fee = 50.00,
+        hourly_rate = 100.00,
+        minutes_worked = 30
     )
     j2 = Job.objects.create(
         job_status='completed',
@@ -87,7 +90,10 @@ def add_jobs(c1,o1):
         requestor_city = "Iowa City",
         requestor_state = "Iowa",
         requestor_zip = "52240",
-        requestor_address = "2 W Washington St"
+        requestor_address = "2 W Washington St",
+        flat_fee = 0.00,
+        hourly_rate = 50.00,
+        minutes_worked = 100
     )
     return j1,j2
 
