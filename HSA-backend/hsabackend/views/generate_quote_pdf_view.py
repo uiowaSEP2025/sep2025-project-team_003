@@ -91,6 +91,26 @@ def _build_quote_pdf(job: Job, org: Organization) -> bytes:
             row = tbl.row()
             row.cell(info["service name"])
             row.cell(info["service description"])
+        
+        row = tbl.row()
+        row.cell("Hourly Rate")
+        row.cell(format_currency(job.hourly_rate))
+
+        row = tbl.row()
+        row.cell("Total Minutes")
+        row.cell(str(job.minutes_worked))
+
+        row = tbl.row()
+        row.cell("Flat Rate")
+        row.cell(format_currency(job.flat_fee))
+
+        labor_cost = (
+            job.hourly_rate * (Decimal(job.minutes_worked) / Decimal(60))
+            + job.flat_fee
+        )
+        row = tbl.row()
+        row.cell("Labor Cost", colspan=1)
+        row.cell(format_currency(labor_cost))
     pdf.ln(5)
 
     # Materials table
@@ -122,6 +142,13 @@ def _build_quote_pdf(job: Job, org: Organization) -> bytes:
         tr.cell("Materials Total")
         tr.cell("", colspan=2)
         tr.cell(format_currency(total))
+
+        grand = total + labor_cost
+        gr = tbl.row()
+        gr.cell("Grand Total")
+        gr.cell("", colspan=2)
+        gr.cell(format_currency(grand))
+
 
     # Signature page
     pdf.add_page()

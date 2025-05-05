@@ -75,10 +75,12 @@ class GenSignableLinkTests(unittest.TestCase):
 class PDFBuilderTests(unittest.TestCase):
     @patch("hsabackend.views.generate_quote_pdf_view.JobService")
     @patch("hsabackend.views.generate_quote_pdf_view.JobMaterial")
-    def test_build_quote_pdf_minimal(self, mock_mat, mock_svc):
+    @patch("hsabackend.views.generate_quote_pdf_view.Decimal")
+    def test_build_quote_pdf_minimal(self, mock_mat, mock_svc, mock_decimal):
         """Smoke-test that _build_quote_pdf returns real PDF bytes."""
         mock_svc.objects.select_related.return_value.filter.return_value = []
         mock_mat.objects.filter.return_value = []
+        mock_decimal.return_value=0
 
         fake_job = Mock(
             pk=42,
