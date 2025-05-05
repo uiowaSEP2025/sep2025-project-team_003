@@ -6,6 +6,24 @@
         <div>and status: {{initialStatus}}</div>
     </mat-card>
 
+  <div class="m-10"></div>
+    <app-table-component
+      data-testid="invoice-quotes-table"
+      [loadDataToTable]="loadQuotesToTable.bind(this)"
+      editRedirect=""
+      [hideValues]="['Actions', 'Id']"
+      [fetchedData]="quotes"
+      checkbox="multiple"
+      [checkedIds]="selectedQuotes"
+      [setCheckedIds]="setSelectedQuotes.bind(this)"
+      [hideSearch]="true"
+      [headers]="['Description','Customer', 'Job Status', 'Start Date', 'End Date']"
+    >
+    </app-table-component>
+    @if (selectedQuotesIsError) {
+      <mat-error class="mt-3">You must select a completed job.</mat-error>
+    }
+
     <mat-form-field class="pt-5">
         <mat-label>Status</mat-label>
         <mat-select data-testid="status-selector" required [(ngModel)]="status">
@@ -19,11 +37,6 @@
       <input matInput [(ngModel)]="paymentLink" type="text">
 
     </mat-form-field>
-
-    @if (isDateSelectVisible()) {
-    <app-invoice-date-picker [formControll]="range"
-        [dateLabels]="['Issuance date', 'Due date']"></app-invoice-date-picker>
-    }
 
     <app-invoice-date-picker
       [formControll]="range"

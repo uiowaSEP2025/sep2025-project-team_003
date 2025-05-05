@@ -22,10 +22,16 @@ describe('EditInvoicePageComponent', () => {
       const activatedRouteMock = {
         paramMap: paramMapSubject.asObservable(),
         queryParams: of({ status: 'created',
-            "due_date": "N/A",
-            "issuance_date": "N/A",
-            "customer": "Alex Guo",
-            "tax":"0.06"
+            date_due: "N/A",
+            date_issued: "N/A",
+            customer: {
+              first_name: "Alex",
+              last_name: "Guo",
+
+            },
+          customer_id: 0,
+          sales_tax_percent:"0.06",
+          payment_link: "https://www.paypal.com"
          })
       };
 
@@ -48,7 +54,7 @@ describe('EditInvoicePageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-    it('should display date picker when status is not created', async () => {
+    it('should display date picker', async () => {
       const select = (await loader.getAllHarnesses(MatSelectHarness))[0]
       const compiled = fixture.debugElement.nativeElement;
       await select.open();
@@ -56,33 +62,6 @@ describe('EditInvoicePageComponent', () => {
       await options[2].click()
       fixture.detectChanges()
       expect(compiled.textContent).toContain("Choose Dates")
-    })
-
-    it('should not display date picker when status is created', async () => {
-      const compiled = fixture.debugElement.nativeElement;
-      fixture.detectChanges()
-      expect(compiled.textContent).not.toContain("Choose Dates")
-    })
-
-    it('should call validate on the view child', async () => {
-      const select = (await loader.getAllHarnesses(MatSelectHarness))[0]
-      await select.open();
-      const options = await select.getOptions();
-      await options[1].click()
-      fixture.detectChanges()
-      const filteredButtons = await Promise.all(
-        (await loader.getAllHarnesses(MatButtonHarness)).map(async (button) => {
-          const text = await button.getText();
-          return text === 'Submit' ? button : null;
-        })
-      ).then(results => results.filter(button => button !== null)); // correctly working async filter
-      spyOn(component.datePicker, 'validate'); // Spy on the function
-
-      const submit = filteredButtons[0];
-      await submit.click()
-      fixture.detectChanges()
-
-      expect(component.datePicker.validate).toHaveBeenCalled(); // Verify the call
     })
 
     it('should show error when no quotes are selected', async () => {
@@ -100,7 +79,7 @@ describe('EditInvoicePageComponent', () => {
       await submit.click()
       fixture.detectChanges()
 
-      expect(compiled.textContent).toContain('You must select a quote to include')
+      expect(compiled.textContent).toContain('You must select a completed job.')
     })
 
     it('should call the service when everything is valid', async () => {

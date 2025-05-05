@@ -20,6 +20,7 @@ import { ClickStopPropagationDirective } from '../../utils/click-event-propogati
 import { OnInit } from '@angular/core';
 import { InputFieldDictionary } from '../../interfaces/interface-helpers/inputField-row-helper.interface';
 import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.component';
+import { AddConfirmDialogComponentComponent } from '../add-confirm-dialog-component/add-confirm-dialog-component.component';
 
 @Component({
   selector: 'app-table-component',
@@ -42,10 +43,12 @@ import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.c
 export class TableComponentComponent implements AfterViewInit, OnChanges, OnDestroy, OnInit {
   @Input() fetchedData: any = null
   @Input() deleteRequest!: (data: any) => Observable<StandardApiResponse>
-  @Input({ required: true }) loadDataToTable!: (search: string, pageSize: number, offSet: number) => void
+  @Input() approveRequest!: (data: any, isApproved: boolean) => Observable<any>
+  @Input({ required: true }) loadDataToTable!: (search: string, pageSize: number, offSet: number, status?: string) => void
+  @Input() status: 'approved' | 'pending' | 'received' | 'none' = 'none'
   @Input() hideValues: string[] = [];
   @Input() width: string = 'auto'
-  @Input() checkbox: 'none' | 'single' | 'multiple' = 'none';
+  @Input() checkbox: 'none' | 'single' | 'multiple' | 'actions' | 'approval' = 'actions';
   @Input() unitUsedField: boolean = false;
   @Input() pricePerUnitField: boolean = false;
   @Input() checkedIds: number[] | null = null;
@@ -70,7 +73,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   pageSize: number | null = null
   dataSize: number | null = null
   checkedRowIndexes = new Set<number>();
-
+  
   headersWithActions = [...this.headers, 'Actions']
   editRedirect = input.required<string>()
   isDataNotAvailable: boolean = false
@@ -107,15 +110,14 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   ngOnInit(): void {
-
+    
     this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
       return !this.hideValues.includes(header)
     }) // this has to be here to allow default headers change. On init is ran
     // when inputs are recieved
 
-    if (this.checkbox !== 'none') {
-      if (!this.headersWithActions.includes('Checkbox')) {
-
+    if (this.checkbox !== 'actions') {
+      if (!this.headersWithActions.includes('Checkbox')) { 
         this.headersWithActions = ['Checkbox', ...this.headersWithActions]
       }
     }
@@ -125,19 +127,18 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
         this.headersWithActions = [...this.headersWithActions, 'Unit Used', 'Price Per Unit']
       }
     }
-
+  
     if (this.fetchedData !== undefined) {
       if (this.fetchedData.length !== 0) {
         if (this.fetchedData.data !== undefined) {
           this.isDataNotAvailable = this.fetchedData.data.length === 0
         }
-      }
+      }  
     }
   }
 
   redirectEdit(id: number, args: any) {
     const queryParams = args
-    console.log(queryParams)
     this.router.navigate([`${this.editRedirect()}/${id}`], {
       queryParams: queryParams
     });
@@ -169,6 +170,31 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
     });
   }
 
+  openApprovalDialog(args: any, isApproved: boolean) {
+    const dialogRef = this.dialog.open(AddConfirmDialogComponentComponent, {
+      width: '300px',
+      data: isApproved ? "approval" : "deny"
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+          this.approveRequest(args, isApproved).subscribe({
+            next: (response) => {
+              this.snackBar.open(isApproved ? 'Approved successfully' : 'Denied successfully', '', {
+                duration: 3000
+              });
+              
+              if (isApproved) {
+                this.redirectEdit(response.data.id, response.data);
+              } else {
+                window.location.reload();
+              }
+            }
+          })
+      }
+    })
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     // this has to be here to change the headers, and does not affect how the headers are set based on the data
     if (changes["fetchedData"]?.currentValue || changes["dataSource"] || changes["formControl"]) {
@@ -182,7 +208,17 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
         this.headers = this.headers.map(header => this.stringFormatter.formatSnakeToCamel(header))
 
         if (this.checkbox === "none") {
+          this.headersWithActions = [...this.headers].filter((header) => {
+            return !this.hideValues.includes(header)
+          })
+        }
+        else if (this.checkbox === "actions") {
           this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
+            return !this.hideValues.includes(header)
+          })
+        }
+        else if (this.checkbox === "approval") {
+          this.headersWithActions = [...this.headers, 'Approval'].filter((header) => {
             return !this.hideValues.includes(header)
           })
         }
@@ -244,7 +280,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       const number = isNaN(parsedNumber) ? 0: parsedNumber
       let currentUnitsUsedDict = this.materialInputFields
       let specificEntry = currentUnitsUsedDict.find((item) => item.id === id)
-
+      
       if (specificEntry) {
         specificEntry['unitsUsed'] = number
       }
@@ -259,7 +295,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       const number = isNaN(parsedNumber) ? 0: parsedNumber
       let currentUnitsUsedDict = this.materialInputFields
       let specificEntry = currentUnitsUsedDict.find((item) => item.id === id)
-
+      
       if (specificEntry) {
         specificEntry['pricePerUnit'] = number
       }
@@ -267,7 +303,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       this.setMaterialInputFields!(currentUnitsUsedDict)
     }
   }
-
+  
 
   ngOnDestroy() {
     if (this.searchSubscription) {
@@ -280,7 +316,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   refetch(textField: string) {
-    this.loadDataToTable(textField, this.pageSize ?? 20, this.page ?? 0)
+    this.loadDataToTable(textField, this.pageSize ?? 20, this.page ?? 0, this.status)
   }
 
   shouldCheckCheckbox(id: number): boolean {
@@ -289,11 +325,11 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
 
   getUnitsUsedValue(id: number): number | string {
     const entry = this.materialInputFields.find(item => item.id === id);
-    return entry?.['unitsUsed'] ?? '';
+    return entry?.['unitsUsed'] ?? ''; 
   }
 
   getPricePerUnitValue(id: number): number | string {
     const entry = this.materialInputFields.find(item => item.id === id);
-    return entry?.['pricePerUnit'] ?? '';
+    return entry?.['pricePerUnit'] ?? ''; 
   }
 }

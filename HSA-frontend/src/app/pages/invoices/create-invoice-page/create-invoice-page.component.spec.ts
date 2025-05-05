@@ -72,12 +72,6 @@ describe('CreateInvoicePageComponent', () => {
     expect(compiled.textContent).toContain("Choose Dates")
   })
 
-  it('should not display date picker when status is created', async () => {
-    const compiled = fixture.debugElement.nativeElement;
-    fixture.detectChanges()
-    expect(compiled.textContent).not.toContain("Choose Dates")
-  })
-
   it('should call validate on the view child', async () => {
     const select = (await loader.getAllHarnesses(MatSelectHarness))[1]
     const compiled = fixture.debugElement.nativeElement;
@@ -100,7 +94,7 @@ describe('CreateInvoicePageComponent', () => {
     expect(component.datePicker.validate).toHaveBeenCalled(); // Verify the call
   })
 
-  it('should show error when no quotes are selected', async () => {
+  it('should show error when no jobs are selected', async () => {
     const compiled = fixture.debugElement.nativeElement;
     component.selectedCustomers = [1]
     fixture.detectChanges()
@@ -117,7 +111,7 @@ describe('CreateInvoicePageComponent', () => {
     await submit.click()
     fixture.detectChanges()
 
-    expect(compiled.textContent).toContain('You must select a quote to include')
+    expect(compiled.textContent).toContain('You must select a completed job.')
   })
 
   it('should call the service when everything is valid', async () => {

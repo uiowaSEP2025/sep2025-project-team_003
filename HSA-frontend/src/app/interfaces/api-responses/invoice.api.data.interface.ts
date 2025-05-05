@@ -7,6 +7,10 @@ export interface InvoiceDataInterface {
     customer: {
       first_name: string,
       last_name: string,
+      notes: string,
+      email: string,
+      phone: string,
+      id: number
     },
     quotes: InvoiceQuoteDisplayInterface
 }

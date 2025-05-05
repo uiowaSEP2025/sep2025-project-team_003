@@ -3,6 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { CalendarComponentComponent } from './calendar-component.component';
 import { provideHttpClient } from '@angular/common/http';
+import { DayPilot, DayPilotCalendarComponent, DayPilotModule, DayPilotNavigatorComponent } from "@daypilot/daypilot-lite-angular";
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { Component } from '@angular/core';
 import { MatSelectHarness } from '@angular/material/select/testing';
@@ -29,7 +30,17 @@ describe('CalendarComponentComponent', () => {
 
     fixture = TestBed.createComponent(CalendarComponentComponent);
     component = fixture.componentInstance;
-    component.contractorNames = [{ name: "alex", id: 1 }, { name: "alex1", id: 1 }];
+    component.contractorNames = [{
+      first_name: "Alex", id: 1,
+      last_name: 'Guo',
+      email: '',
+      phone: ''
+    }, {
+      first_name: "Alex1", id: 1,
+      last_name: 'Guo1',
+      email: '',
+      phone: ''
+    }];
     loader = TestbedHarnessEnvironment.loader(fixture);
     component.ngOnChanges();
     fixture.detectChanges();
@@ -57,8 +68,7 @@ describe('CalendarComponentComponent', () => {
       expect(weekButton).toBeTruthy();
     })
 
-    
+
   })
 
-  // select harness can not be aquired due to the daypilot, it times out the test
 });

@@ -149,12 +149,21 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   }
 
   loadEvents(): void {
+    // Check if nav and nav.control exist before accessing them
+    if (!this.nav || !this.nav.control) {
+      return; // Exit early if nav or nav.control is undefined
+    }
+
     const from = this.nav.control.visibleStart();
     const to = this.nav.control.visibleEnd();
 
+    // Check if selectControl has a value before proceeding
+    if (!this.selectControl.value) {
+      return; // Exit early if no contractor is selected
+    }
+
     //load events from the booking model
-    console.log(this.selectControl.value);
-    this.calendarDataService.getEvents(from, to, this.selectControl.value!.id).subscribe({
+    this.calendarDataService.getEvents(from, to, this.selectControl.value.id).subscribe({
       next: (response) => {
         console.log(response);
         let allInfo: any = response

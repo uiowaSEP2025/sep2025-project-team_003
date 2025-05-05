@@ -36,7 +36,6 @@ describe('ViewInvoicePageComponent', () => {
         totalDiscount: '0.00',
         "grandtotal" : 'O.00'
       },
-      jobs: [0]
     }
 
     paramMapSubject = new Subject();

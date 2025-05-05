@@ -31,7 +31,7 @@ export interface DateRange {
   selector: 'app-edit-invoice-page',
   imports: [MatError, MatButtonModule, MatSelectModule,
     FormsModule, MatInputModule, MatFormFieldModule, MatCardModule,
-    InvoiceDatePickerComponent, ReactiveFormsModule],
+    InvoiceDatePickerComponent, ReactiveFormsModule, TableComponentComponent],
   templateUrl: './edit-invoice-page.component.html',
   providers: [],
   standalone: true,
@@ -139,16 +139,46 @@ export class EditInvoicePageComponent implements OnInit {
     });
   }
 
+  loadQuotesToTable(searchTerm: string, pageSize: number, offSet: number) {
+    this.quoteService.getQuotesByCustomer(this.customerId, { search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
+      next: (response) => {
+        this.quotes = response
+      },
+      error: (error) => {
+      }
+    })
+  }
+
+  setSelectedQuotes(quotes: number[]) {
+    this.selectedQuotes = [...quotes]
+    this.selectedQuotesIsError = this.selectedQuotes.length === 0 ? true : false
+  }
+
 
 
   onSubmit() {
     if (!this.taxAmount.valid) {
       return;
     }
-    if (this.isDateSelectVisible() && !this.datePicker.validate()) {
-      this.selectedQuotesIsError = false;
+
+    // Always validate the datePicker if it's visible
+    // Store the result for later use
+    let datePickerValid = true;
+    if (this.isDateSelectVisible()) {
+      datePickerValid = this.datePicker.validate();
+    }
+
+    // Check if quotes are selected
+    if (this.selectedQuotes.length === 0) {
+      this.selectedQuotesIsError = true;
       return false;
     }
+
+    // Return false if datePicker validation failed
+    if (!datePickerValid) {
+      return false;
+    }
+
     this.selectedQuotesIsError = false;
     if (this.initialStatus === 'issued' || this.initialStatus === 'paid') {
       this.openDialog()
