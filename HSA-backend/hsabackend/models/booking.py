@@ -41,7 +41,7 @@ class Booking(models.Model):
     @property
     def full_display_address(self):
         """Returns the displayable address"""
-        return f"#{self.job.requestor_address, self.job.requestor_city, self.job.requestor_state, self.job.requestor_zip}"
+        return f"{self.job.requestor_address}, {self.job.requestor_city}, {self.job.requestor_state}, {self.job.requestor_zip}"
 
 
     def __str__(self):

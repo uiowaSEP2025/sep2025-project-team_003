@@ -52,6 +52,7 @@ def get_ical_for_bookings(request):
         e.end = booking.end_time
         e.description = booking.job.description
         e.location = booking.full_display_address
+        print(booking.full_display_address)
         c.events.add(e)
     
     ical_file = BytesIO()
