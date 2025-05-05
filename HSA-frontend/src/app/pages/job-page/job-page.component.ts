@@ -48,7 +48,7 @@ export class JobPageComponent implements OnInit {
 
   onTabChange(event: MatTabChangeEvent) {
     this.selectedTab = (event.tab.textLabel as "Created" | "In Progress" | "Completed");
-
+    this.loadDataToTable(this.tabStates[this.selectedTab].search, this.tabStates[this.selectedTab].pagesize, this.tabStates[this.selectedTab].offset)
   }
 
   loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {

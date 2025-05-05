@@ -27,7 +27,7 @@
 
         </div>
       </mat-tab>
-      <mat-tab [label]="'Complete'">
+      <mat-tab [label]="'Completed'">
         <div class="large-box mat-elevation-z4">
           <app-table-component editRedirect="/jobs/edit" [fetchedData]="tabStates.Completed.data"
             [deleteRequest]="jobService.deleteJob.bind(jobService)" [loadDataToTable]="this.loadDataToTable.bind(this)"
