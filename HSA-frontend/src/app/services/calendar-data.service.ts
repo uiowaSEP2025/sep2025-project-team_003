@@ -45,6 +45,7 @@ export class BookingService {
 
   private apiGetUrl = `${environment.apiUrl}/api/get/bookings`;
   private apiCreateUrl = `${environment.apiUrl}/api/create/booking`;
+  private apiIcalUrl = `${environment.apiUrl}api/icals/booking`;
   private apiEditUrl = `${environment.apiUrl}/api/edit/booking`;
   private apiDeleteUrl = `${environment.apiUrl}/api/delete/booking`;
 
@@ -66,6 +67,8 @@ export class BookingService {
   public deleteEvent(data: BookingDeletePostData): Observable<StandardApiResponse> {
     return this.http.post<StandardApiResponse>(this.apiDeleteUrl + `/${data.id}`, data)
   }
+
+  public getIcal(from: DayPilot.Date, to:DayPilot.Date, contractorId: number) {}
 
   getColors(): any[] {
     const colors = [

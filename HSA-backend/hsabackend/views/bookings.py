@@ -2,7 +2,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.utils.dateparse import parse_datetime
+from io import BytesIO
 from ics import Calendar, Event
+from django.http import HttpResponse
 from django.utils import timezone
 from hsabackend.models.organization import Organization
 from hsabackend.models.booking import Booking
@@ -16,8 +18,52 @@ from hsabackend.utils.api_validators import parse_and_return_int
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
-def get_ical_for_bookings(): 
-    pass
+def get_ical_for_bookings(request): 
+    org = request.org
+    fromDateString = request.query_params.get('from', '')
+    toDateString = request.query_params.get('to', '')
+    contractor_id = request.query_params.get('contractor', '')
+
+    if not fromDateString or not toDateString:
+        return Response({"message": "missing a starting date or ending date"}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        fromDateTimeObject = timezone.make_aware(parse_datetime(fromDateString))
+        toDateTimeObject = timezone.make_aware(parse_datetime(toDateString))
+    except Exception:
+        return Response({"message": "Cannot parse date time"}, status=status.HTTP_400_BAD_REQUEST)
+
+    contractor_id = parse_and_return_int(contractor_id)
+
+    if not contractor_id:
+        return Response({"message": "Contractor id must be int"}, status=status.HTTP_400_BAD_REQUEST)
+
+    bookings = Booking.objects.filter(
+        organization=org.pk,
+        job__jobcontractor__contractor=contractor_id,
+        start_time__gte=fromDateTimeObject,
+        end_time__lte=toDateTimeObject
+    ).select_related('job').distinct()
+
+    c = Calendar()
+    for booking in bookings:
+        e = Event()
+        e.name = booking.event_name
+        e.begin = booking.start_time
+        e.end = booking.end_time
+        e.description = booking.job.description
+        e.location = booking.full_display_address
+        c.events.add(e)
+    
+    ical_file = BytesIO()
+    ical_file.write(c.to_ical())
+    ical_file.seek(0)  
+
+    response = HttpResponse(ical_file, content_type='text/calendar')
+    response['Content-Disposition'] = 'attachment; filename="bookings.ics"'
+    response['Content-Length'] = str(len(ical_file.getvalue()))
+    
+    return response
+
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()

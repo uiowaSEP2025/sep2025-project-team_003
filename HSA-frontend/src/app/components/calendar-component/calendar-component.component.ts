@@ -39,7 +39,7 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
 
   events: DayPilot.EventData[] = [];
   jobs: any[] = [];
-  date = DayPilot.Date.today();
+  date = DayPilot.Date.today(); 
   selectControl: FormControl<ContractorNameId | null> = new FormControl(null);
 
   clearAllEvents() {
@@ -66,11 +66,10 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   };
 
   changeDate(date: DayPilot.Date): void {
-    console.log(date)
     this.configDay.startDate = date;
     this.configWeek.startDate = date;
     this.clearAllEvents()
-    this.loadEvents(date)
+    this.loadEvents()
   }
 
   configDay: DayPilot.CalendarConfig = {
@@ -149,25 +148,26 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
             </div>`
   }
 
-  loadEvents(fromDate: DayPilot.Date = new DayPilot.Date().getDatePart()): void {
+  private getFromTo() {
+    let from: DayPilot.Date | undefined = undefined;
+    let to: DayPilot.Date | undefined = undefined
+    
+    const isDay = this.configDay.visible
+    if (isDay) {
+      from = this.date;
+      to = this.date.addHours(23).addMinutes(59).addSeconds(59);
+    }
+    else {
+      from = this.date.firstDayOfWeek()
+      to = from.addDays(6).addHours(23).addMinutes(59).addSeconds(59);
+    }
+    return [from,to]
+  } 
+
+  loadEvents(): void {
     if (this.nav) {
+      const [from,to] = this.getFromTo()
 
-      // nav is not init when the select change is bound
-
-      let from: DayPilot.Date | undefined = undefined;
-      let to: DayPilot.Date | undefined = undefined
-      
-      const isDay = this.configDay.visible
-      if (isDay) {
-        from = fromDate;
-        to = fromDate.addHours(23).addMinutes(59).addSeconds(59);
-      }
-      else {
-        from = fromDate.firstDayOfWeek()
-        to = from.addDays(6).addHours(23).addMinutes(59).addSeconds(59);
-      }
-      
-      console.log(from,to)
 
     //load events from booking model
     this.calendarDataService.getEvents(from, to, this.selectControl.value!.id).subscribe({
