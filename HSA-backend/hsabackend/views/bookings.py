@@ -43,7 +43,7 @@ def get_ical_for_bookings(request):
         start_time__gte=fromDateTimeObject,
         end_time__lte=toDateTimeObject
     ).select_related('job').distinct()
-    print(bookings)
+
     c = Calendar()
     for booking in bookings:
         e = Event()
@@ -155,6 +155,8 @@ def create_event(request):
     except Job.DoesNotExist:
         return Response({"errors": "Job not found"}, status=status.HTTP_400_BAD_REQUEST)
 
+    if job_object.job_status == "completed":
+        return Response({"message": "Job can't have status completed"}, status=status.HTTP_400_BAD_REQUEST)
     # Prepare event data
     event_data = {
         'event_name': request.data.get('eventName', ''),
