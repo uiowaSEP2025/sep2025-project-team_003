@@ -9,7 +9,6 @@ from django.contrib.auth.models import User
 from hsabackend.models.request import Request
 from hsabackend.models.job_service import JobService
 from hsabackend.models.job import Job
-from hsabackend.models.quote import Quote
 from hsabackend.models.discount_type import DiscountType
 from hsabackend.models.job_template import JobTemplate
 from hsabackend.models.subscription import Subscription
@@ -273,45 +272,7 @@ class Command(BaseCommand):
             discounts_1 = DiscountType.objects.filter(organization__pk=org1.pk)[:5]
             discounts = DiscountType.objects.filter(organization__pk=org.pk)[:5]
 
-            for i in range(5):
-                issuance_date = timezone.now().date()
-                due_date = issuance_date + timezone.timedelta(days=30)
-                status = 'created' if i % 2 == 0 else 'accepted'
-                material_subtotal = 1000.0 * (i + 1)
-                total_price = material_subtotal 
-                jobID = jobs_org_1[i]
-                
-
-                q = Quote.objects.create(
-                    issuance_date=issuance_date,
-                    due_date=due_date,
-                    status='accepted',
-                    material_subtotal=material_subtotal,
-                    total_price=total_price,
-                    jobID=jobID,
-                    discount_type = random.choice(discounts_1)
-                    )
-                q.save()
-
-                issuance_date = timezone.now().date()
-                due_date = issuance_date + timezone.timedelta(days=30)
-                status = 'created' if i % 2 == 0 else 'accepted'
-                material_subtotal = 1000.0 * (i + 1)
-                total_price = material_subtotal 
-                jobID = jobs_org[i]
-                
-
-                q = Quote.objects.create(
-                    issuance_date=issuance_date,
-                    due_date=due_date,
-                    status=status,
-                    material_subtotal=material_subtotal,
-                    total_price=total_price,
-                    jobID=jobID,
-                    discount_type = random.choice(discounts)
-                    )
-                q.save()
-
+            
             # create another job and tie a quote to it
             j = Job.objects.create(
                     job_status=random.choice(['completed']),
@@ -327,16 +288,6 @@ class Command(BaseCommand):
                 )
             j.save()
 
-            q = Quote.objects.create(
-                    issuance_date=issuance_date,
-                    due_date=due_date,
-                    status='accepted',
-                    material_subtotal=material_subtotal,
-                    total_price=total_price,
-                    jobID=j,
-                    discount_type = random.choice(discounts_1)
-                    )
-            q.save()
 
             jobs_for_invoice = Job.objects.filter(
                 customer=customers[1],

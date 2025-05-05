@@ -20,7 +20,6 @@ from hsabackend.models.organization import Organization
 from hsabackend.models.job import Job
 from hsabackend.models.job_service import JobService
 from hsabackend.models.job_material import JobMaterial
-from hsabackend.models.quote import Quote
 from hsabackend.utils.string_formatters import (
     format_title_case,
     format_phone_number_with_parens,

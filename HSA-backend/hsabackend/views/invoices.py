@@ -2,7 +2,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from hsabackend.models.customer import Customer 
-from hsabackend.models.quote import Quote
 from hsabackend.models.invoice import Invoice
 from hsabackend.models.organization import Organization
 from django.core.exceptions import ValidationError
@@ -69,15 +68,6 @@ def createInvoice(request):
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
     
-    Quote.objects.filter(
-        pk__in=quote_ids, 
-        jobID__organization=org,  # Ensure the quote's job is linked to the user's organization
-        invoice = None, # Ensure this quote does not belong to other invoice
-        status = "accepted",                # invoice must be accepted to bill
-        jobID__job_status= "completed",      # job must be done to bill 
-        jobID__customer= cust_qs[0]
-    ).update(invoice=invoice)
-
     return Response({"message": "Invoice created"}, status=status.HTTP_201_CREATED)
 
 
@@ -173,18 +163,7 @@ def updateInvoice(request, id):
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
-    Quote.objects.filter(
-        pk__in=quote_ids, 
-        jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
-        status = "accepted",                # quote must be accepted to bill
-        jobID__job_status= "completed",     # job must be done to bill 
-        jobID__customer=customer            # quote must for the customer on the invoice
-    ).update(invoice=id)
-
-    Quote.objects.exclude(pk__in=quote_ids).filter(
-        jobID__organization=org,  # Ensure the quote's job is linked to the user's organization
-        invoice=id # find all quotes linked to this invoice
-    ).update(invoice=None)
+    
     return Response({"message": "Invoice updated successfully"}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
@@ -216,28 +195,15 @@ def get_data_for_invoice(request, id):
 
     res_quotes = []
 
-    quotes = Quote.objects.filter(invoice=id)
-    aggregated_values = quotes.aggregate(
-        total_material_subtotal=Sum("material_subtotal"),
-        total_total_price=Sum("total_price"),
-    )
-    total_discnt = Decimal(0)
-
-    for quote in quotes:
-        total_discnt += quote.discount_type.discount_percent if quote.discount_type else Decimal(0)
-        res_quotes.append(quote.jsonToDisplayForInvoice())
-
-    total_discnt = total_discnt/len(quotes)
-    aggregated_subtotal = aggregated_values["total_total_price"] or 0
-
-    res["quotes"] = {
-        "quotes": res_quotes,
-        "totalMaterialSubtotal": str(aggregated_values["total_material_subtotal"] or 0),
-        "subtotal": str(aggregated_subtotal),
-        "taxPercent": str(invoice_qs[0].tax),
-        "totalDiscount": str(total_discnt), # this is agregated from the discounts, eg 0.3 (30%)
-        # total_discnt is like 30.05%, i know the casting is disgusting, sorry -alex
-        "grandtotal" : str((aggregated_subtotal * (Decimal(f"0.{str(100 - total_discnt).replace('.', '')}"))) * (1 + invoice_qs[0].tax))
-    }
+    
+    # res["quotes"] = {
+    #     "quotes": res_quotes,
+    #     "totalMaterialSubtotal": str(aggregated_values["total_material_subtotal"] or 0),
+    #     "subtotal": str(aggregated_subtotal),
+    #     "taxPercent": str(invoice_qs[0].tax),
+    #     "totalDiscount": str(total_discnt), # this is agregated from the discounts, eg 0.3 (30%)
+    #     # total_discnt is like 30.05%, i know the casting is disgusting, sorry -alex
+    #     "grandtotal" : str((aggregated_subtotal * (Decimal(f"0.{str(100 - total_discnt).replace('.', '')}"))) * (1 + invoice_qs[0].tax))
+    # }
 
     return Response(res, status=status.HTTP_200_OK)

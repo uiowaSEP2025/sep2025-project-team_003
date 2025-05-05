@@ -3,6 +3,7 @@ from hsabackend.models.organization import Organization
 from hsabackend.models.model_validators import isNonEmpty, validate_state
 from hsabackend.models.customer import Customer
 from hsabackend.utils.string_formatters import NA_on_empty_string, format_maybe_null_date
+from django.core.validators import MinValueValidator
 
 class Job(models.Model):
     """A request for service from a customer to an organization"""
@@ -22,7 +23,10 @@ class Job(models.Model):
     requestor_state = models.CharField(max_length=50, validators=[isNonEmpty, validate_state])
     requestor_zip = models.CharField(max_length=10, validators=[isNonEmpty])
     requestor_address = models.CharField(max_length=100, validators=[isNonEmpty])
-    
+    flat_fee = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    hourly_rate = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    minutes_worked = models.IntegerField(validators=[MinValueValidator(0)])
+
     quote_choices = [
         ('not-created-yet', 'not-created-yet'),
         ('created', 'created'),
