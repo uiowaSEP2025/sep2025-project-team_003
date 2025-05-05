@@ -12,7 +12,7 @@
       </form>
     }
     <div #tableContainer tabindex="-1" class="table-container">
-      @if (isDataNotAvailable) {
+      @if (isDataNotAvailable()) {
         <p class="empty-message">Nothing to show here</p>
       }
       @else {

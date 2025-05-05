@@ -76,10 +76,16 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   
   headersWithActions = [...this.headers, 'Actions']
   editRedirect = input.required<string>()
-  isDataNotAvailable: boolean = false
+  isDataNotAvailable = () => {
+    if (this.fetchedData === undefined || this.fetchedData === null || this.fetchedData.data === undefined || this.fetchedData.data === null || this.fetchedData.data.length === 0) {
+      return true;
+    }
+    return false;
+  }
 
   data = new MatTableDataSource(this.fetchedData ?? []);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  
 
   ngAfterViewInit() {
     if (this.dataSubscription) {
@@ -127,10 +133,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
         this.headersWithActions = [...this.headersWithActions, 'Unit Used', 'Price Per Unit']
       }
     }
-    console.log(this.fetchedData === undefined,this.fetchedData === null,this.fetchedData.data === undefined,this.fetchedData.data === null,this.fetchedData.data.length === 0 )
-    if (this.fetchedData === undefined || this.fetchedData === null || this.fetchedData.data === undefined || this.fetchedData.data === null || this.fetchedData.data.length === 0) {
-      this.isDataNotAvailable = true;
-    }
+    
   }
 
   redirectEdit(id: number, args: any) {
@@ -197,7 +200,6 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       this.fetchedData = changes["fetchedData"].currentValue;
       this.data = new MatTableDataSource(this.fetchedData.data ?? []);
       this.dataSize = this.fetchedData.totalCount
-      this.isDataNotAvailable = this.dataSize === 0 ? true : false
 
       if (this.fetchedData.data && this.fetchedData.data[0] !== undefined) {
         this.headers = Object.keys(this.fetchedData.data[0]);
