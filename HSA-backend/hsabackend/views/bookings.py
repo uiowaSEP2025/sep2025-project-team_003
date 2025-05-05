@@ -4,7 +4,8 @@ from rest_framework import status
 from django.utils.dateparse import parse_datetime
 from io import BytesIO
 from ics import Calendar, Event
-from django.http import HttpResponse
+from django.http import FileResponse
+
 from django.utils import timezone
 from hsabackend.models.organization import Organization
 from hsabackend.models.booking import Booking
@@ -56,13 +57,9 @@ def get_ical_for_bookings(request):
     
     ical_file = BytesIO()
     ical_file.write(c.to_ical())
-    ical_file.seek(0)  
+    ical_file.seek(0)
 
-    response = HttpResponse(ical_file, content_type='text/calendar')
-    response['Content-Disposition'] = 'attachment; filename="bookings.ics"'
-    response['Content-Length'] = str(len(ical_file.getvalue()))
-    
-    return response
+    return FileResponse(ical_file, as_attachment=True, filename="bookings.ics", content_type='text/calendar')
 
 
 @api_view(["GET"])

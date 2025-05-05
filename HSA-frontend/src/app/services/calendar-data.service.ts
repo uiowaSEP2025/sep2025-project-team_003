@@ -68,7 +68,10 @@ export class BookingService {
     return this.http.post<StandardApiResponse>(this.apiDeleteUrl + `/${data.id}`, data)
   }
 
-  public getIcal(from: DayPilot.Date, to:DayPilot.Date, contractorId: number) {}
+  public getIcal(from: DayPilot.Date, to:DayPilot.Date, contractorId: number) {
+    const url = `${this.apiIcalUrl}?from=${from}&to=${to}&contractor=${contractorId}`;
+    return this.http.get(url, { responseType: 'blob' as 'blob' });
+  }
 
   getColors(): any[] {
     const colors = [

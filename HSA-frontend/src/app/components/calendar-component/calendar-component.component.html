@@ -6,10 +6,10 @@
 	<div class="content">
 		<div class="flex flex-row justify-evenly">
 			<div class="buttons" data-testid="buttons">
-				<button (click)="viewDay()"
-					[class]="this.configNavigator.selectMode == 'Day' ? 'selected' : ''">Day</button>
+				<button  (click)="viewDay()"
+					[class]="this.configNavigator.selectMode == 'Day' ? 'selected button' : 'button'">Day</button>
 				<button (click)="viewWeek()"
-					[class]="this.configNavigator.selectMode == 'Week' ? 'selected' : ''">Week</button>
+					[class]="this.configNavigator.selectMode == 'Week' ? 'selected button' : 'button'">Week</button>
 			</div>
 	
 			<mat-form-field appearance="fill" class="ml-4">
@@ -20,6 +20,8 @@
 				  </mat-option>
 				</mat-select>
 			  </mat-form-field>
+
+			  <button (click)="downloadIcal()">Cancel</button>
 		</div>
 		<daypilot-calendar [config]="configDay" [events]="events" #day data-testid="cal"></daypilot-calendar>
 		<daypilot-calendar [config]="configWeek" [events]="events" #week data-testid="cal"></daypilot-calendar>

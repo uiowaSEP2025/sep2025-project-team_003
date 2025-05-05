@@ -14,6 +14,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ContractorNameId } from '../../services/contractor.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-calendar-component',
@@ -23,7 +24,8 @@ import { MatInputModule } from '@angular/material/input';
     CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatButtonModule
   ],
   providers: [
     BookingService,
@@ -42,6 +44,8 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   date = DayPilot.Date.today(); 
   selectControl: FormControl<ContractorNameId | null> = new FormControl(null);
 
+  isDay = () => (this.configDay.visible)
+
   clearAllEvents() {
     // DO NOT SET EVENTS TO [] TO CLEAR EVENTS. THAT DOES NOTHING!
     //USE THIS INSTEAD!
@@ -54,6 +58,22 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
       this.week.control.events.list = [];
       this.week.control.update();
     }
+  }
+
+  downloadIcal() {
+    const [from, to] = this.getFromTo()
+
+    this.calendarDataService.getIcal(from, to, this.selectControl.value?.id!).subscribe(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'bookings.ics';
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    });
   }
 
   configNavigator: DayPilot.NavigatorConfig = {
@@ -152,8 +172,8 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
     let from: DayPilot.Date | undefined = undefined;
     let to: DayPilot.Date | undefined = undefined
     
-    const isDay = this.configDay.visible
-    if (isDay) {
+    
+    if (this.isDay()) {
       from = this.date;
       to = this.date.addHours(23).addMinutes(59).addSeconds(59);
     }
@@ -167,7 +187,6 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   loadEvents(): void {
     if (this.nav) {
       const [from,to] = this.getFromTo()
-
 
     //load events from booking model
     this.calendarDataService.getEvents(from, to, this.selectControl.value!.id).subscribe({
