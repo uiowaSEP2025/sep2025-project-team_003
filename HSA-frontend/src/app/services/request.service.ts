@@ -35,7 +35,7 @@ export class RequestService {
 
   constructor(private http: HttpClient) {}
 
-  public getFilteredRequest(params?: RequestFilteredParams): Observable<StandardApiResponse> {
+  public getFilteredRequest(params?: RequestFilteredParams): Observable<TableApiResponse<any>> {
     let httpParams = new HttpParams();
 
     // Add query parameters
@@ -55,7 +55,7 @@ export class RequestService {
       });
     }
 
-    return this.http.get<StandardApiResponse>(this.apiGetFilteredUrl, { params: httpParams });
+    return this.http.get<TableApiResponse<any>>(this.apiGetFilteredUrl, { params: httpParams });
   }
   
    public getExcludedRequest(params?: RequestParams): Observable<TableApiResponse<Request>> {
