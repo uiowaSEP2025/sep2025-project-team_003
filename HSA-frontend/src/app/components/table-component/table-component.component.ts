@@ -127,8 +127,8 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
         this.headersWithActions = [...this.headersWithActions, 'Unit Used', 'Price Per Unit']
       }
     }
-  
-    if (this.fetchedData === undefined || this.fetchedData === null || this.fetchedData.data === undefined || this.fetchedData.data === null || this.fetchedData.data.length === 0 ) {
+    console.log(this.fetchedData === undefined,this.fetchedData === null,this.fetchedData.data === undefined,this.fetchedData.data === null,this.fetchedData.data.length === 0 )
+    if (this.fetchedData === undefined || this.fetchedData === null || this.fetchedData.data === undefined || this.fetchedData.data === null || this.fetchedData.data.length === 0) {
       this.isDataNotAvailable = true;
     }
   }
