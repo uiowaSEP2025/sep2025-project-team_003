@@ -52,6 +52,7 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
     // DO NOT SET EVENTS TO [] TO CLEAR EVENTS. THAT DOES NOTHING!
     //USE THIS INSTEAD!
     console.log(this.day, this.day && this.day.control)
+    this.events = []
     if (this.day && this.day.control) {
       this.day.control.events.list = [];
       this.day.control.update();
