@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.utils.dateparse import parse_datetime
+from ics import Calendar, Event
 from django.utils import timezone
 from hsabackend.models.organization import Organization
 from hsabackend.models.booking import Booking
@@ -13,6 +14,10 @@ from hsabackend.serializers.booking_serializer import BookingSerializer
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 from hsabackend.utils.api_validators import parse_and_return_int
 
+@api_view(["GET"])
+@check_authenticated_and_onboarded()
+def get_ical_for_bookings(): 
+    pass
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
