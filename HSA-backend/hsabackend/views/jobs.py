@@ -105,7 +105,6 @@ def get_job_table_data(request):
         Q(customer__last_name__icontains=search) |
         Q(start_date__icontains=search) |
         Q(end_date__icontains=search) |
-        Q(job_status__icontains=search) |
         Q(description__icontains=search)
     )[offset:offset + pagesize]
 
@@ -113,7 +112,7 @@ def get_job_table_data(request):
     for job in jobs:
         data.append(job.json_simplify())
 
-    count = Job.objects.filter(organization=org.pk).filter(
+    count = Job.objects.filter(organization=org.pk, job_status=status_query).filter(
         Q(customer__first_name__icontains=search) |
         Q(customer__last_name__icontains=search) |
         Q(start_date__icontains=search) |

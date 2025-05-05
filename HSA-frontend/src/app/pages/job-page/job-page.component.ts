@@ -61,6 +61,7 @@ export class JobPageComponent implements OnInit {
     const statusQuery: "created" | "in-progress" | "completed" = tabToApiMap[this.selectedTab] as "created" | "in-progress" | "completed";;
     this.jobService.getJob(statusQuery, { search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
       next: (response) => {
+        console.log(response)
         switch (this.selectedTab) {
           case "Created":
             this.tabStates["Created"].data = response
