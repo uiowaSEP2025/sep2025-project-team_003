@@ -66,10 +66,11 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   };
 
   changeDate(date: DayPilot.Date): void {
+    console.log(date)
     this.configDay.startDate = date;
     this.configWeek.startDate = date;
     this.clearAllEvents()
-    this.loadEvents()
+    this.loadEvents(date)
   }
 
   configDay: DayPilot.CalendarConfig = {
@@ -148,12 +149,25 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
             </div>`
   }
 
-  loadEvents(): void {
+  loadEvents(fromDate: DayPilot.Date = new DayPilot.Date().getDatePart()): void {
     if (this.nav) {
-      console.log(this.nav.control.visibleStart())
+
       // nav is not init when the select change is bound
-      const from = this.nav.control.visibleStart();
-      const to = this.nav.control.visibleEnd();
+
+      let from: DayPilot.Date | undefined = undefined;
+      let to: DayPilot.Date | undefined = undefined
+      
+      const isDay = this.configDay.visible
+      if (isDay) {
+        from = fromDate;
+        to = fromDate.addHours(23).addMinutes(59).addSeconds(59);
+      }
+      else {
+        from = fromDate.firstDayOfWeek()
+        to = from.addDays(6).addHours(23).addMinutes(59).addSeconds(59);
+      }
+      
+      console.log(from,to)
 
     //load events from booking model
     this.calendarDataService.getEvents(from, to, this.selectControl.value!.id).subscribe({
