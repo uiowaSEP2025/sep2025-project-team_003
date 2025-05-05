@@ -18,6 +18,8 @@ from hsabackend.utils.pdf_helpers import generate_pdf_customer_org_header, gener
 def generate_quote_pdf(request, job_id):
     return generate_pdf(request, job_id, "quote")
 
+def generate_quote_pdf_as_base64(request, job_id):
+    return generate_pdf(request, job_id, "quote_64")
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
@@ -71,3 +73,7 @@ def send_quote_pdf_to_customer_email(request, job_id):
         {"message": f"Quote PDF sent to {to_email}"},
         status=status.HTTP_200_OK
     )
+
+
+def sign_the_quote(request, job_id):
+    print("TBD")

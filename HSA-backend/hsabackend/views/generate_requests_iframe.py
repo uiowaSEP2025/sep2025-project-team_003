@@ -20,7 +20,7 @@ def get_url():
 
 @xframe_options_exempt
 @api_view(["GET"])
-def getHTMLForm(request, id):
+def get_html_form(request, id):
     org = get_object_or_404(Organization, pk=id)
     services    = Service.objects.filter(organization=org)
     contractors = Contractor.objects.filter(organization=org)

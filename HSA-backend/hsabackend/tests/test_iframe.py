@@ -6,7 +6,7 @@ from django.http import HttpResponse, Http404
 from rest_framework.test import APIRequestFactory
 from unittest.mock import patch, MagicMock
 
-from hsabackend.views.generate_requests_iframe import getHTMLForm, get_url
+from hsabackend.views.generate_requests_iframe import get_html_form, get_url
 from hsabackend.models.organization import Organization
 
 
@@ -56,7 +56,7 @@ class GenerateRequestsIframeViewTests(TestCase):
         mock_render.return_value = fake_resp
 
         request = self.factory.get('/api/request/genhtml/42')
-        response = getHTMLForm(request, 42)
+        response = get_html_form(request, 42)
 
         mock_get_404.assert_called_once_with(Organization, pk=42)
         mock_service_filter.assert_called_once_with(organization=org)

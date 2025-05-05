@@ -236,11 +236,16 @@ def generate_signature_page(pdf: FPDF):
 def generate_pdf(request, job_id, type_enum="invoice"):
     org = request.organization
 
-    if type_enum == "quote":
+    if type_enum == "quote" or type_enum == "quote_64":
         object_select = Job.objects.select_related("customer").filter(
         customer__organization=org.pk,
         pk=job_id
     )
+
+
+    if type_enum == "quote_64":
+        provided_pin = str(request.data.get('pin'))
+
     else:
         invoice = Invoice.objects.get(pk=job_id)
         object_select = Job.objects.select_related("invoice").filter(

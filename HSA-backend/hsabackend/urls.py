@@ -7,15 +7,6 @@ from django.urls import path, re_path, include
 
 import hsabackend.views.index as hview
 from hsabackend.views.bookings import create_event, delete_event, edit_event, get_booking_data
-from hsabackend.views.contractors import get_contractor_excluded_table_data, get_contractor_table_data, \
-    create_contractor, edit_contractor, delete_contractor, get_all_contractors_for_org
-from hsabackend.views.customers import get_customer_excluded_table_data, get_customer_table_data, create_customer, \
-    edit_customer, delete_customer
-from hsabackend.views.discounts import get_discounts, edit_discount, create_discount, delete_discount
-from hsabackend.views.generate_invoice_pdf_view import generate_invoice_pdf
-from hsabackend.views.generate_quote_pdf_view import generate_quote_pdf, send_quote_pdf_to_customer_email
-from hsabackend.views.user_auth import login_view, logout_view, user_create, user_exist
-from hsabackend.views.customers import get_customer_excluded_table_data, get_customer_table_data, create_customer, edit_customer, delete_customer
 from hsabackend.views.contractors import (
     get_contractor_excluded_table_data,
     get_contractor_table_data,
@@ -24,31 +15,13 @@ from hsabackend.views.contractors import (
     delete_contractor,
     get_all_contractors_for_org,
 )
-
-from hsabackend.views.requests import (
-    get_filtered_request_data,
-    get_individual_request_data,
-    get_org_request_data,
-    delete_request,
-    approve_request,
-    create_request,
-)
-from hsabackend.views.services import get_service_table_data, get_service_excluded_table_data, create_service, edit_service, delete_service
-from hsabackend.views.materials import get_material_excluded_table_data, get_material_table_data, create_material, edit_material, delete_material
-from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice, get_data_for_invoice
-from hsabackend.views.jobs import get_job_excluded_table_data, get_job_table_data, get_job_individual_data, create_job, edit_job, delete_job, get_jobs_by_contractor
-from hsabackend.views.jobs_services import get_job_service_table_data, create_job_service, delete_job_service, delete_cached_job_service
-from hsabackend.views.jobs_materials import get_job_material_table_data, create_job_material, delete_job_material, delete_cached_job_material
-from hsabackend.views.jobs_contractors import get_job_contractor_table_data, create_job_contractor, delete_job_contractor, delete_cached_job_contractor
-from hsabackend.views.job_templates import get_job_template_table_data, get_job_template_individual_data, create_job_template, edit_job_template, delete_job_template
-from hsabackend.views.job_templates_services import get_job_template_service_table_data, create_job_template_service, delete_job_template_service, delete_cached_job_template_service
-from hsabackend.views.job_templates_materials import get_job_template_material_table_data, create_job_template_material, delete_job_template_material, delete_cached_job_template_material
-from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice
-from hsabackend.views.quotes import getQuotesForInvoiceByCustomer, getQuotesForInvoiceByInvoice
-from hsabackend.views.generate_invoice_pdf_view import generate_pdf
-from hsabackend.views.generate_quote_pdf_view import generate_quote_pdf, send_quote_pdf_to_customer_email, generate_quote_pdf_as_base64, sign_the_quote, get_list_of_quotes_by_org, retrieve_quote, accept_reject_quote
-from hsabackend.views.organizations import complete_onboarding, createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail
-from hsabackend.views.generate_requests_iframe import getHTMLForm
+from hsabackend.views.customers import get_customer_excluded_table_data, get_customer_table_data, create_customer, \
+    edit_customer, delete_customer
+from hsabackend.views.discounts import get_discounts, edit_discount, create_discount, delete_discount
+from hsabackend.views.generate_invoice_pdf_view import generate_invoice_pdf
+from hsabackend.views.generate_quote_pdf_view import generate_quote_pdf, send_quote_pdf_to_customer_email, \
+    generate_quote_pdf_as_base64, sign_the_quote
+from hsabackend.views.generate_requests_iframe import get_html_form
 from hsabackend.views.invoices import create_invoice, get_invoices, delete_invoice, update_invoice, \
     get_data_for_invoice, get_invoice, get_quotes_for_invoice_by_customer
 from hsabackend.views.job_templates import get_job_template_table_data, get_job_template_individual_data, \
@@ -107,7 +80,7 @@ urlpatterns = [
     path("api/delete/request/<int:request_id>", delete_request, name='delete_request'),
     path("api/create/request/<int:request_id>", create_request, name='create_request'),
     path("api/approve/request/<int:request_id>", approve_request, name='approve_request'),
-    path("api/request/genhtml/<int:request_id>", getHTMLForm),
+    path("api/request/genhtml/<int:request_id>", get_html_form, name='get_html_form'),
 
     # service
     path("api/get/services", get_service_table_data, name='get_service_table_data'),
@@ -135,8 +108,8 @@ urlpatterns = [
     path("api/generate/quote/<int:job_id>", generate_quote_pdf, name='generate_quote_pdf'),
     path("api/get/quotesforinvoice/customer/<int:customer_id>", get_quotes_for_invoice_by_customer, name="get_quotes_for_invoice_by_customer"),
     path("api/send/quote/<int:job_id>", send_quote_pdf_to_customer_email, name='send_quote_pdf_to_customer_email'),
-    path('api/ret/quote/<int:id>', generate_quote_pdf_as_base64),
-    path('api/quote/sign/<int:id>', sign_the_quote),
+    path('api/ret/quote/<int:job_id>', generate_quote_pdf_as_base64, name='generate_quote_pdf_as_base64'),
+    path('api/quote/sign/<int:job_id>', sign_the_quote, name='sign_the_quote'),
 
     # job_templates
     path("api/get/jobtemplates", get_job_template_table_data, name='get_job_template_table_data'),
@@ -173,12 +146,9 @@ urlpatterns = [
     path("api/edit/organization/onboarding", complete_onboarding, name='complete_onboarding'),
 
     # quotes
-    path("api/get/quotesforinvoice/customer/<int:id>", getQuotesForInvoiceByCustomer),
-    path("api/get/quotesforinvoice/invoice/<int:id>", getQuotesForInvoiceByInvoice),
-    path("api/send/quote/<int:id>", send_quote_pdf_to_customer_email),
-    path("api/manage/quote/<int:id>", accept_reject_quote),
-    path('api/get/quotes', get_list_of_quotes_by_org),
-    path("api/render/quote/<int:id>", retrieve_quote),
+    path("api/get/quotesforinvoice/customer/<int:id>", get_quotes_for_invoice_by_customer, name="get_quotes_for_invoice_by_customer"),
+    path("api/send/quote/<int:id>", send_quote_pdf_to_customer_email, name="send_quote_pdf_to_customer_email"),
+
 
     # discounts
     path("api/get/discounts", get_discounts, name='get_discounts'),
