@@ -111,17 +111,13 @@ def get_individual_request_data(request, id):
 @check_authenticated_and_onboarded()
 def get_filtered_request_data(request):
     org = request.org
-    reqStatus = request.query_params.get('status', '')
-
-    if reqStatus == None:
+    reqStatus = request.query_params.get('status', None)
+    if reqStatus == None or reqStatus not in ["received", "approved"]:
         return Response({"message": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
     
-    if reqStatus == 'none':
-        requests = Request.objects.filter(organization=org.pk)
-        count = Request.objects.filter(organization=org.pk).count()
     else:
-        requests = Request.objects.filter(organization=org.pk).filter(Q(status__icontains=reqStatus))
-        count = Request.objects.filter(organization=org.pk).filter(Q(status__icontains=reqStatus)).count()
+        requests = Request.objects.filter(organization=org.pk).filter(Q(request_status__icontains=reqStatus))
+        count = Request.objects.filter(organization=org.pk).filter(Q(request_status__icontains=reqStatus)).count()
     
     data = []
     for req in requests:
@@ -155,27 +151,25 @@ def approve_request(request, id):
         with transaction.atomic():
             # Find the request
             req = Request.objects.get(pk=id, organization=org)
-            
-            req.status = 'approved'
+            req.request_status = 'approved'
             req.full_clean()
             req.save()
-
+            
             new_cust = Customer(
-                first_name = req.requestor_first_name,
-                last_name = req.requestor_last_name,
-                email = req.requestor_email,
-                phone_no = req.requestor_phone_no,
+                first_name = req.requester_first_name,
+                last_name = req.requester_last_name,
+                email = req.requester_email,
+                phone_no = req.requester_phone,
                 notes = "",
                 organization = org
             )
             new_cust.full_clean()
             new_cust.save()
-
             new_job = Job(
-                requestor_city = req.requestor_city,
-                requestor_state = req.requestor_state,
-                requestor_zip = req.requestor_zip,
-                requestor_address = req.requestor_address,
+                requestor_city = req.requester_city,
+                requestor_state = req.requester_state,
+                requestor_zip = req.requester_zip,
+                requestor_address = req.requester_address,
                 description = "",
                 customer = new_cust,
                 organization = org,
@@ -184,5 +178,7 @@ def approve_request(request, id):
             new_job.save()
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"errors": e}, status=status.HTTP_400_BAD_REQUEST)
     
     return Response({"message": "Request approved successfully", "data": new_job.json()}, status=status.HTTP_200_OK)

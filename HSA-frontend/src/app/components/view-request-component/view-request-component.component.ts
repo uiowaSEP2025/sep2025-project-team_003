@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { RequestData } from '../../interfaces/api-responses/request.api.interface';
 import { RequestService } from '../../services/request.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { LoadingFallbackComponent } from '../loading-fallback/loading-fallback.component';
 import { CommonModule } from '@angular/common';
@@ -49,6 +49,7 @@ export class ViewRequestComponentComponent {
     this.requestService.getSpecificRequestData(this.requestID).subscribe(
       {next: (response) => {
         this.requestData = response
+        console.log(response)
       },
       error: (error) => {
       }}
@@ -79,10 +80,6 @@ export class ViewRequestComponentComponent {
       })
     }
 
-  onRedirectToBooking() {
-    this.dialogRef.close(false);
-    this.navigateToPage('booking');
-  }
 
   navigateToPage(pagePath: string) {
     this.router.navigate([`/${pagePath}`]);
