@@ -68,6 +68,8 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   changeDate(date: DayPilot.Date): void {
     this.configDay.startDate = date;
     this.configWeek.startDate = date;
+    this.clearAllEvents()
+    this.loadEvents()
   }
 
   configDay: DayPilot.CalendarConfig = {
@@ -148,6 +150,7 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
 
   loadEvents(): void {
     if (this.nav) {
+      console.log(this.nav.control.visibleStart())
       // nav is not init when the select change is bound
       const from = this.nav.control.visibleStart();
       const to = this.nav.control.visibleEnd();
