@@ -27,8 +27,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class CreateTemplateConfirmDialogComponentComponent {
   jobTemplateData: JobTemplateDataInterface | null = null;
   jobTemplateForm: FormGroup;
-  currentDescription: string = ""
-
   constructor(
     public dialogRef: MatDialogRef<CreateTemplateConfirmDialogComponentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,

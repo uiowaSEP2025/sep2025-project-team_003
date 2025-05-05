@@ -6,15 +6,15 @@
   <mat-dialog-content>Description: {{ jobTemplateData.data.description }}</mat-dialog-content>
   <div style="padding: 20px;" class="dialog-scroll-wrapper">
     <app-job-display-table
-      [dataSource]="jobTemplateData.services"
+      [dataSource]="jobTemplateData"
       [typeToDisplay]="'service'"
     ></app-job-display-table>
     <app-job-display-table
-      [dataSource]="jobTemplateData.materials"
+      [dataSource]="jobTemplateData"
       [typeToDisplay]="'material'"
     ></app-job-display-table>
   </div>
-  
+
   <mat-dialog-actions>
     <button mat-stroked-button (click)="onCancel()">Cancel</button>
     <button mat-flat-button type="submit" (click)="onConfirm()">Confirm</button>
