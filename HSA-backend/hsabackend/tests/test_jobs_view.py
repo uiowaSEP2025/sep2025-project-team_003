@@ -362,7 +362,7 @@ class TestGetJobTable(APITestCase):
         response = get_job_table_data(request)
         
         assert response.status_code == status.HTTP_200_OK
-        filter.assert_called_with(organization=1)
+        filter.assert_called_with(organization=1, job_status='completed')
 
 class CreateJobTest(APITestCase):
     def test_create_job_unauth(self):
