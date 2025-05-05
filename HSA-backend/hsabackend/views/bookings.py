@@ -5,7 +5,6 @@ from django.utils.dateparse import parse_datetime
 from io import BytesIO
 from ics import Calendar, Event
 from django.http import FileResponse
-
 from django.utils import timezone
 from hsabackend.models.organization import Organization
 from hsabackend.models.booking import Booking
@@ -56,7 +55,7 @@ def get_ical_for_bookings(request):
         c.events.add(e)
     
     ical_file = BytesIO()
-    ical_file.write(c.to_ical())
+    ical_file.write(str(c).encode('utf-8'))
     ical_file.seek(0)
 
     return FileResponse(ical_file, as_attachment=True, filename="bookings.ics", content_type='text/calendar')

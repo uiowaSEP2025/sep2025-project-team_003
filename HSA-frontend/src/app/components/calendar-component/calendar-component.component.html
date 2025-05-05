@@ -21,7 +21,9 @@
 				</mat-select>
 			  </mat-form-field>
 
-			  <button (click)="downloadIcal()">Cancel</button>
+			  <button mat-stroked-button (click)="downloadIcal()">
+				<mat-icon>file_download</mat-icon>
+				{{ isDay() ? "Download all bookings for the day" : "Download all bookings for the week"}}</button>
 		</div>
 		<daypilot-calendar [config]="configDay" [events]="events" #day data-testid="cal"></daypilot-calendar>
 		<daypilot-calendar [config]="configWeek" [events]="events" #week data-testid="cal"></daypilot-calendar>

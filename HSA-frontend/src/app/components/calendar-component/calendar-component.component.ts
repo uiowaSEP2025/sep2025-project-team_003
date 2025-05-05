@@ -15,6 +15,7 @@ import { ContractorNameId } from '../../services/contractor.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-calendar-component',
@@ -25,7 +26,8 @@ import { MatButtonModule } from '@angular/material/button';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [
     BookingService,
@@ -62,7 +64,6 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
 
   downloadIcal() {
     const [from, to] = this.getFromTo()
-
     this.calendarDataService.getIcal(from, to, this.selectControl.value?.id!).subscribe(blob => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');

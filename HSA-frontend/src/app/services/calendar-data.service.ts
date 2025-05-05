@@ -45,7 +45,7 @@ export class BookingService {
 
   private apiGetUrl = `${environment.apiUrl}/api/get/bookings`;
   private apiCreateUrl = `${environment.apiUrl}/api/create/booking`;
-  private apiIcalUrl = `${environment.apiUrl}api/icals/booking`;
+  private apiIcalUrl = `${environment.apiUrl}/api/icals/booking`;
   private apiEditUrl = `${environment.apiUrl}/api/edit/booking`;
   private apiDeleteUrl = `${environment.apiUrl}/api/delete/booking`;
 
