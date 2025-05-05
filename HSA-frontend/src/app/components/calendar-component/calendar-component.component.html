@@ -7,9 +7,9 @@
 		<div class="flex flex-row justify-evenly">
 			<div class="buttons" data-testid="buttons">
 				<button  (click)="viewDay()"
-					[class]="this.configNavigator.selectMode == 'Day' ? 'selected button' : 'button'">Day</button>
+					[class]="isDay() ? 'selected button' : 'button'">Day</button>
 				<button (click)="viewWeek()"
-					[class]="this.configNavigator.selectMode == 'Week' ? 'selected button' : 'button'">Week</button>
+					[class]="!isDay() ? 'selected button' : 'button'">Week</button>
 			</div>
 	
 			<mat-form-field appearance="fill" class="ml-4">

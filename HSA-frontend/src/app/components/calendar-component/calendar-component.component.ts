@@ -17,6 +17,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
+
 @Component({
   selector: 'app-calendar-component',
   imports: [
@@ -43,27 +44,24 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
 
   events: DayPilot.EventData[] = [];
   jobs: any[] = [];
-  date = DayPilot.Date.today(); 
+  date = DayPilot.Date.today();
   selectControl: FormControl<ContractorNameId | null> = new FormControl(null);
+  isDay = () => (this.configNavigator.selectMode = "Day")
 
-  isDay = () => (this.configDay.visible)
+  private getFromTo() {
+    let from: DayPilot.Date | undefined = undefined;
+    let to: DayPilot.Date | undefined = undefined
 
-  clearAllEvents() {
-    // DO NOT SET EVENTS TO [] TO CLEAR EVENTS. THAT DOES NOTHING!
-    //USE THIS INSTEAD!
-    console.log(this.day, this.day && this.day.control)
-    this.events = []
-    if (this.day && this.day.control) {
-      this.day.control.events.list = [];
-      this.day.control.update();
-      return;
+
+    if (this.isDay()) {
+      from = this.date;
+      to = this.date.addHours(23).addMinutes(59).addSeconds(59);
     }
-    else if (this.week && this.week.control) {
-      this.week.control.events.list = [];
-      this.week.control.update();
-      return;
+    else {
+      from = this.date.firstDayOfWeek()
+      to = from.addDays(6).addHours(23).addMinutes(59).addSeconds(59);
     }
-    console.log('fell')
+    return [from, to]
   }
 
   downloadIcal() {
@@ -81,20 +79,33 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
     });
   }
 
+  clearAllEvents() {
+    // DO NOT SET EVENTS TO [] TO CLEAR EVENTS. THAT DOES NOTHING!
+    //USE THIS INSTEAD!
+    this.events = [];
+    if (this.day && this.day.control) {
+      this.day.control.events.list = [];
+      this.day.control.update();
+    }
+    if (this.week && this.week.control) {
+      this.week.control.events.list = [];
+      this.week.control.update();
+    }
+  }
+
   configNavigator: DayPilot.NavigatorConfig = {
     showMonths: 3,
     cellWidth: 25,
     cellHeight: 25,
     onVisibleRangeChanged: args => {
 
+      // this.loadEvents();
     }
   };
 
   changeDate(date: DayPilot.Date): void {
     this.configDay.startDate = date;
     this.configWeek.startDate = date;
-    this.clearAllEvents()
-    this.loadEvents()
   }
 
   configDay: DayPilot.CalendarConfig = {
@@ -173,61 +184,47 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
             </div>`
   }
 
-  private getFromTo() {
-    let from: DayPilot.Date | undefined = undefined;
-    let to: DayPilot.Date | undefined = undefined
-    
-    
-    if (this.isDay()) {
-      from = this.date;
-      to = this.date.addHours(23).addMinutes(59).addSeconds(59);
-    }
-    else {
-      from = this.date.firstDayOfWeek()
-      to = from.addDays(6).addHours(23).addMinutes(59).addSeconds(59);
-    }
-    return [from,to]
-  } 
-
   loadEvents(): void {
     if (this.nav) {
-      const [from,to] = this.getFromTo()
+      // nav is not init when the select change is bound
+      const from = this.nav.control.visibleStart();
+      const to = this.nav.control.visibleEnd();
 
-    //load events from booking model
-    this.calendarDataService.getEvents(from, to, this.selectControl.value!.id).subscribe({
-      next: (response) => {
-        let allInfo: any = response
-        let eventsInfo: any = allInfo["event_data"]
-        let jobsInfo: any = allInfo["job_data"]
-        if (eventsInfo.length !== 0) {
-          eventsInfo.forEach((element: any) => {
-            let eventFormat = new DayPilot.Event({
-              id: element.id,
-              text: element["event_name"],
-              start: new DayPilot.Date(element["start_time"], true),
-              end: new DayPilot.Date(element["end_time"], true),
-              tags: {
-                jobID: element["job"],
-                bookingType: element["booking_type"],
-                status: element["status"]
-              },
-              backColor: element["back_color"]
+      //load events from booking model
+      this.calendarDataService.getEvents(from, to, this.selectControl.value!.id).subscribe({
+        next: (response) => {
+          let allInfo: any = response
+          let eventsInfo: any = allInfo["event_data"]
+          let jobsInfo: any = allInfo["job_data"]
+          if (eventsInfo.length !== 0) {
+            eventsInfo.forEach((element: any) => {
+              let eventFormat = new DayPilot.Event({
+                id: element.id,
+                text: element["event_name"],
+                start: new DayPilot.Date(element["start_time"], true),
+                end: new DayPilot.Date(element["end_time"], true),
+                tags: {
+                  jobID: element["job"],
+                  bookingType: element["booking_type"],
+                  status: element["status"]
+                },
+                backColor: element["back_color"]
+              });
+
+              this.events.push(eventFormat.data)
             });
+          }
 
-            this.events.push(eventFormat.data)
-          });
+          if (jobsInfo.length !== 0) {
+            jobsInfo.forEach((element: any, index: number) => {
+              this.jobs.push(element)
+              let endDate = element.data.endDate.split("-").slice(1).join("/");
+              this.events[index].html = this.eventHTML(this.events[index].text, endDate, element.data.customerName, this.events[index].tags.bookingType)
+              this.events[index].tags.jobDescription = element.data.description
+            });
+          }
         }
-
-        if (jobsInfo.length !== 0) {
-          jobsInfo.forEach((element: any, index: number) => {
-            this.jobs.push(element)
-            let endDate = element.data.endDate.split("-").slice(1).join("/");
-            this.events[index].html = this.eventHTML(this.events[index].text, endDate, element.data.customerName, this.events[index].tags.bookingType)
-            this.events[index].tags.jobDescription = element.data.description
-          });
-        }
-      }
-    });
+      });
     }
 
   }
@@ -236,16 +233,12 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
     this.configNavigator.selectMode = "Day";
     this.configDay.visible = true;
     this.configWeek.visible = false;
-    this.clearAllEvents()
-    this.loadEvents()
   }
 
   viewWeek(): void {
     this.configNavigator.selectMode = "Week";
     this.configDay.visible = false;
     this.configWeek.visible = true;
-    this.clearAllEvents()
-    this.loadEvents()
   }
 
   onBeforeEventRender(args: any) {
@@ -299,6 +292,8 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
             width: '425px',
             data: messageData
           });
+
+
 
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
