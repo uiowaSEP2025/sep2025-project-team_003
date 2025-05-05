@@ -221,7 +221,7 @@ class TestGetFiltered(APITestCase):
         org.return_value = organization
 
         factory = APIRequestFactory()
-        request = factory.get('api/get/requests/filter?status=approved')
+        request = factory.get('api/get/requests/filter?status=approved&pagesize=10&offset=10')
         request.user = mock_user  
         request.org = organization
 

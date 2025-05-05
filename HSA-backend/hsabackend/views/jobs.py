@@ -44,7 +44,7 @@ def get_jobs_by_contractor(request):
         Q(end_date__icontains=search) |
         Q(job_status__icontains=search) |
         Q(description__icontains=search)
-    ).exclude(job_status="completed").distinct()
+    ).exclude(job_status="completed").distinct()[offset:offset + pagesize]
 
     jres = []
 
@@ -102,7 +102,7 @@ def get_job_table_data(request):
         Q(end_date__icontains=search) |
         Q(job_status__icontains=search) |
         Q(description__icontains=search)
-    )[offset:offset + pagesize] if search else Job.objects.filter(organization=org.pk)[offset:offset + pagesize]
+    )[offset:offset + pagesize]
 
     data = []
     for job in jobs:
