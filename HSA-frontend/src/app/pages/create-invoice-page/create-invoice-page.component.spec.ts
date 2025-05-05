@@ -59,7 +59,7 @@ describe('CreateInvoicePageComponent', () => {
     const compiled = fixture.debugElement.nativeElement;
     component.selectedCustomers = [1]
     fixture.detectChanges()
-    expect(compiled.querySelectorAll('table').length).toEqual(2)
+    expect(compiled.querySelectorAll('div[data-testid="app-table"]').length).toEqual(2)
   })
 
   it('should display date picker when status is not created', async () => {
@@ -104,7 +104,7 @@ describe('CreateInvoicePageComponent', () => {
     const compiled = fixture.debugElement.nativeElement;
     component.selectedCustomers = [1]
     fixture.detectChanges()
-    expect(compiled.querySelectorAll('table').length).toEqual(2)
+    expect(compiled.querySelectorAll('div[data-testid="app-table"]').length).toEqual(2)
 
     const filteredButtons = await Promise.all(
       (await loader.getAllHarnesses(MatButtonHarness)).map(async (button) => {

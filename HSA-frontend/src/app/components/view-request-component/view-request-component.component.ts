@@ -49,7 +49,6 @@ export class ViewRequestComponentComponent {
     this.requestService.getSpecificRequestData(this.requestID).subscribe(
       {next: (response) => {
         this.requestData = response
-        console.log(response)
       },
       error: (error) => {
       }}
