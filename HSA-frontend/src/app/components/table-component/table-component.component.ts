@@ -99,7 +99,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
     if (this.disableEditCheck === null) {
       return false
     }
-    return this.shouldDisableEdit(row)
+    return this.disableEditCheck(row)
   }
 
   ngAfterViewInit() {
