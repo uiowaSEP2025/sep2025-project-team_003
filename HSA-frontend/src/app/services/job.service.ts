@@ -72,7 +72,7 @@ export class JobService {
     return this.http.get<TableApiResponse<JobSimplified>>(`${this.getJobsByContractorUrl}?${searchquery}pagesize=${pageSize}&offset=${offset}&contractor=${contractorID}`);
   }
 
-  public getJob(status: "created" | "in-progress" | "completed", params?: Record<string, string | number>): Observable<StandardApiResponse> {
+  public getJob(status: "created" | "in-progress" | "completed", params?: Record<string, string | number>): Observable<TableApiResponse<any>> {
     let httpParams = new HttpParams();
     // Add query parameters
     if (params) {
@@ -82,7 +82,7 @@ export class JobService {
     }
 
     httpParams = httpParams.append('status', status)
-    return this.http.get<StandardApiResponse>(this.apiGetUrl, { params: httpParams });
+    return this.http.get<TableApiResponse<any>>(this.apiGetUrl, { params: httpParams });
   }
   
    public getExcludedJob(params?: JobParams): Observable<TableApiResponse<Job>> {

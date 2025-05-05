@@ -7,6 +7,7 @@ import { JobService } from '../../services/job.service';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 import { CommonModule } from '@angular/common';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
+import { TableApiResponse } from '../../interfaces/api-responses/table.api.interface';
 
 @Component({
   selector: 'app-job-page',
@@ -20,21 +21,35 @@ import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
   styleUrl: './job-page.component.scss'
 })
 export class JobPageComponent implements OnInit {
-  jobs: any = null;
+  private defaultSearch = ""
+  private defaultPageSize = 5
+  private defaultOffset = 0
+
   jobService: JobService
   selectedTab: "Created" | "In Progress" | "Completed" = "Created" // MAKE SURE TO UPDATE THIS IF WE ADD A NEW TAB!!!
+  tabStates: Record<"Created" | "In Progress" | "Completed", {
+    search: string;
+    pagesize: number;
+    offset: number;
+    data: TableApiResponse<any>;
+  }> = {
+      Created: { search: this.defaultSearch, pagesize: this.defaultPageSize, offset: this.defaultOffset, data: { data: [], totalCount: 0 } },
+      "In Progress": { search: this.defaultSearch, pagesize: this.defaultPageSize, offset: this.defaultOffset, data: { data: [], totalCount: 0 } },
+      "Completed": { search: this.defaultSearch, pagesize: this.defaultPageSize, offset: this.defaultOffset, data: { data: [], totalCount: 0 } }
+    }
 
   constructor(private router: Router, jobService: JobService) {
     this.jobService = jobService
   }
 
   ngOnInit(): void {
-    this.loadDataToTable("", 5, 0);
+    this.loadDataToTable(this.defaultSearch, this.defaultPageSize, this.defaultOffset);
   }
 
   onTabChange(event: MatTabChangeEvent) {
-      this.selectedTab = (event.tab.textLabel as "Created" | "In Progress" | "Completed");
-    }
+    this.selectedTab = (event.tab.textLabel as "Created" | "In Progress" | "Completed");
+
+  }
 
   loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {
     const tabToApiMap: Record<typeof this.selectedTab, string> = {
@@ -44,10 +59,30 @@ export class JobPageComponent implements OnInit {
     };
 
     const statusQuery: "created" | "in-progress" | "completed" = tabToApiMap[this.selectedTab] as "created" | "in-progress" | "completed";;
-    console.log(statusQuery)
     this.jobService.getJob(statusQuery, { search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
       next: (response) => {
-        this.jobs = response
+        switch (this.selectedTab) {
+          case "Created":
+            this.tabStates["Created"].data = response
+            this.tabStates["Created"].pagesize = pageSize
+            this.tabStates["Created"].offset = offSet
+            this.tabStates["Created"].search = searchTerm
+            break;
+          case "In Progress":
+            this.tabStates["In Progress"].data = response
+            this.tabStates["In Progress"].pagesize = pageSize
+            this.tabStates["In Progress"].offset = offSet
+            this.tabStates["In Progress"].search = searchTerm
+            break;
+          case "Completed":
+            this.tabStates["Completed"].data = response
+            this.tabStates["Completed"].pagesize = pageSize
+            this.tabStates["Completed"].offset = offSet
+            this.tabStates["Completed"].search = searchTerm
+            break;
+          default:
+            throw new Error("Got a non-valid tab option when fetching")
+        }
       },
       error: (error) => {
       }
