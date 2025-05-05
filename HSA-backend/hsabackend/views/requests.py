@@ -59,40 +59,6 @@ def create_request(request, id):
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
-def get_org_request_data(request):
-    org = request.org
-    search = request.query_params.get('search', '')
-    pagesize = request.query_params.get('pagesize', '')
-    offset = request.query_params.get('offset',0)
-    if not pagesize or not offset:
-        return Response({"message": "missing pagesize or offset"}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        pagesize = int(pagesize)
-        offset = int(offset)
-    except:
-        return Response({"message": "pagesize and offset must be int"}, status=status.HTTP_400_BAD_REQUEST)
-    
-    requests = Request.objects.filter(organization=org.pk).filter(
-        Q(name__icontains=search))[offset:offset + pagesize] if search else Request.objects.filter(
-        organization=org.pk)[offset:offset + pagesize]
-
-    data = []
-    for req in requests:
-        data.append(req.json_simplify())
-    
-    count = Request.objects.filter(organization=org.pk).filter(
-        Q(name__icontains=search)).count() if search else Request.objects.filter(
-        organization=org.pk).count()
-    
-    res = {
-        'data': data,
-        'totalCount': count
-    }    
-    return Response(res, status=status.HTTP_200_OK)
-
-@api_view(["GET"])
-@check_authenticated_and_onboarded()
 def get_individual_request_data(request, id):
     org = request.org
 
