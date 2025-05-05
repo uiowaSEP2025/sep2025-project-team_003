@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChange, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { ContractorJSON, JobDisplayInterface, MaterialJSON, ServiceJSON } from '../../interfaces/api-responses/job.api.display.interface';
 import { MatIcon } from '@angular/material/icon';
@@ -68,7 +68,7 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['dataSource']) {
       const newValue = changes['dataSource'].currentValue;
-      
+
       if (newValue && 'services' in newValue) {
         this.updateServiceTable();
       } else if (newValue && 'materials' in newValue) {
@@ -83,13 +83,13 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
     if (this.dataSource) {
       this.displayServices = this.dataSource.services.map(
         (service) => ({
-          "Service ID": service.serviceID,
-          "Service Name": service.serviceName,
-          "Service Description": service.serviceDescription
+          "Service ID": service.id,
+          "Service Name": service.name,
+          "Service Description": service.description
         })
       )
     }
-    
+
     this.displayedServiceColumns = ["Service ID", "Service Name", "Service Description"]
     this.displayedServiceColumns = this.isEditRow === true ? [...this.displayedServiceColumns, "Actions"] : this.displayedServiceColumns
   }
@@ -121,7 +121,7 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
         })
       )
     }
-    
+
     this.displayedContractorColumns = ["Contractor ID", "Contractor Name", "Contractor Phone No", "Contractor Email"]
     this.displayedContractorColumns = this.isEditRow === true ? [...this.displayedContractorColumns, "Actions"] : this.displayedContractorColumns
   }
@@ -140,13 +140,13 @@ export class JobDisplayTableComponent  implements OnInit, OnChanges {
       case 'service': {
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            let jobServiceEntry = this.dataSource.services.filter((item: { serviceID: any; }) => item.serviceID === args["Service ID"])[0] as any
+            let jobServiceEntry = this.dataSource.services.filter((item: { id: any; }) => item.id === args["Service ID"])[0] as any
             this.popOutEntry(typeOfTable, args, jobServiceEntry.id, jobServiceEntry.serviceID)
             this.displayServices = this.dataSource.services?.map(
               (service) => ({
-                "Service ID": service.serviceID,
-                "Service Name": service.serviceName,
-                "Service Description": service.serviceDescription
+                "Service ID": service.id,
+                "Service Name": service.name,
+                "Service Description": service.description
               })
             )
           }

@@ -59,6 +59,7 @@ export class ViewJobPageComponent  implements OnInit {
     this.jobService.getSpecificJobData(this.jobID).subscribe(
       {next: (response) => {
         this.jobData = response
+          console.log(response)
       },
       error: (error) => {
       }}

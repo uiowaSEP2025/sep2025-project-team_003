@@ -4,7 +4,7 @@ from hsabackend.models.organization import Organization
 from hsabackend.models.job import Job
 from hsabackend.models.booking import Booking
 
-class BookingModelTest(APITestCase):
+class BookingModelTest(TestCase):
     def test_booking_date_property(self):
         """Test that the booking_date property returns the correct date."""
         start_time = timezone.now()

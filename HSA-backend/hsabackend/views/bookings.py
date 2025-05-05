@@ -1,4 +1,3 @@
-from django.db.models import Q
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from rest_framework import status
@@ -6,7 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from hsabackend.models.booking import Booking
-from hsabackend.models.job import Job, JobsServices, JobsMaterials
+from hsabackend.models.job import Job
 from hsabackend.models.organization import Organization
 from hsabackend.serializers.booking_serializer import BookingSerializer
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
