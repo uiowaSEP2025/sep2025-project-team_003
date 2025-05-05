@@ -51,15 +51,18 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   clearAllEvents() {
     // DO NOT SET EVENTS TO [] TO CLEAR EVENTS. THAT DOES NOTHING!
     //USE THIS INSTEAD!
-    this.events = [];
+    console.log(this.day, this.day && this.day.control)
     if (this.day && this.day.control) {
       this.day.control.events.list = [];
       this.day.control.update();
+      return;
     }
-    if (this.week && this.week.control) {
+    else if (this.week && this.week.control) {
       this.week.control.events.list = [];
       this.week.control.update();
+      return;
     }
+    console.log('fell')
   }
 
   downloadIcal() {
@@ -295,8 +298,6 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
             width: '425px',
             data: messageData
           });
-
-
 
           dialogRef.afterClosed().subscribe(result => {
             if (result) {
