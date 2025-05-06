@@ -172,7 +172,6 @@ def complete_onboarding(request):
             org.is_onboarding = is_onboarding
             org.save()
     except ValidationError as e:
-        print(e)
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response({"message": "Onboarding complete"}, status=status.HTTP_200_OK)

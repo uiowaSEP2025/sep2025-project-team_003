@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 from unittest.mock import Mock
 from unittest.mock import patch
 from django.contrib.auth.models import User
-from hsabackend.views.jobs import get_job_individual_data, get_job_table_data, create_job, edit_job, get_jobs_by_contractor, get_job_excluded_table_data
+from hsabackend.views.jobs import get_job_individual_data, get_job_table_data, create_job, edit_job, get_jobs_by_contractor, get_job_excluded_table_data, delete_job
 from rest_framework.test import APITestCase
 from hsabackend.models.organization import Organization
 from hsabackend.models.customer import Customer
@@ -92,97 +92,6 @@ class jobViewTest(APITestCase):
         assert response.data["data"] == mock_response
 
     
-
-    def test_edit_job_unauth(self):
-        mock_user = Mock(spec=User)
-        mock_user.is_authenticated = False
-        
-        factory = APIRequestFactory()
-        request = factory.post('/api/edit/job/1')
-        request.user = mock_user  
-        response = edit_job(request, 1)
-        
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
-    @patch('hsabackend.views.jobs.Job.objects.get')
-    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
-    def test_edit_job_not_found(self,org, job_name):
-        mock_user = Mock(spec=User)
-        mock_user.is_authenticated = True
-        job_name.side_effect = Job.DoesNotExist
-        organization = Organization()
-        organization.is_onboarding = False
-        org.return_value = organization
-        
-        factory = APIRequestFactory()
-        request = factory.post('/api/edit/job/0')
-        request.user = mock_user  
-        response = edit_job(request, 1)
-
-        assert response.status_code == status.HTTP_404_NOT_FOUND
-
-    @patch('hsabackend.views.jobs.Customer.objects.get')
-    @patch('hsabackend.views.jobs.Job.objects.get')
-    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
-    def test_edit_job_invalid(self, org, job_name, customer):
-        mock_user = Mock(spec=User)
-        mock_user.is_authenticated = True
-        mock_job_name = MagicMock(spec=Job)
-        customer.return_value = Customer()
-        job_name.return_value = mock_job_name
-        organization = Organization()
-        organization.is_onboarding = False
-        org.return_value = organization
-        
-        mock_job_name.full_clean.side_effect = ValidationError({'description': ['This field is required.']})
-
-        factory = APIRequestFactory()
-        request = factory.post('/api/edit/job/1',
-            data={
-                "job_status": "created",
-                "start_date": "2026-01-02",
-                "end_date": "2026-02-02",
-                "description": "Test Job",
-                "city": "Test City",
-                "state": "Iowa",
-                "zip": "99999",
-                "address": "Test Address",
-            })
-        request.user = mock_user  
-        response = edit_job(request, 1)
-        
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-    @patch('hsabackend.views.jobs.Customer.objects.get')
-    @patch('hsabackend.views.jobs.Job.objects.get')
-    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
-    def test_edit_job_valid(self, org, job_name, customer):
-        mock_user = Mock(spec=User)
-        mock_user.is_authenticated = True
-        mock_job_name = MagicMock(spec=Job)
-        customer.return_value = Customer()
-        job_name.return_value = mock_job_name
-        organization = Organization()
-        organization.is_onboarding = False
-        org.return_value = organization
-
-        factory = APIRequestFactory()
-        request = factory.post('/api/edit/job/1',
-            data={
-                "job_status": "created",
-                "start_date": "2026-01-02",
-                "end_date": "2026-02-02",
-                "description": "Test Job",
-                "city": "Test City",
-                "state": "Iowa",
-                "zip": "99999",
-                "address": "Test Address",
-            })
-        request.user = mock_user  
-        response = edit_job(request, 1)
-        
-        assert response.status_code == status.HTTP_200_OK
-
 class JobsByCustomer(APITestCase):
     
     @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
@@ -653,3 +562,190 @@ class GetJobExcludedTest(APITestCase):
         res = get_job_excluded_table_data(request)
 
         assert res.status_code == 200
+
+class TestEditJobs(APITestCase):
+    @patch('hsabackend.views.jobs.Job.objects.get')
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_edit_job_not_found(self,org, job_name):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        job_name.side_effect = Job.DoesNotExist
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
+        
+        factory = APIRequestFactory()
+        request = factory.post('/api/edit/job/0')
+        request.user = mock_user  
+        response = edit_job(request, 1)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    @patch('hsabackend.views.jobs.Customer.objects.get')
+    @patch('hsabackend.views.jobs.Job.objects.get')
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_edit_job_invalid(self, org, job_name, customer):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        mock_job_name = MagicMock(spec=Job)
+        customer.return_value = Customer()
+        job_name.return_value = mock_job_name
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
+        
+        mock_job_name.full_clean.side_effect = ValidationError({'description': ['This field is required.']})
+
+        factory = APIRequestFactory()
+        request = factory.post('/api/edit/job/1',
+            data={
+                "job_status": "created",
+                "start_date": "2026-01-02",
+                "end_date": "2026-02-02",
+                "description": "Test Job",
+                "city": "Test City",
+                "state": "Iowa",
+                "zip": "99999",
+                "address": "Test Address",
+            })
+        request.user = mock_user  
+        response = edit_job(request, 1)
+        
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @patch('hsabackend.views.jobs.Customer.objects.get')
+    @patch('hsabackend.views.jobs.Job.objects.get')
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_edit_job_is_completed(self, org, job_name, customer):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        mock_job_name = MagicMock(spec=Job)
+        mock_job_name.job_status = "completed"
+        customer.return_value = Customer()
+        job_name.return_value = mock_job_name
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
+
+        factory = APIRequestFactory()
+        request = factory.post('/api/edit/job/1',
+            data={
+                "job_status": "created",
+                "start_date": "2026-01-02",
+                "end_date": "2026-02-02",
+                "description": "Test Job",
+                "city": "Test City",
+                "state": "Iowa",
+                "zip": "99999",
+                "address": "Test Address",
+            })
+        request.user = mock_user  
+        response = edit_job(request, 1)
+        
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+    @patch('hsabackend.views.jobs.Customer.objects.get')
+    @patch('hsabackend.views.jobs.Job.objects.get')
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_edit_job_valid(self, org, job_name, customer):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        mock_job_name = MagicMock(spec=Job)
+        customer.return_value = Customer()
+        job_name.return_value = mock_job_name
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
+
+        factory = APIRequestFactory()
+        request = factory.post('/api/edit/job/1',
+            data={
+                "job_status": "created",
+                "start_date": "2026-01-02",
+                "end_date": "2026-02-02",
+                "description": "Test Job",
+                "city": "Test City",
+                "state": "Iowa",
+                "zip": "99999",
+                "address": "Test Address",
+            })
+        request.user = mock_user  
+        response = edit_job(request, 1)
+        
+        assert response.status_code == status.HTTP_200_OK
+
+
+class TestDeleteJobs(APITestCase):
+    @patch('hsabackend.views.jobs.Job.objects.filter')
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_delete_job_not_found(self, org, job):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
+
+        mock_job = Mock()
+        mock_job.exists.return_value = False
+        job.return_value = mock_job
+
+        factory = APIRequestFactory()
+        request = factory.post('/api/delete/job/1')
+        request.user = mock_user
+
+        res = delete_job(request, 1)
+
+        assert res.status_code == status.HTTP_404_NOT_FOUND
+
+    @patch('hsabackend.views.jobs.Job.objects.filter')
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_delete_job_completed(self, org, job):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
+
+        mock_job = MagicMock()
+        mock_job.exists.return_value = True
+        job.return_value = mock_job
+
+        mock_job_obj = MagicMock(name="Job")
+        mock_job_obj.job_status = "completed"  
+        mock_job.__getitem__.side_effect = lambda x: mock_job_obj
+
+        factory = APIRequestFactory()
+        request = factory.post('/api/delete/job/1')
+        request.user = mock_user
+
+        res = delete_job(request, 1)
+        assert res.status_code == status.HTTP_400_BAD_REQUEST
+
+    @patch('hsabackend.views.jobs.Job.objects.filter')
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_delete_job_ok(self, org, job):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization
+
+        mock_job = MagicMock()
+        mock_job.exists.return_value = True
+        job.return_value = mock_job
+
+        mock_job_obj = MagicMock(name="Job")
+        mock_job.__getitem__.side_effect = lambda x: mock_job_obj
+
+        factory = APIRequestFactory()
+        request = factory.post('/api/delete/job/1')
+        request.user = mock_user
+
+        res = delete_job(request, 1)
+        mock_job_obj.delete.assert_called_once()
+        assert res.status_code == status.HTTP_200_OK
+

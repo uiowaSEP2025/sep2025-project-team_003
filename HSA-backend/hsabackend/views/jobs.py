@@ -1,3 +1,4 @@
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -251,13 +252,6 @@ def create_job(request):
         requestor_zip=requestor_zip
     )
 
-    if "hourly_rate" in request.data:
-        job.hourly_rate = request.data.get("hourly_rate")
-    if "minutes_worked" in request.data:
-        job.minutes_worked = request.data.get("minutes_worked")
-    if "flat_fee" in request.data:
-        job.flat_fee = request.data.get("flat_fee")
-
     try:
         job.full_clean()  # Validate the model instance
         job.save()
@@ -351,13 +345,6 @@ def edit_job(request, id):
     job.requestor_state = request.data.get('state', '')
     job.requestor_zip = request.data.get('zip', '')
 
-    if "hourly_rate" in request.data:
-        job.hourly_rate = request.data.get("hourly_rate")
-    if "minutes_worked" in request.data:
-        job.minutes_worked = request.data.get("minutes_worked")
-    if "flat_fee" in request.data:
-        job.flat_fee = request.data.get("flat_fee")
-
     try:
         customer = Customer.objects.get(id=request.data.get('customerID'))
         job.customer = customer
@@ -381,7 +368,7 @@ def delete_job(request, id):
     if not jobs.exists():
         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
-    job = job[0]
+    job = jobs[0]
 
     if job.job_status == "completed":
         return Response({"message": "Can not delete a completed job"}, status=status.HTTP_400_BAD_REQUEST)
