@@ -36,9 +36,9 @@ export interface DateRange {
   styleUrl: './edit-invoice-page.component.scss'
 })
 export class EditInvoicePageComponent implements OnInit {
-  selectedQuotes: number[] = []
+  selectedJobs: number[] = []
   quotes: any
-  selectedQuotesIsError = false
+  selectedJobsisError = false
   invoiceID!: number
   customerName!: string
   issuanceDate!: string
@@ -106,14 +106,14 @@ export class EditInvoicePageComponent implements OnInit {
     this.loadQuotesToTable("", 5, 0);
   }
 
-  setSelectedQuotes(newQuotes: number[]) {
-    if (newQuotes.length === 0) {
-      this.selectedQuotesIsError = true
-      this.selectedQuotes = [...newQuotes]
+  setSelectedJobs(selectedJobs: number[]) {
+    if (selectedJobs.length === 0) {
+      this.selectedJobsisError = true
+      this.selectedJobs = [...selectedJobs]
     }
     else {
-      this.selectedQuotesIsError = false
-      this.selectedQuotes = [...newQuotes]
+      this.selectedJobsisError = false
+      this.selectedJobs = [...selectedJobs]
     }
 
   }
@@ -126,7 +126,7 @@ export class EditInvoicePageComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
         const data = {
-          quoteIDs: this.selectedQuotes,
+          quoteIDs: this.selectedJobs,
           status: this.status,
           issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
           dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
@@ -151,23 +151,23 @@ export class EditInvoicePageComponent implements OnInit {
     if (!this.taxAmount.valid) {
       return;
     }
-    if (this.selectedQuotes.length === 0) {
+    if (this.selectedJobs.length === 0) {
       this.datePicker?.validate()
-      this.selectedQuotesIsError = true;
+      this.selectedJobsisError = true;
       return;
     }
     if (this.isDateSelectVisible() && !this.datePicker.validate()) {
-      this.selectedQuotesIsError = false;
+      this.selectedJobsisError = false;
       return false;
     }
-    this.selectedQuotesIsError = false;
+    this.selectedJobsisError = false;
     if (this.initialStatus === 'issued' || this.initialStatus === 'paid') {
       this.openDialog()
       return;
     }
     
     const data = {
-      quoteIDs: this.selectedQuotes,
+      quoteIDs: this.selectedJobs,
       status: this.status,
       issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value) ,
       dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
