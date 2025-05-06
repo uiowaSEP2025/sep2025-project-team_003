@@ -213,7 +213,9 @@ def get_data_for_invoice(request, id):
     
     total = Decimal(0)
     for job in jobs:
-        res_jobs.append(job.get_finances())
+        tmp = job.get_finances()
+        tmp["description"] = job.truncated_job_desc
+        res_jobs.append(tmp)
         total += job.total_cost
 
     tax_percent = (inv.tax * Decimal('0.01'))

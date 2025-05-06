@@ -40,6 +40,10 @@ class Job(models.Model):
             total += jm.units_used * jm.price_per_unit
 
         return round((self.hourly_rate * Decimal(str((self.minutes_worked / 60)))) + self.flat_fee + total, 2)
+    
+    @property
+    def truncated_job_desc(self):
+        return NA_on_empty_string(self.description[:50] + ("..." if len(self.description) > 50 else ""))
 
     quote_choices = [
         ('not-created-yet', 'not-created-yet'),
@@ -79,7 +83,7 @@ class Job(models.Model):
         return {
             'id': self.pk,
             # cap at 50 so table doesn't stretch
-            'description': NA_on_empty_string(self.description[:50] + ("..." if len(self.description) > 50 else "")),
+            'description': self.truncated_job_desc,
             'job_status': NA_on_empty_string(self.job_status),
             'start_date': format_maybe_null_date(self.start_date),
             'end_date': format_maybe_null_date(self.end_date),
@@ -96,9 +100,9 @@ class Job(models.Model):
         }
     
     def get_finances(self):
-        return {"flatFee": self.flat_fee,
-                "hourlyRate": self.hourly_rate,
-                "hoursWorked": round(self.minutes_worked / 60, 2),
+        return {"flatFee": str(self.flat_fee),
+                "hourlyRate": str(self.hourly_rate),
+                "hoursWorked": str(round(self.minutes_worked / 60, 2)),
                 "totalCost": self.total_cost
                 }
     

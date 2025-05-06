@@ -2,11 +2,10 @@ import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { TableApiResponse } from "../interfaces/api-responses/table.api.interface";
-import { Invoice } from "../interfaces/invoice.interface";
 import { Observable } from "rxjs";
+import { Invoice } from "../components/invoice-job/invoice-job.component";
 import { HttpParams } from "@angular/common/http";
 import { StandardApiResponse } from "../interfaces/api-responses/standard-api-response.interface";
-import { InvoiceDataInterface } from "../interfaces/api-responses/invoice.api.data.interface";
 
 interface CreateInvoiceInterface {
     customerID: number,
@@ -71,8 +70,8 @@ export class InvoiceService {
         return this.http.post<StandardApiResponse>(`${this.deleteUrl}/${id}`, null);
     }
 
-    public getSpecificInvoiceData(id: number): Observable<InvoiceDataInterface> {
-        return this.http.get<InvoiceDataInterface>(`${this.getSpecificUrl}/${id}`);
+    public getSpecificInvoiceData(id: number): Observable<Invoice> {
+        return this.http.get<Invoice>(`${this.getSpecificUrl}/${id}`);
     }
 
 }

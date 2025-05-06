@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { InvoiceJobComponent } from '../../components/invoice-job/invoice-job.component';
-
+import { Invoice } from '../../components/invoice-job/invoice-job.component';
 @Component({
   selector: 'app-view-invoice-page',
   imports: [LoadingFallbackComponent,CommonModule, MatButtonModule, MatIconModule, InvoiceJobComponent, MatCardModule],
@@ -17,7 +17,7 @@ import { InvoiceJobComponent } from '../../components/invoice-job/invoice-job.co
 })
 export class ViewInvoicePageComponent implements OnInit{
   invoiceID!: number
-  invoiceData: any = null;
+  invoiceData: Invoice | null = null;
 
   constructor (private router: Router, private invoiceService: InvoiceService, private activatedRoute:ActivatedRoute) {
     this.activatedRoute.paramMap.subscribe(params => {
@@ -28,7 +28,8 @@ export class ViewInvoicePageComponent implements OnInit{
   ngOnInit(): void {
     this.invoiceService.getSpecificInvoiceData(this.invoiceID).subscribe(
       {next: (response) => {
-        this.invoiceData = response
+        this.invoiceData = response 
+        console.log(response)
       },
       error: (error) => {
       }}

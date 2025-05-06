@@ -128,7 +128,6 @@ export class EditJobPageComponent {
       {
         next: (response) => {
           this.jobData = response;
-          console.log(response)
           this.jobForm.setValue({
             customerName: this.jobData?.data.customerName,
             jobStatus: this.jobData?.data.jobStatus,
