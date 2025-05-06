@@ -4,6 +4,7 @@ from hsabackend.models.model_validators import isNonEmpty, validate_state
 from hsabackend.models.customer import Customer
 from hsabackend.utils.string_formatters import NA_on_empty_string, format_maybe_null_date
 from django.core.validators import MinValueValidator
+from hsabackend.models.invoice import Invoice
 
 class Job(models.Model):
     """A request for service from a customer to an organization"""
@@ -26,6 +27,7 @@ class Job(models.Model):
     flat_fee = models.DecimalField(max_digits=10, default=0, decimal_places=2, validators=[MinValueValidator(0)])
     hourly_rate = models.DecimalField(max_digits=10, decimal_places=2, default=0, validators=[MinValueValidator(0)])
     minutes_worked = models.IntegerField(default = 0, validators=[MinValueValidator(0)])
+    invoice = models.ForeignKey(Invoice, on_delete=models.SET_NULL, blank=True, null=True)
 
     quote_choices = [
         ('not-created-yet', 'not-created-yet'),
