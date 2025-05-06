@@ -26,9 +26,7 @@
 							<td>{{invoiceData.dueDate}}</td>
 						</tr>
 					</table>
-					<app-invoice-quotes-display-table
-							[dataSource]="invoiceData.quotes"
-					></app-invoice-quotes-display-table>
+					<app-invoice-job></app-invoice-job>
 					<button mat-fab extended class="m-10" (click)="navigateViewInvoice()">
 							<mat-icon>auto_awesome</mat-icon>
 							Generate Invoice

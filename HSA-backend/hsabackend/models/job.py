@@ -39,7 +39,7 @@ class Job(models.Model):
         for jm in jobs_materials:
             total += jm.units_used * jm.price_per_unit
 
-        return (self.hourly_rate * Decimal(str((self.minutes_worked / 60)))) + self.flat_fee + total
+        return round((self.hourly_rate * Decimal(str((self.minutes_worked / 60)))) + self.flat_fee + total, 2)
 
     quote_choices = [
         ('not-created-yet', 'not-created-yet'),

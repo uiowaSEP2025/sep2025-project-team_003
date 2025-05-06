@@ -218,14 +218,14 @@ def get_data_for_invoice(request, id):
 
     tax_percent = (inv.tax * Decimal('0.01'))
     tax_amount = total * tax_percent
-    grand_total = total + tax_amount
 
     decimal_tax_amount = Decimal(str(round(tax_amount, 2)))
     decimal_tax_percent = Decimal(str(round(tax_percent, 2)))
 
     res["taxAmount"] = str(decimal_tax_amount)
     res["taxPercent"] = str(decimal_tax_percent)
-    res["grandTotal"] = str(decimal_tax_amount + total)
+    res["grandTotal"] = str(round(decimal_tax_amount + total, 2))
+    res["jobs"] = res_jobs
 
 
     return Response(res, status=status.HTTP_200_OK)

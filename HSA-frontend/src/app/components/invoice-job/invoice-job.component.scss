@@ -1,0 +1,22 @@
+.info-table {
+  width: 100%; 
+  table-layout: auto; /* Changed from fixed */
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.info-table th:first-child,
+.info-table td:first-child {
+  white-space: nowrap; 
+  padding-right: 20px; 
+}
+
+.info-table td, .info-table th {
+  border: 1px solid #000000;
+  padding: 12px;
+  text-align: left;
+}
+
+.info-table th {
+  background-color: #7b93a1;
+}
