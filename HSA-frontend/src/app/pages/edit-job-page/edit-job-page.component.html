@@ -169,6 +169,7 @@
                       </td>
                       <td>
                         <mat-form-field appearance="fill" class="full-width">
+                          <span matTextPrefix>$&nbsp;</span>
                           <input formControlName="flatfee" matInput (input)="onChangeUpdateButton()">
                           @if (jobForm.get('flatfee')?.touched && jobForm.get('flatfee')?.hasError('required')) {
                           <mat-error>Flat Fee is required</mat-error>
@@ -183,6 +184,7 @@
                       <td>Hourly Rate</td>
                       <td>
                         <mat-form-field appearance="fill" class="full-width">
+                          <span matTextPrefix>$&nbsp;</span>
                           <input formControlName="hourlyRate" matInput (input)="onChangeUpdateButton()">
                           @if (jobForm.get('hourlyRate')?.touched && jobForm.get('hourlyRate')?.hasError('required')) {
                           <mat-error>Hourly Rate is required</mat-error>

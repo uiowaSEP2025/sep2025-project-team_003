@@ -56,6 +56,9 @@ class Job(models.Model):
             'requestorAddress': self.requestor_address,
             "requestorCity": self.requestor_city,
             "requestorState": self.requestor_state,
+            "flatfee": self.flat_fee,
+            "hourlyRate": self.hourly_rate,
+            "minutesWorked": self.minutes_worked,
             "requestorZip": self.requestor_zip,
             'quote_s3_link': self.quote_s3_link or 'NA',
         }

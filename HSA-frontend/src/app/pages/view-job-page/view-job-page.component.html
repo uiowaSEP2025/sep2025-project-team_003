@@ -39,9 +39,18 @@
                 <td>{{jobData.data.requestorAddress + ", " + jobData.data.requestorCity + ", " + jobData.data.requestorState + " " + jobData.data.requestorZip}}</td>
               </tr>
               <tr>
-                <td>Job ID</td>
-                <td>{{jobData.data.id}}</td>
+                <td>Flat Fee</td>
+                <td>{{jobData.data.flatfee}}</td>
               </tr>
+              <tr>
+                <td>Hourly Rate</td>
+                <td>{{jobData.data.hourlyRate}}</td>
+              </tr>
+              <tr>
+                <td>Minutes<br>Worked</td>
+                <td>{{jobData.data.minutesWorked}}</td>
+              </tr>
+              
             </table>
           </mat-expansion-panel>
       </mat-accordion>
