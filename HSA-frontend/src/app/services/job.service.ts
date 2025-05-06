@@ -20,7 +20,10 @@ interface JobCreatePostData {
   address: string | null,
   contractors: [] | null,
   services: [] | null,
-  materials: [] | null
+  materials: [] | null,
+  flatfee: string;       
+  hourlyRate: string;    
+  minutesWorked: string; 
 }
 
 interface JobEditPostData {

@@ -482,7 +482,10 @@ export class CreateJobPageComponent {
       address: this.jobForm.get('requestorAddress')?.value,
       contractors: contractorsField as [],
       services: servicesField as [],
-      materials: materialsField as []
+      materials: materialsField as [],
+      flatfee: this.jobForm.get('flatfee')?.value,
+      hourlyRate: this.jobForm.get('hourlyRate')?.value,    
+      minutesWorked: this.jobForm.get('minutesWorked')?.value,    
     }
 
     this.jobService.createJob(requestJson).subscribe(

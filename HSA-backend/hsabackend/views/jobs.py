@@ -230,6 +230,9 @@ def create_job(request):
     requestor_state = request.data.get('state', '')
     requestor_zip = request.data.get('zip', '')
     requestor_address = request.data.get('address', '')
+    flat_fee = request.data.get('flatfee', '')
+    hourly_rate = request.data.get('hourlyRate', '')
+    minutes_worked = request.data.get('minutesWorked', '')
 
     # data send form: contractors: [{ "id": int }]
     contractor_list = request.data.get('contractors', '')
@@ -249,7 +252,10 @@ def create_job(request):
         requestor_address=requestor_address,
         requestor_city=requestor_city,
         requestor_state=requestor_state,
-        requestor_zip=requestor_zip
+        requestor_zip=requestor_zip,
+        flat_fee = flat_fee,
+        hourly_rate = hourly_rate,
+        minutes_worked = minutes_worked,
     )
 
     try:
