@@ -85,8 +85,8 @@ def _build_quote_pdf(job: Job, org: Organization) -> bytes:
         row.cell(format_currency(job.hourly_rate))
 
         row = tbl.row()
-        row.cell("Total Minutes")
-        row.cell(str(job.minutes_worked))
+        row.cell("Total Hours")
+        row.cell(str(round(job.minutes_worked / 60, 2)))
 
         row = tbl.row()
         row.cell("Flat Rate")
