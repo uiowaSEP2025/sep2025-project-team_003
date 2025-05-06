@@ -100,7 +100,10 @@ export class CreateJobPageComponent {
       requestorCity: ['', Validators.required],
       requestorZip: ['', Validators.required],
       requestorStateSelect: ['', Validators.required],
-      jobDescription: ['', Validators.required]
+      jobDescription: ['', Validators.required],
+      flatfee: ['', Validators.required],
+      hourlyRate: ['', Validators.required],
+      minutesWorked: ['', Validators.required],
     }, { validators: this.dateValidator });
 
     this.services = { "services": [] };

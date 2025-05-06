@@ -3,7 +3,7 @@ import io
 import base64
 import random
 from datetime import datetime
-
+from hsabackend.utils.env_utils import get_url
 import boto3
 from decimal import Decimal
 from fpdf import FPDF
@@ -25,20 +25,8 @@ from hsabackend.utils.string_formatters import (
     format_phone_number_with_parens,
     format_maybe_null_date,
     format_currency,
-    format_percent,
-    format_tax_percent,
 )
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
-
-
-def get_url():
-    if "ENV" not in os.environ:
-        return "http://localhost:8000"
-    if os.environ["ENV"] == "DEV":
-        return "https://hsa.ssankey.com"
-    if os.environ["ENV"] == "PROD":
-        return "https://hsa-app.starlitex.com"
-    raise RuntimeError("The environment for the backend was not set correctly")
 
 
 def gen_signable_link(job: Job) -> str:
