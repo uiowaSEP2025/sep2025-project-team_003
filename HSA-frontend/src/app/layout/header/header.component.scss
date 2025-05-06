@@ -17,6 +17,15 @@
   padding-top: 60px;
   z-index: 900;
 }
+
+.example-icon {
+  color: white
+}
+
+.example-icon:hover {
+  color: rgb(0, 0, 0)
+}
+
 .sidebar.open {
   width: 200px;
 }
@@ -24,6 +33,11 @@
 .sidebar ul {
   list-style: none;
   padding: 0;
+}
+
+.sidebar hr {
+  width: 100%;
+  border: 1px solid rgb(167, 167, 167);
 }
 
 .sidebar ul li {
