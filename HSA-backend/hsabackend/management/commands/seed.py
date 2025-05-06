@@ -106,9 +106,13 @@ class Command(BaseCommand):
                 s2.save
 
 
+            first_names = ["Alice", "Bob", "Charlie", "Diana", "Ethan"]
+            last_names = ["Smith", "Johnson", "Williams", "Brown", "Davis"]
+
+
             for i in range(5):
                 c1 = Customer.objects.create(
-                    first_name=f"First{i}",
+                    first_name=random.choice(first_names),
                     last_name=f"Last{i}",
                     email=f"user{i}@example.com",
                     phone_no=f"{random.randint(1000000000, 9999999999)}",
@@ -118,8 +122,8 @@ class Command(BaseCommand):
                 c1.save()
 
                 c2 = Customer.objects.create(
-                    first_name=f"First{i}Test",
-                    last_name=f"Last{i}Test",
+                    first_name=random.choice(first_names) + "test",
+                    last_name=random.choice(last_names) + "test",
                     email=f"testuser{i}@example.com",
                     phone_no=f"{random.randint(1000000000, 9999999999)}",
                     notes=f"Sample notes for test user {i}",
