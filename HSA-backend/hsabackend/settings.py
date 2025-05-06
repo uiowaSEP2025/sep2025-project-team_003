@@ -187,8 +187,9 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-
+if "REDDIS_URL" in os.environ:
+    CELERY_BROKER_URL = os.environ["REDDIS_URL"]
+    CELERY_RESULT_BACKEND = os.environ["REDDIS_URL"]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
