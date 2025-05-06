@@ -100,11 +100,11 @@ describe('EditInvoicePageComponent', () => {
       await submit.click()
       fixture.detectChanges()
       
-      expect(compiled.textContent).toContain('You must select a quote to include')
+      expect(compiled.textContent).toContain('You must select a job to include')
     })
   
     it('should call the service when everything is valid', async () => {
-      component.selectedQuotes= [2]
+      component.selectedJobs= [2]
       fixture.detectChanges()
   
       const filteredButtons = await Promise.all(
