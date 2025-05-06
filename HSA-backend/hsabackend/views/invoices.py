@@ -10,6 +10,7 @@ from hsabackend.models.job import Job
 from hsabackend.utils.api_validators import parseAndReturnDate, parse_and_return_decimal
 from django.db.transaction import atomic
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+from decimal import Decimal
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
@@ -202,19 +203,29 @@ def get_data_for_invoice(request, id):
     if not invoice_qs.exists():
         return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
-    res = invoice_qs[0].json_for_view_invoice()
+    inv = invoice_qs[0]
 
-    res_quotes = []
+    res = inv.json_for_view_invoice()
 
+    res_jobs = []
+
+    jobs = Job.objects.filter(invoice=id)
     
-    # res["quotes"] = {
-    #     "quotes": res_quotes,
-    #     "totalMaterialSubtotal": str(aggregated_values["total_material_subtotal"] or 0),
-    #     "subtotal": str(aggregated_subtotal),
-    #     "taxPercent": str(invoice_qs[0].tax),
-    #     "totalDiscount": str(total_discnt), # this is agregated from the discounts, eg 0.3 (30%)
-    #     # total_discnt is like 30.05%, i know the casting is disgusting, sorry -alex
-    #     "grandtotal" : str((aggregated_subtotal * (Decimal(f"0.{str(100 - total_discnt).replace('.', '')}"))) * (1 + invoice_qs[0].tax))
-    # }
+    total = Decimal(0)
+    for job in jobs:
+        res_jobs.append(job.get_finances())
+        total += job.total_cost
+
+    tax_percent = (inv.tax * Decimal('0.01'))
+    tax_amount = total * tax_percent
+    grand_total = total + tax_amount
+
+    decimal_tax_amount = Decimal(str(round(tax_amount, 2)))
+    decimal_tax_percent = Decimal(str(round(tax_percent, 2)))
+
+    res["taxAmount"] = str(decimal_tax_amount)
+    res["taxPercent"] = str(decimal_tax_percent)
+    res["grandTotal"] = str(decimal_tax_amount + total)
+
 
     return Response(res, status=status.HTTP_200_OK)

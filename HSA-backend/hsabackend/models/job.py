@@ -5,6 +5,7 @@ from hsabackend.models.customer import Customer
 from hsabackend.utils.string_formatters import NA_on_empty_string, format_maybe_null_date
 from django.core.validators import MinValueValidator
 from hsabackend.models.invoice import Invoice
+from decimal import Decimal
 
 class Job(models.Model):
     """A request for service from a customer to an organization"""
@@ -28,6 +29,10 @@ class Job(models.Model):
     hourly_rate = models.DecimalField(max_digits=10, decimal_places=2, default=0, validators=[MinValueValidator(0)])
     minutes_worked = models.IntegerField(default = 0, validators=[MinValueValidator(0)])
     invoice = models.ForeignKey(Invoice, on_delete=models.SET_NULL, blank=True, null=True)
+
+    @property
+    def total_cost(self):
+        return (self.hourly_rate * Decimal(str((self.minutes_worked / 60)))) + self.flat_fee
 
     quote_choices = [
         ('not-created-yet', 'not-created-yet'),
@@ -82,3 +87,11 @@ class Job(models.Model):
             'start_date': format_maybe_null_date(self.start_date),
             'end_date': format_maybe_null_date(self.end_date),
         }
+    
+    def get_finances(self):
+        return {"flatFee": self.flat_fee,
+                "hourlyRate": self.hourly_rate,
+                "hoursWorked": round(self.minutes_worked / 60, 2),
+                "totalCost": self.total_cost
+                }
+    
