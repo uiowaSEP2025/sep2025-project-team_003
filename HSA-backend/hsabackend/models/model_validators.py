@@ -1,6 +1,9 @@
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 import decimal
+from urllib.parse import urlparse
+from django.core.validators import URLValidator
+
 
 def isValidPhone(phone: str):
     """Validates a phone number without any separating characters.
@@ -38,4 +41,15 @@ def is_valid_percent(percent: decimal.Decimal):
         raise ValidationError(
             _("%(percent)s is not a valid percentage"),
             params={"percent": percent},
+        )
+
+def is_valid_http_url(url: str):
+    """Validates that a URL is a properly structured HTTP or HTTPS URL."""
+    validator = URLValidator()
+    validator(url)
+    scheme = urlparse(url).scheme
+    if scheme not in ("http", "https"):
+        raise ValidationError(
+            _("%(url)s does not use HTTP or HTTPS"),
+            params={"url": url},
         )
