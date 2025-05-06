@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 from unittest.mock import Mock
 from unittest.mock import patch
 from django.contrib.auth.models import User
-from hsabackend.views.jobs import get_job_individual_data, get_job_table_data, create_job, edit_job, get_jobs_by_contractor, get_job_excluded_table_data, delete_job
+from hsabackend.views.jobs import get_job_individual_data, get_job_table_data, create_job, edit_job, get_jobs_by_contractor, get_job_excluded_table_data, delete_job, get_invoicable_jobs
 from rest_framework.test import APITestCase
 from hsabackend.models.organization import Organization
 from hsabackend.models.customer import Customer
@@ -748,4 +748,58 @@ class TestDeleteJobs(APITestCase):
         res = delete_job(request, 1)
         mock_job_obj.delete.assert_called_once()
         assert res.status_code == status.HTTP_200_OK
+
+class TestGetInvoicableJobs(APITestCase):
+
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_missing_params(self, org):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization 
+
+        factory = APIRequestFactory()
+        request = factory.get('api/get/invoicable/jobs?pagesize=10')
+        request.user = mock_user
+
+        res = get_invoicable_jobs(request)
+        assert res.status_code == 400
+
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_invalid_params(self, org):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization 
+
+        factory = APIRequestFactory()
+        request = factory.get('api/get/invoicable/jobs?pagesize=10&customer=s')
+        request.user = mock_user
+
+        res = get_invoicable_jobs(request)
+        assert res.status_code == 400
+
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    @patch('hsabackend.views.jobs.Job.objects.filter')
+    def test_ok(self,filter, org):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        organization = Organization()
+        organization.is_onboarding = False
+        org.return_value = organization 
+
+        factory = APIRequestFactory()
+        request = factory.get('api/get/invoicable/jobs?pagesize=10&customer=1')
+        request.user = mock_user
+
+        mock_filter = MagicMock()
+        filter.return_value = MagicMock()
+
+        res = get_invoicable_jobs(request)
+        assert res.status_code == 200
 
