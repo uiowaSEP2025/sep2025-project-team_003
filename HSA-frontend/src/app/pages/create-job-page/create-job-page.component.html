@@ -136,7 +136,14 @@
                 </td>
               </tr>
               <tr>
-                <td>Flat Fee</td>
+                <td>
+                  <div class="flex flex-row items-center">
+                    <mat-icon 
+                      matTooltip="A fee added to a job"
+                    >info</mat-icon>
+                    Flat Fee
+                  </div>
+                </td>
                 <td>
                   <mat-form-field appearance="fill" class="full-width">
                     <input formControlName="flatfee" matInput (input)="onChangeUpdateButton()">

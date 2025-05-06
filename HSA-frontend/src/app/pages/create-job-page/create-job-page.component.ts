@@ -24,6 +24,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { CreateTemplateConfirmDialogComponentComponent } from '../../components/create-template-confirm-dialog-component/create-template-confirm-dialog-component.component';
 import { JobTemplateService } from '../../services/jobTemplate.service';
 import { currencyValidator } from '../../utils/currency-validator';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconModule } from '@angular/material/icon';
+
 
 @Component({
   selector: 'app-create-job-page',
@@ -42,7 +45,9 @@ import { currencyValidator } from '../../utils/currency-validator';
     FormsModule,
     ReactiveFormsModule,
     MatDatepickerModule,
-    JobDisplayTableComponent
+    JobDisplayTableComponent,
+    MatIconModule,
+    MatTooltipModule
   ],
   providers: [
     provideNativeDateAdapter()
@@ -104,7 +109,7 @@ export class CreateJobPageComponent {
       jobDescription: ['', Validators.required],
       flatfee: ['0.00', [Validators.required, currencyValidator()]],
       hourlyRate: ['0.00', [Validators.required, currencyValidator()]],
-      minutesWorked: ['', [Validators.required, Validators.min(0)]],
+      minutesWorked: ['0', [Validators.required, Validators.min(0)]],
     }, { validators: this.dateValidator });
 
     this.services = { "services": [] };
@@ -484,8 +489,8 @@ export class CreateJobPageComponent {
       services: servicesField as [],
       materials: materialsField as [],
       flatfee: this.jobForm.get('flatfee')?.value,
-      hourlyRate: this.jobForm.get('hourlyRate')?.value,    
-      minutesWorked: this.jobForm.get('minutesWorked')?.value,    
+      hourlyRate: this.jobForm.get('hourlyRate')?.value,
+      minutesWorked: this.jobForm.get('minutesWorked')?.value,
     }
 
     this.jobService.createJob(requestJson).subscribe(
