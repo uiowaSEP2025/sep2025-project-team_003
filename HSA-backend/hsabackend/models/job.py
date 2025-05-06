@@ -32,6 +32,11 @@ class Job(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.SET_NULL, blank=True, null=True)
 
     @property
+    def full_display_address(self):
+        """Returns the displayable address"""
+        return f"{self.requestor_address}, {self.requestor_city}, {self.requestor_state}, {self.requestor_zip}"
+
+    @property
     def total_cost(self):
         jobs_materials = JobMaterial.objects.filter(job=self)
 
