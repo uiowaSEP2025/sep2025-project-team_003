@@ -350,6 +350,9 @@ def edit_job(request, id):
     job.requestor_city = request.data.get('city', '')
     job.requestor_state = request.data.get('state', '')
     job.requestor_zip = request.data.get('zip', '')
+    job.flat_fee = request.data.get('flatfee', '')
+    job.hourly_rate = request.data.get('hourlyRate', '')
+    job.minutes_worked = request.data.get('minutesWorked', '')
 
     try:
         customer = Customer.objects.get(id=request.data.get('customerID'))

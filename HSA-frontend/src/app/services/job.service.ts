@@ -37,6 +37,9 @@ interface JobEditPostData {
   state: string | null,
   zip: string | null,
   address: string | null,
+  flatfee: string;       
+  hourlyRate: string;    
+  minutesWorked: string; 
 }
 
 interface JobDeletePostData {

@@ -159,8 +159,53 @@
                       </td>
                     </tr>
                     <tr>
-                      <td>Job ID</td>
-                      <td>{{jobData.data.id}}</td>
+                      <td>
+                        <div class="flex flex-row items-center">
+                          <mat-icon 
+                            matTooltip="A fee added to a job"
+                          >info</mat-icon>
+                          Flat Fee
+                        </div>
+                      </td>
+                      <td>
+                        <mat-form-field appearance="fill" class="full-width">
+                          <input formControlName="flatfee" matInput (input)="onChangeUpdateButton()">
+                          @if (jobForm.get('flatfee')?.touched && jobForm.get('flatfee')?.hasError('required')) {
+                          <mat-error>Flat Fee is required</mat-error>
+                          }
+                          @if (jobForm.get('flatfee')?.touched && jobForm.get('flatfee')?.hasError('invalidCurrency')) {
+                            <mat-error>Flat Fee must be a valid amount</mat-error>
+                            }
+                        </mat-form-field>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Hourly Rate</td>
+                      <td>
+                        <mat-form-field appearance="fill" class="full-width">
+                          <input formControlName="hourlyRate" matInput (input)="onChangeUpdateButton()">
+                          @if (jobForm.get('hourlyRate')?.touched && jobForm.get('hourlyRate')?.hasError('required')) {
+                          <mat-error>Hourly Rate is required</mat-error>
+                          }
+                          @if (jobForm.get('hourlyRate')?.touched && jobForm.get('hourlyRate')?.hasError('invalidCurrency')) {
+                          <mat-error>Hourly Rate must be a valid amount</mat-error>
+                          }
+                        </mat-form-field>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Minutes <br>Worked</td>
+                      <td>
+                        <mat-form-field appearance="fill" class="full-width">
+                          <input formControlName="minutesWorked" matInput (input)="onChangeUpdateButton()" type="number">
+                          @if (jobForm.get('minutesWorked')?.touched && jobForm.get('minutesWorked')?.hasError('required')) {
+                          <mat-error>Minutes Worked is required</mat-error>
+                          }
+                          @if (jobForm.get('minutesWorked')?.touched && jobForm.get('minutesWorked')?.hasError('min')) {
+                            <mat-error>Minutes Worked must be at least 0</mat-error>
+                            }
+                        </mat-form-field>
+                      </td>
                     </tr>
                   </table>
               </form> 
