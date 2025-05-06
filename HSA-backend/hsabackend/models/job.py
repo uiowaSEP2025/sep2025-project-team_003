@@ -63,3 +63,16 @@ class Job(models.Model):
             'end_date': self.end_date,
             'customer_name': self.customer.first_name + " " + self.customer.last_name,
         }
+
+    def jwt_json(self):
+        return {
+            'id': self.pk,
+            'jobStatus': self.job_status,
+            'description': self.description,
+            'customerName': self.customer.first_name + " " + self.customer.last_name,
+            'customerID': self.customer.id,
+            'requestorAddress': self.requestor_address,
+            "requestorCity": self.requestor_city,
+            "requestorState": self.requestor_state,
+            "requestorZip": self.requestor_zip,
+        }

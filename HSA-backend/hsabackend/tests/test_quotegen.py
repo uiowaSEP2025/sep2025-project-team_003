@@ -127,7 +127,7 @@ class GenerateBase64Tests(APITestCase):
     def test_base64_already_generated(self, mock_job, mock_pin):
         job = Mock(quote_s3_link="link.pdf")
         mock_job.objects.get.return_value = job
-        mock_pin.return_value = job.json()
+        mock_pin.return_value = job.jwt_json()
         request = self.factory.post("/api/ret/quote/1", {"pin": "1234"}, format="json")
         resp = generate_quote_pdf_as_base64(request, 1)
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
@@ -139,7 +139,7 @@ class GenerateBase64Tests(APITestCase):
     def test_base64_success(self, mock_job, mock_pin, mock_build):
         job = Mock(quote_s3_link=None)
         mock_job.objects.get.return_value = job
-        mock_pin.return_value = job.json()
+        mock_pin.return_value = job.jwt_json()
         raw = b"PDF_RAW"
         mock_build.return_value = raw
 

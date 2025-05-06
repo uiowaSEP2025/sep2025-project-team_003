@@ -34,8 +34,8 @@ from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 from hsabackend.utils.env_utils import get_url
 
 # these wrappers are for stubbing purposes
-def encode(job: Job):
-    return jwt.encode(job.json(), "vibecodedAPPS-willgetyouHACKED!!", algorithm="HS256")
+def encode(job):
+    return jwt.encode(job.jwt_json(), "vibecodedAPPS-willgetyouHACKED!!", algorithm="HS256")
 
 def decode(token):
     return jwt.decode(token, "vibecodedAPPS-willgetyouHACKED!!", algorithms=["HS256"])
@@ -165,8 +165,13 @@ def generate_quote_pdf_as_base64(request, id):
 
     provided_pin = str(request.data.get("pin", ""))
 
-    decoded = decode(provided_pin)
-    if decoded != job.json():
+    try:
+        decoded = decode(provided_pin)
+    except Exception:
+        return Response({"message": "Invalid PIN"}, status=status.HTTP_403_FORBIDDEN)
+
+
+    if decoded != job.jwt_json():
         return Response({"message": "Invalid PIN"}, status=status.HTTP_403_FORBIDDEN)
 
     if job.quote_s3_link:
@@ -254,7 +259,7 @@ def send_quote_pdf_to_customer_email(request, id):
     from_email = os.environ.get("EMAIL_HOST_USER")
     to_email = job.customer.email
 
-    token = encode(job.json())
+    token = encode(job)
 
 
     text_content = (
