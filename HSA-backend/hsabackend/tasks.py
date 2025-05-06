@@ -14,8 +14,13 @@ def check_upcoming_bookings():
     """
     Finds all bookings starting between now and now+5min.
     """
-    now = timezone.now()
-    window = now + datetime.timedelta(minutes=5)
+    now = timezone.localtime(timezone.now())
+    window = now + datetime.timedelta(minutes=15)
+
+    print(now)
+    print(window)
+
+    ogq = Booking.objects.count()
 
     qs = Booking.objects.filter(
         start_time__gte=now,
