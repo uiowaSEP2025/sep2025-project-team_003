@@ -145,7 +145,12 @@ export class EditInvoicePageComponent implements OnInit {
 
 
   loadJobs(searchTerm: string, pageSize: number, offSet: number) {
-    
+      this.JobsService.getJobsByInvoice(this.invoiceID, searchTerm, pageSize, offSet).subscribe({
+        next: (response) => {
+          this.jobs = response
+        },
+        error: () => {}
+      })
   }
 
   onSubmit() {

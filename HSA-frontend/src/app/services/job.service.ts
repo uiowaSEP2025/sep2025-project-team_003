@@ -87,7 +87,7 @@ export class JobService {
 
   public getJobsByInvoice(invoice: number,search: string, pageSize: number, offset: number) {
     const searchquery = search === "" ? "" : `search=${search}&`
-    return this.http.get<TableApiResponse<any>>(`${this.getJobsByInvoiceURL}?${searchquery}pagesize=${pageSize}&offset=${offset}/${invoice}`);
+    return this.http.get<TableApiResponse<any>>(`${this.getJobsByInvoiceURL}?${searchquery}pagesize=${pageSize}&offset=${offset}&invoice=${invoice}`);
   }
 
   public getJob(status: "created" | "in-progress" | "completed", params?: Record<string, string | number>): Observable<TableApiResponse<any>> {

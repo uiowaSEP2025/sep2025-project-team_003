@@ -16,19 +16,21 @@ from django.core.exceptions import ValidationError
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 @api_view(["GET"])
-def get_invoicable_jobs_per_invoice(request,invoice):
+@check_authenticated_and_onboarded()
+def get_invoicable_jobs_per_invoice(request):
     org = request.org
     search = request.query_params.get('search', '')
     pagesize = request.query_params.get('pagesize', '')
     offset = request.query_params.get('offset', 0)
+    invoice = request.query_params.get('invoice', 0)
 
-    if not pagesize or not cust:
+    if not pagesize or not invoice:
         return Response({"message": "missing parameters. need: pagesize,offset,customer"}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         pagesize = int(pagesize)
         offset = int(offset)
-        cust = int(cust)
+        invoice = int(invoice)
     except:
         return Response({"message": "pagesize,offset,customer must be int"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -41,8 +43,8 @@ def get_invoicable_jobs_per_invoice(request,invoice):
     
     inv_obj = inv[0]
 
-    jobs_not_on_invoice = Job.objects.filter(inv_obj.customer, invoice=None)
-    jobs_on_invoice = Job.objects.filter(invoice=inv_obj)
+    jobs_not_on_invoice = Job.objects.filter(customer=inv_obj.customer, invoice=None,job_status="completed")
+    jobs_on_invoice = Job.objects.filter(invoice=inv_obj, job_status="completed")
 
     resqs = jobs_not_on_invoice.union(jobs_on_invoice)
 
@@ -51,7 +53,7 @@ def get_invoicable_jobs_per_invoice(request,invoice):
     data = []
     for job in resqs:
         json = job.json_terse_for_invoice()
-        json["invoice"] = job.invoice
+        json["invoice"] = job.invoice.pk if job.invoice else None
         data.append(json)
 
     res = {

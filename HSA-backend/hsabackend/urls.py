@@ -105,7 +105,7 @@ urlpatterns = [
     path("api/edit/job/<int:id>", edit_job),
     path("api/delete/job/<int:id>", delete_job),
     path("api/get/jobs/by-contractor", get_jobs_by_contractor),
-    path("api/get/jobs/for-invoice/<int:id>", get_invoicable_jobs_per_invoice),
+    path("api/get/jobs/for-invoice", get_invoicable_jobs_per_invoice),
 
     # jobs_services join
     path("api/get/job/<int:id>/services", get_job_service_table_data),
