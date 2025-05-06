@@ -10,3 +10,6 @@ static
 
 # finegrain remove index.html from templates
 templates/index.html
+
+# lmao don't commit these files
+celerybeat-*
