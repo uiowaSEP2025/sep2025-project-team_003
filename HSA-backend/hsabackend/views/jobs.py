@@ -24,15 +24,15 @@ def get_invoicable_jobs_per_invoice(request):
     offset = request.query_params.get('offset', 0)
     invoice = request.query_params.get('invoice', 0)
 
-    if not pagesize or not invoice:
-        return Response({"message": "missing parameters. need: pagesize,offset,customer"}, status=status.HTTP_400_BAD_REQUEST)
-
+    if (not pagesize) or (not invoice):
+        return Response({"message": "missing parameters. need: pagesize,invoice"}, status=status.HTTP_400_BAD_REQUEST)
+    
     try:
         pagesize = int(pagesize)
         offset = int(offset)
         invoice = int(invoice)
     except:
-        return Response({"message": "pagesize,offset,customer must be int"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "pagesize,offset,invoice must be int"}, status=status.HTTP_400_BAD_REQUEST)
 
     offset = offset * pagesize
 
