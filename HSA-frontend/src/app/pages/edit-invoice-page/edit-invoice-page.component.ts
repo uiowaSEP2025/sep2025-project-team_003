@@ -47,6 +47,8 @@ export class EditInvoicePageComponent implements OnInit {
   status!: 'issued' | 'created' | 'paid'// also serves as a form control
   initialStatus!: string
   tax!: number
+  isFirstLoad = true
+
   readonly range: FormGroup<DateRange> = new FormGroup({
     issued: new FormControl<Date | null>(null),
     due: new FormControl<Date | null>(null),
@@ -104,7 +106,7 @@ export class EditInvoicePageComponent implements OnInit {
       const day = split[2]
       this.range.controls.due.setValue(new Date(parseInt(year), parseInt(month) - 1, parseInt(day)))
     }
-    this.loadJobs("", 5, 0);
+    this.loadJobs("", 5, 0);    
   }
 
   setSelectedJobs(selectedJobs: number[]) {
@@ -147,6 +149,12 @@ export class EditInvoicePageComponent implements OnInit {
   loadJobs(searchTerm: string, pageSize: number, offSet: number) {
       this.JobsService.getJobsByInvoice(this.invoiceID, searchTerm, pageSize, offSet).subscribe({
         next: (response) => {
+          
+          if (this.isFirstLoad) {
+            this.isFirstLoad = false
+            const ids = response.data.filter((job: any) => (job.invoice===this.invoiceID)).map((job:any) => (job.id))
+            this.setSelectedJobs(ids)
+          }
           this.jobs = response
         },
         error: () => {}
