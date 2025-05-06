@@ -21,3 +21,11 @@ class JobMaterial(models.Model):
             'unitsUsed': self.units_used,
             'pricePerUnit': self.price_per_unit 
         }
+    
+    def invoice_material_row(self):
+        return {
+            "material name": self.material.material_name,
+            "per unit": self.price_per_unit,
+            "units used": self.units_used,
+            "total": (self.price_per_unit * self.units_used)
+        }

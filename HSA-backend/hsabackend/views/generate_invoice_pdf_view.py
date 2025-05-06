@@ -151,51 +151,6 @@ from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 #     pdf.set_y(-40)  # Move to 20 units above the bottom
 #     pdf.multi_cell(0, text=disclaimer_text, align="C")
 
-# def generate_table_for_specific_job(pdf: FPDF, jobid: int, num_jobs: int, idx: int):
-#     greyscale = 215 # higher no --> lighter grey
-#     pdf.set_x(10)
-#     pdf.multi_cell(100, text=f"Job #{idx + 1} of {num_jobs}", align="L")
-#     with pdf.table(line_height=4, padding=2, text_align=("LEFT", "LEFT", "LEFT", "LEFT", "LEFT"), borders_layout="SINGLE_TOP_LINE", cell_fill_color=greyscale, cell_fill_mode="ROWS") as table:
-#         header = table.row()
-#         header.cell("Services Rendered", colspan=2, align="C")
-#         services = JobService.objects.select_related("service").filter(
-#             job=jobid
-#         )
-#         for service in services:
-#             json = service.get_service_info_for_detailed_invoice()
-#             service_row = table.row()
-#             service_row.cell(json["service name"])
-#             service_row.cell(json["service description"])
-
-#     pdf.ln(5) 
-
-#     with pdf.table(line_height=4, padding=2, text_align=("LEFT", "LEFT", "LEFT", "LEFT", "LEFT"), borders_layout="SINGLE_TOP_LINE", cell_fill_color=greyscale, cell_fill_mode="ROWS") as table:
-#         materials = JobMaterial.objects.filter(job=jobid)
-        
-#         header = table.row()
-#         header.cell("Material Name")
-#         header.cell("Per Unit")
-#         header.cell("Units Used")
-#         header.cell("Total")
-
-#         total = Decimal(0)
-#         for mat in materials:
-#             material_row = table.row()
-#             json = mat.invoice_material_row()
-#             material_row.cell(json["material name"])
-#             material_row.cell(format_currency(json["per unit"]))
-#             material_row.cell(str(json["units used"]))
-#             total += json["total"]
-#             material_row.cell(format_currency(json["total"]))
-
-#         total_row = table.row()
-#         total_row.cell("Materials Total")
-#         total_row.cell("")
-#         total_row.cell("")
-#         total_row.cell(format_currency(total))
-
-
-
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
