@@ -10,8 +10,10 @@ from django.db.models import Q
 from hsabackend.models.customer import Customer
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 from django.core.exceptions import ValidationError
+from django_ratelimit.decorators import ratelimit
 
 @api_view(["POST"])
+@ratelimit(key='ip', rate='3/m')
 def create_request(request, id):
     """
     Public: create a new Request for org=id.
