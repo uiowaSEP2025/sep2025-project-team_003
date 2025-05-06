@@ -6,6 +6,7 @@ from hsabackend.utils.string_formatters import NA_on_empty_string, format_maybe_
 from django.core.validators import MinValueValidator
 from hsabackend.models.invoice import Invoice
 from decimal import Decimal
+from hsabackend.models.job_material import JobMaterial
 
 class Job(models.Model):
     """A request for service from a customer to an organization"""
@@ -32,7 +33,13 @@ class Job(models.Model):
 
     @property
     def total_cost(self):
-        return (self.hourly_rate * Decimal(str((self.minutes_worked / 60)))) + self.flat_fee
+        jobs_materials = JobMaterial.objects.filter(job=self)
+
+        total = Decimal(0)
+        for jm in jobs_materials:
+            total += jm.units_used * jm.price_per_unit
+
+        return (self.hourly_rate * Decimal(str((self.minutes_worked / 60)))) + self.flat_fee + total
 
     quote_choices = [
         ('not-created-yet', 'not-created-yet'),
