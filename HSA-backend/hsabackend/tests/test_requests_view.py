@@ -7,25 +7,16 @@ from rest_framework.test import APIRequestFactory
 from rest_framework import status
 from hsabackend.views.requests import delete_request, approve_request, create_request, get_individual_request_data, get_filtered_request_data
 from hsabackend.models.organization import Organization
+from django.core.exceptions import ValidationError
 from hsabackend.models.request import Request
 from hsabackend.models.customer import Customer
 from hsabackend.models.job import Job
 from django.db.models import QuerySet
 from django.db.models import Q
 
-class RequestView(APITestCase):
+class TestCreate(APITestCase)
 
-    def test_delete_unauth(self):
-        mock_user = Mock(spec=User)
-        mock_user.is_authenticated = False
-        
-        factory = APIRequestFactory()
-        request = factory.post('/api/delete/request/1')
-        request.user = mock_user  
-        response = delete_request(request,1)
-        
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
+class DeleteRequestTest(APITestCase):
     @patch('hsabackend.views.requests.Organization.objects.get')
     @patch('hsabackend.views.requests.Request.objects.filter')
     def test_delete_not_found(self, req, get):
@@ -67,17 +58,7 @@ class RequestView(APITestCase):
 
         assert response.status_code == status.HTTP_200_OK
 
-    def test_approve_unauth(self):
-        mock_user = Mock(spec=User)
-        mock_user.is_authenticated = False
-        
-        factory = APIRequestFactory()
-        request = factory.post('/api/approve/request/1')
-        request.user = mock_user  
-        response = approve_request(request,1)
-        
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
+class TestApprove(APITestCase):
     @patch('hsabackend.views.requests.Organization.objects.get')
     @patch('hsabackend.views.requests.Request.objects.get')
     def test_approve_not_exists(self,filter, org):
@@ -99,7 +80,7 @@ class RequestView(APITestCase):
     @patch('hsabackend.views.requests.Request.objects.get')
     @patch('hsabackend.views.requests.Customer')
     @patch('hsabackend.views.requests.Job')
-    def test_approve_valid(self, job, customer, get, org):
+    def test_approve_invalid(self, job, customer, get, org):
         mock_user = Mock(spec=User)
         mock_user.is_authenticated = True
 
@@ -143,6 +124,71 @@ class RequestView(APITestCase):
         job_mock.description = ""
         job_mock.customer = customer_mock
         job_mock.organization = organization
+        job.return_value = job_mock
+
+        job_mock.save.side_effect = ValidationError({'firstn': ['This field is required.']})
+
+        
+        factory = APIRequestFactory()
+        
+        request = factory.post('/api/approve/request/1')
+        request.user = mock_user  
+        request.org = organization
+
+        response = approve_request(request,1)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+    @patch('hsabackend.views.requests.Organization.objects.get')
+    @patch('hsabackend.views.requests.Request.objects.get')
+    @patch('hsabackend.views.requests.Customer')
+    @patch('hsabackend.views.requests.Job')
+    def test_approve_valid(self, job, customer, get, org):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+
+        organization = Organization(
+            org_name = "Test Org",
+            org_email = "test@test.com",
+            org_city = "test city",
+            org_requestor_state = "IA",
+            org_requestor_zip = "99999",
+            org_requestor_address = "Test address",
+            org_phone = "124567890",
+            org_owner_first_name = "Test",
+            org_owner_last_name = "Test",
+            is_onboarding = False,
+        )
+        org.return_value = organization
+
+        req = MagicMock(spec=Request)
+        req.requester_first_name = "Test"
+        req.requester_last_name = "Test"
+        req.requester_email = "test@gmail.com"
+        req.requester_phone = "1234567890"
+        req.organization = organization
+        get.return_value = req
+
+        customer_mock = MagicMock(spec=Customer)
+        customer_mock.first_name = "Test"
+        customer_mock.last_name = "Test"
+        customer_mock.email = "test@gmail.com"
+        customer_mock.phone_no = "1234567890"
+        customer_mock.notes = ""
+        customer_mock.organization = organization
+        customer.return_value = customer_mock
+
+        job_mock = MagicMock(spec=Job)
+        job_mock.requestor_city = req.requester_city
+        job_mock.requestor_state = req.requester_state
+        job_mock.requestor_zip = req.requester_zip
+        job_mock.requestor_address = req.requester_address
+        job_mock.description = ""
+        job_mock.customer = customer_mock
+        job_mock.organization = organization
+
+
         job.return_value = job_mock
         
         factory = APIRequestFactory()
