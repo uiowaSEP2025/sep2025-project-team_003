@@ -120,6 +120,18 @@ def add_total_and_disclaimer(pdf: FPDF, total, org_name):
     pdf.set_y(-40)  # Move to 20 units above the bottom
     pdf.multi_cell(0, text=disclaimer_text, align="C")
 
+def add_job_header(pdf, job):
+    pdf.set_font("Arial", size=12, style='B')
+    pdf.set_xy(10, 20)
+    pdf.cell(10, 10, f"Job {job.pk} - {job.truncated_job_desc}", ln=True)
+    pdf.set_font("Arial", size=10)
+    pdf.set_xy(10, 30)
+    pdf.cell(10, 10, f"Start Date: {format_date_to_iso_string(job.start_date)}", ln=True)
+    pdf.set_xy(10, 40)
+    pdf.cell(10, 10, f"Address: {job.full_display_address}", ln=True)
+    pdf.ln(5)  # Add some space between the header and the table
+
+
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
@@ -143,9 +155,12 @@ def generate_pdf(request, id):
     generate_pdf_customer_org_header(pdf,org,inv)
     jobs, total = generate_global_jobs_table(pdf, inv)
     add_total_and_disclaimer(pdf, total, org.org_name)
-    for j in jobs:
+    for idx in range(len(jobs)):
+        j = jobs[idx]
+        add_job_header(pdf, j)
         get_job_detailed_table(pdf, j)
-        pdf.add_page() # move to top of next page
+        if idx != len(jobs) - 1:
+            pdf.add_page() # move to top of next page
 
         
 
