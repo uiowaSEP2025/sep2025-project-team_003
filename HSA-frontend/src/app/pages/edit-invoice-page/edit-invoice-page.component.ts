@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { TableComponentComponent } from '../../components/table-component/table-component.component';
-import { QuoteService } from '../../services/quote.service';
 import { ActivatedRoute } from '@angular/router';
 import { OnInit } from '@angular/core';
 import { MatError } from '@angular/material/form-field';
@@ -62,7 +61,7 @@ export class EditInvoicePageComponent implements OnInit {
     matcher = new GenericFormErrorStateMatcher()
   
   
-  constructor(private quoteService: QuoteService, private activatedRoute: ActivatedRoute, 
+  constructor(private activatedRoute: ActivatedRoute, 
     private invoiceService: InvoiceService, private stringFormatter: StringFormatter, 
     private router: Router) { }
 
@@ -145,13 +144,7 @@ export class EditInvoicePageComponent implements OnInit {
 
 
   loadQuotesToTable(searchTerm: string, pageSize: number, offSet: number) {
-    this.quoteService.getQuotesByInvoice(this.invoiceID, { search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
-      next: (response) => {
-        this.quotes = response
-      },
-      error: (error) => {
-      }
-    })
+    
   }
 
   onSubmit() {
