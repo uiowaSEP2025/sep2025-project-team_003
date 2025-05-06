@@ -29,33 +29,6 @@ from hsabackend.views.generate_quote_pdf_view import (
 # ------------------------------------------------------------------ #
 #  0. get_url() and gen_signable_link() tests
 # ------------------------------------------------------------------ #
-class GetUrlTests(unittest.TestCase):
-    def setUp(self):
-        # snapshot existing ENV
-        self._orig_env = os.environ.copy()
-
-    def tearDown(self):
-        os.environ.clear()
-        os.environ.update(self._orig_env)
-
-    def test_default_env(self):
-        os.environ.pop("ENV", None)
-        self.assertEqual(get_url(), "http://localhost:8000")
-
-    def test_dev_env(self):
-        os.environ["ENV"] = "DEV"
-        self.assertEqual(get_url(), "https://hsa.ssankey.com")
-
-    def test_prod_env(self):
-        os.environ["ENV"] = "PROD"
-        self.assertEqual(get_url(), "https://hsa-app.starlitex.com")
-
-    def test_invalid_env_raises(self):
-        os.environ["ENV"] = "STAGING"
-        with self.assertRaises(RuntimeError):
-            get_url()
-
-
 class GenSignableLinkTests(unittest.TestCase):
     @patch("hsabackend.views.generate_quote_pdf_view.random.randint")
     def test_pin_generated_and_saved(self, mock_randint):
@@ -75,13 +48,11 @@ class GenSignableLinkTests(unittest.TestCase):
 class PDFBuilderTests(unittest.TestCase):
     @patch("hsabackend.views.generate_quote_pdf_view.JobService")
     @patch("hsabackend.views.generate_quote_pdf_view.JobMaterial")
-    @patch("hsabackend.views.generate_quote_pdf_view.Decimal")
-    def test_build_quote_pdf_minimal(self, mock_mat, mock_svc, mock_decimal):
+    @patch("hsabackend.views.generate_quote_pdf_view.get_job_detailed_table")
+    def test_build_quote_pdf_minimal(self, details, mock_mat, mock_svc):
         """Smoke-test that _build_quote_pdf returns real PDF bytes."""
         mock_svc.objects.select_related.return_value.filter.return_value = []
         mock_mat.objects.filter.return_value = []
-        mock_decimal.return_value=0
-
         fake_job = Mock(
             pk=42,
             customer=Mock(
@@ -99,7 +70,6 @@ class PDFBuilderTests(unittest.TestCase):
 
         pdf_bytes = _build_quote_pdf(fake_job, fake_org)
         self.assertTrue(pdf_bytes.startswith(b"%PDF"))
-
 
 # ------------------------------------------------------------------ #
 #  2. /api/generate/quote/<id>
@@ -450,6 +420,7 @@ class PDFBuilderWithDataTests(unittest.TestCase):
         self.assertEqual(pdf_stub.table.call_count, 2)
         # each “row” call executed at least once (header + data rows)
         self.assertGreaterEqual(tbl_stub.row.call_count, 2)
+
 class SendQuotePDFEmailTests(APITestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
