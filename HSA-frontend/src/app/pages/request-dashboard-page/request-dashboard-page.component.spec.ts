@@ -6,6 +6,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of, Subject } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 
 class MockRouter {
   navigate = jasmine.createSpy('navigate');
@@ -64,5 +65,34 @@ describe('RequestDashboardPageComponent', () => {
     const createButton = compiled.querySelector('button')
     expect(table).toBeTruthy()
     expect(createButton).toBeTruthy()
-  })
+  });
+
+  it('should load approved and pending requests on init', () => {
+    const approvedReq = httpMock.expectOne((req: any) =>
+      req.url.includes('/request') && req.params.get('status') === 'approved'
+    );
+    expect(approvedReq).toBeTruthy();
+    approvedReq.flush([{ id: 1, description: 'Approved request' }]);
+  
+    const pendingReq = httpMock.expectOne((req: any) =>
+      req.url.includes('/request') && req.params.get('status') === 'received'
+    );
+    expect(pendingReq).toBeTruthy();
+    pendingReq.flush([{ id: 2, description: 'Pending request' }]);
+  
+    expect(component.approvedRequests.length).toBe(1);
+    expect(component.pendingRequests.length).toBe(1);
+  });
+  
+  it('should update tab label on tab change', () => {
+    const mockEvent = { tab: { textLabel: 'Pending' } } as any;
+    component.onTabChange(mockEvent);
+    expect(component.currentTabLabel).toBe('pending');
+  });
+  
+  it('should navigate to the correct page', () => {
+    component.navigateToPage('login');
+    expect(router.navigate).toHaveBeenCalledWith(['/login']);
+  });
 });
+
