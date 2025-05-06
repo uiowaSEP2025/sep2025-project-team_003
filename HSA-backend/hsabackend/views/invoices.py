@@ -156,7 +156,6 @@ def updateInvoice(request, id):
     
     if not invoice_qs.exists():
         return Response({"message": "The invoice does not exist"}, status=status.HTTP_404_NOT_FOUND)
-    
     try: 
         with atomic():
             invoice = invoice_qs[0]
