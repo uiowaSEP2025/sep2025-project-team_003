@@ -3,10 +3,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from hsabackend.models.customer import Customer 
 from hsabackend.models.invoice import Invoice
-from hsabackend.models.organization import Organization
+from django.db.transaction import atomic
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.db.models import Sum
+from hsabackend.models.job import Job
 from hsabackend.utils.api_validators import parseAndReturnDate, parse_and_return_decimal
 from decimal import Decimal
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
@@ -18,15 +18,15 @@ def createInvoice(request):
     org = request.org
 
     customer_id = json.get("customerID", None)
-    quote_ids = json.get("quoteIDs",[])
+    job_ids = json.get("jobIds",[])
     if not isinstance(customer_id, int):
         return Response({"message": "CustomerID must be int"}, status=status.HTTP_400_BAD_REQUEST)  
     
-    if not isinstance(quote_ids, list):
-        return Response({"message": "Quotes must be list"}, status=status.HTTP_400_BAD_REQUEST)  
+    if not isinstance(job_ids, list):
+        return Response({"message": "Jobs must be list"}, status=status.HTTP_400_BAD_REQUEST)  
     
-    if len(quote_ids) == 0:
-        return Response({"message": "Must include at least 1 quote"}, status=status.HTTP_400_BAD_REQUEST)  
+    if len(job_ids) == 0:
+        return Response({"message": "Must include at least 1 job"}, status=status.HTTP_400_BAD_REQUEST)  
 
     invoice_status = json.get("status",None)
     issued = parseAndReturnDate(json.get("issuedDate",""))
@@ -54,19 +54,25 @@ def createInvoice(request):
         # will be here if user does not own the customer ID
         return Response({"message": "Must provide customer for the invoice."}, status=status.HTTP_404_NOT_FOUND)
 
-    invoice = Invoice(
-        customer = cust_qs[0],
-        issuance_date = issued,
-        due_date = due,
-        tax = parse_and_return_decimal(tax_percent),
-        status=invoice_status
-    )
-    
     try:
-        invoice.full_clean()
-        invoice.save()
+        with atomic():
+            invoice = Invoice(
+                customer = cust_qs[0],
+                issuance_date = issued,
+                due_date = due,
+                tax = parse_and_return_decimal(tax_percent),
+                status=invoice_status)
+        
+            invoice.full_clean()
+            invoice.save()
+
+            Job.objects.filter(organization=org.pk, job_status="completed",
+                        invoice=None, customer=cust_qs[0]).update(invoice=invoice.pk)
+
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": "500"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     return Response({"message": "Invoice created"}, status=status.HTTP_201_CREATED)
 

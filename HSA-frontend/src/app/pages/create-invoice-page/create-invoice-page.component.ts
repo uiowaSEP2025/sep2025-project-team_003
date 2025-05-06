@@ -74,7 +74,6 @@ export class CreateInvoicePageComponent implements OnInit {
   loadJobsToTable(searchTerm: string, pageSize: number, offSet: number) {
     this.jobService.getInvoicableJobs(this.selectedCustomers[0], searchTerm, pageSize, offSet).subscribe({
       next: (response) => {
-        console.log(response)
         this.jobs = response
       },
       error: (error) => {
@@ -103,30 +102,32 @@ export class CreateInvoicePageComponent implements OnInit {
   }
 
   onSubmit() {
-    let validDates: any
+    let haserror: boolean = false
     if (this.isDateSelectVisible()) {
-      validDates = this.datePicker.validate()
+      haserror = !this.datePicker.validate()
     }
     if (this.selectedCustomers.length === 0) {
       this.selectedCustomersIsError = true
-      return;
+      haserror = true;
     }
     if (this.selectedJobs.length === 0) {
-      const quotesTableVisible = this.selectedCustomers.length !== 0
-      if (quotesTableVisible) {
+      const jobsTableVisible = this.selectedCustomers.length !== 0
+      if (jobsTableVisible) {
         this.selectedJobsIsError = true
+        haserror = true;
       }
-      return;
     }
+    this.taxAmount.markAsUntouched()
     if (!this.taxAmount.valid) {
-      return;
+      this.taxAmount.markAsTouched()
+      haserror = true;
     }
-    if (this.isDateSelectVisible() && !validDates) {
+    if (haserror) {
       return;
     }
     const json = {
       customerID: this.selectedCustomers[0],
-      quoteIDs: this.selectedJobs,
+      jobIds: this.selectedJobs,
       status: this.status,
       issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
       dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
