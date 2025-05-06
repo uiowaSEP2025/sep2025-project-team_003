@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
+import { StringFormatter } from '../../utils/string-formatter';
 
 interface Job {
   flatFee: number;
@@ -32,17 +33,40 @@ export class InvoiceJobComponent implements OnChanges{
   displayedColumns = ["Description", "Flat Fee", "Hourly Rate", "Hours Worked", "Total Cost"]
   displayData: any | null = null;
 
+  constructor (private formatter: StringFormatter) {}
+
   ngOnChanges(changes: SimpleChanges): void {
     if (this.data) {
+      console.log(this.data)
       this.displayData = this.data.jobs.map((job: any) => (
-        {"Flat Fee": job.flatFee,
-         "Hourly Rate": job.hourlyRate,
+        {"Flat Fee": this.formatter.formatCurrency(job.flatFee),
+         "Hourly Rate": this.formatter.formatCurrency(job.hourlyRate),
          "Hours Worked": job.hoursWorked,
          "Total Cost": job.totalCost,
          "Description": job.description
         }
 
       ));
+
+      this.displayData.push({"Flat Fee": "",
+        "Hourly Rate": "",
+        "Hours Worked": "",
+        "Total Cost": this.formatter.formatTaxPercent(this.data.taxPercent),
+        "Description": "Tax Percent"
+       })
+       this.displayData.push({"Flat Fee": "",
+        "Hourly Rate": "",
+        "Hours Worked": "",
+        "Total Cost": this.formatter.formatCurrency(this.data.taxAmount),
+        "Description": "Tax Amount"
+       })
+       this.displayData.push({"Flat Fee": "",
+        "Hourly Rate": "",
+        "Hours Worked": "",
+        "Total Cost": this.formatter.formatCurrency(this.data.grandTotal),
+        "Description": "Grand Total"
+       })
+
     }
   }
   

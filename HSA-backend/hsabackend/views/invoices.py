@@ -225,7 +225,7 @@ def get_data_for_invoice(request, id):
     decimal_tax_percent = Decimal(str(round(tax_percent, 2)))
 
     res["taxAmount"] = str(decimal_tax_amount)
-    res["taxPercent"] = str(decimal_tax_percent)
+    res["taxPercent"] = str(round(inv.tax, 2))
     res["grandTotal"] = str(round(decimal_tax_amount + total, 2))
     res["jobs"] = res_jobs
 
