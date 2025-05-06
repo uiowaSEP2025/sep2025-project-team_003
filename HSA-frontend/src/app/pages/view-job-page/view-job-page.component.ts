@@ -13,6 +13,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatDialog } from '@angular/material/dialog';
 import { QuoteDialogComponent } from '../../components/quote-dialog/quote-dialog.component';
+import { StringFormatter } from '../../utils/string-formatter';
 
 @Component({
   selector: 'app-view-job-page',
@@ -33,16 +34,19 @@ import { QuoteDialogComponent } from '../../components/quote-dialog/quote-dialog
 export class ViewJobPageComponent  implements OnInit {
   jobID!: number
   jobData: JobDataInterface | null = null;
+  formatter: StringFormatter
 
   constructor(
     private jobService: JobService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private stringFormatter: StringFormatter
   ) {
     this.activatedRoute.paramMap.subscribe(params => {
       this.jobID = Number(params.get('id'));
     });
+    this.formatter = stringFormatter
   }
 
   openQuoteDialog() {

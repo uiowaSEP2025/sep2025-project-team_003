@@ -99,7 +99,6 @@ export class EditJobPageComponent {
     private router: Router,
     private tracker: RequestTrackerService,
     private jobFormBuilder: FormBuilder,
-    private http: HttpClient,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
   ) {
