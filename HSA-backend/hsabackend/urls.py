@@ -18,7 +18,6 @@ from hsabackend.views.contractors import (
 from hsabackend.views.requests import (
     get_filtered_request_data, 
     get_individual_request_data, 
-    get_org_request_data,
     delete_request,
     approve_request,
     create_request,
@@ -40,7 +39,7 @@ from hsabackend.views.generate_quote_pdf_view import generate_quote_pdf, send_qu
 from hsabackend.views.organizations import complete_onboarding, createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail
 from hsabackend.views.generate_requests_iframe import getHTMLForm
 from hsabackend.views.discounts import get_discounts, edit_discount, create_discount, delete_discount
-from hsabackend.views.bookings import create_event, delete_event, edit_event, get_booking_data
+from hsabackend.views.bookings import create_event, delete_event, edit_event, get_booking_data, get_ical_for_bookings
 from django.http import HttpResponse
 
 def handle_unmatched_api(request):
@@ -77,7 +76,6 @@ urlpatterns = [
     path("api/delete/contractor/<int:id>", delete_contractor),
 
     # request
-    path("api/get/requests", get_org_request_data),
     path("api/get/requests/filter", get_filtered_request_data),
     path("api/get/request/<int:id>", get_individual_request_data),
     path("api/delete/request/<int:id>", delete_request),
@@ -181,6 +179,7 @@ urlpatterns = [
     path("api/create/booking", create_event),
     path("api/edit/booking/<int:id>", edit_event),
     path("api/delete/booking/<int:id>", delete_event),
+    path("api/icals/booking", get_ical_for_bookings),
 
     # password reset
     re_path(r'^api/password_reset/', include('hsabackend.utils.password_reset_route_adder', namespace='password_reset')),

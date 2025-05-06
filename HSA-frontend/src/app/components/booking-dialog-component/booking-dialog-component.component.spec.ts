@@ -10,7 +10,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { MatSelectHarness } from '@angular/material/select/testing';
 
-fdescribe('BookingDialogComponentComponent', () => {
+describe('BookingDialogComponentComponent', () => {
   let component: BookingDialogComponentComponent;
   let fixture: ComponentFixture<BookingDialogComponentComponent>;
   let loader: HarnessLoader;

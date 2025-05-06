@@ -14,6 +14,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ContractorNameId } from '../../services/contractor.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-calendar-component',
@@ -23,7 +25,9 @@ import { MatInputModule } from '@angular/material/input';
     CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
   ],
   providers: [
     BookingService,
@@ -40,7 +44,43 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   events: DayPilot.EventData[] = [];
   jobs: any[] = [];
   date = DayPilot.Date.today();
+  /* when we change the mode to day or week with the buttons, it fires the date change.
+  the good thing is that when we use the buttons, the date does not change, so that
+  we have a reliable way of telling if a actual date is selected 
+  */
+  staleDate = DayPilot.Date.today(); 
   selectControl: FormControl<ContractorNameId | null> = new FormControl(null);
+  isDay = () => (this.configNavigator.selectMode === "Day")
+
+  private getFromTo() {
+    let from: DayPilot.Date | undefined = undefined;
+    let to: DayPilot.Date | undefined = undefined
+
+    if (this.isDay()) {
+      from = this.date;
+      to = this.date.addHours(23).addMinutes(59).addSeconds(59);
+    }
+    else {
+      from = this.date.firstDayOfWeek()
+      to = from.addDays(6).addHours(23).addMinutes(59).addSeconds(59);
+    }
+    return [from, to]
+  }
+
+  downloadIcal() {
+    const [from, to] = this.getFromTo()
+    this.calendarDataService.getIcal(from, to, this.selectControl.value?.id!).subscribe(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'bookings.ics';
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    });
+  }
 
   clearAllEvents() {
     // DO NOT SET EVENTS TO [] TO CLEAR EVENTS. THAT DOES NOTHING!
@@ -62,13 +102,17 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
     cellHeight: 25,
     onVisibleRangeChanged: args => {
 
-      // this.loadEvents();
     }
   };
 
   changeDate(date: DayPilot.Date): void {
-    this.configDay.startDate = date;
-    this.configWeek.startDate = date;
+    if (this.staleDate !== date) {
+      this.configDay.startDate = date;
+      this.configWeek.startDate = date;
+      this.staleDate = date
+      this.clearAllEvents()
+      this.loadEvents()
+    } 
   }
 
   configDay: DayPilot.CalendarConfig = {
@@ -150,44 +194,42 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   loadEvents(): void {
     if (this.nav) {
       // nav is not init when the select change is bound
-      const from = this.nav.control.visibleStart();
-      const to = this.nav.control.visibleEnd();
+      const [from,to] = this.getFromTo()
+      //load events from booking model
+      this.calendarDataService.getEvents(from, to, this.selectControl.value!.id).subscribe({
+        next: (response) => {
+          let allInfo: any = response
+          let eventsInfo: any = allInfo["event_data"]
+          let jobsInfo: any = allInfo["job_data"]
+          if (eventsInfo.length !== 0) {
+            eventsInfo.forEach((element: any) => {
+              let eventFormat = new DayPilot.Event({
+                id: element.id,
+                text: element["event_name"],
+                start: new DayPilot.Date(element["start_time"], true),
+                end: new DayPilot.Date(element["end_time"], true),
+                tags: {
+                  jobID: element["job"],
+                  bookingType: element["booking_type"],
+                  status: element["status"]
+                },
+                backColor: element["back_color"]
+              });
 
-    //load events from booking model
-    this.calendarDataService.getEvents(from, to, this.selectControl.value!.id).subscribe({
-      next: (response) => {
-        let allInfo: any = response
-        let eventsInfo: any = allInfo["event_data"]
-        let jobsInfo: any = allInfo["job_data"]
-        if (eventsInfo.length !== 0) {
-          eventsInfo.forEach((element: any) => {
-            let eventFormat = new DayPilot.Event({
-              id: element.id,
-              text: element["event_name"],
-              start: new DayPilot.Date(element["start_time"], true),
-              end: new DayPilot.Date(element["end_time"], true),
-              tags: {
-                jobID: element["job"],
-                bookingType: element["booking_type"],
-                status: element["status"]
-              },
-              backColor: element["back_color"]
+              this.events.push(eventFormat.data)
             });
+          }
 
-            this.events.push(eventFormat.data)
-          });
+          if (jobsInfo.length !== 0) {
+            jobsInfo.forEach((element: any, index: number) => {
+              this.jobs.push(element)
+              let endDate = element.data.endDate.split("-").slice(1).join("/");
+              this.events[index].html = this.eventHTML(this.events[index].text, endDate, element.data.customerName, this.events[index].tags.bookingType)
+              this.events[index].tags.jobDescription = element.data.description
+            });
+          }
         }
-
-        if (jobsInfo.length !== 0) {
-          jobsInfo.forEach((element: any, index: number) => {
-            this.jobs.push(element)
-            let endDate = element.data.endDate.split("-").slice(1).join("/");
-            this.events[index].html = this.eventHTML(this.events[index].text, endDate, element.data.customerName, this.events[index].tags.bookingType)
-            this.events[index].tags.jobDescription = element.data.description
-          });
-        }
-      }
-    });
+      });
     }
 
   }
@@ -196,12 +238,14 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
     this.configNavigator.selectMode = "Day";
     this.configDay.visible = true;
     this.configWeek.visible = false;
+    
   }
 
   viewWeek(): void {
     this.configNavigator.selectMode = "Week";
     this.configDay.visible = false;
     this.configWeek.visible = true;
+    
   }
 
   onBeforeEventRender(args: any) {

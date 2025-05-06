@@ -43,7 +43,7 @@ describe('MaterialsPageComponent', () => {
 
   it('should render the components', () => {
     const compiled = fixture.debugElement.nativeElement;
-    const table = compiled.querySelector('table')
+    const table = compiled.querySelector('div[data-testid="app-table"]');
     const createButton = compiled.querySelector('button')
     expect(table).toBeTruthy()
     expect(createButton).toBeTruthy()

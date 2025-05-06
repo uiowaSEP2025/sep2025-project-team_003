@@ -3,7 +3,6 @@ from django.db import models
 from hsabackend.models.job import Job
 from hsabackend.models.model_validators import isNonEmpty, validate_state, isValidPhone
 from hsabackend.models.organization import Organization
-from hsabackend.models.service import Service
 
 
 class Request(models.Model):
@@ -40,13 +39,13 @@ class Request(models.Model):
             'requester_zip': self.requester_zip,
             'requester_address': self.requester_address,
             'description': self.description,
-            'status': self.status
+            'status': self.request_status
         }
     
     def json_simplify(self):
         return {
             'id': self.id,
-            'requestor_name': self.requestor_first_name + " " + self.requestor_last_name,
-            'requestor_email': self.requestor_email,
+            'requester_name': self.requester_first_name + " " + self.requester_last_name,
+            'requester_email': self.requester_email,
             'description': self.description,
         }

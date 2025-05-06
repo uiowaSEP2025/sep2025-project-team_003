@@ -30,7 +30,6 @@ export class QuotesDashboardPageComponent implements OnInit {
     const url = this.filter ? `/api/get/quotes?filterby=${this.filter}` : `/api/get/quotes`;
     this.http.get<{ data: Quote[] }>(url).subscribe({
       next: res => {
-        console.log('Loaded quotes:', res.data);
         this.quotes = res.data;
       },
       error: err => console.error('Failed to load quotes:', err)

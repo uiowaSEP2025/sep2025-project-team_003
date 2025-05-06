@@ -29,6 +29,6 @@ describe('InvoicesPageComponent', () => {
   it('should render the compoenents', () => {
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('button')).toBeTruthy()
-    expect(compiled.querySelector('table')).toBeTruthy()
+    expect(compiled.querySelector('div[data-testid="app-table"]')).toBeTruthy()
   })
 });

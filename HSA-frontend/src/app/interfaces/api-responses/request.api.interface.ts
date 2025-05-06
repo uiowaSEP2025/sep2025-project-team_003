@@ -1,11 +1,12 @@
 export interface RequestResponseData {
     id: number,
-    requestor_name: string,
-    requestor_email: string,
-    requestor_city: string
-    requestor_state: string,
-    requestor_zip: string,
-    requestor_address: string,
+    requester_first_name: string,
+    requester_last_name: string,
+    requester_email: string,
+    requester_city: string
+    requester_state: string,
+    requester_zip: string,
+    requester_address: string,
     description: string,
     status: string
 }

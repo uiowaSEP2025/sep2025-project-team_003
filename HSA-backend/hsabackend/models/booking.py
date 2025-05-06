@@ -37,6 +37,11 @@ class Booking(models.Model):
         """Returns the duration in minutes between start_time and end_time"""
         time_difference = self.end_time - self.start_time
         return int(time_difference.total_seconds() / 60)
+    
+    @property
+    def full_display_address(self):
+        """Returns the displayable address"""
+        return f"{self.job.requestor_address}, {self.job.requestor_city}, {self.job.requestor_state}, {self.job.requestor_zip}"
 
 
     def __str__(self):

@@ -61,7 +61,7 @@ export class BookingDialogComponentComponent implements OnInit {
     this.eventForm = this.eventFormBuilder.group({
       eventName: ['', Validators.required],
       bookingType: ['', Validators.required],
-      jobID: ['', Validators.required],
+      jobID: [null, Validators.required],
       jobDescription: [''],
       status: ['', Validators.required],
       color: [''],
@@ -108,7 +108,7 @@ export class BookingDialogComponentComponent implements OnInit {
         jobID: this.data.jobID,
         status: this.data.status,
         jobDescription: this.data.jobDescription,
-        color: this.data.backColor,
+        color: this.data.backColor ? this.data.backColor : "",
         startTime: this.stringFormatter.formatDateToHHMM(new Date(this.data.startTime)),
         endTime: this.stringFormatter.formatDateToHHMM(new Date(this.data.endTime)),
       });
@@ -187,6 +187,7 @@ export class BookingDialogComponentComponent implements OnInit {
       this.snackBar.open('Invalid fields. Please review the form and submit again!', '', {
         duration: 3000
       });
+      return;
     }
     this.dialogRef.close({
       eventName: this.eventForm.get('eventName')?.value,

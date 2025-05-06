@@ -23,7 +23,6 @@ interface RequestDeletePostData {
   providedIn: 'root'
 })
 export class RequestService {
-  private apiGetUrl = `${environment.apiUrl}/api/get/requests`;
   private apiGetFilteredUrl =  `${environment.apiUrl}/api/get/requests/filter`;
   private apiGetExcludedUrl = `${environment.apiUrl}/api/get/requests/exclude`;
   private apiGetSpecificUrl = `${environment.apiUrl}/api/get/request`;
@@ -36,20 +35,7 @@ export class RequestService {
 
   constructor(private http: HttpClient) {}
 
-  public getRequest(params?: Record<string, string | number>): Observable<StandardApiResponse> {
-    let httpParams = new HttpParams();
-
-    // Add query parameters
-    if (params) {
-      Object.keys(params).forEach(key => {
-        httpParams = httpParams.append(key, params[key])
-      })
-    }
-
-    return this.http.get<StandardApiResponse>(this.apiGetUrl, { params: httpParams });
-  }
-
-  public getFilteredRequest(params?: RequestFilteredParams): Observable<StandardApiResponse> {
+  public getFilteredRequest(params?: RequestFilteredParams): Observable<TableApiResponse<any>> {
     let httpParams = new HttpParams();
 
     // Add query parameters
@@ -69,7 +55,7 @@ export class RequestService {
       });
     }
 
-    return this.http.get<StandardApiResponse>(this.apiGetFilteredUrl, { params: httpParams });
+    return this.http.get<TableApiResponse<any>>(this.apiGetFilteredUrl, { params: httpParams });
   }
   
    public getExcludedRequest(params?: RequestParams): Observable<TableApiResponse<Request>> {
