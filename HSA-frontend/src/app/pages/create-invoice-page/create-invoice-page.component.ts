@@ -20,6 +20,7 @@ import { Validators } from '@angular/forms';
 import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
 import { ReactiveFormsModule } from '@angular/forms';
 import integerValidator from '../../utils/whole-number-validator';
+import { JobService } from '../../services/job.service';
 
 @Component({
   selector: 'app-create-invoice-page',
@@ -31,12 +32,12 @@ import integerValidator from '../../utils/whole-number-validator';
   styleUrl: './create-invoice-page.component.scss'
 })
 export class CreateInvoicePageComponent implements OnInit {
-  quotes: any
+  jobs: any
   customers: any
   selectedCustomers: any = []
   selectedCustomersIsError: boolean = false
-  selectedQuotes: any = []
-  selectedQuotesIsError: boolean = false
+  selectedJobs: any = []
+  selectedJobsIsError: boolean = false
   status: 'created' | 'issued' | 'paid' = 'created'
   matcher = new GenericFormErrorStateMatcher()
   @ViewChild(InvoiceDatePickerComponent) datePicker!: InvoiceDatePickerComponent;
@@ -51,7 +52,8 @@ export class CreateInvoicePageComponent implements OnInit {
   ])
 
   constructor(private customerService: CustomerService, private router: Router,
-    private invoiceService: InvoiceService, private stringFormatter: StringFormatter) { }
+    private invoiceService: InvoiceService, private stringFormatter: StringFormatter,
+    private jobService: JobService) { }
 
   ngOnInit(): void {
     this.loadCustomersToTable("", 5, 0);
@@ -69,26 +71,33 @@ export class CreateInvoicePageComponent implements OnInit {
     })
   }
 
-  loadQuotesToTable(searchTerm: string, pageSize: number, offSet: number) {
-    
+  loadJobsToTable(searchTerm: string, pageSize: number, offSet: number) {
+    this.jobService.getInvoicableJobs(this.selectedCustomers[0], searchTerm, pageSize, offSet).subscribe({
+      next: (response) => {
+        console.log(response)
+        this.jobs = response
+      },
+      error: (error) => {
+      }
+    })
   }
 
-  setSelectedQuotes(quotes: number[]) {
-    this.selectedQuotes = [...quotes]
-    this.selectedQuotesIsError = this.selectedQuotes.length === 0 ? true : false
+  setSelectedQuotes(jobs: number[]) {
+    this.selectedJobs = [...jobs]
+    this.selectedJobsIsError = this.selectedJobs.length === 0 ? true : false
   }
 
   setSelectedCustomers(cust: number[]) {
     this.selectedCustomers = [...cust]
     if (this.selectedCustomers.length !== 0) {
       this.selectedCustomersIsError = false
-      this.selectedQuotes = []
-      this.selectedQuotesIsError = false
-      this.loadQuotesToTable('', 5, 0)
+      this.selectedJobs = []
+      this.selectedJobsIsError = false
+      this.loadJobsToTable('', 5, 0)
     }
     else {
-      this.selectedQuotes = []
-      this.quotes = { data: [], totalCount: 0 }
+      this.selectedJobs = []
+      this.jobs = { data: [], totalCount: 0 }
       this.selectedCustomersIsError = true
     }
   }
@@ -102,10 +111,10 @@ export class CreateInvoicePageComponent implements OnInit {
       this.selectedCustomersIsError = true
       return;
     }
-    if (this.selectedQuotes.length === 0) {
+    if (this.selectedJobs.length === 0) {
       const quotesTableVisible = this.selectedCustomers.length !== 0
       if (quotesTableVisible) {
-        this.selectedQuotesIsError = true
+        this.selectedJobsIsError = true
       }
       return;
     }
@@ -117,7 +126,7 @@ export class CreateInvoicePageComponent implements OnInit {
     }
     const json = {
       customerID: this.selectedCustomers[0],
-      quoteIDs: this.selectedQuotes,
+      quoteIDs: this.selectedJobs,
       status: this.status,
       issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
       dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),

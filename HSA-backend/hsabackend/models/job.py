@@ -73,3 +73,12 @@ class Job(models.Model):
             'end_date': format_maybe_null_date(self.end_date),
             'customer_name': NA_on_empty_string(self.customer.first_name + " " + self.customer.last_name),
         }
+    
+    def josn_terse_for_invoice(self):
+        return {
+            'id': self.pk,
+            # cap at 50 so table doesn't stretch
+            'description': NA_on_empty_string(self.description[:50] + ("..." if len(self.description) > 50 else "")),
+            'start_date': format_maybe_null_date(self.start_date),
+            'end_date': format_maybe_null_date(self.end_date),
+        }

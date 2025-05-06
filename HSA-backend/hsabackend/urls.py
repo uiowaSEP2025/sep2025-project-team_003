@@ -25,7 +25,7 @@ from hsabackend.views.requests import (
 from hsabackend.views.services import get_service_table_data, get_service_excluded_table_data, create_service, edit_service, delete_service
 from hsabackend.views.materials import get_material_excluded_table_data, get_material_table_data, create_material, edit_material, delete_material
 from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice, get_data_for_invoice
-from hsabackend.views.jobs import get_job_excluded_table_data, get_job_table_data, get_job_individual_data, create_job, edit_job, delete_job, get_jobs_by_contractor
+from hsabackend.views.jobs import get_job_excluded_table_data, get_job_table_data, get_job_individual_data, create_job, edit_job, delete_job, get_jobs_by_contractor, get_invoicable_jobs
 from hsabackend.views.jobs_services import get_job_service_table_data, create_job_service, delete_job_service, delete_cached_job_service
 from hsabackend.views.jobs_materials import get_job_material_table_data, create_job_material, delete_job_material, delete_cached_job_material
 from hsabackend.views.jobs_contractors import get_job_contractor_table_data, create_job_contractor, delete_job_contractor, delete_cached_job_contractor
@@ -98,6 +98,7 @@ urlpatterns = [
 
     # jobs
     path("api/get/jobs", get_job_table_data),
+    path("api/get/invoicable/jobs", get_invoicable_jobs),
     path("api/get/jobs/exclude", get_job_excluded_table_data),
     path("api/get/job/<int:id>", get_job_individual_data),
     path("api/create/job", create_job),

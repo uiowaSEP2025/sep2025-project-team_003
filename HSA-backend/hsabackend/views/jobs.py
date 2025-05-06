@@ -17,6 +17,54 @@ from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
+def get_invoicable_jobs(request):
+    org = request.org
+    search = request.query_params.get('search', '')
+    pagesize = request.query_params.get('pagesize', '')
+    cust = request.query_params.get('customer', '')
+    offset = request.query_params.get('offset', 0)
+
+    if not pagesize or not cust:
+        return Response({"message": "missing parameters. need: pagesize,offset,customer"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        pagesize = int(pagesize)
+        offset = int(offset)
+        cust = int(cust)
+    except:
+        return Response({"message": "pagesize,offset,customer must be int"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    offset = offset * pagesize
+    jobs = Job.objects.filter(organization=org.pk, job_status="completed",invoice=None, customer=cust).filter(
+        Q(customer__first_name__icontains=search) |
+        Q(customer__last_name__icontains=search) |
+        Q(start_date__icontains=search) |
+        Q(end_date__icontains=search) |
+        Q(description__icontains=search)
+    )[offset:offset + pagesize]
+
+    data = []
+    for job in jobs:
+        data.append(job.josn_terse_for_invoice())
+
+    count = Job.objects.filter(organization=org.pk, job_status="completed",invoice=None, customer=cust).filter(
+        Q(customer__first_name__icontains=search) |
+        Q(customer__last_name__icontains=search) |
+        Q(start_date__icontains=search) |
+        Q(end_date__icontains=search) |
+        Q(description__icontains=search)
+    ).count()
+
+    res = {
+        'data': data,
+        'totalCount': count
+    }
+    return Response(res, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@check_authenticated_and_onboarded()
 def get_jobs_by_contractor(request):
     org = request.org
     search = request.query_params.get('search', '')
