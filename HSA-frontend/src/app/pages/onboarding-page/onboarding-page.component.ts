@@ -138,7 +138,6 @@ export class OnboardingPageComponent implements OnInit {
       requestorZip: ['', Validators.required],
       requestorStateSelect: [, Validators.required],
       jobDescription: ['', Validators.required],
-
       flatfee: ['0.00', [Validators.required, currencyValidator()]],
       hourlyRate: ['0.00', [Validators.required, currencyValidator()]],
       minutesWorked: ['0', [Validators.required, Validators.min(0)]],
@@ -634,7 +633,10 @@ export class OnboardingPageComponent implements OnInit {
         address: this.jobGeneralForm.get('requestorAddress')?.value,
         contractors: contractorsField as [],
         services: servicesField as [],
-        materials: materialsField as []
+        materials: materialsField as [],
+        flatfee: this.jobGeneralForm.get('flatfee')?.value,
+        hourlyrate: this.jobGeneralForm.get('hourlyRate')?.value,
+        minutesworked: this.jobGeneralForm.get('minutesWorked')?.value,
       }
     }
 
@@ -664,8 +666,7 @@ export class OnboardingPageComponent implements OnInit {
   }
 
   updateOnboardingField(request: any) {
-    console.log("about to hit the API")
-    return;
+    //submits the data to save
     this.organizationService.updateOnboardingProcess(request).subscribe({
       next: (response) => {
         this.snackBar.open('Onboarding completed!', '', {
