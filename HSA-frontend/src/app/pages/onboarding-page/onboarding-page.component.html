@@ -355,6 +355,57 @@
 									</mat-form-field>
 								</td>
 							</tr>
+							<tr>
+								<td>
+								  <div class="flex flex-col items-center">
+									Flat Fee
+									<mat-icon 
+									  matTooltip="A fee added to a job"
+									>info</mat-icon><br>
+								  </div>
+								</td>
+								<td>
+								  <mat-form-field appearance="fill" class="full-width">
+									<span matTextPrefix>$&nbsp;</span>
+									<input formControlName="flatfee" matInput>
+									@if (jobGeneralForm.get('flatfee')?.touched && jobGeneralForm.get('flatfee')?.hasError('required')) {
+									<mat-error>Flat Fee is required</mat-error>
+									}
+									@if (jobGeneralForm.get('flatfee')?.touched && jobGeneralForm.get('flatfee')?.hasError('invalidCurrency')) {
+									  <mat-error>Flat Fee must be a valid amount</mat-error>
+									  }
+								  </mat-form-field>
+								</td>
+							  </tr>
+							  <tr>
+								<td>Hourly Rate</td>
+								<td>
+								  <mat-form-field appearance="fill" class="full-width">
+									<span matTextPrefix>$&nbsp;</span>
+									<input formControlName="hourlyRate" matInput>
+									@if (jobGeneralForm.get('hourlyRate')?.touched && jobGeneralForm.get('hourlyRate')?.hasError('required')) {
+									<mat-error>Hourly Rate is required</mat-error>
+									}
+									@if (jobGeneralForm.get('hourlyRate')?.touched && jobGeneralForm.get('hourlyRate')?.hasError('invalidCurrency')) {
+									<mat-error>Hourly Rate must be a valid amount</mat-error>
+									}
+								  </mat-form-field>
+								</td>
+							  </tr>
+							  <tr>
+								<td>Minutes <br>Worked</td>
+								<td>
+								  <mat-form-field appearance="fill" class="full-width">
+									<input formControlName="minutesWorked" matInput type="number">
+									@if (jobGeneralForm.get('minutesWorked')?.touched && jobGeneralForm.get('minutesWorked')?.hasError('required')) {
+									<mat-error>Minutes Worked is required</mat-error>
+									}
+									@if (jobGeneralForm.get('minutesWorked')?.touched && jobGeneralForm.get('minutesWorked')?.hasError('min')) {
+									  <mat-error>Minutes Worked must be at least 0</mat-error>
+									  }
+								  </mat-form-field>
+								</td>
+							  </tr>
 						</table>
 						<div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
 							<button data-testid="next-5" mat-flat-button type="submit" (click)="onSubmitJobGeneral()">Next</button>
