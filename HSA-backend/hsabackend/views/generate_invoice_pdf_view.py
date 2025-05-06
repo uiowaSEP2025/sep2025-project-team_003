@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view
 from hsabackend.models.organization import Organization
 from rest_framework import status   
 from hsabackend.models.invoice import Invoice
-from hsabackend.models.job_material import JobMaterial
+from hsabackend.utils.pdf_utils import get_job_detailed_table
 from hsabackend.utils.string_formatters import format_title_case, format_phone_number_with_parens, format_maybe_null_date, format_currency, format_tax_percent, format_date_to_iso_string
 from decimal import Decimal
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
@@ -59,6 +59,7 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
         header.cell("Address")
         header.cell("Amount")
 
+        total = Decimal(0)
         for j in jobs:
             r = table.row()
             r.cell(str(j.pk))
@@ -66,9 +67,41 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
             r.cell(j.truncated_job_desc)
             r.cell(j.full_display_address)
             r.cell(format_currency(j.total_cost))
-            
+            total += Decimal(str(j.total_cost))
 
-        total_with_tax = 0
+        # display total
+        r = table.row()
+        r.cell("Total:")
+        r.cell("")
+        r.cell("")
+        r.cell("")
+        r.cell(format_currency(total))
+
+        # display tax %
+        r = table.row()
+        r.cell("Tax Percent:")
+        r.cell("")
+        r.cell("")
+        r.cell("")
+        r.cell(str(f"{invoice.tax} %"))
+        #display tax amount
+        math_tax = invoice.tax * Decimal("0.01")
+        tax_amount = math_tax * total
+        r = table.row()
+        r.cell("Tax Amount:")
+        r.cell("")
+        r.cell("")
+        r.cell("")
+        r.cell(format_currency(tax_amount))
+
+        #display grand total
+        total_with_tax = total + tax_amount
+        r = table.row()
+        r.cell("Total With Tax:")
+        r.cell("")
+        r.cell("")
+        r.cell("")
+        r.cell(format_currency(total_with_tax))
 
     return (list(jobs), total_with_tax)
 
@@ -109,12 +142,12 @@ def generate_pdf(request, id):
 
     generate_pdf_customer_org_header(pdf,org,inv)
     jobs, total = generate_global_jobs_table(pdf, inv)
-    # add_total_and_disclaimer(pdf, total, org.org_name)
-    # # cursor is on page 2
-    # for i in range(len(job_ids)):
-    #     generate_table_for_specific_job(pdf,job_ids[i], len(job_ids), i)
-    #     if i != len(job_ids) - 1:
-    #         pdf.add_page() # move to top of next page
+    add_total_and_disclaimer(pdf, total, org.org_name)
+    for j in jobs:
+        get_job_detailed_table(pdf, j)
+        pdf.add_page() # move to top of next page
+
+        
 
     # Save PDF to a BytesIO buffer
     pdf_buffer = io.BytesIO()
