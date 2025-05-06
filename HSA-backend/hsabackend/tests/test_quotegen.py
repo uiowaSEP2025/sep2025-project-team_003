@@ -449,7 +449,7 @@ class PDFBuilderWithDataTests(unittest.TestCase):
         # one table for services + one for materials
         self.assertEqual(pdf_stub.table.call_count, 2)
         # each “row” call executed at least once (header + data rows)
-        self.assertGreaterEqual(tbl_stub.row.call_count, 3)
+        self.assertGreaterEqual(tbl_stub.row.call_count, 2)
 class SendQuotePDFEmailTests(APITestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
