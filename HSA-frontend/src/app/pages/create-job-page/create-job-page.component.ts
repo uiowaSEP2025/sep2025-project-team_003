@@ -23,6 +23,7 @@ import { AddConfirmDialogComponentComponent } from '../../components/add-confirm
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CreateTemplateConfirmDialogComponentComponent } from '../../components/create-template-confirm-dialog-component/create-template-confirm-dialog-component.component';
 import { JobTemplateService } from '../../services/jobTemplate.service';
+import { currencyValidator } from '../../utils/currency-validator';
 
 @Component({
   selector: 'app-create-job-page',
@@ -42,7 +43,7 @@ import { JobTemplateService } from '../../services/jobTemplate.service';
     ReactiveFormsModule,
     MatDatepickerModule,
     JobDisplayTableComponent
-],
+  ],
   providers: [
     provideNativeDateAdapter()
   ],
@@ -83,10 +84,10 @@ export class CreateJobPageComponent {
     public dialog: MatDialog,
     private jobService: JobService,
     private jobTemplateService: JobTemplateService,
-    private stringFormatter: StringFormatter, 
+    private stringFormatter: StringFormatter,
     private jobFormBuilder: FormBuilder,
     private snackBar: MatSnackBar,
-  ) { 
+  ) {
     this.activatedRoute.paramMap.subscribe(params => {
       this.jobID = Number(params.get('id'));
     })
@@ -101,9 +102,9 @@ export class CreateJobPageComponent {
       requestorZip: ['', Validators.required],
       requestorStateSelect: ['', Validators.required],
       jobDescription: ['', Validators.required],
-      flatfee: ['', Validators.required],
-      hourlyRate: ['', Validators.required],
-      minutesWorked: ['', Validators.required],
+      flatfee: ['0.00', [Validators.required, currencyValidator()]],
+      hourlyRate: ['0.00', [Validators.required, currencyValidator()]],
+      minutesWorked: ['0.00', [Validators.required, Validators.min(0)]],
     }, { validators: this.dateValidator });
 
     this.services = { "services": [] };
@@ -118,7 +119,7 @@ export class CreateJobPageComponent {
 
     if (!startDate) {
       return { noStartDate: true };
-    } 
+    }
 
     if (!endDate) {
       return { noEndDate: true };
@@ -136,15 +137,15 @@ export class CreateJobPageComponent {
       typeOfDialog: 'template',
       dialogData: this.customerID,
       searchHint: 'Search by template name',
-      headers: ['Description','Name'],
+      headers: ['Description', 'Name'],
       materialInputFields: this.materialInputFields,
     };
 
     const firstDialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData,
       disableClose: true,
     });
@@ -152,16 +153,16 @@ export class CreateJobPageComponent {
     firstDialogRef.afterClosed().subscribe(result => {
       if (result.length !== 0) {
         let data = result.selectedItems[0];
-        
+
         this.jobForm.patchValue({
           jobDescription: data.jobDescription
         });
-      
+
         this.services.services = []
         data.services.services.forEach((element: { [x: string]: any; }) => {
           this.services = { services: [...this.services.services, element] };
         });
-      
+
         this.selectedServices = result.selectedItems;
 
         this.materials.materials = []
@@ -186,15 +187,15 @@ export class CreateJobPageComponent {
       typeOfDialog: 'customer',
       dialogData: this.customerID,
       searchHint: 'Search by customer name',
-      headers: ['First Name','Last Name', 'Email', 'Phone No'],
+      headers: ['First Name', 'Last Name', 'Email', 'Phone No'],
       materialInputFields: this.materialInputFields,
     };
 
     const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -220,10 +221,10 @@ export class CreateJobPageComponent {
     };
 
     const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -254,14 +255,14 @@ export class CreateJobPageComponent {
     }
 
     const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
-    dialogRef.afterClosed().subscribe((result:any) => {
+    dialogRef.afterClosed().subscribe((result: any) => {
       if (result.length !== 0) {
         result.itemsInfo.forEach((element: any) => {
           this.materials = { materials: [...this.materials.materials, element] };
@@ -283,14 +284,14 @@ export class CreateJobPageComponent {
     }
 
     const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
-    dialogRef.afterClosed().subscribe((result:any) => {
+    dialogRef.afterClosed().subscribe((result: any) => {
       if (result.length !== 0) {
         result.itemsInfo.forEach((element: { [x: string]: any; }) => {
           let info: any = {};
@@ -338,7 +339,7 @@ export class CreateJobPageComponent {
       }
       case 'contractor': {
         let popOutID = data["Contractor ID"];
-        
+
         if (joinRelationID !== 0) {
           this.deletedJobContractors.push(joinRelationID);
         } else {
@@ -348,27 +349,27 @@ export class CreateJobPageComponent {
         this.contractors.contractors = this.contractors.contractors.filter((item: { contractorID: any; }) => item.contractorID !== popOutID);
         this.onChangeUpdateButton();
         return this.contractors;
-      }  
+      }
     };
-    
+
   }
 
   onChangeUpdateButton() {
     this.isUpdatedField = this.jobForm.get('startDate')?.value
-    || this.jobForm.get('endDate')?.value
-    || this.jobForm.get('jobDescription')?.value
-    || this.jobForm.get('requestorAddress')?.value
-    || this.jobForm.get('requestorCity')?.value
-    || this.jobForm.get('requestorStateSelect')?.value
-    || this.jobForm.get('requestorZip')?.value
-    || this.jobForm.get('customerName')?.value
-    || this.selectedServices.length !== 0
-    || this.deletedJobServices !== 0
-    || this.selectedMaterials.length !== 0
-    || this.deletedJobMaterials !== 0
-    || this.selectedContractors.length !== 0
-    || this.deletedJobContractors !== 0
-    
+      || this.jobForm.get('endDate')?.value
+      || this.jobForm.get('jobDescription')?.value
+      || this.jobForm.get('requestorAddress')?.value
+      || this.jobForm.get('requestorCity')?.value
+      || this.jobForm.get('requestorStateSelect')?.value
+      || this.jobForm.get('requestorZip')?.value
+      || this.jobForm.get('customerName')?.value
+      || this.selectedServices.length !== 0
+      || this.deletedJobServices !== 0
+      || this.selectedMaterials.length !== 0
+      || this.deletedJobMaterials !== 0
+      || this.selectedContractors.length !== 0
+      || this.deletedJobContractors !== 0
+
     this.isAllowedTemplate = this.isUpdatedField
 
     return this.isUpdatedField;
@@ -379,8 +380,8 @@ export class CreateJobPageComponent {
       const dialogRef = this.dialog.open(AddConfirmDialogComponentComponent, {
         data: "job creation"
       });
-  
-      dialogRef.afterClosed().subscribe((result:any) => {
+
+      dialogRef.afterClosed().subscribe((result: any) => {
         if (result) {
           this.onSubmit();
         }
@@ -393,27 +394,27 @@ export class CreateJobPageComponent {
       }
 
       const dialogRef = this.dialog.open(CreateTemplateConfirmDialogComponentComponent, {
-        width: 'auto', 
-        maxWidth: '90vw', 
-        height: 'auto', 
-        maxHeight: '90vh', 
+        width: 'auto',
+        maxWidth: '90vw',
+        height: 'auto',
+        maxHeight: '90vh',
         data: templateCreateDialogData,
       });
 
       dialogRef.afterClosed().subscribe(result => {
         if (result !== false) {
 
-          let serviceFields: { id: any; } [] = []
+          let serviceFields: { id: any; }[] = []
           result.services.services.forEach((element: any) => {
-            serviceFields.push({ "id": element["serviceID"]})
+            serviceFields.push({ "id": element["serviceID"] })
           });
 
-          let materialsField: { id: any, unitsUsed: any, pricePerUnit: any} [] = []
+          let materialsField: { id: any, unitsUsed: any, pricePerUnit: any }[] = []
           result.materials.materials.forEach((element: any) => {
-            materialsField.push({ 
+            materialsField.push({
               "id": element["materialID"],
               "unitsUsed": element["unitsUsed"],
-              "pricePerUnit": element["pricePerUnit"] 
+              "pricePerUnit": element["pricePerUnit"]
             })
           })
 
@@ -436,7 +437,7 @@ export class CreateJobPageComponent {
           })
         }
       })
-    }  
+    }
   }
 
   onSubmit() {
@@ -447,28 +448,28 @@ export class CreateJobPageComponent {
       });
     }
 
-    let servicesField: { id: any; } [] = []
+    let servicesField: { id: any; }[] = []
     this.services.services.forEach((element: any) => {
       servicesField.push({ "id": element["serviceID"] })
     })
 
-    
 
-    let materialsField: { id: any, unitsUsed: any, pricePerUnit: any} [] = []
+
+    let materialsField: { id: any, unitsUsed: any, pricePerUnit: any }[] = []
     this.materials.materials.forEach((element: any) => {
-      materialsField.push({ 
+      materialsField.push({
         "id": element["materialID"],
         "unitsUsed": element["unitsUsed"],
-        "pricePerUnit": element["pricePerUnit"] 
+        "pricePerUnit": element["pricePerUnit"]
       })
     })
 
 
-    let contractorsField: { id: any; } [] = []
+    let contractorsField: { id: any; }[] = []
     this.contractors.contractors.forEach((element: any) => {
       contractorsField.push({ "id": element["contractorID"] })
     })
-    
+
     const requestJson = {
       jobStatus: this.status,
       startDate: this.stringFormatter.dateFormatter(this.jobForm.get('startDate')?.value),
