@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from hsabackend.models.job import Job
 from hsabackend.utils.api_validators import parseAndReturnDate, parse_and_return_decimal
-from decimal import Decimal
+from django.db.transaction import atomic
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 @api_view(["POST"])
@@ -122,12 +122,12 @@ def updateInvoice(request, id):
     org = request.org
     json = request.data  
 
-    quote_ids = json.get("quoteIDs",[])
+    job_ids = json.get("jobIDs",[])
 
-    if not isinstance(quote_ids, list):
+    if not isinstance(job_ids, list):
         return Response({"message": "Quotes must be list"}, status=status.HTTP_400_BAD_REQUEST)  
     
-    if len(quote_ids) == 0:
+    if len(job_ids) == 0:
         return Response({"message": "Must include at least 1 quote"}, status=status.HTTP_400_BAD_REQUEST)  
 
     invoice_status = json.get("status",None)
@@ -155,20 +155,23 @@ def updateInvoice(request, id):
     
     if not invoice_qs.exists():
         return Response({"message": "The invoice does not exist"}, status=status.HTTP_404_NOT_FOUND)
-    customer = invoice_qs[0].customer
+    
+    try: 
+        with atomic():
+            invoice = invoice_qs[0]
+            invoice.status = invoice_status
+            invoice.issuance_date = issued
+            invoice.due_date = due
+            invoice.tax = parse_and_return_decimal(tax_percent)
+            invoice.full_clean()
+            invoice.save()
 
-    invoice = invoice_qs[0]
-    invoice.status = invoice_status
-    invoice.issuance_date = issued
-    invoice.due_date = due
-    invoice.tax = parse_and_return_decimal(tax_percent)
+            Job.objects.filter(customer=invoice.customer).filter(Q(invoice=None) | Q(invoice=invoice)).update(invoice=invoice)
 
-    try:
-        invoice.full_clean()
-        invoice.save()
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
-
+    except Exception:
+        return Response({"errors": 500}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     return Response({"message": "Invoice updated successfully"}, status=status.HTTP_200_OK)
 
