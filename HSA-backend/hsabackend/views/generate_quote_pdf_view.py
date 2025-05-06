@@ -3,6 +3,7 @@ import io
 import base64
 import random
 from datetime import datetime
+import jwt
 
 import boto3
 from decimal import Decimal
@@ -30,23 +31,14 @@ from hsabackend.utils.string_formatters import (
     format_tax_percent,
 )
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+from hsabackend.utils.env_utils import get_url
 
+# these wrappers are for stubbing purposes
+def encode(job):
+    return jwt.encode(job.jwt_json(), "vibecodedAPPS-willgetyouHACKED!!", algorithm="HS256")
 
-def get_url():
-    if "ENV" not in os.environ:
-        return "http://localhost:8000"
-    if os.environ["ENV"] == "DEV":
-        return "https://hsa.ssankey.com"
-    if os.environ["ENV"] == "PROD":
-        return "https://hsa-app.starlitex.com"
-    raise RuntimeError("The environment for the backend was not set correctly")
-
-
-def gen_signable_link(job: Job) -> str:
-    pin = str(random.randint(10_000_000, 99_999_999))
-    job.quote_sign_pin = pin
-    job.save(update_fields=["quote_sign_pin"])
-    return pin
+def decode(token):
+    return jwt.decode(token, "vibecodedAPPS-willgetyouHACKED!!", algorithms=["HS256"])
 
 
 def _build_quote_pdf(job: Job, org: Organization) -> bytes:
@@ -172,7 +164,14 @@ def generate_quote_pdf_as_base64(request, id):
         return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
 
     provided_pin = str(request.data.get("pin", ""))
-    if provided_pin != job.quote_sign_pin:
+
+    try:
+        decoded = decode(provided_pin)
+    except Exception:
+        return Response({"message": "Invalid PIN"}, status=status.HTTP_403_FORBIDDEN)
+
+
+    if decoded != job.jwt_json():
         return Response({"message": "Invalid PIN"}, status=status.HTTP_403_FORBIDDEN)
 
     if job.quote_s3_link:
@@ -259,12 +258,14 @@ def send_quote_pdf_to_customer_email(request, id):
     subject = f"Quote for Job #{job.pk}"
     from_email = os.environ.get("EMAIL_HOST_USER")
     to_email = job.customer.email
-    pin = gen_signable_link(job)
+
+    token = encode(job)
+
 
     text_content = (
         f"Hello {job.customer.first_name},\n\n"
-        f"Please find attached the PDF quote for your requested job, and make a statement at {get_url()}/signquote. "
-        f"Use pincode {pin} to access signable window.\n\n"
+        f"Please find attached the PDF quote for your requested job, and make a statement at {get_url()}/signquote."
+        f"Use pincode {token} to access signable window.\n\n"
     )
     html_content = f"""
         <p>Hello {job.customer.first_name},</p>

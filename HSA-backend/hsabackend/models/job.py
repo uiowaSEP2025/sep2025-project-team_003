@@ -31,7 +31,6 @@ class Job(models.Model):
     ]
 
     quote_s3_link = models.CharField(max_length=100, blank=True, null=True)
-    quote_sign_pin = models.CharField(max_length=10, blank=True, null=True)
     quote_status = models.CharField(max_length=50, choices=quote_choices, default="not-created-yet")
 
     def __str__(self):
@@ -63,4 +62,17 @@ class Job(models.Model):
             'start_date': format_maybe_null_date(self.start_date),
             'end_date': format_maybe_null_date(self.end_date),
             'customer_name': NA_on_empty_string(self.customer.first_name + " " + self.customer.last_name),
+        }
+
+    def jwt_json(self):
+        return {
+            'id': self.pk,
+            'jobStatus': self.job_status,
+            'description': self.description,
+            'customerName': self.customer.first_name + " " + self.customer.last_name,
+            'customerID': self.customer.id,
+            'requestorAddress': self.requestor_address,
+            "requestorCity": self.requestor_city,
+            "requestorState": self.requestor_state,
+            "requestorZip": self.requestor_zip,
         }
