@@ -23,9 +23,9 @@ class Job(models.Model):
     requestor_state = models.CharField(max_length=50, validators=[isNonEmpty, validate_state])
     requestor_zip = models.CharField(max_length=10, validators=[isNonEmpty])
     requestor_address = models.CharField(max_length=100, validators=[isNonEmpty])
-    flat_fee = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
-    hourly_rate = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
-    minutes_worked = models.IntegerField(validators=[MinValueValidator(0)])
+    flat_fee = models.DecimalField(max_digits=10, default=0, decimal_places=2, validators=[MinValueValidator(0)])
+    hourly_rate = models.DecimalField(max_digits=10, decimal_places=2, default=0, validators=[MinValueValidator(0)])
+    minutes_worked = models.IntegerField(default = 0, validators=[MinValueValidator(0)])
 
     quote_choices = [
         ('not-created-yet', 'not-created-yet'),

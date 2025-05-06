@@ -251,6 +251,13 @@ def create_job(request):
         requestor_zip=requestor_zip
     )
 
+    if "hourly_rate" in request.data:
+        job.hourly_rate = request.data.get("hourly_rate")
+    if "minutes_worked" in request.data:
+        job.minutes_worked = request.data.get("minutes_worked")
+    if "flat_fee" in request.data:
+        job.flat_fee = request.data.get("flat_fee")
+
     try:
         job.full_clean()  # Validate the model instance
         job.save()
@@ -343,6 +350,13 @@ def edit_job(request, id):
     job.requestor_city = request.data.get('city', '')
     job.requestor_state = request.data.get('state', '')
     job.requestor_zip = request.data.get('zip', '')
+
+    if "hourly_rate" in request.data:
+        job.hourly_rate = request.data.get("hourly_rate")
+    if "minutes_worked" in request.data:
+        job.minutes_worked = request.data.get("minutes_worked")
+    if "flat_fee" in request.data:
+        job.flat_fee = request.data.get("flat_fee")
 
     try:
         customer = Customer.objects.get(id=request.data.get('customerID'))
