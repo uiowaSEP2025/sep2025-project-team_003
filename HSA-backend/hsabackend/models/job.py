@@ -31,7 +31,6 @@ class Job(models.Model):
     ]
 
     quote_s3_link = models.CharField(max_length=100, blank=True, null=True)
-    quote_sign_pin = models.CharField(max_length=10, blank=True, null=True)
     quote_status = models.CharField(max_length=50, choices=quote_choices, default="not-created-yet")
 
     def __str__(self):
