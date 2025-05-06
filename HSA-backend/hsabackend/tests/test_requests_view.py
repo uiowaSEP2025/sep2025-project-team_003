@@ -31,17 +31,28 @@ class TestCreate(APITestCase):
 
         mock_req = Mock()
         req.return_value = mock_req
+        mock_req.full_clean.side_effect = ValidationError({'name': ['Error while saving organization']})
 
         factory = APIRequestFactory()
         request = factory.post('/api/create/request/1')
         res = create_request(request, 1)
 
-        assert res.status_code == 404
-
+        assert res.status_code == 400
     
+    @patch('hsabackend.views.requests.Organization.objects.get')
+    @patch('hsabackend.views.requests.Request')
+    def test_valid(self, req, org):
+        mock_org = Mock()
+        org.return_value = mock_org
 
-    def test_valid(self):
-        pass
+        mock_req = Mock()
+        req.return_value = mock_req
+
+        factory = APIRequestFactory()
+        request = factory.post('/api/create/request/1')
+        res = create_request(request, 1)
+
+        assert res.status_code == 201
 
 class DeleteRequestTest(APITestCase):
     @patch('hsabackend.views.requests.Organization.objects.get')
