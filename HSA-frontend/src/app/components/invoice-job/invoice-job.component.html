@@ -3,27 +3,27 @@
 
     <ng-container matColumnDef="Description">
       <th mat-header-cell *matHeaderCellDef> Description</th>
-      <td mat-cell *matCellDef="let element"> aaa </td>
+      <td mat-cell *matCellDef="let element"> {{element["Description"]}} </td>
     </ng-container>
 
     <ng-container matColumnDef="Flat Fee">
       <th mat-header-cell *matHeaderCellDef> Flat Fee</th>
-      <td mat-cell *matCellDef="let element"> aaa </td>
+      <td mat-cell *matCellDef="let element"> {{element["Flat Fee"]}} </td>
     </ng-container>
 
     <ng-container matColumnDef="Hourly Rate">
       <th mat-header-cell *matHeaderCellDef> Hourly Rate</th>
-      <td mat-cell *matCellDef="let element"> aaa </td>
+      <td mat-cell *matCellDef="let element"> {{element["Hourly Rate"]}} </td>
     </ng-container>
 
     <ng-container matColumnDef="Hours Worked">
       <th mat-header-cell *matHeaderCellDef> Hours Worked</th>
-      <td mat-cell *matCellDef="let element"> aaa </td>
+      <td mat-cell *matCellDef="let element"> {{element["Hours Worked"]}} </td>
     </ng-container>
 
     <ng-container matColumnDef="Total Cost">
       <th mat-header-cell *matHeaderCellDef> Total Cost</th>
-      <td mat-cell *matCellDef="let element"> aaa </td>
+      <td mat-cell *matCellDef="let element"> {{element["Total Cost"]}} </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
