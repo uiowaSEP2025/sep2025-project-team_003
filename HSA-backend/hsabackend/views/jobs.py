@@ -10,9 +10,55 @@ from hsabackend.models.contractor import Contractor
 from hsabackend.models.job_material import JobMaterial
 from hsabackend.models.job_service import JobService
 from hsabackend.models.job_contractor import JobContractor
+from hsabackend.models.invoice import Invoice
 from django.db.models import Q
 from django.core.exceptions import ValidationError
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+
+@api_view(["GET"])
+def get_invoicable_jobs_per_invoice(request,invoice):
+    org = request.org
+    search = request.query_params.get('search', '')
+    pagesize = request.query_params.get('pagesize', '')
+    offset = request.query_params.get('offset', 0)
+
+    if not pagesize or not cust:
+        return Response({"message": "missing parameters. need: pagesize,offset,customer"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        pagesize = int(pagesize)
+        offset = int(offset)
+        cust = int(cust)
+    except:
+        return Response({"message": "pagesize,offset,customer must be int"}, status=status.HTTP_400_BAD_REQUEST)
+
+    offset = offset * pagesize
+
+    inv = Invoice.objects.filter(pk=invoice,customer__organization=org)
+
+    if not inv.exists():
+        return Response({"message": "invoice not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    inv_obj = inv[0]
+
+    jobs_not_on_invoice = Job.objects.filter(inv_obj.customer, invoice=None)
+    jobs_on_invoice = Job.objects.filter(invoice=inv_obj)
+
+    resqs = jobs_not_on_invoice.union(jobs_on_invoice)
+
+    count = resqs.count()
+
+    data = []
+    for job in resqs:
+        json = job.json_terse_for_invoice()
+        json["invoice"] = job.invoice
+        data.append(json)
+
+    res = {
+        'data': data,
+        'totalCount': count
+    }
+    return Response(res, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -46,7 +92,7 @@ def get_invoicable_jobs(request):
 
     data = []
     for job in jobs:
-        data.append(job.josn_terse_for_invoice())
+        data.append(job.json_terse_for_invoice())
 
     count = Job.objects.filter(organization=org.pk, job_status="completed",invoice=None, customer=cust).filter(
         Q(customer__first_name__icontains=search) |

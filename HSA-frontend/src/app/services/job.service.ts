@@ -70,6 +70,7 @@ export class JobService {
   private apiDeleteUrl = `${environment.apiUrl}/api/delete/job`;
   private getJobsByContractorUrl = `${environment.apiUrl}/api/get/jobs/by-contractor`
   private getInvoicableURL = `${environment.apiUrl}/api/get/invoicable/jobs`
+  private getJobsByInvoiceURL = `${environment.apiUrl}/api/get/jobs/for-invoice`
   responses: any[]  = []
 
   constructor(private http: HttpClient) {}
@@ -79,9 +80,14 @@ export class JobService {
     return this.http.get<TableApiResponse<JobSimplified>>(`${this.getJobsByContractorUrl}?${searchquery}pagesize=${pageSize}&offset=${offset}&contractor=${contractorID}`);
   }
 
-  public getInvoicableJobs(customerID: number, search: string, pageSize: number, offset: number) {
+  public getInvoicableJobs(customerID: number, search: string, pageSize: number, offset: number): Observable<TableApiResponse<any>> {
     const searchquery = search === "" ? "" : `search=${search}&`
     return this.http.get<TableApiResponse<JobSimplified>>(`${this.getInvoicableURL}?${searchquery}pagesize=${pageSize}&offset=${offset}&customer=${customerID}`);
+  }
+
+  public getJobsByInvoice(invoice: number,search: string, pageSize: number, offset: number) {
+    const searchquery = search === "" ? "" : `search=${search}&`
+    return this.http.get<TableApiResponse<any>>(`${this.getJobsByInvoiceURL}?${searchquery}pagesize=${pageSize}&offset=${offset}/${invoice}`);
   }
 
   public getJob(status: "created" | "in-progress" | "completed", params?: Record<string, string | number>): Observable<TableApiResponse<any>> {

@@ -21,8 +21,8 @@
 
     <h1 class="pb-5">Select new jobs for this invoice</h1>
 
-    <app-table-component data-testid="invoice-quotes-table" [loadDataToTable]="loadQuotesToTable.bind(this)"
-        editRedirect="" [hideValues]="['Actions', 'Id']" [fetchedData]="quotes" checkbox="multiple"
+    <app-table-component data-testid="invoice-quotes-table" [loadDataToTable]="loadJobs.bind(this)"
+        editRedirect="" [hideValues]="['Actions', 'Id']" [fetchedData]="jobs" checkbox="multiple"
         [checkedIds]="selectedJobs" [setCheckedIds]="setSelectedJobs.bind(this)" [hideSearch]="true"
         [headers]="['Checkbox','Material Subtotal', 'Total Price', 'Job Description']">
     </app-table-component>

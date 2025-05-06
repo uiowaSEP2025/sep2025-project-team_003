@@ -20,6 +20,7 @@ import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
 import integerValidator from '../../utils/whole-number-validator';
+import { JobService } from '../../services/job.service';
 
 export interface DateRange {
   issued: FormControl<Date | null>;
@@ -37,7 +38,7 @@ export interface DateRange {
 })
 export class EditInvoicePageComponent implements OnInit {
   selectedJobs: number[] = []
-  quotes: any
+  jobs: any
   selectedJobsisError = false
   invoiceID!: number
   customerName!: string
@@ -63,7 +64,7 @@ export class EditInvoicePageComponent implements OnInit {
   
   constructor(private activatedRoute: ActivatedRoute, 
     private invoiceService: InvoiceService, private stringFormatter: StringFormatter, 
-    private router: Router) { }
+    private router: Router, private JobsService: JobService) { }
 
     private fixBackendTaxPercentage(tax: string): string {
       if (tax === "1.00") {
@@ -103,7 +104,7 @@ export class EditInvoicePageComponent implements OnInit {
       const day = split[2]
       this.range.controls.due.setValue(new Date(parseInt(year), parseInt(month) - 1, parseInt(day)))
     }
-    this.loadQuotesToTable("", 5, 0);
+    this.loadJobs("", 5, 0);
   }
 
   setSelectedJobs(selectedJobs: number[]) {
@@ -143,7 +144,7 @@ export class EditInvoicePageComponent implements OnInit {
   }
 
 
-  loadQuotesToTable(searchTerm: string, pageSize: number, offSet: number) {
+  loadJobs(searchTerm: string, pageSize: number, offSet: number) {
     
   }
 

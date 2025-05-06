@@ -74,7 +74,7 @@ class Job(models.Model):
             'customer_name': NA_on_empty_string(self.customer.first_name + " " + self.customer.last_name),
         }
     
-    def josn_terse_for_invoice(self):
+    def json_terse_for_invoice(self):
         return {
             'id': self.pk,
             # cap at 50 so table doesn't stretch
