@@ -2,15 +2,14 @@ from django.http import HttpResponse
 from rest_framework.response import Response
 from fpdf import FPDF
 import io
+from hsabackend.models.job import Job
 from rest_framework.decorators import api_view
 from hsabackend.models.organization import Organization
 from rest_framework import status   
 from hsabackend.models.invoice import Invoice
-from hsabackend.models.job_material import JobMaterial
-from hsabackend.models.quote import Quote
-from hsabackend.utils.string_formatters import format_title_case, format_phone_number_with_parens, format_maybe_null_date, format_currency, format_percent, format_tax_percent
+from hsabackend.utils.pdf_utils import get_job_detailed_table
+from hsabackend.utils.string_formatters import format_title_case, format_phone_number_with_parens, format_maybe_null_date, format_currency, format_tax_percent, format_date_to_iso_string
 from decimal import Decimal
-from hsabackend.models.job_service import JobService
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 
 def generate_pdf_customer_org_header(pdf: FPDF, org: Organization, invoice: Invoice):
@@ -50,10 +49,7 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
     the jobs that are included in the table in order, as well as the total amount
     """
     # no validation checks on if the org owns the quotes, thats done on creation
-    quotes = Quote.objects.select_related("jobID").select_related("discount_type").filter(
-        invoice=invoice
-    ).order_by("-jobID__end_date")
-    res = []
+    jobs = Job.objects.filter(invoice=invoice)
     greyscale = 215 # higher no --> lighter grey
     with pdf.table(line_height=4, padding=2, text_align=("LEFT", "LEFT", "LEFT", "LEFT", "LEFT"), borders_layout="SINGLE_TOP_LINE", cell_fill_color=greyscale, cell_fill_mode="ROWS") as table:
         header = table.row()
@@ -62,80 +58,52 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
         header.cell("Job Description")
         header.cell("Address")
         header.cell("Amount")
-        
-        # amount is a decimal type
+
         total = Decimal(0)
-        total_discnt_aggregate = Decimal(0)
+        for j in jobs:
+            r = table.row()
+            r.cell(str(j.pk))
+            r.cell(format_date_to_iso_string(j.start_date))
+            r.cell(j.truncated_job_desc)
+            r.cell(j.full_display_address)
+            r.cell(format_currency(j.total_cost))
+            total += Decimal(str(j.total_cost))
 
-        cnt = 1
-        for quote in quotes:
-            res.append(quote.jobID.pk)
-            quote_row = table.row()
-            json = quote.geerate_invoice_global_table_json()
-            quote_row.cell(str(cnt))
-            quote_row.cell(json["Date"])
-            quote_row.cell(json["Job Description"])
-            quote_row.cell(json["Address"])
-            total += json["Total Undiscounted"]
-            quote_row.cell(str(json["Total Undiscounted"]))
-            total_discnt_aggregate += json["Discount Percent"]
-            cnt += 1
+        # display total
+        r = table.row()
+        r.cell("Total:")
+        r.cell("")
+        r.cell("")
+        r.cell("")
+        r.cell(format_currency(total))
 
-        undiscounted_total_row = table.row()
-        undiscounted_total_row.cell("Original Total: ")
-        undiscounted_total_row.cell("")
-        undiscounted_total_row.cell("")
-        undiscounted_total_row.cell("")
-        undiscounted_total_row.cell(str(format_currency(total)))
-        total_discnt_aggregate = total_discnt_aggregate/len(quotes) # ex 30.01%
-        # this solution sucks so much ass, and I am open to discussing how to fix it
-        math_discount_percent = Decimal((1-(total_discnt_aggregate/100)))
+        # display tax %
+        r = table.row()
+        r.cell("Tax Percent:")
+        r.cell("")
+        r.cell("")
+        r.cell("")
+        r.cell(str(f"{invoice.tax} %"))
+        #display tax amount
+        math_tax = invoice.tax * Decimal("0.01")
+        tax_amount = math_tax * total
+        r = table.row()
+        r.cell("Tax Amount:")
+        r.cell("")
+        r.cell("")
+        r.cell("")
+        r.cell(format_currency(tax_amount))
 
-        discounted_total = total * math_discount_percent
+        #display grand total
+        total_with_tax = total + tax_amount
+        r = table.row()
+        r.cell("Total With Tax:")
+        r.cell("")
+        r.cell("")
+        r.cell("")
+        r.cell(format_currency(total_with_tax))
 
-        is_discounted = discounted_total != total
-
-        discounted_amout = total # will be the full total if not is_discounted
-
-        if is_discounted:
-            discount_percent_row = table.row()
-            discount_percent_row.cell("Discount Percent: ")
-            discount_percent_row.cell("")
-            discount_percent_row.cell("")
-            discount_percent_row.cell("")
-            discount_percent_row.cell(str(format_percent(total_discnt_aggregate)))
-
-            discounted_amout = total * math_discount_percent
-            discounted_price_row = table.row()
-            discounted_price_row.cell("Discounted Price: ")
-            discounted_price_row.cell("")
-            discounted_price_row.cell("")
-            discounted_price_row.cell("")
-            discounted_price_row.cell(str(format_currency(discounted_amout)))
-
-        tax_percent_row = table.row()
-        tax_percent_row.cell("Tax Amount: ")
-        tax_percent_row.cell("")
-        tax_percent_row.cell("")
-        tax_percent_row.cell("")
-        tax_percent_row.cell(format_tax_percent(str(invoice.tax)))
-
-        total_with_tax = (1 + invoice.tax) * discounted_amout
-        tax_amount_row = table.row()
-        tax_amount_row.cell("Tax Amount: ")
-        tax_amount_row.cell("")
-        tax_amount_row.cell("")
-        tax_amount_row.cell("")
-        tax_amount_row.cell(str(format_currency(total_with_tax - discounted_amout)))
-
-        grand_total_row = table.row()
-        grand_total_row.cell("Total:")
-        grand_total_row.cell("")
-        grand_total_row.cell("")
-        grand_total_row.cell("")
-        grand_total_row.cell(str(format_currency(total_with_tax)))
-
-    return (res, total_with_tax)
+    return (list(jobs), total_with_tax)
 
 def add_total_and_disclaimer(pdf: FPDF, total, org_name):
     disclaimer_text = """
@@ -152,49 +120,16 @@ def add_total_and_disclaimer(pdf: FPDF, total, org_name):
     pdf.set_y(-40)  # Move to 20 units above the bottom
     pdf.multi_cell(0, text=disclaimer_text, align="C")
 
-def generate_table_for_specific_job(pdf: FPDF, jobid: int, num_jobs: int, idx: int):
-    greyscale = 215 # higher no --> lighter grey
-    pdf.set_x(10)
-    pdf.multi_cell(100, text=f"Job #{idx + 1} of {num_jobs}", align="L")
-    with pdf.table(line_height=4, padding=2, text_align=("LEFT", "LEFT", "LEFT", "LEFT", "LEFT"), borders_layout="SINGLE_TOP_LINE", cell_fill_color=greyscale, cell_fill_mode="ROWS") as table:
-        header = table.row()
-        header.cell("Services Rendered", colspan=2, align="C")
-        services = JobService.objects.select_related("service").filter(
-            job=jobid
-        )
-        for service in services:
-            json = service.get_service_info_for_detailed_invoice()
-            service_row = table.row()
-            service_row.cell(json["service name"])
-            service_row.cell(json["service description"])
-
-    pdf.ln(5) 
-
-    with pdf.table(line_height=4, padding=2, text_align=("LEFT", "LEFT", "LEFT", "LEFT", "LEFT"), borders_layout="SINGLE_TOP_LINE", cell_fill_color=greyscale, cell_fill_mode="ROWS") as table:
-        materials = JobMaterial.objects.filter(job=jobid)
-        
-        header = table.row()
-        header.cell("Material Name")
-        header.cell("Per Unit")
-        header.cell("Units Used")
-        header.cell("Total")
-
-        total = Decimal(0)
-        for mat in materials:
-            material_row = table.row()
-            json = mat.invoice_material_row()
-            material_row.cell(json["material name"])
-            material_row.cell(format_currency(json["per unit"]))
-            material_row.cell(str(json["units used"]))
-            total += json["total"]
-            material_row.cell(format_currency(json["total"]))
-
-        total_row = table.row()
-        total_row.cell("Materials Total")
-        total_row.cell("")
-        total_row.cell("")
-        total_row.cell(format_currency(total))
-
+def add_job_header(pdf, job):
+    pdf.set_font("Arial", size=12, style='B')
+    pdf.set_xy(10, 20)
+    pdf.cell(10, 10, f"Job {job.pk} - {job.truncated_job_desc}", ln=True)
+    pdf.set_font("Arial", size=10)
+    pdf.set_xy(10, 30)
+    pdf.cell(10, 10, f"Start Date: {format_date_to_iso_string(job.start_date)}", ln=True)
+    pdf.set_xy(10, 40)
+    pdf.cell(10, 10, f"Address: {job.full_display_address}", ln=True)
+    pdf.ln(5)  # Add some space between the header and the table
 
 
 
@@ -218,13 +153,16 @@ def generate_pdf(request, id):
     inv = invoice_qs[0] 
 
     generate_pdf_customer_org_header(pdf,org,inv)
-    job_ids, total = generate_global_jobs_table(pdf, inv)
+    jobs, total = generate_global_jobs_table(pdf, inv)
     add_total_and_disclaimer(pdf, total, org.org_name)
-    # cursor is on page 2
-    for i in range(len(job_ids)):
-        generate_table_for_specific_job(pdf,job_ids[i], len(job_ids), i)
-        if i != len(job_ids) - 1:
+    for idx in range(len(jobs)):
+        j = jobs[idx]
+        add_job_header(pdf, j)
+        get_job_detailed_table(pdf, j)
+        if idx != len(jobs) - 1:
             pdf.add_page() # move to top of next page
+
+        
 
     # Save PDF to a BytesIO buffer
     pdf_buffer = io.BytesIO()

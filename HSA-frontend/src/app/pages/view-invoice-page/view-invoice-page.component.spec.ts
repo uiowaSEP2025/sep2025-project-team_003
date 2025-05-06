@@ -2,32 +2,43 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { ViewInvoicePageComponent } from './view-invoice-page.component';
 import { ActivatedRoute } from '@angular/router';
-import { InvoiceDataInterface } from '../../interfaces/api-responses/invoice.api.data.interface';
+import { Invoice } from '../../components/invoice-job/invoice-job.component';
 import { of, Subject } from 'rxjs';
 
 
 describe('ViewInvoicePageComponent', () => {
   let component: ViewInvoicePageComponent;
   let fixture: ComponentFixture<ViewInvoicePageComponent>;
-  let data: InvoiceDataInterface
+  let data: Invoice
   let paramMapSubject: Subject<any>;
 
   beforeEach(async () => {
 
     data = {
       id: 1,
-      status: "created",
-      issuanceDate: "N/A",
-      dueDate: "N/A",
-      customer: "Alex Guo",
-      quotes: {
-        quotes: [],
-        totalMaterialSubtotal: '0.00',
-        subtotal: '0.00',
-        taxPercent: '0.00',
-        totalDiscount: '0.00',
-        "grandtotal" : 'O.00'
-      }     
+      status: "Pending",
+      dueDate: "2025-05-15",
+      issuanceDate: "2025-05-01",
+      customer: "John Doe",
+      taxAmount: "15.50",
+      taxPercent: "10",
+      grandTotal: "155.50",
+      jobs: [
+        {
+          flatFee: 100,
+          hourlyRate: 20,
+          hoursWorked: 2.5,
+          totalCost: 150,
+          description: "Web development services"
+        },
+        {
+          flatFee: 50,
+          hourlyRate: 25,
+          hoursWorked: 1,
+          totalCost: 25,
+          description: "Consulting services"
+        }
+      ]
     }
 
     paramMapSubject = new Subject();

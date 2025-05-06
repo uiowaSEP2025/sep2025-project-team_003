@@ -131,7 +131,11 @@ def complete_onboarding(request):
                     requestor_address = job_request.get("address"),
                     requestor_city = job_request.get("city"),
                     requestor_state = job_request.get("state"),
-                    requestor_zip = job_request.get("zip")
+                    requestor_zip = job_request.get("zip"),
+                    flat_fee = job_request.get("flatfee"),
+                    hourly_rate = job_request.get("hourlyrate"),
+                    minutes_worked = job_request.get("minutesworked")
+
                 )
                 new_job.full_clean()
                 new_job.save()
@@ -172,7 +176,6 @@ def complete_onboarding(request):
             org.is_onboarding = is_onboarding
             org.save()
     except ValidationError as e:
-        print(e)
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response({"message": "Onboarding complete"}, status=status.HTTP_200_OK)

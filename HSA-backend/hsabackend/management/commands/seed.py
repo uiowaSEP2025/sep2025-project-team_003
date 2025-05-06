@@ -9,7 +9,6 @@ from django.contrib.auth.models import User
 from hsabackend.models.request import Request
 from hsabackend.models.job_service import JobService
 from hsabackend.models.job import Job
-from hsabackend.models.quote import Quote
 from hsabackend.models.discount_type import DiscountType
 from hsabackend.models.job_template import JobTemplate
 from hsabackend.models.subscription import Subscription
@@ -107,9 +106,13 @@ class Command(BaseCommand):
                 s2.save
 
 
+            first_names = ["Alice", "Bob", "Charlie", "Diana", "Ethan"]
+            last_names = ["Smith", "Johnson", "Williams", "Brown", "Davis"]
+
+
             for i in range(5):
                 c1 = Customer.objects.create(
-                    first_name=f"First{i}",
+                    first_name=random.choice(first_names),
                     last_name=f"Last{i}",
                     email=f"user{i}@example.com",
                     phone_no=f"{random.randint(1000000000, 9999999999)}",
@@ -119,8 +122,8 @@ class Command(BaseCommand):
                 c1.save()
 
                 c2 = Customer.objects.create(
-                    first_name=f"First{i}Test",
-                    last_name=f"Last{i}Test",
+                    first_name=random.choice(first_names) + "test",
+                    last_name=random.choice(last_names) + "test",
                     email=f"testuser{i}@example.com",
                     phone_no=f"{random.randint(1000000000, 9999999999)}",
                     notes=f"Sample notes for test user {i}",
@@ -197,7 +200,10 @@ class Command(BaseCommand):
                     requestor_city = "Iowa City",
                     requestor_state = "Iowa",
                     requestor_zip = "52240",
-                    requestor_address = "2 W Washington St"
+                    requestor_address = "2 W Washington St",
+                    flat_fee = 0.00,
+                    hourly_rate = 50.00,
+                    minutes_worked = 100
                 )
                 j.save()
 
@@ -211,7 +217,10 @@ class Command(BaseCommand):
                     requestor_city = "Iowa City",
                     requestor_state = "Iowa",
                     requestor_zip = "52240",
-                    requestor_address = "2 W Washington St"
+                    requestor_address = "2 W Washington St",
+                    flat_fee = 0.00,
+                    hourly_rate = 50.00,
+                    minutes_worked = 100
                 )
                 j.save()
 
@@ -273,45 +282,7 @@ class Command(BaseCommand):
             discounts_1 = DiscountType.objects.filter(organization__pk=org1.pk)[:5]
             discounts = DiscountType.objects.filter(organization__pk=org.pk)[:5]
 
-            for i in range(5):
-                issuance_date = timezone.now().date()
-                due_date = issuance_date + timezone.timedelta(days=30)
-                status = 'created' if i % 2 == 0 else 'accepted'
-                material_subtotal = 1000.0 * (i + 1)
-                total_price = material_subtotal 
-                jobID = jobs_org_1[i]
-                
-
-                q = Quote.objects.create(
-                    issuance_date=issuance_date,
-                    due_date=due_date,
-                    status='accepted',
-                    material_subtotal=material_subtotal,
-                    total_price=total_price,
-                    jobID=jobID,
-                    discount_type = random.choice(discounts_1)
-                    )
-                q.save()
-
-                issuance_date = timezone.now().date()
-                due_date = issuance_date + timezone.timedelta(days=30)
-                status = 'created' if i % 2 == 0 else 'accepted'
-                material_subtotal = 1000.0 * (i + 1)
-                total_price = material_subtotal 
-                jobID = jobs_org[i]
-                
-
-                q = Quote.objects.create(
-                    issuance_date=issuance_date,
-                    due_date=due_date,
-                    status=status,
-                    material_subtotal=material_subtotal,
-                    total_price=total_price,
-                    jobID=jobID,
-                    discount_type = random.choice(discounts)
-                    )
-                q.save()
-
+            
             # create another job and tie a quote to it
             j = Job.objects.create(
                     job_status=random.choice(['completed']),
@@ -323,25 +294,17 @@ class Command(BaseCommand):
                     requestor_city = "Iowa City",
                     requestor_state = "Iowa",
                     requestor_zip = "52240",
-                    requestor_address = "2 W Washington St"
+                    requestor_address = "2 W Washington St",
+                    flat_fee = 0.00,
+                    hourly_rate = 50.00,
+                    minutes_worked = 100
                 )
             j.save()
 
-            q = Quote.objects.create(
-                    issuance_date=issuance_date,
-                    due_date=due_date,
-                    status='accepted',
-                    material_subtotal=material_subtotal,
-                    total_price=total_price,
-                    jobID=j,
-                    discount_type = random.choice(discounts_1)
-                    )
-            q.save()
 
             jobs_for_invoice = Job.objects.filter(
                 customer=customers[1],
                 job_status="completed",
-                quote__status="accepted",  # Ensures only jobs with accepted quotes are selected
                 customer__organization=org
             )
 

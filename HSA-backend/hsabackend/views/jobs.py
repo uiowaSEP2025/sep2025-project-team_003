@@ -1,3 +1,4 @@
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,9 +10,113 @@ from hsabackend.models.contractor import Contractor
 from hsabackend.models.job_material import JobMaterial
 from hsabackend.models.job_service import JobService
 from hsabackend.models.job_contractor import JobContractor
+from hsabackend.models.invoice import Invoice
 from django.db.models import Q
 from django.core.exceptions import ValidationError
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+
+@api_view(["GET"])
+@check_authenticated_and_onboarded()
+def get_invoicable_jobs_per_invoice(request):
+    org = request.org
+    search = request.query_params.get('search', '')
+    pagesize = request.query_params.get('pagesize', '')
+    offset = request.query_params.get('offset', 0)
+    invoice = request.query_params.get('invoice', 0)
+
+    if not pagesize or not invoice:
+        return Response({"message": "missing parameters. need: pagesize,offset,customer"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        pagesize = int(pagesize)
+        offset = int(offset)
+        invoice = int(invoice)
+    except:
+        return Response({"message": "pagesize,offset,customer must be int"}, status=status.HTTP_400_BAD_REQUEST)
+
+    offset = offset * pagesize
+
+    inv = Invoice.objects.filter(pk=invoice,customer__organization=org)
+
+    if not inv.exists():
+        return Response({"message": "invoice not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    inv_obj = inv[0]
+
+    jobs_not_on_invoice = Job.objects.filter(customer=inv_obj.customer, invoice=None,job_status="completed").filter(Q(customer__first_name__icontains=search) |
+        Q(customer__last_name__icontains=search) |
+        Q(start_date__icontains=search) |
+        Q(end_date__icontains=search) |
+        Q(description__icontains=search))
+    jobs_on_invoice = Job.objects.filter(invoice=inv_obj, job_status="completed").filter(Q(customer__first_name__icontains=search) |
+        Q(customer__last_name__icontains=search) |
+        Q(start_date__icontains=search) |
+        Q(end_date__icontains=search) |
+        Q(description__icontains=search))
+
+    resqs = jobs_not_on_invoice.union(jobs_on_invoice)
+
+    count = resqs.count()
+
+    data = []
+    for job in resqs:
+        json = job.json_terse_for_invoice()
+        json["invoice"] = job.invoice.pk if job.invoice else None
+        data.append(json)
+
+    res = {
+        'data': data,
+        'totalCount': count
+    }
+    return Response(res, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@check_authenticated_and_onboarded()
+def get_invoicable_jobs(request):
+    org = request.org
+    search = request.query_params.get('search', '')
+    pagesize = request.query_params.get('pagesize', '')
+    cust = request.query_params.get('customer', '')
+    offset = request.query_params.get('offset', 0)
+
+    if not pagesize or not cust:
+        return Response({"message": "missing parameters. need: pagesize,offset,customer"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        pagesize = int(pagesize)
+        offset = int(offset)
+        cust = int(cust)
+    except:
+        return Response({"message": "pagesize,offset,customer must be int"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    offset = offset * pagesize
+    jobs = Job.objects.filter(organization=org.pk, job_status="completed",invoice=None, customer=cust).filter(
+        Q(customer__first_name__icontains=search) |
+        Q(customer__last_name__icontains=search) |
+        Q(start_date__icontains=search) |
+        Q(end_date__icontains=search) |
+        Q(description__icontains=search)
+    )[offset:offset + pagesize]
+
+    data = []
+    for job in jobs:
+        data.append(job.json_terse_for_invoice())
+
+    count = Job.objects.filter(organization=org.pk, job_status="completed",invoice=None, customer=cust).filter(
+        Q(customer__first_name__icontains=search) |
+        Q(customer__last_name__icontains=search) |
+        Q(start_date__icontains=search) |
+        Q(end_date__icontains=search) |
+        Q(description__icontains=search)
+    ).count()
+
+    res = {
+        'data': data,
+        'totalCount': count
+    }
+    return Response(res, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -229,6 +334,9 @@ def create_job(request):
     requestor_state = request.data.get('state', '')
     requestor_zip = request.data.get('zip', '')
     requestor_address = request.data.get('address', '')
+    flat_fee = request.data.get('flatfee', '')
+    hourly_rate = request.data.get('hourlyRate', '')
+    minutes_worked = request.data.get('minutesWorked', '')
 
     # data send form: contractors: [{ "id": int }]
     contractor_list = request.data.get('contractors', '')
@@ -248,7 +356,10 @@ def create_job(request):
         requestor_address=requestor_address,
         requestor_city=requestor_city,
         requestor_state=requestor_state,
-        requestor_zip=requestor_zip
+        requestor_zip=requestor_zip,
+        flat_fee = flat_fee,
+        hourly_rate = hourly_rate,
+        minutes_worked = minutes_worked,
     )
 
     try:
@@ -332,6 +443,9 @@ def edit_job(request, id):
     except Job.DoesNotExist:
         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
+    if job.job_status == "completed":
+        return Response({"message": "Can not edit a completed job"}, status=status.HTTP_400_BAD_REQUEST)
+
     job.job_status = request.data.get('jobStatus', '')
     job.start_date = request.data.get('startDate', '')
     job.end_date = request.data.get('endDate', '')
@@ -340,6 +454,9 @@ def edit_job(request, id):
     job.requestor_city = request.data.get('city', '')
     job.requestor_state = request.data.get('state', '')
     job.requestor_zip = request.data.get('zip', '')
+    job.flat_fee = request.data.get('flatfee', '')
+    job.hourly_rate = request.data.get('hourlyRate', '')
+    job.minutes_worked = request.data.get('minutesWorked', '')
 
     try:
         customer = Customer.objects.get(id=request.data.get('customerID'))
@@ -359,10 +476,15 @@ def edit_job(request, id):
 @check_authenticated_and_onboarded()
 def delete_job(request, id):
     org = request.org
-    job = Job.objects.filter(pk=id, organization=org)
+    jobs = Job.objects.filter(pk=id, organization=org)
 
-    if not job.exists():
+    if not jobs.exists():
         return Response({"message": "The job does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
-    job[0].delete()
+    job = jobs[0]
+
+    if job.job_status == "completed":
+        return Response({"message": "Can not delete a completed job"}, status=status.HTTP_400_BAD_REQUEST)
+
+    job.delete()
     return Response({"message": "Job deleted sucessfully"}, status=status.HTTP_200_OK)

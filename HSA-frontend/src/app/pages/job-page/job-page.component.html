@@ -14,6 +14,8 @@
             [deleteRequest]="jobService.deleteJob.bind(jobService)" [loadDataToTable]="this.loadDataToTable.bind(this)"
             searchHint="Search by any keywords" [checkbox]="'actions'" [hideValues]="['Id']" [width]="'auto'"
             [clickableRows]="true" [onRowClick]="redirectJobDetails.bind(this)"
+            [disableEditCheck]="shouldDisableEdit"
+            [disableDeleteCheck]="shouldDisableDelete"
             [headers]="['Description','Job Status','Start Date','End Date','Customer Name']"></app-table-component>
 
         </div>
@@ -24,6 +26,8 @@
             [deleteRequest]="jobService.deleteJob.bind(jobService)" [loadDataToTable]="this.loadDataToTable.bind(this)"
             searchHint="Search by any keywords" [checkbox]="'actions'" [hideValues]="['Id']" [width]="'auto'"
             [clickableRows]="true" [onRowClick]="redirectJobDetails.bind(this)"
+            [disableEditCheck]="shouldDisableEdit"
+            [disableDeleteCheck]="shouldDisableDelete"
             [headers]="['Description','Job Status','Start Date','End Date','Customer Name']"></app-table-component>
 
         </div>
@@ -34,6 +38,8 @@
             [deleteRequest]="jobService.deleteJob.bind(jobService)" [loadDataToTable]="this.loadDataToTable.bind(this)"
             searchHint="Search by any keywords" [checkbox]="'actions'" [hideValues]="['Id']" [width]="'auto'"
             [clickableRows]="true" [onRowClick]="redirectJobDetails.bind(this)"
+            [disableEditCheck]="shouldDisableEdit"
+            [disableDeleteCheck]="shouldDisableDelete"
             [headers]="['Description','Job Status','Start Date','End Date','Customer Name']"></app-table-component>
 
         </div>

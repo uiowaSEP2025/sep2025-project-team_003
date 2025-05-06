@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { TableComponentComponent } from '../../components/table-component/table-component.component';
-import { QuoteService } from '../../services/quote.service';
 import { ActivatedRoute } from '@angular/router';
 import { OnInit } from '@angular/core';
 import { MatError } from '@angular/material/form-field';
@@ -21,6 +20,7 @@ import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
 import integerValidator from '../../utils/whole-number-validator';
+import { JobService } from '../../services/job.service';
 
 export interface DateRange {
   issued: FormControl<Date | null>;
@@ -37,9 +37,9 @@ export interface DateRange {
   styleUrl: './edit-invoice-page.component.scss'
 })
 export class EditInvoicePageComponent implements OnInit {
-  selectedQuotes: number[] = []
-  quotes: any
-  selectedQuotesIsError = false
+  selectedJobs: number[] = []
+  jobs: any
+  selectedJobsisError = false
   invoiceID!: number
   customerName!: string
   issuanceDate!: string
@@ -47,6 +47,8 @@ export class EditInvoicePageComponent implements OnInit {
   status!: 'issued' | 'created' | 'paid'// also serves as a form control
   initialStatus!: string
   tax!: number
+  isFirstLoad = true
+
   readonly range: FormGroup<DateRange> = new FormGroup({
     issued: new FormControl<Date | null>(null),
     due: new FormControl<Date | null>(null),
@@ -62,17 +64,9 @@ export class EditInvoicePageComponent implements OnInit {
     matcher = new GenericFormErrorStateMatcher()
   
   
-  constructor(private quoteService: QuoteService, private activatedRoute: ActivatedRoute, 
+  constructor(private activatedRoute: ActivatedRoute, 
     private invoiceService: InvoiceService, private stringFormatter: StringFormatter, 
-    private router: Router) { }
-
-    private fixBackendTaxPercentage(tax: string): string {
-      if (tax === "1.00") {
-        return "100"
-      }
-      tax = tax.split('.')[1]
-      return tax
-    }
+    private router: Router, private JobsService: JobService) { }
 
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe(params => {
@@ -85,7 +79,7 @@ export class EditInvoicePageComponent implements OnInit {
       this.dueDate = params['due_date'];
       this.issuanceDate = params['issuance_date'];
       this.customerName = params['customer'];
-      this.tax = parseInt(this.fixBackendTaxPercentage(params['tax']));
+      this.tax = parseInt(params['tax']);
     })
     this.taxAmount.setValue(this.tax.toFixed(2))
 
@@ -104,17 +98,17 @@ export class EditInvoicePageComponent implements OnInit {
       const day = split[2]
       this.range.controls.due.setValue(new Date(parseInt(year), parseInt(month) - 1, parseInt(day)))
     }
-    this.loadQuotesToTable("", 5, 0);
+    this.loadJobs("", 5, 0);    
   }
 
-  setSelectedQuotes(newQuotes: number[]) {
-    if (newQuotes.length === 0) {
-      this.selectedQuotesIsError = true
-      this.selectedQuotes = [...newQuotes]
+  setSelectedJobs(selectedJobs: number[]) {
+    if (selectedJobs.length === 0) {
+      this.selectedJobsisError = true
+      this.selectedJobs = [...selectedJobs]
     }
     else {
-      this.selectedQuotesIsError = false
-      this.selectedQuotes = [...newQuotes]
+      this.selectedJobsisError = false
+      this.selectedJobs = [...selectedJobs]
     }
 
   }
@@ -127,7 +121,7 @@ export class EditInvoicePageComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
         const data = {
-          quoteIDs: this.selectedQuotes,
+          jobIds: this.selectedJobs,
           status: this.status,
           issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
           dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
@@ -144,37 +138,42 @@ export class EditInvoicePageComponent implements OnInit {
   }
 
 
-  loadQuotesToTable(searchTerm: string, pageSize: number, offSet: number) {
-    this.quoteService.getQuotesByInvoice(this.invoiceID, { search: searchTerm, pagesize: pageSize, offset: offSet }).subscribe({
-      next: (response) => {
-        this.quotes = response
-      },
-      error: (error) => {
-      }
-    })
+  loadJobs(searchTerm: string, pageSize: number, offSet: number) {
+      this.JobsService.getJobsByInvoice(this.invoiceID, searchTerm, pageSize, offSet).subscribe({
+        next: (response) => {
+          
+          if (this.isFirstLoad) {
+            this.isFirstLoad = false
+            const ids = response.data.filter((job: any) => (job.invoice===this.invoiceID)).map((job:any) => (job.id))
+            this.setSelectedJobs(ids)
+          }
+          this.jobs = response
+        },
+        error: () => {}
+      })
   }
 
   onSubmit() {
     if (!this.taxAmount.valid) {
       return;
     }
-    if (this.selectedQuotes.length === 0) {
+    if (this.selectedJobs.length === 0) {
       this.datePicker?.validate()
-      this.selectedQuotesIsError = true;
+      this.selectedJobsisError = true;
       return;
     }
     if (this.isDateSelectVisible() && !this.datePicker.validate()) {
-      this.selectedQuotesIsError = false;
+      this.selectedJobsisError = false;
       return false;
     }
-    this.selectedQuotesIsError = false;
+    this.selectedJobsisError = false;
     if (this.initialStatus === 'issued' || this.initialStatus === 'paid') {
       this.openDialog()
       return;
     }
     
     const data = {
-      quoteIDs: this.selectedQuotes,
+      jobIds: this.selectedJobs,
       status: this.status,
       issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value) ,
       dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),

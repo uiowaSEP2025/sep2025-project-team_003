@@ -46,6 +46,14 @@ export class JobPageComponent implements OnInit {
     this.loadDataToTable(this.defaultSearch, this.defaultPageSize, this.defaultOffset);
   }
 
+  shouldDisableEdit(row: any):boolean {
+    return row.job_status=== "completed";
+  }
+
+  shouldDisableDelete(row: any):boolean {
+    return row.job_status=== "completed";
+  }
+
   onTabChange(event: MatTabChangeEvent) {
     this.selectedTab = (event.tab.textLabel as "Created" | "In Progress" | "Completed");
     this.loadDataToTable(this.tabStates[this.selectedTab].search, this.tabStates[this.selectedTab].pagesize, this.tabStates[this.selectedTab].offset)

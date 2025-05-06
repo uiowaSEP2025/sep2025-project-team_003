@@ -1,9 +1,9 @@
 
 export interface JobGeneralDataInterface {
-    id: number, 
+    id: number,
     jobStatus: 'created' | 'completed',
     startDate: string
-    endDate: string ,
+    endDate: string,
     description: string,
     customerName: string,
     customerID: number,
@@ -11,4 +11,7 @@ export interface JobGeneralDataInterface {
     requestorCity: string,
     requestorState: string,
     requestorZip: string,
+    flatfee: string;
+    hourlyRate: string;
+    minutesWorked: string;
 }

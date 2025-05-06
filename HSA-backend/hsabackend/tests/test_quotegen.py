@@ -21,22 +21,21 @@ from hsabackend.views.generate_quote_pdf_view import (
     get_list_of_quotes_by_org,
     retrieve_quote,
     accept_reject_quote,
-    encode,
-    decode,
 )
 
 
 # ------------------------------------------------------------------ #
+
 #  1. Helper / internal-only tests
 # ------------------------------------------------------------------ #
 class PDFBuilderTests(unittest.TestCase):
     @patch("hsabackend.views.generate_quote_pdf_view.JobService")
     @patch("hsabackend.views.generate_quote_pdf_view.JobMaterial")
-    def test_build_quote_pdf_minimal(self, mock_mat, mock_svc):
+    @patch("hsabackend.views.generate_quote_pdf_view.get_job_detailed_table")
+    def test_build_quote_pdf_minimal(self, details, mock_mat, mock_svc):
         """Smoke-test that _build_quote_pdf returns real PDF bytes."""
         mock_svc.objects.select_related.return_value.filter.return_value = []
         mock_mat.objects.filter.return_value = []
-
         fake_job = Mock(
             pk=42,
             customer=Mock(
@@ -54,7 +53,6 @@ class PDFBuilderTests(unittest.TestCase):
 
         pdf_bytes = _build_quote_pdf(fake_job, fake_org)
         self.assertTrue(pdf_bytes.startswith(b"%PDF"))
-
 
 # ------------------------------------------------------------------ #
 #  2. /api/generate/quote/<id>
@@ -407,7 +405,8 @@ class PDFBuilderWithDataTests(unittest.TestCase):
         # one table for services + one for materials
         self.assertEqual(pdf_stub.table.call_count, 2)
         # each “row” call executed at least once (header + data rows)
-        self.assertGreaterEqual(tbl_stub.row.call_count, 3)
+
+        self.assertGreaterEqual(tbl_stub.row.call_count, 2)
 
 class SendQuotePDFEmailTests(APITestCase):
     def setUp(self):

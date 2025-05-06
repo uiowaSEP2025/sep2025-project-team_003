@@ -3,12 +3,11 @@ import io
 import base64
 import random
 from datetime import datetime
+from hsabackend.utils.env_utils import get_url
 import jwt
-
 import boto3
-from decimal import Decimal
 from fpdf import FPDF
-
+from hsabackend.utils.pdf_utils import get_job_detailed_table
 from django.http import HttpResponse
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
@@ -21,14 +20,11 @@ from hsabackend.models.organization import Organization
 from hsabackend.models.job import Job
 from hsabackend.models.job_service import JobService
 from hsabackend.models.job_material import JobMaterial
-from hsabackend.models.quote import Quote
 from hsabackend.utils.string_formatters import (
     format_title_case,
     format_phone_number_with_parens,
     format_maybe_null_date,
-    format_currency,
-    format_percent,
-    format_tax_percent,
+    
 )
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
 from hsabackend.utils.env_utils import get_url
@@ -37,9 +33,9 @@ from hsabackend.utils.env_utils import get_url
 def encode(job):
     return jwt.encode(job.jwt_json(), "vibecodedAPPS-willgetyouHACKED!!", algorithm="HS256")
 
+
 def decode(token):
     return jwt.decode(token, "vibecodedAPPS-willgetyouHACKED!!", algorithms=["HS256"])
-
 
 def _build_quote_pdf(job: Job, org: Organization) -> bytes:
     """Create the PDF in memory and return its bytes."""
@@ -67,54 +63,7 @@ def _build_quote_pdf(job: Job, org: Organization) -> bytes:
     pdf.ln(15)
 
     # Services table
-    grey = 215
-    pdf.set_x(10)
-    with pdf.table(
-        line_height=5,
-        padding=2,
-        text_align=("LEFT",) * 5,
-        borders_layout="SINGLE_TOP_LINE",
-        cell_fill_color=grey,
-        cell_fill_mode="ROWS",
-    ) as tbl:
-        hdr = tbl.row()
-        hdr.cell("Services Rendered", colspan=2, align="C")
-        for svc in JobService.objects.select_related("service").filter(job=job):
-            info = svc.get_service_info_for_detailed_invoice()
-            row = tbl.row()
-            row.cell(info["service name"])
-            row.cell(info["service description"])
-    pdf.ln(5)
-
-    # Materials table
-    with pdf.table(
-        line_height=5,
-        padding=2,
-        text_align=("LEFT",) * 4,
-        borders_layout="SINGLE_TOP_LINE",
-        cell_fill_color=grey,
-        cell_fill_mode="ROWS",
-    ) as tbl:
-        hdr = tbl.row()
-        hdr.cell("Material Name")
-        hdr.cell("Per Unit")
-        hdr.cell("Units Used")
-        hdr.cell("Total")
-
-        total = Decimal(0)
-        for mat in JobMaterial.objects.filter(job=job):
-            info = mat.invoice_material_row()
-            r = tbl.row()
-            r.cell(info["material name"])
-            r.cell(format_currency(info["per unit"]))
-            r.cell(str(info["units used"]))
-            total += info["total"]
-            r.cell(format_currency(info["total"]))
-
-        tr = tbl.row()
-        tr.cell("Materials Total")
-        tr.cell("", colspan=2)
-        tr.cell(format_currency(total))
+    get_job_detailed_table(pdf, job)
 
     # Signature page
     pdf.add_page()

@@ -28,6 +28,8 @@ import { UpdateConfirmDialogComponentComponent } from '../../components/update-c
 import { RequestTrackerService } from '../../utils/request-tracker';
 import { take } from 'rxjs/operators';
 import { StateList } from '../../utils/states-list';
+import { currencyValidator } from '../../utils/currency-validator';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 interface State {
   name: string,
@@ -40,11 +42,11 @@ interface State {
     provideNativeDateAdapter()
   ],
   imports: [
-    LoadingFallbackComponent, 
-    CommonModule, 
-    MatButtonModule, 
-    MatIconModule, 
-    JobDisplayTableComponent, 
+    LoadingFallbackComponent,
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    JobDisplayTableComponent,
     MatCardModule,
     MatListModule,
     MatDividerModule,
@@ -53,6 +55,7 @@ interface State {
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
+    MatTooltipModule,
     MatSelectModule,
     MatDatepickerModule
   ],
@@ -88,15 +91,14 @@ export class EditJobPageComponent {
   jobForm: FormGroup;
   states: any = []
   isUpdatedField: boolean = false
-  
-  constructor (
+
+  constructor(
     private jobService: JobService,
     private stringFormatter: StringFormatter,
-    private activatedRoute:ActivatedRoute, 
-    private router: Router, 
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
     private tracker: RequestTrackerService,
     private jobFormBuilder: FormBuilder,
-    private http: HttpClient,
     public dialog: MatDialog,
     private snackBar: MatSnackBar,
   ) {
@@ -114,36 +116,43 @@ export class EditJobPageComponent {
       requestorAddress: [''],
       requestorCity: [''],
       requestorZip: [''],
-      requestorStateSelect: ['', Validators.required]
+      requestorStateSelect: ['', Validators.required],
+      flatfee: ['0.00', [Validators.required, currencyValidator()]],
+      hourlyRate: ['0.00', [Validators.required, currencyValidator()]],
+      minutesWorked: ['0', [Validators.required, Validators.min(0)]],
     }, { validators: this.dateValidator });
   }
 
   ngOnInit(): void {
     this.jobService.getSpecificJobData(this.jobID).subscribe(
-      {next: (response) => {
-        this.jobData = response;
+      {
+        next: (response) => {
+          this.jobData = response;
+          this.jobForm.setValue({
+            customerName: this.jobData?.data.customerName,
+            jobStatus: this.jobData?.data.jobStatus,
+            startDate: new Date(this.jobData?.data.startDate),
+            endDate: new Date(this.jobData?.data.endDate),
+            jobDescription: this.jobData?.data.description,
+            requestorAddress: this.jobData?.data.requestorAddress,
+            requestorCity: this.jobData?.data.requestorCity,
+            requestorZip: this.jobData?.data.requestorZip,
+            requestorStateSelect: this.jobData?.data.requestorState,
+            flatfee: this.jobData?.data.flatfee,
+            hourlyRate: this.jobData?.data.hourlyRate,
+            minutesWorked: this.jobData?.data.minutesWorked,
+          });
 
-        this.jobForm.setValue({
-          customerName: this.jobData?.data.customerName,
-          jobStatus: this.jobData?.data.jobStatus,
-          startDate: new Date(this.jobData?.data.startDate),
-          endDate: new Date(this.jobData?.data.endDate),
-          jobDescription: this.jobData?.data.description,
-          requestorAddress: this.jobData?.data.requestorAddress,
-          requestorCity: this.jobData?.data.requestorCity,
-          requestorZip: this.jobData?.data.requestorZip,
-          requestorStateSelect: this.jobData?.data.requestorState,
-        });
-        
-        this.customerID = this.jobData?.data.customerID;
-        this.customers = this.jobData?.data.customerName;
-        this.services = this.jobData.services;
-        this.materials = this.jobData.materials;
-        this.contractors = this.jobData.contractors;
-        this.jobForm.markAllAsTouched();
-      },
-      error: (error) => {
-      }}
+          this.customerID = this.jobData?.data.customerID;
+          this.customers = this.jobData?.data.customerName;
+          this.services = this.jobData.services;
+          this.materials = this.jobData.materials;
+          this.contractors = this.jobData.contractors;
+          this.jobForm.markAllAsTouched();
+        },
+        error: (error) => {
+        }
+      }
     );
   }
 
@@ -154,7 +163,7 @@ export class EditJobPageComponent {
 
     if (!startDate) {
       return { noStartDate: true };
-    } 
+    }
 
     if (!endDate) {
       return { noEndDate: true };
@@ -172,15 +181,15 @@ export class EditJobPageComponent {
       typeOfDialog: 'customer',
       dialogData: this.customerID,
       searchHint: 'Search by customer name',
-      headers: ['First Name','Last Name', 'Email', 'Phone No'],
+      headers: ['First Name', 'Last Name', 'Email', 'Phone No'],
       materialInputFields: this.materialInputFields,
     };
 
     const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -206,10 +215,10 @@ export class EditJobPageComponent {
     };
 
     const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
@@ -223,7 +232,7 @@ export class EditJobPageComponent {
           info['serviceDescription'] = element['service_description'];
           this.services = { services: [...this.services.services, info] };
         });
-      
+
         this.selectedServices = result.selectedItems;
         this.onChangeUpdateButton()
       }
@@ -240,14 +249,14 @@ export class EditJobPageComponent {
     }
 
     const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
-    dialogRef.afterClosed().subscribe((result:any) => {
+    dialogRef.afterClosed().subscribe((result: any) => {
       if (result.length !== 0) {
         result.itemsInfo.forEach((element: any) => {
           this.materials = { materials: [...this.materials.materials, element] };
@@ -269,14 +278,14 @@ export class EditJobPageComponent {
     }
 
     const dialogRef = this.dialog.open(AddSelectDialogComponentComponent, {
-      width: 'auto', 
-      maxWidth: '90vw', 
-      height: 'auto', 
-      maxHeight: '90vh', 
+      width: 'auto',
+      maxWidth: '90vw',
+      height: 'auto',
+      maxHeight: '90vh',
       data: dialogData
     });
 
-    dialogRef.afterClosed().subscribe((result:any) => {
+    dialogRef.afterClosed().subscribe((result: any) => {
       if (result.length !== 0) {
         result.itemsInfo.forEach((element: { [x: string]: any; }) => {
           let info: any = {};
@@ -344,7 +353,7 @@ export class EditJobPageComponent {
       }
       case 'contractor': {
         let popOutID = data["Contractor ID"];
-        
+
         if (joinRelationID !== 0) {
           this.deletedJobContractors.push(joinRelationID);
         } else {
@@ -354,9 +363,9 @@ export class EditJobPageComponent {
         this.contractors.contractors = this.contractors.contractors.filter((item: { contractorID: any; }) => item.contractorID !== popOutID);
         this.onChangeUpdateButton();
         return this.contractors;
-      }  
+      }
     };
-    
+
   }
 
   onUpdateConfirmDialog() {
@@ -364,7 +373,7 @@ export class EditJobPageComponent {
       data: "job updating"
     });
 
-    dialogRef.afterClosed().subscribe((result:any) => {
+    dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
         this.onSubmit();
       }
@@ -391,7 +400,10 @@ export class EditJobPageComponent {
         city: this.jobForm.get('requestorCity')?.value,
         state: this.jobForm.get('requestorStateSelect')?.value,
         zip: this.jobForm.get('requestorZip')?.value,
-        address: this.jobForm.get('requestorAddress')?.value
+        address: this.jobForm.get('requestorAddress')?.value,
+        flatfee: this.jobForm.get('flatfee')?.value,
+        hourlyRate: this.jobForm.get('hourlyRate')?.value,
+        minutesWorked: this.jobForm.get('minutesWorked')?.value,
       };
 
       this.tracker.startRequest();
@@ -410,7 +422,7 @@ export class EditJobPageComponent {
       );
 
       //call delete on join relations
-      let deletedServicesField: { id: any; } [] = [];
+      let deletedServicesField: { id: any; }[] = [];
       this.deletedJobServices = Array.from(new Set(this.deletedJobServices))
       this.deletedJobServices.forEach((element: any) => {
         deletedServicesField.push({ "id": element });
@@ -419,12 +431,12 @@ export class EditJobPageComponent {
       const deleteJobServicesRequestJson = {
         type: 'service',
         id: this.jobID,
-        deletedItems: { "jobServices" : deletedServicesField }
+        deletedItems: { "jobServices": deletedServicesField }
       };
 
-      let deletedMaterialsField: { id: any; } [] = [];
+      let deletedMaterialsField: { id: any; }[] = [];
       this.deletedJobMaterials = Array.from(new Set(this.deletedJobMaterials))
-      
+
       this.deletedJobMaterials.forEach((element: any) => {
         deletedMaterialsField.push({ "id": element });
       });
@@ -432,10 +444,10 @@ export class EditJobPageComponent {
       const deleteJobMaterialsRequestJson = {
         type: 'material',
         id: this.jobID,
-        deletedItems: { "jobMaterials" : deletedMaterialsField }
+        deletedItems: { "jobMaterials": deletedMaterialsField }
       };
 
-      let deletedContractorsField: { id: any; } [] = [];
+      let deletedContractorsField: { id: any; }[] = [];
       this.deletedJobContractors = Array.from(new Set(this.deletedJobContractors))
       this.deletedJobContractors.forEach((element: any) => {
         deletedContractorsField.push({ "id": element });
@@ -444,9 +456,9 @@ export class EditJobPageComponent {
       const deleteJobContractorsRequestJson = {
         type: 'contractor',
         id: this.jobID,
-        deletedItems: { "jobContractors" : deletedContractorsField }
+        deletedItems: { "jobContractors": deletedContractorsField }
       };
-      
+
       if (deletedServicesField.length !== 0) {
         this.tracker.startRequest();
         this.jobService.deleteJobJoin(deleteJobServicesRequestJson).subscribe(
@@ -463,7 +475,7 @@ export class EditJobPageComponent {
           }
         );
       }
-      
+
       if (deletedMaterialsField.length !== 0) {
         this.tracker.startRequest();
         this.jobService.deleteJobJoin(deleteJobMaterialsRequestJson).subscribe(
@@ -480,7 +492,7 @@ export class EditJobPageComponent {
           }
         );
       }
-      
+
       if (deletedContractorsField.length !== 0) {
         this.tracker.startRequest();
         this.jobService.deleteJobJoin(deleteJobContractorsRequestJson).subscribe(
@@ -499,7 +511,7 @@ export class EditJobPageComponent {
       }
 
       //call create on join relations
-      let selectedServicesField: { id: any; } [] = [];
+      let selectedServicesField: { id: any; }[] = [];
       this.selectedServices.forEach((element: any) => {
         selectedServicesField.push({ "id": element });
       });
@@ -507,17 +519,17 @@ export class EditJobPageComponent {
       const createJobServicesRequestJson = {
         type: 'service',
         id: this.jobID,
-        addedItems: { "services" : selectedServicesField }
+        addedItems: { "services": selectedServicesField }
       };
 
       let selectedMaterialsField = this.selectedMaterials;
       const createJobMaterialsRequestJson = {
         type: 'material',
         id: this.jobID,
-        addedItems: { "materials" : selectedMaterialsField }
+        addedItems: { "materials": selectedMaterialsField }
       };
 
-      let selectedContractorsField: { id: any; } [] = [];
+      let selectedContractorsField: { id: any; }[] = [];
       this.selectedContractors.forEach((element: any) => {
         selectedContractorsField.push({ "id": element });
       });
@@ -525,7 +537,7 @@ export class EditJobPageComponent {
       const createJobContractorsRequestJson = {
         type: 'contractor',
         id: this.jobID,
-        addedItems: { "contractors" : selectedContractorsField }
+        addedItems: { "contractors": selectedContractorsField }
       };
 
       this.tracker.completionNotifier.pipe(take(1)).subscribe(() => {
@@ -546,7 +558,7 @@ export class EditJobPageComponent {
           );
         }
       });
-      
+
       this.tracker.completionNotifier.pipe(take(1)).subscribe(() => {
         if (selectedMaterialsField.length !== 0) {
           this.tracker.startRequest();
@@ -565,7 +577,7 @@ export class EditJobPageComponent {
           );
         }
       })
-      
+
       this.tracker.completionNotifier.pipe(take(1)).subscribe(() => {
         if (selectedContractorsField.length !== 0) {
           this.tracker.startRequest();
@@ -591,7 +603,8 @@ export class EditJobPageComponent {
           this.snackBar.open('Job edit successfully', '', {
             duration: 3000
           });
-        this.navigateToPage('jobs') }
+          this.navigateToPage('jobs')
+        }
         else {
           this.snackBar.open('There is an error in the server, please try again later. Error: ' + errorMessage, '', {
             duration: 3000

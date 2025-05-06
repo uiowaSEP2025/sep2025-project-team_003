@@ -20,7 +20,10 @@ interface JobCreatePostData {
   address: string | null,
   contractors: [] | null,
   services: [] | null,
-  materials: [] | null
+  materials: [] | null,
+  flatfee: string;       
+  hourlyRate: string;    
+  minutesWorked: string; 
 }
 
 interface JobEditPostData {
@@ -34,6 +37,9 @@ interface JobEditPostData {
   state: string | null,
   zip: string | null,
   address: string | null,
+  flatfee: string;       
+  hourlyRate: string;    
+  minutesWorked: string; 
 }
 
 interface JobDeletePostData {
@@ -63,6 +69,8 @@ export class JobService {
   private apiEditUrl = `${environment.apiUrl}/api/edit/job`;
   private apiDeleteUrl = `${environment.apiUrl}/api/delete/job`;
   private getJobsByContractorUrl = `${environment.apiUrl}/api/get/jobs/by-contractor`
+  private getInvoicableURL = `${environment.apiUrl}/api/get/invoicable/jobs`
+  private getJobsByInvoiceURL = `${environment.apiUrl}/api/get/jobs/for-invoice`
   responses: any[]  = []
 
   constructor(private http: HttpClient) {}
@@ -70,6 +78,16 @@ export class JobService {
   public getJobsByContractor(contractorID: number, search: string, pageSize: number, offset: number): Observable<TableApiResponse<JobSimplified>> {
     const searchquery = search === "" ? "" : `search=${search}&`
     return this.http.get<TableApiResponse<JobSimplified>>(`${this.getJobsByContractorUrl}?${searchquery}pagesize=${pageSize}&offset=${offset}&contractor=${contractorID}`);
+  }
+
+  public getInvoicableJobs(customerID: number, search: string, pageSize: number, offset: number): Observable<TableApiResponse<any>> {
+    const searchquery = search === "" ? "" : `search=${search}&`
+    return this.http.get<TableApiResponse<JobSimplified>>(`${this.getInvoicableURL}?${searchquery}pagesize=${pageSize}&offset=${offset}&customer=${customerID}`);
+  }
+
+  public getJobsByInvoice(invoice: number,search: string, pageSize: number, offset: number) {
+    const searchquery = search === "" ? "" : `search=${search}&`
+    return this.http.get<TableApiResponse<any>>(`${this.getJobsByInvoiceURL}?${searchquery}pagesize=${pageSize}&offset=${offset}&invoice=${invoice}`);
   }
 
   public getJob(status: "created" | "in-progress" | "completed", params?: Record<string, string | number>): Observable<TableApiResponse<any>> {

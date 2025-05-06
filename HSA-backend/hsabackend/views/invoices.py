@@ -2,15 +2,15 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from hsabackend.models.customer import Customer 
-from hsabackend.models.quote import Quote
 from hsabackend.models.invoice import Invoice
-from hsabackend.models.organization import Organization
+from django.db.transaction import atomic
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.db.models import Sum
+from hsabackend.models.job import Job
 from hsabackend.utils.api_validators import parseAndReturnDate, parse_and_return_decimal
-from decimal import Decimal
+from django.db.transaction import atomic
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+from decimal import Decimal
 
 @api_view(["POST"])
 @check_authenticated_and_onboarded()
@@ -19,15 +19,15 @@ def createInvoice(request):
     org = request.org
 
     customer_id = json.get("customerID", None)
-    quote_ids = json.get("quoteIDs",[])
+    job_ids = json.get("jobIds",[])
     if not isinstance(customer_id, int):
         return Response({"message": "CustomerID must be int"}, status=status.HTTP_400_BAD_REQUEST)  
     
-    if not isinstance(quote_ids, list):
-        return Response({"message": "Quotes must be list"}, status=status.HTTP_400_BAD_REQUEST)  
+    if not isinstance(job_ids, list):
+        return Response({"message": "Jobs must be list"}, status=status.HTTP_400_BAD_REQUEST)  
     
-    if len(quote_ids) == 0:
-        return Response({"message": "Must include at least 1 quote"}, status=status.HTTP_400_BAD_REQUEST)  
+    if len(job_ids) == 0:
+        return Response({"message": "Must include at least 1 job"}, status=status.HTTP_400_BAD_REQUEST)  
 
     invoice_status = json.get("status",None)
     issued = parseAndReturnDate(json.get("issuedDate",""))
@@ -55,29 +55,27 @@ def createInvoice(request):
         # will be here if user does not own the customer ID
         return Response({"message": "Must provide customer for the invoice."}, status=status.HTTP_404_NOT_FOUND)
 
-    invoice = Invoice(
-        customer = cust_qs[0],
-        issuance_date = issued,
-        due_date = due,
-        tax = parse_and_return_decimal(tax_percent),
-        status=invoice_status
-    )
-    
     try:
-        invoice.full_clean()
-        invoice.save()
+        with atomic():
+            invoice = Invoice(
+                customer = cust_qs[0],
+                issuance_date = issued,
+                due_date = due,
+                tax = parse_and_return_decimal(tax_percent),
+                status=invoice_status)
+        
+            invoice.full_clean()
+            invoice.save()
+
+            Job.objects.filter(organization=org.pk, job_status="completed",
+                        invoice=None, customer=cust_qs[0]).update(invoice=invoice.pk)
+
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        print(e)
+        return Response({"error": "500"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    Quote.objects.filter(
-        pk__in=quote_ids, 
-        jobID__organization=org,  # Ensure the quote's job is linked to the user's organization
-        invoice = None, # Ensure this quote does not belong to other invoice
-        status = "accepted",                # invoice must be accepted to bill
-        jobID__job_status= "completed",      # job must be done to bill 
-        jobID__customer= cust_qs[0]
-    ).update(invoice=invoice)
-
     return Response({"message": "Invoice created"}, status=status.HTTP_201_CREATED)
 
 
@@ -126,12 +124,12 @@ def updateInvoice(request, id):
     org = request.org
     json = request.data  
 
-    quote_ids = json.get("quoteIDs",[])
+    job_ids = json.get("jobIds",[])
 
-    if not isinstance(quote_ids, list):
-        return Response({"message": "Quotes must be list"}, status=status.HTTP_400_BAD_REQUEST)  
+    if not isinstance(job_ids, list):
+        return Response({"message": "Jobs must be list"}, status=status.HTTP_400_BAD_REQUEST)  
     
-    if len(quote_ids) == 0:
+    if len(job_ids) == 0:
         return Response({"message": "Must include at least 1 quote"}, status=status.HTTP_400_BAD_REQUEST)  
 
     invoice_status = json.get("status",None)
@@ -159,32 +157,25 @@ def updateInvoice(request, id):
     
     if not invoice_qs.exists():
         return Response({"message": "The invoice does not exist"}, status=status.HTTP_404_NOT_FOUND)
-    customer = invoice_qs[0].customer
+    
+    try: 
+        with atomic():
+            invoice = invoice_qs[0]
+            invoice.status = invoice_status
+            invoice.issuance_date = issued
+            invoice.due_date = due
+            invoice.tax = parse_and_return_decimal(tax_percent)
+            invoice.full_clean()
+            invoice.save()
 
-    invoice = invoice_qs[0]
-    invoice.status = invoice_status
-    invoice.issuance_date = issued
-    invoice.due_date = due
-    invoice.tax = parse_and_return_decimal(tax_percent)
+            Job.objects.filter(customer=invoice.customer).filter(Q(invoice=None) | Q(invoice=invoice)).update(invoice=invoice)
 
-    try:
-        invoice.full_clean()
-        invoice.save()
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
-
-    Quote.objects.filter(
-        pk__in=quote_ids, 
-        jobID__organization=org,            # Ensure the quote's job is linked to the user's organization
-        status = "accepted",                # quote must be accepted to bill
-        jobID__job_status= "completed",     # job must be done to bill 
-        jobID__customer=customer            # quote must for the customer on the invoice
-    ).update(invoice=id)
-
-    Quote.objects.exclude(pk__in=quote_ids).filter(
-        jobID__organization=org,  # Ensure the quote's job is linked to the user's organization
-        invoice=id # find all quotes linked to this invoice
-    ).update(invoice=None)
+    except Exception as e:
+        print(e)
+        return Response({"errors": 500}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     return Response({"message": "Invoice updated successfully"}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
@@ -212,32 +203,31 @@ def get_data_for_invoice(request, id):
     if not invoice_qs.exists():
         return Response({"message": "The request does not exist"}, status=status.HTTP_404_NOT_FOUND)
     
-    res = invoice_qs[0].json_for_view_invoice()
+    inv = invoice_qs[0]
 
-    res_quotes = []
+    res = inv.json_for_view_invoice()
 
-    quotes = Quote.objects.filter(invoice=id)
-    aggregated_values = quotes.aggregate(
-        total_material_subtotal=Sum("material_subtotal"),
-        total_total_price=Sum("total_price"),
-    )
-    total_discnt = Decimal(0)
+    res_jobs = []
 
-    for quote in quotes:
-        total_discnt += quote.discount_type.discount_percent if quote.discount_type else Decimal(0)
-        res_quotes.append(quote.jsonToDisplayForInvoice())
+    jobs = Job.objects.filter(invoice=id)
+    
+    total = Decimal(0)
+    for job in jobs:
+        tmp = job.get_finances()
+        tmp["description"] = job.truncated_job_desc
+        res_jobs.append(tmp)
+        total += job.total_cost
 
-    total_discnt = total_discnt/len(quotes)
-    aggregated_subtotal = aggregated_values["total_total_price"] or 0
+    tax_percent = (inv.tax * Decimal('0.01'))
+    tax_amount = total * tax_percent
 
-    res["quotes"] = {
-        "quotes": res_quotes,
-        "totalMaterialSubtotal": str(aggregated_values["total_material_subtotal"] or 0),
-        "subtotal": str(aggregated_subtotal),
-        "taxPercent": str(invoice_qs[0].tax),
-        "totalDiscount": str(total_discnt), # this is agregated from the discounts, eg 0.3 (30%)
-        # total_discnt is like 30.05%, i know the casting is disgusting, sorry -alex
-        "grandtotal" : str((aggregated_subtotal * (Decimal(f"0.{str(100 - total_discnt).replace('.', '')}"))) * (1 + invoice_qs[0].tax))
-    }
+    decimal_tax_amount = Decimal(str(round(tax_amount, 2)))
+    decimal_tax_percent = Decimal(str(round(tax_percent, 2)))
+
+    res["taxAmount"] = str(decimal_tax_amount)
+    res["taxPercent"] = str(round(inv.tax, 2))
+    res["grandTotal"] = str(round(decimal_tax_amount + total, 2))
+    res["jobs"] = res_jobs
+
 
     return Response(res, status=status.HTTP_200_OK)
