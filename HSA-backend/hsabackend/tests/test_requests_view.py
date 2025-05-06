@@ -11,10 +11,14 @@ from django.core.exceptions import ValidationError
 from hsabackend.models.request import Request
 from hsabackend.models.customer import Customer
 from hsabackend.models.job import Job
-from django.db.models import QuerySet
-from django.db.models import Q
 
-class TestCreate(APITestCase)
+class TestCreate(APITestCase):
+
+    def test_org_not_found(self):
+        pass
+
+    def test_org_not_found(self):
+        pass
 
 class DeleteRequestTest(APITestCase):
     @patch('hsabackend.views.requests.Organization.objects.get')

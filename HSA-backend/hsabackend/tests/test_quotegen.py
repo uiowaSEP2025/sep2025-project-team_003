@@ -13,8 +13,6 @@ from rest_framework.response import Response
 from rest_framework.test import APIRequestFactory, APITestCase
 
 from hsabackend.views.generate_quote_pdf_view import (
-    get_url,
-    gen_signable_link,
     _build_quote_pdf,
     generate_quote_pdf,
     generate_quote_pdf_as_base64,
@@ -27,22 +25,7 @@ from hsabackend.views.generate_quote_pdf_view import (
 
 
 # ------------------------------------------------------------------ #
-#  0. get_url() and gen_signable_link() tests
-# ------------------------------------------------------------------ #
-class GenSignableLinkTests(unittest.TestCase):
-    @patch("hsabackend.views.generate_quote_pdf_view.random.randint")
-    def test_pin_generated_and_saved(self, mock_randint):
-        mock_randint.return_value = 87654321
-        fake_job = Mock()
-        fake_job.save = Mock()
 
-        pin = gen_signable_link(fake_job)
-        self.assertEqual(pin, "87654321")
-        self.assertEqual(fake_job.quote_sign_pin, "87654321")
-        fake_job.save.assert_called_once_with(update_fields=["quote_sign_pin"])
-
-
-# ------------------------------------------------------------------ #
 #  1. Helper / internal-only tests
 # ------------------------------------------------------------------ #
 class PDFBuilderTests(unittest.TestCase):
@@ -119,34 +102,42 @@ class GenerateBase64Tests(APITestCase):
         self.factory = APIRequestFactory()
 
     @patch("hsabackend.views.generate_quote_pdf_view.Job")
-    def test_base64_not_found(self, mock_job):
+    @patch("hsabackend.views.generate_quote_pdf_view.decode")
+    def test_base64_not_found(self, mock_job, mock_pin):
         mock_job.objects.get.side_effect = mock_job.DoesNotExist
+        mock_pin.return_value="OOga booga"
+        request = self.factory.post("/api/ret/quote/100", {"pin": "0000"}, format="json")
+        resp = generate_quote_pdf_as_base64(request, 1)
+        self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
+
+    @patch("hsabackend.views.generate_quote_pdf_view.decode")
+    @patch("hsabackend.views.generate_quote_pdf_view.Job")
+    def test_base64_invalid_pin(self, mock_job, mock_pin):
+        job = Mock(quote_s3_link=None)
+        mock_job.objects.get.return_value = job
+        mock_pin.return_value = "oogabooga FAIL"
         request = self.factory.post("/api/ret/quote/1", {"pin": "0000"}, format="json")
         resp = generate_quote_pdf_as_base64(request, 1)
         self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
 
+    @patch("hsabackend.views.generate_quote_pdf_view.decode")
     @patch("hsabackend.views.generate_quote_pdf_view.Job")
-    def test_base64_invalid_pin(self, mock_job):
-        job = Mock(quote_sign_pin="1234", quote_s3_link=None)
+    def test_base64_already_generated(self, mock_job, mock_pin):
+        job = Mock(quote_s3_link="link.pdf")
         mock_job.objects.get.return_value = job
-        request = self.factory.post("/api/ret/quote/1", {"pin": "0000"}, format="json")
-        resp = generate_quote_pdf_as_base64(request, 1)
-        self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
-
-    @patch("hsabackend.views.generate_quote_pdf_view.Job")
-    def test_base64_already_generated(self, mock_job):
-        job = Mock(quote_sign_pin="1234", quote_s3_link="link.pdf")
-        mock_job.objects.get.return_value = job
+        mock_pin.return_value = job.jwt_json()
         request = self.factory.post("/api/ret/quote/1", {"pin": "1234"}, format="json")
         resp = generate_quote_pdf_as_base64(request, 1)
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("link", resp.data)
 
     @patch("hsabackend.views.generate_quote_pdf_view._build_quote_pdf")
+    @patch("hsabackend.views.generate_quote_pdf_view.decode")
     @patch("hsabackend.views.generate_quote_pdf_view.Job")
-    def test_base64_success(self, mock_job, mock_build):
-        job = Mock(quote_sign_pin="9999", quote_s3_link=None)
+    def test_base64_success(self, mock_job, mock_pin, mock_build):
+        job = Mock(quote_s3_link=None)
         mock_job.objects.get.return_value = job
+        mock_pin.return_value = job.jwt_json()
         raw = b"PDF_RAW"
         mock_build.return_value = raw
 
@@ -282,11 +273,6 @@ class GetListFilteredTests(APITestCase):
 
 
 class RetrieveQuoteEndpointVariants(APITestCase):
-    """
-    Covers lines 317‑358 and 368‑369:
-    – success when AWS_ENDPOINT is set
-    – bucket‑missing branch already hit elsewhere
-    """
     def setUp(self):
         self.factory = APIRequestFactory()
         os.environ["AWS_BUCKET"] = "mybucket"
@@ -419,6 +405,7 @@ class PDFBuilderWithDataTests(unittest.TestCase):
         # one table for services + one for materials
         self.assertEqual(pdf_stub.table.call_count, 2)
         # each “row” call executed at least once (header + data rows)
+
         self.assertGreaterEqual(tbl_stub.row.call_count, 2)
 
 class SendQuotePDFEmailTests(APITestCase):
@@ -438,12 +425,12 @@ class SendQuotePDFEmailTests(APITestCase):
         self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(resp.data, {"message": "Invalid credentials"})
 
-    @patch("hsabackend.views.generate_quote_pdf_view.gen_signable_link")
+    @patch("hsabackend.views.generate_quote_pdf_view.encode")
     @patch("hsabackend.views.generate_quote_pdf_view._build_quote_pdf")
     @patch("hsabackend.views.generate_quote_pdf_view.EmailMultiAlternatives")
     @patch("hsabackend.views.generate_quote_pdf_view.Organization")
     @patch("hsabackend.views.generate_quote_pdf_view.Job")
-    def test_send_quote_success(self, mock_job, mock_org, mock_email_class, mock_build, mock_pin):
+    def test_send_quote_success(self, mock_job, mock_org, mock_email_class, mock_build, mock_jwt):
         # prepare request and user
         request = self.factory.post('/api/send/quote/3')
         request.user = Mock(is_authenticated=True, pk=7)
@@ -451,6 +438,7 @@ class SendQuotePDFEmailTests(APITestCase):
         # stub Organization.get
         org = Mock(pk=20)
         mock_org.objects.get.return_value = org
+        mock_jwt.return_value = "fuzzfuzz"
 
         # stub Job lookup
         cust = Mock(first_name="Dana", email="dana@example.com")
@@ -460,7 +448,6 @@ class SendQuotePDFEmailTests(APITestCase):
         # stub PDF bytes and PIN
         pdf_data = b'PDFDATA'
         mock_build.return_value = pdf_data
-        mock_pin.return_value = '12345678'
 
         # stub EmailMultiAlternatives instance
         email_msg = Mock(attach_alternative=Mock(), attach=Mock(), send=Mock())
@@ -473,8 +460,6 @@ class SendQuotePDFEmailTests(APITestCase):
         self.assertEqual(resp.data, {"message": f"Quote PDF sent to {cust.email}"})
         # PDF builder called with correct args
         mock_build.assert_called_once_with(job, org)
-        # PIN generator called
-        mock_pin.assert_called_once_with(job)
         # Email was constructed properly
         mock_email_class.assert_called_once_with(
             f"Quote for Job #{job.pk}",
