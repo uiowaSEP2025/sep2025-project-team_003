@@ -18,7 +18,7 @@ interface CreateInvoiceInterface {
 }
 
 interface UpdateInvoiceInterface {
-        quoteIDs: number[],
+        jobIds: number[],
         status: "created" | "issued" | "paid",
         issuedDate: string,
         dueDate: string, 
@@ -59,12 +59,10 @@ export class InvoiceService {
     }
 
     public createInvoice(json: CreateInvoiceInterface): Observable<StandardApiResponse> {
-        json.tax = this.convertTaxInputToMathPercent(json.tax)
         return this.http.post<StandardApiResponse>(this.createUrl, json);
     }
 
     public updateInvoice(id: number, data: UpdateInvoiceInterface) {
-        data.tax = this.convertTaxInputToMathPercent(data.tax)
         return this.http.post<StandardApiResponse>(`${this.editUrl}/${id}`, data);
     }
 

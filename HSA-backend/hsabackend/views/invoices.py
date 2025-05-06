@@ -72,6 +72,7 @@ def createInvoice(request):
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
+        print(e)
         return Response({"error": "500"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     return Response({"message": "Invoice created"}, status=status.HTTP_201_CREATED)
@@ -122,10 +123,10 @@ def updateInvoice(request, id):
     org = request.org
     json = request.data  
 
-    job_ids = json.get("jobIDs",[])
+    job_ids = json.get("jobIds",[])
 
     if not isinstance(job_ids, list):
-        return Response({"message": "Quotes must be list"}, status=status.HTTP_400_BAD_REQUEST)  
+        return Response({"message": "Jobs must be list"}, status=status.HTTP_400_BAD_REQUEST)  
     
     if len(job_ids) == 0:
         return Response({"message": "Must include at least 1 quote"}, status=status.HTTP_400_BAD_REQUEST)  
@@ -170,7 +171,8 @@ def updateInvoice(request, id):
 
     except ValidationError as e:
         return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
-    except Exception:
+    except Exception as e:
+        print(e)
         return Response({"errors": 500}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     return Response({"message": "Invoice updated successfully"}, status=status.HTTP_200_OK)

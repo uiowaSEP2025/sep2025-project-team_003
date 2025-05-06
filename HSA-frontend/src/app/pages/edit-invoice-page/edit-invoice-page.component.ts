@@ -68,14 +68,6 @@ export class EditInvoicePageComponent implements OnInit {
     private invoiceService: InvoiceService, private stringFormatter: StringFormatter, 
     private router: Router, private JobsService: JobService) { }
 
-    private fixBackendTaxPercentage(tax: string): string {
-      if (tax === "1.00") {
-        return "100"
-      }
-      tax = tax.split('.')[1]
-      return tax
-    }
-
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe(params => {
       this.invoiceID = Number(params.get('id'));
@@ -87,7 +79,7 @@ export class EditInvoicePageComponent implements OnInit {
       this.dueDate = params['due_date'];
       this.issuanceDate = params['issuance_date'];
       this.customerName = params['customer'];
-      this.tax = parseInt(this.fixBackendTaxPercentage(params['tax']));
+      this.tax = parseInt(params['tax']);
     })
     this.taxAmount.setValue(this.tax.toFixed(2))
 
@@ -129,7 +121,7 @@ export class EditInvoicePageComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
         const data = {
-          quoteIDs: this.selectedJobs,
+          jobIds: this.selectedJobs,
           status: this.status,
           issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
           dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
@@ -181,7 +173,7 @@ export class EditInvoicePageComponent implements OnInit {
     }
     
     const data = {
-      quoteIDs: this.selectedJobs,
+      jobIds: this.selectedJobs,
       status: this.status,
       issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value) ,
       dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
