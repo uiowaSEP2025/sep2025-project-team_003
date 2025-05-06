@@ -47,12 +47,11 @@ export class JobPageComponent implements OnInit {
   }
 
   shouldDisableEdit(row: any):boolean {
-    console.log(row)
-    return true;
+    return row.job_status=== "completed";
   }
 
   shouldDisableDelete(row: any):boolean {
-    return true;
+    return row.job_status=== "completed";
   }
 
   onTabChange(event: MatTabChangeEvent) {
