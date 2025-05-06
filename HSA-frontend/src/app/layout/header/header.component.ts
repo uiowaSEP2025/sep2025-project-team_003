@@ -4,10 +4,10 @@ import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { UserAuthService } from '../../services/user-auth.service';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltip } from '@angular/material/tooltip';
-import { filter, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -26,7 +26,7 @@ export class HeaderComponent implements OnInit {
   isLoggedIn: boolean = false;
   private loginStatusSubscription: Subscription = new Subscription();
 
-  constructor(private route: ActivatedRoute, private userAuth: UserAuthService, private router: Router, private snackBar: MatSnackBar) { }
+  constructor(private userAuth: UserAuthService, private router: Router, private snackBar: MatSnackBar) { }
 
   toggleSidebar() {
     this.sidebarExpanded = !this.sidebarExpanded
