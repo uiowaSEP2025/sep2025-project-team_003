@@ -4,265 +4,268 @@
         <app-loading-fallback stringToDisplay="Loading the job"></app-loading-fallback>
       }
       @else {
-        <h1>
-          <span>Edit Job Information</span>
-        </h1>
-        <mat-card class="flex p-5 flex-direction: column; items-left">
-          <mat-accordion>
-            <mat-expansion-panel [expanded]="true">
-              <mat-expansion-panel-header>
-                <mat-panel-title> General Info </mat-panel-title>
-              </mat-expansion-panel-header>
-              <form class="parent" [formGroup]="jobForm" (ngSubmit)="onSubmit()">
-                <table class="info-table">
-                    <tr>
-                      <td>Customer</td>
-                      <td>
-                        <div class="customer-box-container">
-                          <span 
-                            class="customer-name-span"
-                          >
-                            {{this.jobForm.get('customerName')?.value}} 
-                          </span>
-                          <button type="button" mat-flat-button (click)="this.openChangeCustomerDialog()">Change customer</button>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Status</td>
-                      <td>
-                        <mat-form-field appearance="fill" class="full-width">
-                          <mat-select 
-                          matNativeControl 
-                          required 
-                          formControlName="jobStatus"
-                          (selectionChange)="onChangeUpdateButton()"
-                          >
-                            <mat-option value="created">created</mat-option>
-                            <mat-option value="in-progress">in-progress</mat-option>
-                            <mat-option value="completed">completed</mat-option>
-                        </mat-select>
-                        </mat-form-field>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Start Date</td>
-                      <td>
-                        <mat-form-field appearance="fill" class="full-width">
-                          <input 
-                            matInput 
-                            [matDatepicker]="startDatePicker" 
-                            formControlName="startDate" 
-                            required
-                            (dateChange)="onChangeUpdateButton()"
-                          >
-                          <mat-hint>MM/DD/YYYY</mat-hint>
-                          <mat-datepicker-toggle matIconSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-                          <mat-datepicker #startDatePicker></mat-datepicker>
-                          @if (jobForm.get('startDate')?.touched && jobForm.hasError('noStartDate')) {
-                            <mat-error>Start date is required</mat-error>
-                          }
-                        </mat-form-field>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>End Date</td>
-                      <td>
-                        <mat-form-field appearance="fill" class="full-width">
-                          <input 
-                            matInput 
-                            [matDatepicker]="endDatePicker" 
-                            formControlName="endDate" 
-                            required
-                            (dateChange)="onChangeUpdateButton()"
-                          >
-                          <mat-hint>MM/DD/YYYY</mat-hint>
-                          <mat-datepicker-toggle matIconSuffix [for]="endDatePicker"></mat-datepicker-toggle>
-                          <mat-datepicker #endDatePicker></mat-datepicker>
-                          @if (jobForm.get('endDate')?.touched && jobForm.hasError('noEndDate')) {
-                            <mat-error>End date is required</mat-error>
-                          }
-                        </mat-form-field>
-                        @if ((jobForm.get('endDate')?.touched || jobForm.get('startDate')?.touched) && jobForm.hasError('endDateBefore')) {
-                            <mat-error>Dates are invalid</mat-error>
-                        }
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Description</td>
-                      <td>
-                        <mat-form-field appearance="fill" class="full-width">
-                          <input
-                            formControlName = "jobDescription"
-                            matInput
-                            required
-                            (input)="onChangeUpdateButton()"
-                          >
-                          @if (jobForm.get('jobDescription')?.touched && jobForm.get('jobDescription')?.hasError('required')) {
-                            <mat-error>Job description is required</mat-error>
-                          }
-                        </mat-form-field>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Address</td>
-                      <td>
-                        <mat-form-field appearance="fill" class="full-width">
-                          <input
-                            formControlName = "requestorAddress"
-                            matInput
-                            (input)="onChangeUpdateButton()"
-                          >
-                        </mat-form-field>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>City</td>
-                      <td>
-                        <mat-form-field appearance="fill" class="full-width">
-                          <input
-                            formControlName = "requestorCity"
-                            matInput
-                            (input)="onChangeUpdateButton()"
-                          >
-                        </mat-form-field>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>State</td>
-                      <td>
-                        <mat-form-field appearance="fill" class="full-width">
-                          <mat-select 
-                            formControlName="requestorStateSelect"
-                            (selectionChange)="onChangeUpdateButton()"
-                          >
-                            @for (state of states; track state) {
-                              <mat-option [value]="state.name">{{state.name}} - {{state.code}}</mat-option>
-                            }
-                          </mat-select>
-                          @if (jobForm.get('requestorStateSelect')?.touched && jobForm.get('requestorStateSelect')?.hasError('required')) {
-                            <mat-error>State is required</mat-error>
-                          }
-                        </mat-form-field>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Zip Code</td>
-                      <td>
-                        <mat-form-field appearance="fill" class="full-width">
-                          <input
-                            formControlName = "requestorZip"
-                            matInput
-                            (input)="onChangeUpdateButton()"
-                          >
-                        </mat-form-field>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="flex flex-col items-center">
-                          Flat Fee
-                          <mat-icon 
-                            matTooltip="A fee added to a job"
-                          >info</mat-icon><br>
+        <div class="table-header">
+          <div class="header-bar">
+            <h1>
+              <span>Edit Job Information</span>
+            </h1>
+          </div>
+          <hr/>
+          <mat-card class="flex p-5 flex-direction: column; items-left" style="background-color: #9eccfa">
+            <mat-accordion>
+              <mat-expansion-panel [expanded]="true">
+                <mat-expansion-panel-header>
+                  <mat-panel-title> General Info </mat-panel-title>
+                </mat-expansion-panel-header>
+                <form class="parent" [formGroup]="jobForm" (ngSubmit)="onSubmit()">
+                  <table class="info-table">
+                      <tr>
+                        <td>Customer</td>
+                        <td>
+                          <div class="customer-box-container">
+                            <span 
+                              class="customer-name-span"
+                            >
+                              {{this.jobForm.get('customerName')?.value}} 
+                            </span>
+                            <button type="button" mat-flat-button (click)="this.openChangeCustomerDialog()">Change customer</button>
                           </div>
-                      </td>
-                      <td>
-                        <mat-form-field appearance="fill" class="full-width">
-                          <span matTextPrefix>$&nbsp;</span>
-                          <input formControlName="flatfee" matInput (input)="onChangeUpdateButton()">
-                          @if (jobForm.get('flatfee')?.touched && jobForm.get('flatfee')?.hasError('required')) {
-                          <mat-error>Flat Fee is required</mat-error>
-                          }
-                          @if (jobForm.get('flatfee')?.touched && jobForm.get('flatfee')?.hasError('invalidCurrency')) {
-                            <mat-error>Flat Fee must be a valid amount</mat-error>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Status</td>
+                        <td>
+                          <mat-form-field appearance="fill" class="full-width">
+                            <mat-select 
+                            matNativeControl 
+                            required 
+                            formControlName="jobStatus"
+                            (selectionChange)="onChangeUpdateButton()"
+                            >
+                              <mat-option value="created">created</mat-option>
+                              <mat-option value="in-progress">in-progress</mat-option>
+                              <mat-option value="completed">completed</mat-option>
+                          </mat-select>
+                          </mat-form-field>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Start Date</td>
+                        <td>
+                          <mat-form-field appearance="fill" class="full-width">
+                            <input 
+                              matInput 
+                              [matDatepicker]="startDatePicker" 
+                              formControlName="startDate" 
+                              required
+                              (dateChange)="onChangeUpdateButton()"
+                            >
+                            <mat-hint>MM/DD/YYYY</mat-hint>
+                            <mat-datepicker-toggle matIconSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                            <mat-datepicker #startDatePicker></mat-datepicker>
+                            @if (jobForm.get('startDate')?.touched && jobForm.hasError('noStartDate')) {
+                              <mat-error>Start date is required</mat-error>
                             }
-                        </mat-form-field>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Hourly Rate</td>
-                      <td>
-                        <mat-form-field appearance="fill" class="full-width">
-                          <span matTextPrefix>$&nbsp;</span>
-                          <input formControlName="hourlyRate" matInput (input)="onChangeUpdateButton()">
-                          @if (jobForm.get('hourlyRate')?.touched && jobForm.get('hourlyRate')?.hasError('required')) {
-                          <mat-error>Hourly Rate is required</mat-error>
-                          }
-                          @if (jobForm.get('hourlyRate')?.touched && jobForm.get('hourlyRate')?.hasError('invalidCurrency')) {
-                          <mat-error>Hourly Rate must be a valid amount</mat-error>
-                          }
-                        </mat-form-field>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Minutes <br>Worked</td>
-                      <td>
-                        <mat-form-field appearance="fill" class="full-width">
-                          <input formControlName="minutesWorked" matInput (input)="onChangeUpdateButton()" type="number">
-                          @if (jobForm.get('minutesWorked')?.touched && jobForm.get('minutesWorked')?.hasError('required')) {
-                          <mat-error>Minutes Worked is required</mat-error>
-                          }
-                          @if (jobForm.get('minutesWorked')?.touched && jobForm.get('minutesWorked')?.hasError('min')) {
-                            <mat-error>Minutes Worked must be at least 0</mat-error>
+                          </mat-form-field>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>End Date</td>
+                        <td>
+                          <mat-form-field appearance="fill" class="full-width">
+                            <input 
+                              matInput 
+                              [matDatepicker]="endDatePicker" 
+                              formControlName="endDate" 
+                              required
+                              (dateChange)="onChangeUpdateButton()"
+                            >
+                            <mat-hint>MM/DD/YYYY</mat-hint>
+                            <mat-datepicker-toggle matIconSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                            <mat-datepicker #endDatePicker></mat-datepicker>
+                            @if (jobForm.get('endDate')?.touched && jobForm.hasError('noEndDate')) {
+                              <mat-error>End date is required</mat-error>
                             }
-                        </mat-form-field>
-                      </td>
-                    </tr>
-                  </table>
-              </form> 
+                          </mat-form-field>
+                          @if ((jobForm.get('endDate')?.touched || jobForm.get('startDate')?.touched) && jobForm.hasError('endDateBefore')) {
+                              <mat-error>Dates are invalid</mat-error>
+                          }
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Description</td>
+                        <td>
+                          <mat-form-field appearance="fill" class="full-width">
+                            <input
+                              formControlName = "jobDescription"
+                              matInput
+                              required
+                              (input)="onChangeUpdateButton()"
+                            >
+                            @if (jobForm.get('jobDescription')?.touched && jobForm.get('jobDescription')?.hasError('required')) {
+                              <mat-error>Job description is required</mat-error>
+                            }
+                          </mat-form-field>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Address</td>
+                        <td>
+                          <mat-form-field appearance="fill" class="full-width">
+                            <input
+                              formControlName = "requestorAddress"
+                              matInput
+                              (input)="onChangeUpdateButton()"
+                            >
+                          </mat-form-field>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>City</td>
+                        <td>
+                          <mat-form-field appearance="fill" class="full-width">
+                            <input
+                              formControlName = "requestorCity"
+                              matInput
+                              (input)="onChangeUpdateButton()"
+                            >
+                          </mat-form-field>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>State</td>
+                        <td>
+                          <mat-form-field appearance="fill" class="full-width">
+                            <mat-select 
+                              formControlName="requestorStateSelect"
+                              (selectionChange)="onChangeUpdateButton()"
+                            >
+                              @for (state of states; track state) {
+                                <mat-option [value]="state.name">{{state.name}} - {{state.code}}</mat-option>
+                              }
+                            </mat-select>
+                            @if (jobForm.get('requestorStateSelect')?.touched && jobForm.get('requestorStateSelect')?.hasError('required')) {
+                              <mat-error>State is required</mat-error>
+                            }
+                          </mat-form-field>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Zip Code</td>
+                        <td>
+                          <mat-form-field appearance="fill" class="full-width">
+                            <input
+                              formControlName = "requestorZip"
+                              matInput
+                              (input)="onChangeUpdateButton()"
+                            >
+                          </mat-form-field>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div style="display: flex; align-items: center; gap: 4px;">
+                            <span>Flat Fee</span>
+                            <mat-icon matTooltip="A fee added to a job">info</mat-icon>
+                          </div>
+                        </td>
+                        <td>
+                          <mat-form-field appearance="fill" class="full-width">
+                            <span matTextPrefix>$&nbsp;</span>
+                            <input formControlName="flatfee" matInput (input)="onChangeUpdateButton()">
+                            @if (jobForm.get('flatfee')?.touched && jobForm.get('flatfee')?.hasError('required')) {
+                            <mat-error>Flat Fee is required</mat-error>
+                            }
+                            @if (jobForm.get('flatfee')?.touched && jobForm.get('flatfee')?.hasError('invalidCurrency')) {
+                              <mat-error>Flat Fee must be a valid amount</mat-error>
+                              }
+                          </mat-form-field>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Hourly Rate</td>
+                        <td>
+                          <mat-form-field appearance="fill" class="full-width">
+                            <span matTextPrefix>$&nbsp;</span>
+                            <input formControlName="hourlyRate" matInput (input)="onChangeUpdateButton()">
+                            @if (jobForm.get('hourlyRate')?.touched && jobForm.get('hourlyRate')?.hasError('required')) {
+                            <mat-error>Hourly Rate is required</mat-error>
+                            }
+                            @if (jobForm.get('hourlyRate')?.touched && jobForm.get('hourlyRate')?.hasError('invalidCurrency')) {
+                            <mat-error>Hourly Rate must be a valid amount</mat-error>
+                            }
+                          </mat-form-field>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Minutes <br>Worked</td>
+                        <td>
+                          <mat-form-field appearance="fill" class="full-width">
+                            <input formControlName="minutesWorked" matInput (input)="onChangeUpdateButton()" type="number">
+                            @if (jobForm.get('minutesWorked')?.touched && jobForm.get('minutesWorked')?.hasError('required')) {
+                            <mat-error>Minutes Worked is required</mat-error>
+                            }
+                            @if (jobForm.get('minutesWorked')?.touched && jobForm.get('minutesWorked')?.hasError('min')) {
+                              <mat-error>Minutes Worked must be at least 0</mat-error>
+                              }
+                          </mat-form-field>
+                        </td>
+                      </tr>
+                    </table>
+                </form> 
+              </mat-expansion-panel>
+          </mat-accordion>
+          <div class="spacer"></div>
+          <mat-accordion>
+            <mat-expansion-panel [expanded]="true" >
+              <mat-expansion-panel-header>
+                <mat-panel-title> Services </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div>
+                <app-job-display-table
+                  [dataSource]="this.services"
+                  [typeToDisplay]="'service'"
+                  [isEditRow]="true"
+                  [popOutEntry]="this.onDelete.bind(this)"
+                  [listOfTable]="this.services"
+                ></app-job-display-table>
+              </div>
+              <div class="button-container">
+                <button mat-flat-button type="submit" class="mt-10 mb-5" (click)="this.openAddServiceDialog()">Add service</button>
+              </div>
+              <div>
+                <app-job-display-table
+                  [dataSource]="this.materials"
+                  [typeToDisplay]="'material'"
+                  [isEditRow]="true"
+                  [popOutEntry]="this.onDelete.bind(this)"
+                  [listOfTable]="this.materials"
+                ></app-job-display-table>
+              </div>
+              <div class="button-container">
+                <button mat-flat-button type="submit" class="mt-10 mb-5" (click)="openAddMaterialDialog()">Add material</button>
+              </div>
+              <div>
+                <app-job-display-table
+                  [dataSource]="this.contractors"
+                  [typeToDisplay]="'contractor'"
+                  [isEditRow]="true"
+                  [popOutEntry]="this.onDelete.bind(this)"
+                  [listOfTable]="this.contractors"
+                ></app-job-display-table>
+              </div>
+              <div class="button-container">
+                <button mat-flat-button type="submit" class="mt-10 mb-5" (click)="openAddContractorDialog()">Add Contractor</button>
+              </div>
             </mat-expansion-panel>
-        </mat-accordion>
-        <div class="spacer"></div>
-        <mat-accordion>
-          <mat-expansion-panel [expanded]="true" >
-            <mat-expansion-panel-header>
-              <mat-panel-title> Services </mat-panel-title>
-            </mat-expansion-panel-header>
-            <div>
-              <app-job-display-table
-                [dataSource]="this.services"
-                [typeToDisplay]="'service'"
-                [isEditRow]="true"
-                [popOutEntry]="this.onDelete.bind(this)"
-                [listOfTable]="this.services"
-              ></app-job-display-table>
-            </div>
-            <div class="button-container">
-              <button mat-flat-button type="submit" class="mt-10 mb-5" (click)="this.openAddServiceDialog()">Add service</button>
-            </div>
-            <div>
-              <app-job-display-table
-                [dataSource]="this.materials"
-                [typeToDisplay]="'material'"
-                [isEditRow]="true"
-                [popOutEntry]="this.onDelete.bind(this)"
-                [listOfTable]="this.materials"
-              ></app-job-display-table>
-            </div>
-            <div class="button-container">
-              <button mat-flat-button type="submit" class="mt-10 mb-5" (click)="openAddMaterialDialog()">Add material</button>
-            </div>
-            <div>
-              <app-job-display-table
-                [dataSource]="this.contractors"
-                [typeToDisplay]="'contractor'"
-                [isEditRow]="true"
-                [popOutEntry]="this.onDelete.bind(this)"
-                [listOfTable]="this.contractors"
-              ></app-job-display-table>
-            </div>
-            <div class="button-container">
-              <button mat-flat-button type="submit" class="mt-10 mb-5" (click)="openAddContractorDialog()">Add Contractor</button>
-            </div>
-          </mat-expansion-panel>
-        </mat-accordion>
-        <div class="spacer"></div>
-        <div class="items-center">
-          <button mat-flat-button type="submit" class="mt-10 mb-5" [disabled]="!isUpdatedField" (click)="onUpdateConfirmDialog()">Update</button>
-          <button mat-stroked-button class="mt-10 mb-5" (click)="navigateToPage('jobs')">Cancel</button>
+          </mat-accordion>
+          <div class="items-center">
+            <button mat-flat-button type="submit" class="mt-10 mb-5" [disabled]="!isUpdatedField" (click)="onUpdateConfirmDialog()">Update</button>
+            <button mat-stroked-button class="mt-10 mb-5" (click)="navigateToPage('jobs')">Cancel</button>
+          </div>
+          </mat-card>
+          <div class="spacer"></div>
         </div>
-        </mat-card>
       }
   </div>
   
