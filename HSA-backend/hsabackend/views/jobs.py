@@ -43,14 +43,18 @@ def get_invoicable_jobs_per_invoice(request):
     
     inv_obj = inv[0]
 
-    jobs_not_on_invoice = Job.objects.filter(customer=inv_obj.customer, invoice=None,job_status="completed")
-    jobs_on_invoice = Job.objects.filter(invoice=inv_obj, job_status="completed")
-
-    resqs = jobs_not_on_invoice.union(jobs_on_invoice).filter(Q(customer__first_name__icontains=search) |
+    jobs_not_on_invoice = Job.objects.filter(customer=inv_obj.customer, invoice=None,job_status="completed").filter(Q(customer__first_name__icontains=search) |
         Q(customer__last_name__icontains=search) |
         Q(start_date__icontains=search) |
         Q(end_date__icontains=search) |
         Q(description__icontains=search))
+    jobs_on_invoice = Job.objects.filter(invoice=inv_obj, job_status="completed").filter(Q(customer__first_name__icontains=search) |
+        Q(customer__last_name__icontains=search) |
+        Q(start_date__icontains=search) |
+        Q(end_date__icontains=search) |
+        Q(description__icontains=search))
+
+    resqs = jobs_not_on_invoice.union(jobs_on_invoice)
 
     count = resqs.count()
 
