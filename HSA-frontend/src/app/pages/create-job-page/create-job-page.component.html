@@ -143,6 +143,9 @@
                     @if (jobForm.get('flatfee')?.touched && jobForm.get('flatfee')?.hasError('required')) {
                     <mat-error>Flat Fee is required</mat-error>
                     }
+                    @if (jobForm.get('flatfee')?.touched && jobForm.get('flatfee')?.hasError('invalidCurrency')) {
+                      <mat-error>Flat Fee must be a valid amount</mat-error>
+                      }
                   </mat-form-field>
                 </td>
               </tr>
@@ -154,6 +157,9 @@
                     @if (jobForm.get('hourlyRate')?.touched && jobForm.get('hourlyRate')?.hasError('required')) {
                     <mat-error>Hourly Rate is required</mat-error>
                     }
+                    @if (jobForm.get('hourlyRate')?.touched && jobForm.get('hourlyRate')?.hasError('invalidCurrency')) {
+                    <mat-error>Hourly Rate must be a valid amount</mat-error>
+                    }
                   </mat-form-field>
                 </td>
               </tr>
@@ -161,10 +167,13 @@
                 <td>Minutes <br>Worked</td>
                 <td>
                   <mat-form-field appearance="fill" class="full-width">
-                    <input formControlName="minutesWorked" matInput (input)="onChangeUpdateButton()">
+                    <input formControlName="minutesWorked" matInput (input)="onChangeUpdateButton()" type="number">
                     @if (jobForm.get('minutesWorked')?.touched && jobForm.get('minutesWorked')?.hasError('required')) {
                     <mat-error>Minutes Worked is required</mat-error>
                     }
+                    @if (jobForm.get('minutesWorked')?.touched && jobForm.get('minutesWorked')?.hasError('min')) {
+                      <mat-error>Minutes Worked must be at least 0</mat-error>
+                      }
                   </mat-form-field>
                 </td>
               </tr>

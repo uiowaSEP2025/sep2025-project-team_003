@@ -104,7 +104,7 @@ export class CreateJobPageComponent {
       jobDescription: ['', Validators.required],
       flatfee: ['0.00', [Validators.required, currencyValidator()]],
       hourlyRate: ['0.00', [Validators.required, currencyValidator()]],
-      minutesWorked: ['0.00', [Validators.required, Validators.min(0)]],
+      minutesWorked: ['', [Validators.required, Validators.min(0)]],
     }, { validators: this.dateValidator });
 
     this.services = { "services": [] };
