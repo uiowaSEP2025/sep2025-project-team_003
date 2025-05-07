@@ -37,7 +37,50 @@ class TestSendQuote(TestCase):
         msg_mock.send.assert_called_once()
         self.assertEqual(to_email, "alex@example.com")
         
+class TestAcceptReject(TestCase):
 
+    @patch("hsabackend.mailing.quotes_mailer.EmailMultiAlternatives")
+    @patch("hsabackend.mailing.quotes_mailer.get_url", return_value="https://example.com")
+    @patch("hsabackend.mailing.quotes_mailer.os.environ.get", return_value="noreply@example.com")
+    def test_accept_quote(self, mock_env, mock_get_url, mock_email_multi):
+        msg_mock = MagicMock()
+        mock_email_multi.return_value = msg_mock
+        c = Mock()
+        c.first_name = "Alex"
+        c.email = "alex@example.com"
 
+        j = Mock()
+        j.pk = 123
+        j.customer = c
+        j.quote_status = "pending"
+        j.quote_s3_link = "some_url"
 
-        
+        accept_reject_quotes(j, "accept")
+
+        j.save.assert_called_with(update_fields=['quote_status'])
+        self.assertEqual(j.quote_status, "accepted")
+        self.assertIsNotNone(j.quote_s3_link)
+        msg_mock.send.assert_called_once()
+
+    @patch("hsabackend.mailing.quotes_mailer.EmailMultiAlternatives")
+    @patch("hsabackend.mailing.quotes_mailer.get_url", return_value="https://example.com")
+    @patch("hsabackend.mailing.quotes_mailer.os.environ.get", return_value="noreply@example.com")
+    def test_reject_quote(self, mock_env, mock_get_url, mock_email_multi):
+        msg_mock = MagicMock()
+        mock_email_multi.return_value = msg_mock
+        c = Mock()
+        c.first_name = "Alex"
+        c.email = "alex@example.com"
+
+        j = Mock()
+        j.pk = 123
+        j.customer = c
+        j.quote_status = "pending"
+        j.quote_s3_link = "some_url"
+
+        accept_reject_quotes(j, "reject")
+        j.save.assert_called_with(update_fields=['quote_status', 'quote_s3_link'])
+
+        self.assertEqual(j.quote_status, "rejected")
+        self.assertIsNone(j.quote_s3_link)
+        msg_mock.send.assert_called_once()
