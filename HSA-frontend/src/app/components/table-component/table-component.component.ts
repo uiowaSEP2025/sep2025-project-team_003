@@ -60,7 +60,6 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   @Input() onRowClick: any = null // if clickable rows is enabled this the function that handles the click
   @Input() headers = ['header1', 'header2', 'header3', 'header4'] // headers to render before fetching the data
   // note: headers are decided based on backend json keys
-  @Input() disableEditCheck: ((row: any) => boolean) | null = null
   @Input() disableDeleteCheck: ((row: any) => boolean) | null = null
   searchHint = input<string>("Use me to search the data")
 
@@ -75,7 +74,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   pageSize: number | null = null
   dataSize: number | null = null
   checkedRowIndexes = new Set<number>();
-  
+
   headersWithActions = [...this.headers, 'Actions']
   editRedirect = input.required<string>()
   isDataNotAvailable = () => {
@@ -94,13 +93,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
     }
     return this.disableDeleteCheck(row)
   }
-  
-  shouldDisableEdit(row: any):boolean {
-    if (this.disableEditCheck === null) {
-      return false
-    }
-    return this.disableEditCheck(row)
-  }
+
 
   ngAfterViewInit() {
     if (this.dataSubscription) {
@@ -131,14 +124,14 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   ngOnInit(): void {
-    
+
     this.headersWithActions = [...this.headers, 'Actions'].filter((header) => {
       return !this.hideValues.includes(header)
     }) // this has to be here to allow default headers change. On init is ran
     // when inputs are recieved
 
     if (this.checkbox !== 'actions') {
-      if (!this.headersWithActions.includes('Checkbox')) { 
+      if (!this.headersWithActions.includes('Checkbox')) {
         this.headersWithActions = ['Checkbox', ...this.headersWithActions]
       }
     }
@@ -148,7 +141,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
         this.headersWithActions = [...this.headersWithActions, 'Unit Used', 'Price Per Unit']
       }
     }
-    
+
   }
 
   redirectEdit(id: number, args: any) {
@@ -197,7 +190,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
               this.snackBar.open(isApproved ? 'Approved successfully' : 'Denied successfully', '', {
                 duration: 3000
               });
-              
+
               if (isApproved) {
                 this.redirectEdit(response.data.id, response.data);
               } else {
@@ -293,7 +286,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       const number = isNaN(parsedNumber) ? 0: parsedNumber
       let currentUnitsUsedDict = this.materialInputFields
       let specificEntry = currentUnitsUsedDict.find((item) => item.id === id)
-      
+
       if (specificEntry) {
         specificEntry['unitsUsed'] = number
       }
@@ -308,7 +301,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       const number = isNaN(parsedNumber) ? 0: parsedNumber
       let currentUnitsUsedDict = this.materialInputFields
       let specificEntry = currentUnitsUsedDict.find((item) => item.id === id)
-      
+
       if (specificEntry) {
         specificEntry['pricePerUnit'] = number
       }
@@ -316,7 +309,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       this.setMaterialInputFields!(currentUnitsUsedDict)
     }
   }
-  
+
 
   ngOnDestroy() {
     if (this.searchSubscription) {
@@ -338,11 +331,11 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
 
   getUnitsUsedValue(id: number): number | string {
     const entry = this.materialInputFields.find(item => item.id === id);
-    return entry?.['unitsUsed'] ?? ''; 
+    return entry?.['unitsUsed'] ?? '';
   }
 
   getPricePerUnitValue(id: number): number | string {
     const entry = this.materialInputFields.find(item => item.id === id);
-    return entry?.['pricePerUnit'] ?? ''; 
+    return entry?.['pricePerUnit'] ?? '';
   }
 }

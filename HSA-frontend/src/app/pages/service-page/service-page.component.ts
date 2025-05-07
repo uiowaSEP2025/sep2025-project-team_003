@@ -6,6 +6,7 @@ import {Router} from '@angular/router';
 import { ServiceService } from '../../services/service.service';
 import { CommonModule } from '@angular/common';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-service-page',
@@ -14,7 +15,8 @@ import { LoadingFallbackComponent } from '../../components/loading-fallback/load
     MatButtonModule,
     MatIcon,
     CommonModule,
-    LoadingFallbackComponent
+    LoadingFallbackComponent,
+    PageTemplateComponent
   ],
   templateUrl: './service-page.component.html',
   styleUrl: './service-page.component.scss'
@@ -22,7 +24,7 @@ import { LoadingFallbackComponent } from '../../components/loading-fallback/load
 export class ServicePageComponent implements OnInit {
   services: any = null;
   serviceService: ServiceService
-  
+
   constructor(private router: Router, serviceService: ServiceService) {
     this.serviceService = serviceService
   }

@@ -1,15 +1,10 @@
-<div class="parent">
-  <div class="main-heading">
+<app-page-template [title]="'Services'">
     @if (services === null) {
       <app-loading-fallback stringToDisplay="Loading services"></app-loading-fallback>
     }
     @else {
       <div class="table-header">
-        <div class="header-bar">
-          <h1>
-            <span>Services</span>
-          </h1>
-          <button mat-flat-button id="add-service-button" (click)="navigateToPage('services/create')">
+          <button class="mb-4" mat-flat-button id="add-service-button" (click)="navigateToPage('services/create')">
             <mat-icon>add</mat-icon>
             Add Service
           </button>
@@ -21,7 +16,5 @@
           searchHint="Search by service name or description"
           [headers]="['Service Name', 'Service Description']"
         ></app-table-component>
-      </div>
     }
-  </div>
-</div>
+</app-page-template>

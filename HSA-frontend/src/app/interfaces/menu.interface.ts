@@ -38,7 +38,7 @@ export const MENU_ITEMS: MenuInterface[] = [
   {
     name: 'Bookings',
     route: "/booking",
-    description: "Manage your booking"
+    description: "Manage your bookings"
   },
   {
     name: 'Invoices',
