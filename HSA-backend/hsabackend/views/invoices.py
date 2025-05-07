@@ -62,7 +62,9 @@ def createInvoice(request):
                 issuance_date = issued,
                 due_date = due,
                 tax = parse_and_return_decimal(tax_percent),
-                status=invoice_status)
+                status=invoice_status,
+                payment_url=org.default_payment_url
+                )
         
             invoice.full_clean()
             invoice.save()

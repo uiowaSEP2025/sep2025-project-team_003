@@ -21,6 +21,7 @@ import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-sta
 import { ReactiveFormsModule } from '@angular/forms';
 import integerValidator from '../../utils/whole-number-validator';
 import { JobService } from '../../services/job.service';
+import { OrganizationService } from '../../services/organization.service';
 
 @Component({
   selector: 'app-create-invoice-page',
@@ -38,6 +39,7 @@ export class CreateInvoicePageComponent implements OnInit {
   selectedCustomersIsError: boolean = false
   selectedJobs: any = []
   selectedJobsIsError: boolean = false
+  orgHasLink: boolean | null = null
   status: 'created' | 'issued' | 'paid' = 'created'
   matcher = new GenericFormErrorStateMatcher()
   @ViewChild(InvoiceDatePickerComponent) datePicker!: InvoiceDatePickerComponent;
@@ -53,10 +55,18 @@ export class CreateInvoicePageComponent implements OnInit {
 
   constructor(private customerService: CustomerService, private router: Router,
     private invoiceService: InvoiceService, private stringFormatter: StringFormatter,
-    private jobService: JobService) { }
+    private jobService: JobService, private orgService: OrganizationService) { }
 
   ngOnInit(): void {
     this.loadCustomersToTable("", 5, 0);
+    this.orgService.getPayemntLink().subscribe({
+      next: (response) => {
+        this.orgHasLink = response.URL !== null
+        console.log(this.orgHasLink)
+      },
+      error: () => {}
+    })
+
   }
 
   isDateSelectVisible = () => (!(this.status === 'created'))
