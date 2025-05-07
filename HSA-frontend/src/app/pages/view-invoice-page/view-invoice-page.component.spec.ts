@@ -23,6 +23,7 @@ describe('ViewInvoicePageComponent', () => {
       taxAmount: "15.50",
       taxPercent: "10",
       grandTotal: "155.50",
+      url: "",
       jobs: [
         {
           flatFee: 100,
