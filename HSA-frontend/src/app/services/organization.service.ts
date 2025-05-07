@@ -16,6 +16,14 @@ interface CreateOrganizationPostData {
 	ownerLn: string | null
 }
 
+interface GetURLResponse {
+	URL: string
+}
+
+interface SetURLData {
+	url: string | null
+}
+
 interface OnboardingUpdatePostData {
 	customerRequest: any | null
 	serviceRequest: any | null
@@ -33,9 +41,18 @@ export class OrganizationService {
 	private apiCreateUrl = `${environment.apiUrl}/api/create/organization`;
 	private apiEditUrl = `${environment.apiUrl}/api/edit/organization`;
 	private apiOnboardingUpdateUrl = `${environment.apiUrl}/api/edit/organization/onboarding`;
-	private apiDeleteUrl = `${environment.apiUrl}/api/delete/organization`
-
+	private getPaymentURL = `${environment.apiUrl}/api/get/payment-link`
+	private setPaymentURL = `${environment.apiUrl}/api/set/payment-link`
+	
 	constructor(private http: HttpClient) { }
+
+	public getPayemntLink():Observable<GetURLResponse> {
+		return this.http.get<GetURLResponse>(this.getPaymentURL);
+	}
+
+	public setPayemntLink(data: SetURLData):Observable<any> {
+		return this.http.post(this.setPaymentURL, data);
+	}
 
 	public createOrganization(data: CreateOrganizationPostData): Observable<StandardApiResponse> {
 		return this.http.post<StandardApiResponse>(this.apiCreateUrl, data);

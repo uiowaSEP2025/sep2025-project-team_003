@@ -14,7 +14,6 @@ from hsabackend.views.contractors import (
     delete_contractor,
     get_all_contractors_for_org,
 )
-
 from hsabackend.views.requests import (
     get_filtered_request_data, 
     get_individual_request_data, 
@@ -35,7 +34,7 @@ from hsabackend.views.job_templates_materials import get_job_template_material_t
 from hsabackend.views.invoices import createInvoice, getInvoices, deleteInvoice, updateInvoice
 from hsabackend.views.generate_invoice_pdf_view import generate_pdf
 from hsabackend.views.generate_quote_pdf_view import generate_quote_pdf, send_quote_pdf_to_customer_email, generate_quote_pdf_as_base64, sign_the_quote, get_list_of_quotes_by_org, retrieve_quote, accept_reject_quote
-from hsabackend.views.organizations import complete_onboarding, createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail
+from hsabackend.views.organizations import complete_onboarding, createOrganization, getOrganizationDetail, editOrganizationDetail, get_payment_link, set_payment_link
 from hsabackend.views.generate_requests_iframe import getHTMLForm
 from hsabackend.views.discounts import get_discounts, edit_discount, create_discount, delete_discount
 from hsabackend.views.bookings import create_event, delete_event, edit_event, get_booking_data, get_ical_for_bookings
@@ -162,6 +161,8 @@ urlpatterns = [
     path("api/get/organization", getOrganizationDetail),
     path("api/edit/organization", editOrganizationDetail),
     path("api/edit/organization/onboarding", complete_onboarding),
+    path("api/get/payment-link", get_payment_link),
+    path("api/set/payment-link", set_payment_link),
 
     # quotes
     path("api/send/quote/<int:id>", send_quote_pdf_to_customer_email),

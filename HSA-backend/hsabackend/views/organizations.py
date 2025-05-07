@@ -16,6 +16,33 @@ from hsabackend.models.job_material import JobMaterial
 from hsabackend.models.job_contractor import JobContractor
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
+def get_payment_link(request):
+    org = request.org
+    url = org.default_payment_url if org.default_payment_url else None
+
+    return Response({"URL": url}, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@check_authenticated_and_onboarded()
+def set_payment_link(request):
+    org = request.org
+    url = request.data.get('url',None)
+
+    if not url:
+        return Response({"error": "url is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    org.default_payment_url = url
+    try:
+        org.full_clean()
+        org.save()
+    except ValidationError as e:
+        return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response({"URL": url}, status=status.HTTP_200_OK)
+    
+
+@api_view(["GET"])
 @check_authenticated_and_onboarded(require_onboarding=False)
 def getOrganizationDetail(request):
     try:
