@@ -70,7 +70,7 @@ export class QuotesDashboardPageComponent implements OnInit {
                   function getHeaders() {
                     const headers: any = { 'Content-Type': 'application/json' };
                     if (${this.shouldCSRF}) {
-                      headers['X-CSRFToken'] = 'getCSRFToken()';
+                      headers['X-CSRFToken'] = getCSRFToken();
                     }
                     return headers;
                   }
