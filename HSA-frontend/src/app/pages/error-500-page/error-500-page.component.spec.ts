@@ -1,6 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { Error500PageComponent } from './error-500-page.component';
+import {HttpTestingController, provideHttpClientTesting} from '@angular/common/http/testing';
+import {provideHttpClient} from '@angular/common/http';
+import {RouterTestingModule} from '@angular/router/testing';
+import {provideRouter} from '@angular/router';
 
 describe('Error500PageComponent', () => {
   let component: Error500PageComponent;
@@ -8,7 +12,8 @@ describe('Error500PageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Error500PageComponent]
+      imports: [Error500PageComponent],
+      providers: [HttpTestingController, provideRouter([]), provideHttpClientTesting(), provideHttpClient()]
     })
     .compileComponents();
 
