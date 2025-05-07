@@ -90,13 +90,14 @@ def generate_quote_pdf(request, id):
 
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def generate_quote_pdf_as_base64(request, id):
     """
     Expects JSON body: { "pin": "JWT TOKEN" }
     Returns the PDF as a base64 string if the pin matches and no link exists yet.
     """
     try:
-        job = Job.objects.get(pk=id)
+        job = Job.objects.get(pk=id, organization=request.org)
     except Job.DoesNotExist:
         return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -125,13 +126,14 @@ def generate_quote_pdf_as_base64(request, id):
 
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def sign_the_quote(request, id):
     """
     Expects JSON body: { "quote_pdf_base64": "<base64-string>" }
     Decodes and uploads the signed PDF to S3 (public), marks the job pending, and returns the link.
     """
     try:
-        job = Job.objects.get(pk=id)
+        job = Job.objects.get(pk=id, organization=request.org)
     except Job.DoesNotExist:
         return Response({"message": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -178,11 +180,9 @@ def sign_the_quote(request, id):
 
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def send_quote_pdf_to_customer_email(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     try:
         job = Job.objects.select_related("customer").get(pk=id, customer__organization=org.pk)
     except Job.DoesNotExist:
@@ -195,12 +195,9 @@ def send_quote_pdf_to_customer_email(request, id):
     return Response({"message": f"Quote PDF sent to {to_email}"}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def get_list_of_quotes_by_org(request):
-
-    try:
-        org = Organization.objects.get(owning_User=request.user.pk)
-    except Organization.DoesNotExist:
-        return Response({"message": "Organization not found"}, status=status.HTTP_404_NOT_FOUND)
+    org = request.org
 
     filterby = request.query_params.get("filterby", None)
 
@@ -226,12 +223,9 @@ def get_list_of_quotes_by_org(request):
     return Response({"data":result}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def retrieve_quote(request, id):
-
-    try:
-        org = Organization.objects.get(owning_User=request.user.pk)
-    except Organization.DoesNotExist:
-        return Response({"message": "Organization not found"}, status=status.HTTP_404_NOT_FOUND)
+    org = request.org
 
     try:
         job = Job.objects.select_related("customer__organization") \
@@ -271,16 +265,14 @@ def retrieve_quote(request, id):
     return Response({"url": presigned_url}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def accept_reject_quote(request, id):
     """
     POST /api/quotes/<id>/accept_reject/
     Body: { "decision": "accept" | "reject" }
     """
-    try:
-        org = Organization.objects.get(owning_User=request.user.pk)
-    except Organization.DoesNotExist:
-        return Response({"message": "Organization not found"}, status=status.HTTP_404_NOT_FOUND)
-
+    org = request.org
+    
     try:
         job = Job.objects.select_related("customer__organization")\
             .get(pk=id, customer__organization=org)
