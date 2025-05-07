@@ -189,57 +189,93 @@ class GenerateBase64Tests(APITestCase):
         self.assertEqual(base64.b64decode(resp.data["quote_pdf_base64"]), raw)
 
 
-# # ------------------------------------------------------------------ #
-# #  4. /api/quote/sign/<id>
-# # ------------------------------------------------------------------ #
-# class SignTheQuoteTests(APITestCase):
-#     def setUp(self):
-#         self.factory = APIRequestFactory()
-#         os.environ.pop("AWS_BUCKET", None)
+# ------------------------------------------------------------------ #
+#  4. /api/quote/sign/<id>
+# ------------------------------------------------------------------ #
+class SignTheQuoteTests(APITestCase):
+    def setUp(self):
+        self.factory = APIRequestFactory()
+        os.environ.pop("AWS_BUCKET", None)
 
-#     @patch("hsabackend.views.generate_quote_pdf_view.Job")
-#     def test_sign_missing_pdf(self, mock_job):
-#         mock_job.objects.get.return_value = Mock()
-#         request = self.factory.post("/api/quote/sign/1", {})
-#         resp = sign_the_quote(request, 1)
-#         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+    @patch("hsabackend.views.generate_quote_pdf_view.Job")
+    @patch("hsabackend.utils.auth_wrapper.Organization.objects.get")
+    def test_sign_missing_pdf(self, org, mock_job):
+        mock_user = Mock()
+        mock_user.is_authenticated = True
 
-#     @patch("hsabackend.views.generate_quote_pdf_view.Job")
-#     def test_sign_invalid_base64(self, mock_job):
-#         mock_job.objects.get.return_value = Mock()
-#         request = self.factory.post(
-#             "/api/quote/sign/1", {"signed_pdf_base64": "!!!"}
-#         )
-#         resp = sign_the_quote(request, 1)
-#         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+        mock_org = Mock()
+        mock_org.is_onboarding = False
+        org.return_value = mock_org
 
-#     @patch("hsabackend.views.generate_quote_pdf_view.Job")
-#     def test_sign_no_bucket(self, mock_job):
-#         mock_job.objects.get.return_value = Mock()
-#         pdf_b64 = base64.b64encode(b"A").decode()
-#         request = self.factory.post(
-#             "/api/quote/sign/1", {"signed_pdf_base64": pdf_b64}
-#         )
-#         resp = sign_the_quote(request, 1)
-#         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+        mock_job.objects.get.return_value = Mock()
+        request = self.factory.post("/api/quote/sign/1", {})
+        request.user = mock_user
+        resp = sign_the_quote(request, 1)
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
-#     @patch("hsabackend.views.generate_quote_pdf_view.boto3.client")
-#     @patch("hsabackend.views.generate_quote_pdf_view.Job")
-#     def test_sign_success(self, mock_job, mock_client):
-#         os.environ["AWS_BUCKET"] = "bucket"
-#         job = Mock(pk=11, quote_s3_link=None, quote_status=None, save=Mock())
-#         mock_job.objects.get.return_value = job
-#         client = MagicMock()
-#         client.put_object.return_value = {}
-#         mock_client.return_value = client
+    @patch("hsabackend.views.generate_quote_pdf_view.Job")
+    @patch("hsabackend.utils.auth_wrapper.Organization.objects.get")
+    def test_sign_invalid_base64(self, org, mock_job):
+        mock_user = Mock()
+        mock_user.is_authenticated = True
 
-#         pdf_b64 = base64.b64encode(b"PDF").decode()
-#         request = self.factory.post(
-#             "/api/quote/sign/11", {"signed_pdf_base64": pdf_b64}
-#         )
-#         resp = sign_the_quote(request, 11)
-#         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-#         self.assertTrue(resp.data["quote_s3_link"].startswith("quotes/quote_11_signed_"))
+        mock_org = Mock()
+        mock_org.is_onboarding = False
+        org.return_value = mock_org
+        
+        mock_job.objects.get.return_value = Mock()
+        request = self.factory.post(
+            "/api/quote/sign/1", {"signed_pdf_base64": "!!!"}
+        )
+        request.user = mock_user
+        resp = sign_the_quote(request, 1)
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @patch("hsabackend.views.generate_quote_pdf_view.Job")
+    @patch("hsabackend.utils.auth_wrapper.Organization.objects.get")
+    def test_sign_no_bucket(self, org, mock_job):
+        mock_user = Mock()
+        mock_user.is_authenticated = True
+
+        mock_org = Mock()
+        mock_org.is_onboarding = False
+        org.return_value = mock_org
+        
+        mock_job.objects.get.return_value = Mock()
+        pdf_b64 = base64.b64encode(b"A").decode()
+        request = self.factory.post(
+            "/api/quote/sign/1", {"signed_pdf_base64": pdf_b64}
+        )
+        request.user = mock_user
+        resp = sign_the_quote(request, 1)
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @patch("hsabackend.views.generate_quote_pdf_view.boto3.client")
+    @patch("hsabackend.views.generate_quote_pdf_view.Job")
+    @patch("hsabackend.utils.auth_wrapper.Organization.objects.get")
+    def test_sign_success(self, org, mock_job, mock_client):
+        mock_user = Mock()
+        mock_user.is_authenticated = True
+
+        mock_org = Mock()
+        mock_org.is_onboarding = False
+        org.return_value = mock_org
+
+        os.environ["AWS_BUCKET"] = "bucket"
+        job = Mock(pk=11, quote_s3_link=None, quote_status=None, save=Mock())
+        mock_job.objects.get.return_value = job
+        client = MagicMock()
+        client.put_object.return_value = {}
+        mock_client.return_value = client
+
+        pdf_b64 = base64.b64encode(b"PDF").decode()
+        request = self.factory.post(
+            "/api/quote/sign/11", {"signed_pdf_base64": pdf_b64}
+        )
+        request.user = mock_user
+        resp = sign_the_quote(request, 11)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertTrue(resp.data["quote_s3_link"].startswith("quotes/quote_11_signed_"))
 
 
 # # ------------------------------------------------------------------ #
