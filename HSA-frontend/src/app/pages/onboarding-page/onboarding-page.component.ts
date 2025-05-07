@@ -672,7 +672,7 @@ export class OnboardingPageComponent implements OnInit {
         this.snackBar.open('Onboarding completed!', '', {
           duration: 3000
         });
-        this.navigateToPage('home');
+        this.navigateToPage('update-payment');
       },
       error: (error) => {
       }
