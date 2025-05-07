@@ -8,12 +8,16 @@
 		</div>
 	}
 	<div class="main-heading">
-		<div class="flex flex-col items-center">
-			<h1>
-				<span>Create Invoice</span>
-			</h1>
+		<div class="table-header">
+			<div class="header-bar">
+				<h1>
+					<span>Create Invoice</span>
+				</h1>
+			</div>
+			<hr/>
 			<h2 class="pb-5 pt-5">Select a customer to invoice</h2>
-			<app-table-component 
+			<mat-card class="flex p-10 flex-direction: column; items-center">
+				<app-table-component 
 					data-testid="invoice-customers-table"
 					[loadDataToTable]="loadCustomersToTable.bind(this)" 
 					editRedirect="" 
@@ -24,76 +28,78 @@
 					[setCheckedIds]="setSelectedCustomers.bind(this)"
 					searchHint="Search by customer name"
 					[headers]="['Checkbox','First Name','Last Name', 'Email', 'Phone No']"
-			></app-table-component>
-			@if (selectedCustomersIsError) {
-					<mat-error class="mt-3">You must select a customer to invoice</mat-error>    
-			}
-	
-			<div class="m-10"></div>
-			@if (selectedCustomers.length !== 0) {
-				<app-table-component 
-						data-testid="invoice-quotes-table"
-						[loadDataToTable]="loadJobsToTable.bind(this)" 
-						editRedirect="" 
-						[hideValues]="['Actions', 'Id']"
-						[fetchedData]="jobs"
-						checkbox="multiple"
-						[checkedIds]="selectedJobs"
-						[setCheckedIds]="setSelectedQuotes.bind(this)"
-						[headers]="['Checkbox','Material Subtotal', 'Total Price', 'Job Description']"
-				>
-				</app-table-component> 
-				@if (selectedJobsIsError) {
-						<mat-error class="mt-3">You must select a job to include</mat-error>    
-				}   
-			}
-			<div>
-				<mat-form-field class="mt-5 mr-5">
-					<mat-label>Status</mat-label>
-					<mat-select data-testid="status-selector" matNativeControl required [(ngModel)]="status">
-							<mat-option value="created">created</mat-option>
-							<mat-option value="issued">issued</mat-option>
-							<mat-option value="paid">paid</mat-option>
-					</mat-select>
-			</mat-form-field>
-			@if (isDateSelectVisible()) {
-					<app-invoice-date-picker 
-							[formControll]="range"
-							[dateLabels]="['Issuance date', 'Due date']"
-					></app-invoice-date-picker>
-			}
-	
-			<mat-form-field>
-					<mat-label>Tax rate</mat-label>
-					<input matInput
-							data-testid="tax-input"
-							[formControl]="taxAmount" 
-							[errorStateMatcher]="matcher"
-							type="number"
+				></app-table-component>
+				@if (selectedCustomersIsError) {
+						<mat-error class="mt-3">You must select a customer to invoice</mat-error>    
+				}
+
+				<div class="m-10"></div>
+				@if (selectedCustomers.length !== 0) {
+					<app-table-component 
+							data-testid="invoice-quotes-table"
+							[loadDataToTable]="loadJobsToTable.bind(this)" 
+							editRedirect="" 
+							[hideValues]="['Actions', 'Id']"
+							[fetchedData]="jobs"
+							checkbox="multiple"
+							[checkedIds]="selectedJobs"
+							[setCheckedIds]="setSelectedQuotes.bind(this)"
+							[headers]="['Checkbox','Material Subtotal', 'Total Price', 'Job Description']"
 					>
-					@if (taxAmount.hasError('required')) {
-							<mat-error>Tax amount is <strong>required</strong></mat-error>
-					}
-					@else if (taxAmount.hasError('min') || taxAmount.hasError('max') ) {
-						<mat-error class="mb-5">Tax must be between 0-100</mat-error>
-					}
-					@else if (taxAmount.hasError('notInteger')) {
-						<mat-error class="mb-5">Tax must be a whole number</mat-error>
-					}
-			</mat-form-field>
-			</div>
-			
-			<div class="max-w-md pt-5">
-					<p class="text-center text-sm text-gray-600">
-							<strong>Disclaimer:</strong> You are responsible for understanding and complying with the tax laws of your jurisdiction.
-							We, the software developers, are not liable for any errors, omissions, or legal consequences resulting from your use of this software.
-							Always consult a tax professional for guidance.
-						</p>
-			</div>
-			<div class="items-center">
-				<button mat-flat-button type="submit" class="mt-10 mb-5" (click)="onSubmit()" data-testid="submit">Create</button>
-				<button mat-raised-button class="mt-10 mb-5" (click)="navigateToPage('invoices')">Cancel</button>
-			</div>
+					</app-table-component> 
+					@if (selectedJobsIsError) {
+							<mat-error class="mt-3">You must select a job to include</mat-error>    
+					}   
+				}
+				<div>
+					<mat-form-field class="mt-5 mr-5">
+						<mat-label>Status</mat-label>
+						<mat-select data-testid="status-selector" matNativeControl required [(ngModel)]="status">
+								<mat-option value="created">created</mat-option>
+								<mat-option value="issued">issued</mat-option>
+								<mat-option value="paid">paid</mat-option>
+						</mat-select>
+				</mat-form-field>
+				@if (isDateSelectVisible()) {
+						<app-invoice-date-picker 
+								[formControll]="range"
+								[dateLabels]="['Issuance date', 'Due date']"
+						></app-invoice-date-picker>
+				}
+
+				<mat-form-field>
+						<mat-label>Tax rate</mat-label>
+						<input matInput
+								data-testid="tax-input"
+								[formControl]="taxAmount" 
+								[errorStateMatcher]="matcher"
+								type="number"
+						>
+						@if (taxAmount.hasError('required')) {
+								<mat-error>Tax amount is <strong>required</strong></mat-error>
+						}
+						@else if (taxAmount.hasError('min') || taxAmount.hasError('max') ) {
+							<mat-error class="mb-5">Tax must be between 0-100</mat-error>
+						}
+						@else if (taxAmount.hasError('notInteger')) {
+							<mat-error class="mb-5">Tax must be a whole number</mat-error>
+						}
+				</mat-form-field>
+				</div>
+				
+				<div class="max-w-md pt-5">
+						<p class="text-center text-sm text-gray-600">
+								<strong>Disclaimer:</strong> You are responsible for understanding and complying with the tax laws of your jurisdiction.
+								We, the software developers, are not liable for any errors, omissions, or legal consequences resulting from your use of this software.
+								Always consult a tax professional for guidance.
+							</p>
+				</div>
+				<div class="items-center">
+					<button mat-flat-button type="submit" class="mt-10 mb-5" (click)="onSubmit()" data-testid="submit">Create</button>
+					<button mat-stroked-button class="mt-10 mb-5" (click)="navigateToPage('invoices')">Cancel</button>
+				</div>
+			</mat-card>
+			<div class="spacer"></div>
 		</div>
 	</div>
 </div>

@@ -1,0 +1,46 @@
+<div class="parent">
+    <div class="main-heading">
+      @if (false) {
+      <app-loading-fallback stringToDisplay="Loading the quote table"></app-loading-fallback>
+      }
+      @else {
+        <div class="table-header">
+          <div class="header-bar">
+            <h1>
+              <span>Quotes</span>
+            </h1>
+          </div>
+          <hr/>
+          <mat-tab-group class="tab-container" [disablePagination]="true" (selectedTabChange)="onTabChange($event)">
+            <mat-tab [label]="'Created'">
+              <div class="small-box mat-elevation-z4">
+                <app-table-component editRedirect="" [fetchedData]="quotes"
+                  searchHint="Search by any keywords" [checkbox]="'none'" [hideValues]="['Id']" [width]="'auto'"
+                	[loadDataToTable]="this.loadQuotes.bind(this)"
+                  [headers]="['Job ID','Customer','Status','Start Date','End Date']">
+                </app-table-component>
+              </div>
+            </mat-tab>
+						<mat-tab [label]="'Accepted'">
+              <div class="small-box mat-elevation-z4">
+                <app-table-component editRedirect="" [fetchedData]="quotes"
+                  searchHint="Search by any keywords" [checkbox]="'none'" [hideValues]="['Id']" [width]="'auto'"
+                	[loadDataToTable]="this.loadQuotes.bind(this)"
+                  [headers]="['Job ID','Customer','Status','Start Date','End Date']">
+                </app-table-component>
+              </div>
+            </mat-tab>
+						<mat-tab [label]="'Rejected'">
+              <div class="small-box mat-elevation-z4">
+                <app-table-component editRedirect="" [fetchedData]="quotes"
+                  searchHint="Search by any keywords" [checkbox]="'none'" [hideValues]="['Id']" [width]="'auto'"
+                	[loadDataToTable]="this.loadQuotes.bind(this)"
+                  [headers]="['Job ID','Customer','Status','Start Date','End Date']">
+                </app-table-component>
+              </div>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+      }
+    </div>
+  </div>

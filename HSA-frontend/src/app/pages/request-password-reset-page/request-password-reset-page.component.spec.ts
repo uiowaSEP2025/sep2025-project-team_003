@@ -44,11 +44,11 @@ describe('RequestPasswordResetPageComponent', () => {
   it('should render correctly', async () => {
     const submitButton = await loader.getHarness(MatButtonHarness)
     const compiled = fixture.debugElement.nativeElement;
-    const title = compiled.querySelector('mat-card-title')
+    const title = compiled.querySelector('h1')
     const input = compiled.querySelector('input')
     
     expect(await submitButton.getText()).toEqual("Send Reset Link")
-    expect(title.textContent).toEqual('Reset your password')
+    expect(title.textContent).toEqual('Reset Password')
     expect(input).toBeTruthy()
   })
 

@@ -21,13 +21,14 @@ import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-sta
 import { ReactiveFormsModule } from '@angular/forms';
 import integerValidator from '../../utils/whole-number-validator';
 import { JobService } from '../../services/job.service';
+import { MatCardModule } from '@angular/material/card';
 import { OrganizationService } from '../../services/organization.service';
 
 @Component({
   selector: 'app-create-invoice-page',
   imports: [TableComponentComponent, CommonModule, MatButtonModule, MatError,
     FormsModule, MatFormFieldModule, InvoiceDatePickerComponent, MatSelectModule,
-    MatLabel, MatInputModule, ReactiveFormsModule
+    MatLabel, MatInputModule, MatCardModule, ReactiveFormsModule
   ],
   templateUrl: './create-invoice-page.component.html',
   styleUrl: './create-invoice-page.component.scss'

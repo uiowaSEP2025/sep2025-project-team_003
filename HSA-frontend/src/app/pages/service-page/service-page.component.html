@@ -3,25 +3,24 @@
     @if (services === null) {
       <app-loading-fallback stringToDisplay="Loading services"></app-loading-fallback>
     }
-    
-    @else {<h1>
-        <span>Services</span>
-      </h1>
-      <app-table-component editRedirect="/services/edit" [fetchedData]="services"
-        [deleteRequest]="serviceService.deleteService.bind(serviceService)"
-        [loadDataToTable]="this.loadDataToTable.bind(this)" [hideValues]="['Id']"
-        searchHint="Search by service name or description"
-        [headers]="['Service Name', 'Service Description']"></app-table-component>
-  
-      <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
-        <button mat-fab extended class="m-10" id="add-service-button" (click)="navigateToPage('services/create')">
-          <mat-icon>note_add</mat-icon>
-          Add a Service
-        </button>
-        <button mat-fab extended class="m-10" id="service-list-button" (click)="navigateToPage('materials')">
-          <mat-icon>list</mat-icon>
-          Material lists
-        </button>
+    @else {
+      <div class="table-header">
+        <div class="header-bar">
+          <h1>
+            <span>Services</span>
+          </h1>
+          <button mat-flat-button id="add-service-button" (click)="navigateToPage('services/create')">
+            <mat-icon>add</mat-icon>
+            Add Service
+          </button>
+        </div>
+        <hr/>
+        <app-table-component editRedirect="/services/edit" [fetchedData]="services"
+          [deleteRequest]="serviceService.deleteService.bind(serviceService)"
+          [loadDataToTable]="this.loadDataToTable.bind(this)" [hideValues]="['Id']"
+          searchHint="Search by service name or description"
+          [headers]="['Service Name', 'Service Description']"
+        ></app-table-component>
       </div>
     }
   </div>
