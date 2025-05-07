@@ -75,11 +75,9 @@ def _build_quote_pdf(job: Job, org: Organization) -> bytes:
 
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def generate_quote_pdf(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     try:
         job = Job.objects.select_related("customer").get(pk=id, customer__organization=org.pk)
     except Job.DoesNotExist:

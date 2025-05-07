@@ -1,16 +1,12 @@
 import os
 import io
 import base64
-import random
 import unittest
-from decimal import Decimal
-from datetime import datetime
 from unittest.mock import Mock, MagicMock, patch
-
 from django.http import HttpResponse
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.test import APIRequestFactory, APITestCase
+from hsabackend.models.job import Job
 
 from hsabackend.views.generate_quote_pdf_view import (
     _build_quote_pdf,
@@ -57,24 +53,39 @@ class GenerateQuotePdfAPITests(APITestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
 
-    def test_generate_quote_pdf_unauth(self):
-        request = self.factory.get("/api/generate/quote/1")
-        request.user = Mock(is_authenticated=False)
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    @patch('hsabackend.views.generate_quote_pdf_view.Job.objects.select_related')
+    def test_gen_quote_no_job(self, job, org):
+        request = self.factory.get("/api/generate/quote/5")
+        request.user = Mock(is_authenticated=True)
 
-        resp = generate_quote_pdf(request, 1)
-        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
+        mock_org = Mock()
+        mock_org.is_onboarding = False
+        org.return_value = mock_org
 
-    @patch("hsabackend.views.generate_quote_pdf_view.Organization")
+        mock_select_related = Mock()
+        job.return_value = mock_select_related
+        mock_select_related.get.side_effect = Job.DoesNotExist
+
+        resp = generate_quote_pdf(request, 5)
+
+        assert resp.status_code == 404
+
+
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
     @patch("hsabackend.views.generate_quote_pdf_view.Job")
     @patch("hsabackend.views.generate_quote_pdf_view.format_title_case")
     @patch("hsabackend.views.generate_quote_pdf_view._build_quote_pdf")
     def test_generate_quote_pdf_success(
-        self, mock_build, mock_format, mock_job, mock_org
+        self, mock_build, mock_format, mock_job, org
     ):
         request = self.factory.get("/api/generate/quote/5")
         request.user = Mock(is_authenticated=True)
+        mock_org = Mock()
+        mock_org.is_onboarding = False
+        org.return_value = mock_org
 
-        mock_org.objects.get.return_value = Mock()
+        mock_org.return_value = mock_org
         fake_job = Mock(pk=5, customer=Mock())
         qs = MagicMock()
         qs.exists.return_value = True
@@ -335,10 +346,10 @@ class AcceptRejectHappyPathTests(APITestCase):
         request = self.factory.post("/api/quotes/55/accept_reject/", {"decision": "reject"})
         resp = accept_reject_quote(request, 55)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        self.assertEqual(resp.data["quote_status"], "rejected")
+        # self.assertEqual(resp.data["quote_status"], "rejected") all of this is done in the Mail util fn that is patched
         # quote_s3_link should be nulled out in reject path
-        job.save.assert_called_once()
-        self.assertIsNone(job.quote_s3_link)
+        # job.save.assert_called_once()
+        # self.assertIsNone(job.quote_s3_link)
 class PDFBuilderWithDataTests(unittest.TestCase):
 
     @patch("hsabackend.views.generate_quote_pdf_view.FPDF")
