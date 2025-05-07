@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import {PageTemplateComponent} from '../../components/page-template/page-template.component';
+import { environment } from '../../../environments/environment';
+
 interface Quote {
   job_id: number;
   customer_name: string;
@@ -21,6 +23,7 @@ interface Quote {
 export class QuotesDashboardPageComponent implements OnInit {
   quotes: Quote[] = [];
   filter: string = '';
+  shouldCSRF: boolean = environment.requireCSRF
 
   constructor(private http: HttpClient) {}
 
@@ -59,17 +62,31 @@ export class QuotesDashboardPageComponent implements OnInit {
                   <button onclick="reject()">Reject</button>
                 </div>
                 <script>
+                  function getCSRFToken(): string {
+                    const match = document.cookie.match(/(?:^|;)\s*csrftoken=([^;]+)/);
+                    return match ? decodeURIComponent(match[1]) : "";
+                  }
+
+                  function getHeaders() {
+                    const headers: any = { 'Content-Type': 'application/json' };
+                    if (${this.shouldCSRF}) {
+                      headers['X-CSRFToken'] = 'getCSRFToken()';
+                    }
+                    return headers;
+                  }
+
                   function accept() {
                     fetch('/api/manage/quote/${quote.job_id}', {
                       method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
+                      headers: getHeaders(),
                       body: JSON.stringify({ decision: 'accept' })
                     }).then(res => location.reload());
                   }
+
                   function reject() {
                     fetch('/api/manage/quote/${quote.job_id}', {
                       method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
+                      headers: getHeaders(),
                       body: JSON.stringify({ decision: 'reject' })
                     }).then(res => location.reload());
                   }
