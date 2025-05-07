@@ -7,6 +7,7 @@ import { MaterialService } from '../../services/material.service';
 import { CommonModule } from '@angular/common';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 import {PageTemplateComponent} from '../../components/page-template/page-template.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-materials-page',
@@ -26,12 +27,13 @@ export class MaterialsPageComponent implements OnInit {
   materialService: MaterialService
   @ViewChild(TableComponentComponent) tableComponent!: TableComponentComponent
 
-  constructor(private router: Router, materialService: MaterialService) {
+  constructor(private router: Router, materialService: MaterialService, private breakpointObserver: BreakpointObserver) {
     this.materialService = materialService
   }
 
   ngOnInit(): void {
     this.loadDataToTable("", 5, 0);
+    this.breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {});
   }
 
   loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {

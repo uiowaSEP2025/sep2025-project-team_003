@@ -4,17 +4,22 @@
     }
     @else {
       <div class="table-header">
-        <div class="header-bar">
-          <button class="mb-4" mat-flat-button id="add-material-button" (click)="navigateToPage('materials/create')">
-            <mat-icon>add</mat-icon>
-            Add Material
-          </button>
-        </div>
-        <app-table-component class="w-full" editRedirect="/materials/edit" [fetchedData]="materials"
+        <button class="mb-4 scale-button" mat-flat-button id="add-material-button" (click)="navigateToPage('materials/create')">
+          <mat-icon>add</mat-icon>
+          Add Material
+        </button>
+      </div>
+      <div class="tab-container">
+        <app-table-component 
+          editRedirect="/materials/edit" 
+          [fetchedData]="materials"
           [deleteRequest]="materialService.deleteMaterial.bind(materialService)"
-          [loadDataToTable]="this.loadDataToTable.bind(this)" [hideValues]="['Id']" searchHint="Search by material name"
+          [loadDataToTable]="this.loadDataToTable.bind(this)" 
+          [hideValues]="['Id']" 
+          searchHint="Search by material name"
           [headers]="['Material Name']"
         ></app-table-component>
       </div>
+      <div class="spacer"></div>
     }
 </app-page-template>

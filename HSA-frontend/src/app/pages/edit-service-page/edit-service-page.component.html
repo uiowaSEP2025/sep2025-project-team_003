@@ -1,12 +1,5 @@
 <app-page-template [title]="'Edit Service'">
-
     <div class="table-header">
-      <div class="header-bar">
-        <h1>
-          <span>Edit {{this.currentServiceName}}</span>
-        </h1>
-      </div>
-      <hr/>
       <mat-card class="p-5 wide-card">
         <form class="parent" [formGroup]="serviceForm" (ngSubmit)="onSubmit()">
           <mat-form-field class="full-width-field">

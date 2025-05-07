@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 import {PageTemplateComponent} from '../../components/page-template/page-template.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-invoices-page',
@@ -23,7 +24,7 @@ export class InvoicesPageComponent implements OnInit{
   invoiceService: InvoiceService
 
 
-  constructor (private router: Router, invoiceService: InvoiceService) {
+  constructor (private router: Router, invoiceService: InvoiceService, private breakpointObserver: BreakpointObserver) {
     this.invoiceService = invoiceService
   }
 
@@ -31,6 +32,7 @@ export class InvoicesPageComponent implements OnInit{
 
   ngOnInit(): void {
     this.loadDataToTable("", 5, 0);
+    this.breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {});
   }
 
   loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {

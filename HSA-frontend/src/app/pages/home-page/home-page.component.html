@@ -1,14 +1,15 @@
 <app-page-template [title]="'Handyman Services Application'">
         <div class="table-header">
-
-          <div class="grid xl:grid-cols-4 md:grid-cols-3 gap-x-4 gap-y-4 sm:grid-cols-2 w-full">
-            @for(item of menu_items; track item) {
-              <div>
-                <app-services-card class="hover:cursor-pointer" [routerLink]="item.route" [link]="item.route" [pageTitle]="item.name">{{item.description}}</app-services-card>
-              </div>
-            }
+          <div class="tab-container">
+            <div class="grid xl:grid-cols-4 md:grid-cols-3 gap-x-4 gap-y-4 sm:grid-cols-2 w-full">
+              @for(item of menu_items; track item) {
+                <div>
+                  <app-services-card class="hover:cursor-pointer" [routerLink]="item.route" [link]="item.route" [pageTitle]="item.name">{{item.description}}</app-services-card>
+                </div>
+              }
+            </div>
           </div>
-
         </div>
+        <div class="spacer"></div>
 </app-page-template>
 

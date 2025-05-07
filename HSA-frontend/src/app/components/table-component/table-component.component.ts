@@ -66,6 +66,8 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   constructor(private router: Router, public dialog: MatDialog, private snackBar: MatSnackBar) {
   }
 
+  private mobileXMinDimension = 768
+  private mobileYMinDimension = 400
   searchControl = new FormControl('')
   stringFormatter = new StringFormatter()
   private searchSubscription: Subscription | null = null
@@ -76,6 +78,8 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   checkedRowIndexes = new Set<number>();
 
   headersWithActions = [...this.headers, 'Actions']
+  headersToHideMobileXDim: string[] = ['Start Date', 'End Date', "Requester Email", "Email", "Phone No", "Phone", "Service Description", "Issuance Date"]
+  headersToHideMobileYDim: string[] = ["Phone No", "Phone"]
   editRedirect = input.required<string>()
   isDataNotAvailable = () => {
     if (this.fetchedData === undefined || this.fetchedData === null || this.fetchedData.data === undefined || this.fetchedData.data === null || this.fetchedData.data.length === 0) {
@@ -142,6 +146,18 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
       }
     }
 
+  }
+
+  shouldHideColumn(header: string): boolean {
+    if (window.innerWidth <= this.mobileXMinDimension) {
+      return this.headersToHideMobileXDim.includes(header);
+    }
+
+    if (window.innerHeight <= this.mobileYMinDimension) {
+      return this.headersToHideMobileYDim.includes(header);
+    }
+
+    return false;
   }
 
   redirectEdit(id: number, args: any) {

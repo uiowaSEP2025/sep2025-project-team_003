@@ -1,12 +1,11 @@
 <app-page-template [title]="'Jobs'">
-
     @if (false) {
-    <app-loading-fallback stringToDisplay="Loading the job table"></app-loading-fallback>
+      <app-loading-fallback stringToDisplay="Loading the job table"></app-loading-fallback>
     }
     @else {
       <div class="table-header">
         <div class="header-bar">
-          <button class="mb-4" mat-flat-button id="add-job-button" (click)="navigateToPage('jobs/create')">
+          <button class="mb-4 scale-button" mat-flat-button id="add-job-button" (click)="navigateToPage('jobs/create')">
             <mat-icon>add</mat-icon>
             Add Job
           </button>
@@ -51,5 +50,6 @@
           </mat-tab>
         </mat-tab-group>
       </div>
+      <div class="spacer"></div>
     }
 </app-page-template>
