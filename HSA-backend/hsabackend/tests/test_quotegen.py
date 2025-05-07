@@ -29,13 +29,9 @@ from hsabackend.views.generate_quote_pdf_view import (
 #  1. Helper / internal-only tests
 # ------------------------------------------------------------------ #
 class PDFBuilderTests(unittest.TestCase):
-    @patch("hsabackend.views.generate_quote_pdf_view.JobService")
-    @patch("hsabackend.views.generate_quote_pdf_view.JobMaterial")
     @patch("hsabackend.views.generate_quote_pdf_view.get_job_detailed_table")
-    def test_build_quote_pdf_minimal(self, details, mock_mat, mock_svc):
+    def test_build_quote_pdf_minimal(self, details):
         """Smoke-test that _build_quote_pdf returns real PDF bytes."""
-        mock_svc.objects.select_related.return_value.filter.return_value = []
-        mock_mat.objects.filter.return_value = []
         fake_job = Mock(
             pk=42,
             customer=Mock(
@@ -345,10 +341,8 @@ class AcceptRejectHappyPathTests(APITestCase):
         self.assertIsNone(job.quote_s3_link)
 class PDFBuilderWithDataTests(unittest.TestCase):
 
-    @patch("hsabackend.views.generate_quote_pdf_view.JobMaterial")
-    @patch("hsabackend.views.generate_quote_pdf_view.JobService")
     @patch("hsabackend.views.generate_quote_pdf_view.FPDF")
-    def test_build_pdf_with_services_and_materials(self, mock_fpdf, mock_svc, mock_mat):
+    def test_build_pdf_with_services_and_materials(self, mock_fpdf):
         # ---------- 1. stub out a VERY thin FPDF replacement ----------
         pdf_stub = MagicMock()
         pdf_stub.w = 200
@@ -369,25 +363,6 @@ class PDFBuilderWithDataTests(unittest.TestCase):
         pdf_stub.output.side_effect = _output
 
         mock_fpdf.return_value = pdf_stub
-
-        # ---------- 2. fake service + material querysets ----------
-        svc1 = Mock(get_service_info_for_detailed_invoice=Mock(return_value={
-            "service name": "SvcA", "service description": "DescA"
-        }))
-        svc2 = Mock(get_service_info_for_detailed_invoice=Mock(return_value={
-            "service name": "SvcB", "service description": "DescB"
-        }))
-        mock_svc.objects.select_related.return_value.filter.return_value = [svc1, svc2]
-
-        mat1 = Mock(invoice_material_row=Mock(return_value={
-            "material name": "MatA", "per unit": Decimal("2.50"),
-            "units used": 2, "total": Decimal("5.00")
-        }))
-        mat2 = Mock(invoice_material_row=Mock(return_value={
-            "material name": "MatB", "per unit": Decimal("3.00"),
-            "units used": 1, "total": Decimal("3.00")
-        }))
-        mock_mat.objects.filter.return_value = [mat1, mat2]
 
         # ---------- 3. build the PDF ----------
         job = Mock(
