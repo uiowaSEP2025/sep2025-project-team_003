@@ -13,6 +13,7 @@
         </div>
         <hr/>
         <mat-card class="flex p-5 flex-direction: column; items-left;" style="background-color: #9eccfa">
+          <mat-card-content>
           <div class="spacer"></div>
           <mat-accordion>
             <mat-expansion-panel [expanded]="true">
@@ -232,13 +233,14 @@
               </div>
             </mat-expansion-panel>
           </mat-accordion>
-          <div class="items-center">
-            <button mat-flat-button type="submit" class="mt-10 mb-5" [disabled]="!isUpdatedField"
+          </mat-card-content>
+          <mat-card-actions class="mt-4 justify-center">
+            <button mat-raised-button type="submit"[disabled]="!isUpdatedField"
               (click)="onCreateConfirmDialog('job')">Create</button>
-            <button mat-flat-button type="submit" class="mt-10 mb-5" [disabled]="!isAllowedTemplate"
+            <button mat-raised-button type="submit" [disabled]="!isAllowedTemplate"
               (click)="onCreateConfirmDialog('template')">Create Template</button>
-            <button mat-stroked-button class="mt-10 mb-5" (click)="navigateToPage('jobs')">Cancel</button>
-          </div>
+            <button mat-stroked-button (click)="navigateToPage('jobs')">Cancel</button>
+          </mat-card-actions>
         </mat-card>
         <div class="spacer"></div>
       </div>
