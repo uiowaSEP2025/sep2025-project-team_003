@@ -8,16 +8,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { CustomerService } from '../../services/customer.service';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-edit-customer-page',
   imports: [
-    MatFormFieldModule, 
-    ReactiveFormsModule, 
-    MatInputModule, 
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule,
     MatButtonModule,
-    MatCardModule, 
-    FormsModule
+    MatCardModule,
+    FormsModule,
+    PageTemplateComponent
   ],
   templateUrl: './edit-customer-page.component.html',
   styleUrl: './edit-customer-page.component.scss'

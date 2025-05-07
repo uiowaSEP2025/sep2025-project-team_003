@@ -1,16 +1,9 @@
-<div class="parent">
-    <div class="main-heading">
+<app-page-template [title]="'Edit Job'">
       @if (jobData === null) {
         <app-loading-fallback stringToDisplay="Loading the job"></app-loading-fallback>
       }
       @else {
         <div class="table-header">
-          <div class="header-bar">
-            <h1>
-              <span>Edit Job Information</span>
-            </h1>
-          </div>
-          <hr/>
           <mat-card class="flex p-5 flex-direction: column; items-left" style="background-color: #9eccfa">
             <mat-accordion>
               <mat-expansion-panel [expanded]="true">
@@ -23,10 +16,10 @@
                         <td>Customer</td>
                         <td>
                           <div class="customer-box-container">
-                            <span 
+                            <span
                               class="customer-name-span"
                             >
-                              {{this.jobForm.get('customerName')?.value}} 
+                              {{this.jobForm.get('customerName')?.value}}
                             </span>
                             <button type="button" mat-flat-button (click)="this.openChangeCustomerDialog()">Change customer</button>
                           </div>
@@ -36,9 +29,9 @@
                         <td>Status</td>
                         <td>
                           <mat-form-field appearance="fill" class="full-width">
-                            <mat-select 
-                            matNativeControl 
-                            required 
+                            <mat-select
+                            matNativeControl
+                            required
                             formControlName="jobStatus"
                             (selectionChange)="onChangeUpdateButton()"
                             >
@@ -53,10 +46,10 @@
                         <td>Start Date</td>
                         <td>
                           <mat-form-field appearance="fill" class="full-width">
-                            <input 
-                              matInput 
-                              [matDatepicker]="startDatePicker" 
-                              formControlName="startDate" 
+                            <input
+                              matInput
+                              [matDatepicker]="startDatePicker"
+                              formControlName="startDate"
                               required
                               (dateChange)="onChangeUpdateButton()"
                             >
@@ -73,10 +66,10 @@
                         <td>End Date</td>
                         <td>
                           <mat-form-field appearance="fill" class="full-width">
-                            <input 
-                              matInput 
-                              [matDatepicker]="endDatePicker" 
-                              formControlName="endDate" 
+                            <input
+                              matInput
+                              [matDatepicker]="endDatePicker"
+                              formControlName="endDate"
                               required
                               (dateChange)="onChangeUpdateButton()"
                             >
@@ -136,7 +129,7 @@
                         <td>State</td>
                         <td>
                           <mat-form-field appearance="fill" class="full-width">
-                            <mat-select 
+                            <mat-select
                               formControlName="requestorStateSelect"
                               (selectionChange)="onChangeUpdateButton()"
                             >
@@ -212,7 +205,7 @@
                         </td>
                       </tr>
                     </table>
-                </form> 
+                </form>
               </mat-expansion-panel>
           </mat-accordion>
           <div class="spacer"></div>
@@ -267,6 +260,6 @@
           <div class="spacer"></div>
         </div>
       }
-  </div>
-  
-  
+</app-page-template>
+
+

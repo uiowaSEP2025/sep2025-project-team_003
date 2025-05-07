@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 interface Quote {
   job_id: number;
   customer_name: string;
@@ -15,7 +16,7 @@ interface Quote {
   selector: 'app-quotes-dashboard',
   templateUrl: './quotes-dashboard-page.component.html',
   styleUrls: ['./quotes-dashboard-page.component.scss'],
-  imports: [CommonModule, MatButtonModule]
+  imports: [CommonModule, MatButtonModule, PageTemplateComponent]
 })
 export class QuotesDashboardPageComponent implements OnInit {
   quotes: Quote[] = [];
@@ -36,8 +37,8 @@ export class QuotesDashboardPageComponent implements OnInit {
       error: err => console.error('Failed to load quotes:', err)
     });
   }
-  
-  
+
+
 
   applyFilter(filter: string) {
     this.filter = filter;

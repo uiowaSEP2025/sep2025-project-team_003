@@ -14,19 +14,21 @@ import { MatListModule } from '@angular/material/list';
 import { MatDialog } from '@angular/material/dialog';
 import { QuoteDialogComponent } from '../../components/quote-dialog/quote-dialog.component';
 import { StringFormatter } from '../../utils/string-formatter';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-view-job-page',
   imports: [
-    LoadingFallbackComponent, 
-    CommonModule, 
-    MatButtonModule, 
-    MatIconModule, 
-    JobDisplayTableComponent, 
+    LoadingFallbackComponent,
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    JobDisplayTableComponent,
     MatCardModule,
     MatListModule,
     MatDividerModule,
     MatExpansionModule,
+    PageTemplateComponent,
   ],
   templateUrl: './view-job-page.component.html',
   styleUrl: './view-job-page.component.scss'

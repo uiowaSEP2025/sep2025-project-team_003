@@ -16,6 +16,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import {MatToolbar} from '@angular/material/toolbar';
 
 @Component({
   selector: 'app-calendar-component',
@@ -28,6 +29,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
+    MatToolbar,
   ],
   providers: [
     BookingService,
@@ -46,9 +48,9 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   date = DayPilot.Date.today();
   /* when we change the mode to day or week with the buttons, it fires the date change.
   the good thing is that when we use the buttons, the date does not change, so that
-  we have a reliable way of telling if a actual date is selected 
+  we have a reliable way of telling if a actual date is selected
   */
-  staleDate = DayPilot.Date.today(); 
+  staleDate = DayPilot.Date.today();
   selectControl: FormControl<ContractorNameId | null> = new FormControl(null);
   isDay = () => (this.configNavigator.selectMode === "Day")
 
@@ -112,7 +114,7 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
       this.staleDate = date
       this.clearAllEvents()
       this.loadEvents()
-    } 
+    }
   }
 
   configDay: DayPilot.CalendarConfig = {
@@ -182,7 +184,7 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
   eventHTML(eventName: string, endDate: string, customerName: string, typeOfEvent: string) {
     return `<div style="margin-top: 20px;">
               <b>${eventName}</b>
-              <br> 
+              <br>
               <b style='color:#9e1414;'>End: ${endDate}</b>
               <br>
               <b>Customer: ${customerName}</b>
@@ -238,14 +240,14 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
     this.configNavigator.selectMode = "Day";
     this.configDay.visible = true;
     this.configWeek.visible = false;
-    
+
   }
 
   viewWeek(): void {
     this.configNavigator.selectMode = "Week";
     this.configDay.visible = false;
     this.configWeek.visible = true;
-    
+
   }
 
   onBeforeEventRender(args: any) {

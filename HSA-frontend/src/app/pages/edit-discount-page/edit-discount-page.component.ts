@@ -5,10 +5,11 @@ import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-sta
 import { MatButtonModule } from '@angular/material/button';
 import { DiscountsService } from '../../services/discount.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-edit-discount-page',
-  imports: [MatInputModule, MatButtonModule, ReactiveFormsModule],
+  imports: [MatInputModule, MatButtonModule, ReactiveFormsModule, PageTemplateComponent],
   templateUrl: './edit-discount-page.component.html',
   styleUrl: './edit-discount-page.component.scss'
 })
@@ -34,7 +35,7 @@ export class EditDiscountPageComponent implements OnInit{
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
       this.name = params["discount_name"]
-      
+
       this.percent = params['discount_percent'];
       this.nameControl.setValue(this.name);
       this.percentControl.setValue(this.parsePercentage(this.percent));

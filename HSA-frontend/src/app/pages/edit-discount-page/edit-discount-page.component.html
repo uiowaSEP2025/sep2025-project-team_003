@@ -1,7 +1,8 @@
+<app-page-template [title]="'Edit Discount'">
 <form class="flex flex-col justify-center">
     <mat-form-field>
       <mat-label>Name</mat-label>
-      <input matInput 
+      <input matInput
         [formControl]="nameControl" [errorStateMatcher]="matcher"
         placeholder="Discount Name">
         @if (nameControl.hasError('required')) {
@@ -11,7 +12,7 @@
 
     <mat-form-field>
         <mat-label>Discount Percent</mat-label>
-        <input matInput 
+        <input matInput
           [formControl]="percentControl" [errorStateMatcher]="matcher"
           placeholder="Discount Percent">
           @if (percentControl.hasError('required')) {
@@ -21,7 +22,8 @@
             <mat-error>Discount percent must be <strong>xx.xx</strong></mat-error>
           }
       </mat-form-field>
-    
-    
+
+
 </form>
 <button mat-raised-button (click)="onSubmit()">Edit Discount</button>
+</app-page-template>

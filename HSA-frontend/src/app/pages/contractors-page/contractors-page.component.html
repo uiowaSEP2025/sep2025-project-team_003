@@ -1,22 +1,15 @@
-<div class="parent">
-    <div class="main-heading">
+<app-page-template [title]="'Contractors'">
       @if (contractors === null) {
         <app-loading-fallback stringToDisplay="Loading contractors"></app-loading-fallback>
       }
       @else {
         <div class="table-header">
-          <div class="header-bar">
-            <h1>
-              <span>Contractors</span>
-            </h1>
-            <button mat-flat-button id="add-contractor-button" (click)="navigateToPage('contractors/create')">
+            <button class="mb-4" mat-flat-button id="add-contractor-button" (click)="navigateToPage('contractors/create')">
               <mat-icon>add</mat-icon>
               Add Contractor
             </button>
-          </div>
-          <hr/>
-          <app-table-component 
-            editRedirect="/contractors/edit" 
+          <app-table-component
+            editRedirect="/contractors/edit"
             [fetchedData]="contractors"
             [deleteRequest]="contractorService.deleteContractor.bind(contractorService)"
             [loadDataToTable]="this.loadDataToTable.bind(this)"
@@ -26,5 +19,4 @@
           ></app-table-component>
         </div>
       }
-  </div>
-</div>
+</app-page-template>

@@ -23,6 +23,7 @@ import { OnboardingSelectDialogComponentComponent } from '../../components/onboa
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { currencyValidator } from '../../utils/currency-validator';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-onboarding-page',
@@ -40,7 +41,8 @@ import { currencyValidator } from '../../utils/currency-validator';
     JobDisplayTableComponent,
     MatExpansionModule,
     MatSelectModule,
-    MatError
+    MatError,
+    PageTemplateComponent
   ],
   providers: [
     provideNativeDateAdapter()

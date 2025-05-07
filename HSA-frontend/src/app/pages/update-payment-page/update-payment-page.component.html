@@ -1,10 +1,5 @@
-<div class="parent">
-  <div class="main-heading">
+<app-page-template [title]="'Update Payment Link'">
     <div class="table-header">
-      <div class="header-bar">
-        <h1>Update Payment Link</h1>
-      </div>
-      <hr/>
       <mat-card class="p-10">
         <mat-card-header>
           <mat-card-subtitle>This is the link for the QR code for invoices</mat-card-subtitle>
@@ -13,7 +8,7 @@
         <mat-card-content>
           <mat-form-field appearance="fill" class="w-full">
             <mat-label>Payment Link</mat-label>
-            <input matInput [formControl]="url" 
+            <input matInput [formControl]="url"
                    placeholder="Payment Link">
                    @if (url.touched && !url.valid && url.getError("required")) {
                     <mat-error>URL is required</mat-error>
@@ -29,7 +24,4 @@
         </mat-card-footer>
       </mat-card>
     </div>
-  </div>
-</div>
-
-  
+</app-page-template>

@@ -21,6 +21,7 @@ import { Validators } from '@angular/forms';
 import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
 import integerValidator from '../../utils/whole-number-validator';
 import { JobService } from '../../services/job.service';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 export interface DateRange {
   issued: FormControl<Date | null>;
@@ -31,7 +32,7 @@ export interface DateRange {
   selector: 'app-edit-invoice-page',
   imports: [TableComponentComponent, MatError, MatButtonModule, MatSelectModule,
     FormsModule, MatInputModule, MatFormFieldModule, MatCardModule,
-    InvoiceDatePickerComponent, ReactiveFormsModule],
+    InvoiceDatePickerComponent, ReactiveFormsModule, PageTemplateComponent],
   templateUrl: './edit-invoice-page.component.html',
   providers: [],
   styleUrl: './edit-invoice-page.component.scss'
@@ -66,10 +67,10 @@ export class EditInvoicePageComponent implements OnInit {
     ])
 
     matcher = new GenericFormErrorStateMatcher()
-  
-  
-  constructor(private activatedRoute: ActivatedRoute, 
-    private invoiceService: InvoiceService, private stringFormatter: StringFormatter, 
+
+
+  constructor(private activatedRoute: ActivatedRoute,
+    private invoiceService: InvoiceService, private stringFormatter: StringFormatter,
     private router: Router, private JobsService: JobService) { }
 
   ngOnInit(): void {
@@ -102,7 +103,7 @@ export class EditInvoicePageComponent implements OnInit {
       const day = split[2]
       this.range.controls.due.setValue(new Date(parseInt(year), parseInt(month) - 1, parseInt(day)))
     }
-    this.loadJobs("", 5, 0);    
+    this.loadJobs("", 5, 0);
   }
 
   setSelectedJobs(selectedJobs: number[]) {
@@ -146,7 +147,7 @@ export class EditInvoicePageComponent implements OnInit {
   loadJobs(searchTerm: string, pageSize: number, offSet: number) {
       this.JobsService.getJobsByInvoice(this.invoiceID, searchTerm, pageSize, offSet).subscribe({
         next: (response) => {
-          
+
           if (this.isFirstLoad) {
             this.isFirstLoad = false
             const ids = response.data.filter((job: any) => (job.invoice===this.invoiceID)).map((job:any) => (job.id))
@@ -176,7 +177,7 @@ export class EditInvoicePageComponent implements OnInit {
       this.openDialog()
       return;
     }
-    
+
     const data = {
       jobIds: this.selectedJobs,
       status: this.status,

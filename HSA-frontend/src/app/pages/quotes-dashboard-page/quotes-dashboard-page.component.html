@@ -1,12 +1,5 @@
-<div class="parent">
-  <div class="main-heading">
+<app-page-template [title]="'Quotes'">
     <div class="table-header">
-      <div class="header-bar">
-        <h1>
-          <span>Quotes</span>
-        </h1>
-      </div>
-      <hr/>
       <div class="filter-buttons">
         <button mat-flat-button [disabled]="filter === ''" (click)="applyFilter('')">All</button>
         <button mat-flat-button [disabled]="filter === 'created'" (click)="applyFilter('created')">Created</button>
@@ -35,7 +28,5 @@
         </tbody>
       </table>
     </div>
-  </div>
-</div>
+</app-page-template>
 
-  

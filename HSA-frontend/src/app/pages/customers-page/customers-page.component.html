@@ -1,20 +1,15 @@
-<div class="parent">
-  <div class="main-heading">
+<app-page-template [title]="'Customers'">
     @if (customers === null) {
       <app-loading-fallback stringToDisplay="Loading customers"></app-loading-fallback>
     }
     @else {
       <div class="table-header">
         <div class="header-bar">
-          <h1>
-            <span>Customers</span>
-          </h1>
-          <button mat-flat-button id="add-customer-button" (click)="navigateToPage('customers/create')">
+          <button class="mb-4" mat-flat-button id="add-customer-button" (click)="navigateToPage('customers/create')">
             <mat-icon>add</mat-icon>
             Add Customer
           </button>
         </div>
-        <hr/>
           <app-table-component
             editRedirect="/customers/edit"
             [fetchedData]="customers"
@@ -25,9 +20,9 @@
             [headers]="['First Name', 'Last Name', 'Email']"
           ></app-table-component>
           <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
-            
+
           </div>
       </div>
     }
-  </div>
-</div>
+</app-page-template>
+

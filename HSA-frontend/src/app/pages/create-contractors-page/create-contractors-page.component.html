@@ -1,17 +1,10 @@
-<div class="parent">
-  <div class="main-heading">
+<app-page-template [title]="'Create Contractor'">
     <div class="table-header">
-      <div class="header-bar">
-        <h1>
-          Create Contractor
-        </h1>
-      </div>
-      <hr/>
       <mat-card class="p-5 wide-card">
         <form class="parent">
           <mat-form-field class="full-width-field">
             <mat-label>First Name</mat-label>
-            <input matInput 
+            <input matInput
               [formControl]="firstNameControl" [errorStateMatcher]="matcher"
               placeholder="First Name">
               @if (firstNameControl.hasError('required')) {
@@ -20,7 +13,7 @@
           </mat-form-field>
           <mat-form-field class="full-width-field">
             <mat-label>Last Name</mat-label>
-            <input matInput 
+            <input matInput
               [formControl]="lastNameControl" [errorStateMatcher]="matcher"
               placeholder="Last Name">
               @if (lastNameControl.hasError('required')) {
@@ -29,7 +22,7 @@
           </mat-form-field>
           <mat-form-field class="full-width-field">
             <mat-label>Email</mat-label>
-            <input matInput 
+            <input matInput
               [formControl]="emailControl" [errorStateMatcher]="matcher"
               placeholder="Email">
               @if (emailControl.hasError('required')) {
@@ -38,7 +31,7 @@
               @if (emailControl.hasError('email')) {
                 <mat-error>Email is <strong>invalid</strong></mat-error>
               }
-          </mat-form-field> 
+          </mat-form-field>
           <mat-form-field class="full-width-field">
             <mat-label>Phone Number</mat-label>
             <input matInput placeholder="Phone Number"
@@ -57,5 +50,4 @@
         </form>
       </mat-card>
     </div>
-  </div>
-</div>
+</app-page-template>

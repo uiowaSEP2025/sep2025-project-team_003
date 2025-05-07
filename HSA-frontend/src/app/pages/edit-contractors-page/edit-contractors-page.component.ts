@@ -7,16 +7,18 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
 import { MatCardModule } from '@angular/material/card';
 import { ContractorService } from '../../services/contractor.service';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-edit-contractors-page',
   imports: [
-    MatFormFieldModule, 
-    ReactiveFormsModule, 
-    MatInputModule, 
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule,
     MatButtonModule,
-    MatCardModule, 
-    FormsModule
+    MatCardModule,
+    FormsModule,
+    PageTemplateComponent
   ],
   templateUrl: './edit-contractors-page.component.html',
   styleUrl: './edit-contractors-page.component.scss'
@@ -34,8 +36,8 @@ export class EditContractorsPageComponent implements OnInit {
   emailControl = new FormControl('', [Validators.email, Validators.required])
   phoneControl = new FormControl('', Validators.required)
   matcher = new GenericFormErrorStateMatcher()
-  
-  
+
+
   ngOnInit() {
     // pass existing field in as a query param
     this.activatedRoute.queryParams.subscribe(params => {
@@ -58,7 +60,7 @@ export class EditContractorsPageComponent implements OnInit {
     if (this.firstNameControl.valid &&
       this.lastNameControl.valid &&
       this.emailControl.valid &&
-      this.phoneControl.valid) 
+      this.phoneControl.valid)
     {
       return true
     }

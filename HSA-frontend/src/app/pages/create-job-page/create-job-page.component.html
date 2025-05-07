@@ -1,17 +1,12 @@
-<div class="parent">
-  <div class="main-heading">
+<app-page-template [title]="'Create Job'">
     @if (customers === null) {
     <app-loading-fallback stringToDisplay="Loading the job table"></app-loading-fallback>
     }
     @else {
       <div class="table-header">
         <div class="header-bar">
-          <h1>
-            <span>Create Jobs</span>
-          </h1>
-          <button type="button" mat-flat-button (click)="openApplyTemplateDialog()">Apply Template</button>
+          <button class="mb-4" type="button" mat-flat-button (click)="openApplyTemplateDialog()">Apply Template</button>
         </div>
-        <hr/>
         <mat-card class="flex p-5 flex-direction: column; items-left;" style="background-color: #9eccfa">
           <mat-card-content>
           <div class="spacer"></div>
@@ -245,5 +240,5 @@
         <div class="spacer"></div>
       </div>
     }
-  </div>
-</div>
+</app-page-template>
+

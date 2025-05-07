@@ -26,6 +26,7 @@ import { JobTemplateService } from '../../services/jobTemplate.service';
 import { currencyValidator } from '../../utils/currency-validator';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 
 @Component({
@@ -47,7 +48,8 @@ import { MatIconModule } from '@angular/material/icon';
     MatDatepickerModule,
     JobDisplayTableComponent,
     MatIconModule,
-    MatTooltipModule
+    MatTooltipModule,
+    PageTemplateComponent
   ],
   providers: [
     provideNativeDateAdapter()

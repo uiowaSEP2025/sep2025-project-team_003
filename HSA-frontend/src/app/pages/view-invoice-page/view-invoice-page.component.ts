@@ -9,9 +9,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { InvoiceJobComponent } from '../../components/invoice-job/invoice-job.component';
 import { Invoice } from '../../components/invoice-job/invoice-job.component';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 @Component({
   selector: 'app-view-invoice-page',
-  imports: [LoadingFallbackComponent,CommonModule, MatButtonModule, MatIconModule, InvoiceJobComponent, MatCardModule],
+  imports: [LoadingFallbackComponent, CommonModule, MatButtonModule, MatIconModule, InvoiceJobComponent, MatCardModule, PageTemplateComponent],
   templateUrl: './view-invoice-page.component.html',
   styleUrl: './view-invoice-page.component.scss'
 })
@@ -28,13 +29,13 @@ export class ViewInvoicePageComponent implements OnInit{
   ngOnInit(): void {
     this.invoiceService.getSpecificInvoiceData(this.invoiceID).subscribe(
       {next: (response) => {
-        this.invoiceData = response 
+        this.invoiceData = response
         console.log(response)
       },
       error: (error) => {
       }}
     )
-    
+
   }
 
   navigateViewInvoice() {

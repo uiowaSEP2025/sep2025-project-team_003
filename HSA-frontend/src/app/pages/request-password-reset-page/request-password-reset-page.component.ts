@@ -9,11 +9,12 @@ import { CommonModule } from '@angular/common';
 import { RequestPasswordResetService } from '../../services/request-password-reset.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 
 @Component({
   selector: 'app-request-password-reset-page',
-  imports: [ReactiveFormsModule,MatError,MatInputModule, MatCardModule, MatButtonModule, CommonModule],
+  imports: [ReactiveFormsModule, MatError, MatInputModule, MatCardModule, MatButtonModule, CommonModule, PageTemplateComponent],
   templateUrl: './request-password-reset-page.component.html',
   styleUrl: './request-password-reset-page.component.scss',
   standalone: true
@@ -48,5 +49,5 @@ export class RequestPasswordResetPageComponent {
     })
 
   }
-  
+
 }

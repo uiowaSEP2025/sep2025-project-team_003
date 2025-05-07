@@ -10,16 +10,18 @@ import { RequestService } from '../../services/request.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ViewRequestComponentComponent } from '../../components/view-request-component/view-request-component.component';
 import { TableApiResponse } from '../../interfaces/api-responses/table.api.interface';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-request-dashboard-page',
   imports: [
-    TableComponentComponent, 
-    MatButtonModule, 
-    MatIconModule, 
-    LoadingFallbackComponent, 
-    CommonModule, 
+    TableComponentComponent,
+    MatButtonModule,
+    MatIconModule,
+    LoadingFallbackComponent,
+    CommonModule,
     MatTabsModule,
+    PageTemplateComponent,
   ],
   templateUrl: './request-dashboard-page.component.html',
   styleUrl: './request-dashboard-page.component.scss'
@@ -37,7 +39,7 @@ export class RequestDashboardPageComponent {
   currentTabLabel: "Approved" | "Pending" = 'Approved';
 
   constructor(
-    private router: Router, 
+    private router: Router,
     public requestService: RequestService,
     private dialog: MatDialog
   ) {
@@ -73,7 +75,7 @@ export class RequestDashboardPageComponent {
             break;
           default:
             throw new Error("Got a non-valid tab option when fetching")
-        }    
+        }
       },
       error: (error) => {
       }

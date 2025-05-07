@@ -8,10 +8,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { GenericFormErrorStateMatcher } from '../../utils/generic-form-error-state-matcher';
 import { ConfirmPasswordResetServiceService } from '../../services/confirm-password-reset.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-password-reset-page',
-  imports: [ReactiveFormsModule, MatInputModule, MatError, MatCardModule, MatButtonModule],
+  imports: [ReactiveFormsModule, MatInputModule, MatError, MatCardModule, MatButtonModule, PageTemplateComponent],
   templateUrl: './password-reset-page.component.html',
   styleUrl: './password-reset-page.component.scss'
 })
@@ -30,7 +31,7 @@ export class PasswordResetPageComponent implements OnInit {
     confirmPassword: new FormControl('',)
   }, validateConfirmMatchesAndNotNull);
 
-  constructor(private activatedRoute: ActivatedRoute, private passwordReset: ConfirmPasswordResetServiceService, 
+  constructor(private activatedRoute: ActivatedRoute, private passwordReset: ConfirmPasswordResetServiceService,
     private router: Router, private snackBar: MatSnackBar) { }
 
 
@@ -62,7 +63,7 @@ export class PasswordResetPageComponent implements OnInit {
 
         }
       }
-    }) 
+    })
   }
 
   navigateToPage(pagePath: string) {

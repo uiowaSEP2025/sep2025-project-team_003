@@ -8,10 +8,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { CustomerService } from '../../services/customer.service';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-create-customer-page',
-  imports: [FormsModule, MatInputModule, ReactiveFormsModule, MatButtonModule, MatIconModule, MatCardModule],
+  imports: [FormsModule, MatInputModule, ReactiveFormsModule, MatButtonModule, MatIconModule, MatCardModule, PageTemplateComponent],
   templateUrl: './create-customer-page.component.html',
   styleUrl: './create-customer-page.component.scss'
 })
