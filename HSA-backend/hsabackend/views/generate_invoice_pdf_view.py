@@ -11,6 +11,9 @@ from hsabackend.utils.pdf_utils import get_job_detailed_table
 from hsabackend.utils.string_formatters import format_title_case, format_phone_number_with_parens, format_maybe_null_date, format_currency, format_tax_percent, format_date_to_iso_string
 from decimal import Decimal
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
+from hsabackend.utils.generate_qr_code import generate_qr_code
+import os
+import tempfile
 
 def generate_pdf_customer_org_header(pdf: FPDF, org: Organization, invoice: Invoice):
     pdf.set_auto_page_break(auto=True, margin=15)
@@ -105,19 +108,44 @@ def generate_global_jobs_table(pdf:FPDF, invoice: Invoice):
 
     return (list(jobs), total_with_tax)
 
-def add_total_and_disclaimer(pdf: FPDF, total, org_name):
+def add_total_and_disclaimer(pdf: FPDF, total, org_name, invoice: Invoice):
     disclaimer_text = """
         *Disclaimer: The information on this invoice has been consolidated from reliable sources; however, 
         it may not always be entirely accurate. If you notice any discrepancies, please address them directly 
         with the handyman listed on the invoice. You remain responsible for paying the original agreed-upon 
         amount, regardless of any errors or inconsistencies in this document.
         """
-    pdf.ln(5) 
+    pdf.ln(5)
     pdf.set_left_margin(10) # don't remove or it will mess up alignment
     pdf.multi_cell(0, text=f"Please make payment to {format_title_case(org_name)} for amount {format_currency(total)}*", align="L")
-    pdf.ln(5) 
-    pdf.set_left_margin(0) # don't remove or it will mess up alignmentpdf.set_y(-20)  # Move to 20 units above the bottom
-    pdf.set_y(-40)  # Move to 20 units above the bottom
+    pdf.ln(5)
+
+    # Add QR code if payment_link exists
+    if invoice.payment_url:
+        # Generate QR code
+        qr_img = generate_qr_code(invoice.payment_url)
+
+        # Create a temporary file for the QR code
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.png') as temp_file:
+            temp_img_path = temp_file.name
+            qr_img.save(temp_img_path)
+
+        try:
+            # Position QR code at the bottom right
+            qr_size = 30  # Size of QR code in mm
+            pdf.image(temp_img_path, x=pdf.w - qr_size - 10, y=pdf.h - qr_size - 40, w=qr_size)
+
+            # Add a label for the QR code
+            pdf.set_xy(pdf.w - qr_size - 10, pdf.h - 35)
+            pdf.set_font("Times", size=8)
+            pdf.cell(qr_size, 5, "Scan to pay", align="C")
+        finally:
+            # Clean up the temporary file
+            if os.path.exists(temp_img_path):
+                os.unlink(temp_img_path)
+
+    pdf.set_left_margin(0) # don't remove or it will mess up alignment
+    pdf.set_y(-40)  # Move to 40 units above the bottom
     pdf.multi_cell(0, text=disclaimer_text, align="C")
 
 def add_job_header(pdf, job):
@@ -155,13 +183,14 @@ def generate_pdf(request, id):
 
     generate_pdf_customer_org_header(pdf,org,inv)
     jobs, total = generate_global_jobs_table(pdf, inv)
-    add_total_and_disclaimer(pdf, total, org.org_name)
+    pdf.add_page()
     for idx in range(len(jobs)):
         j = jobs[idx]
         add_job_header(pdf, j)
         get_job_detailed_table(pdf, j)
         if idx != len(jobs) - 1:
             pdf.add_page() # move to top of next page
+    add_total_and_disclaimer(pdf, total, org.org_name, inv)
 
         
 

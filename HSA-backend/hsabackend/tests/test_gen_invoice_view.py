@@ -1,3 +1,8 @@
+from django.contrib.auth.models import User
+
+from hsabackend.models.customer import Customer
+from hsabackend.models.invoice import Invoice
+from hsabackend.models.organization import Organization
 from hsabackend.views.generate_invoice_pdf_view import generate_pdf, add_job_header, add_total_and_disclaimer, generate_global_jobs_table, generate_pdf_customer_org_header
 from rest_framework.test import APITestCase
 from rest_framework.test import APIRequestFactory
@@ -88,14 +93,51 @@ class BSCov(TestCase):
         pdf.ln.assert_called_with(5)
 
     def test_add_total_and_disclaimer(self):
+        self.test_user = User.objects.create_user(
+            username='testuser33',
+            email='testuser33@example.com',
+            password='testpassword'
+        )
+
+        self.test_organization = Organization.objects.create(
+            org_name='Test Organization',
+            org_email='testorg@example.com',
+            org_city='Test City',
+            org_requestor_state='Iowa',  # Using a valid state as per the validator
+            org_requestor_zip='12345',
+            org_requestor_address='123 Test St',
+            org_phone='1234567890',
+            org_owner_first_name='Test',
+            org_owner_last_name='Owner',
+            owning_User=self.test_user,
+            is_onboarding=False,
+        )
+
+        self.test_customer = Customer.objects.create(
+            first_name="First Cus",
+            last_name="Last Cus",
+            email="cus@example.com",
+            phone_no=9876543210,
+            organization=self.test_organization,
+        )
+
+        self.test_invoice = Invoice.objects.create(
+            issuance_date="2025-05-04",
+            due_date="2025-05-14",
+            status="create",
+            tax=0.02,
+            customer=self.test_customer,
+            payment_url="https://www.paypal.com"
+        )
+
         pdf = MagicMock()
         total = Decimal('123.45')
         org_name = "example org"
-        
-        add_total_and_disclaimer(pdf, total, org_name)
+
+        add_total_and_disclaimer(pdf, total, org_name, self.test_invoice)
 
         expected_payment_text = f"Please make payment to Example Org for amount $123.45*"
-        
+
         pdf.ln.assert_any_call(5)
         pdf.set_left_margin.assert_any_call(10)
         pdf.multi_cell.assert_any_call(0, text=expected_payment_text, align="L")

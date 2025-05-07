@@ -34,6 +34,7 @@ import { BookingPageComponent } from './pages/booking-page/booking-page.componen
 import { QuoteSignComponent } from './pages/quote-sign/quote-sign.component'
 import { QuotesDashboardPageComponent } from './pages/quotes-dashboard-page/quotes-dashboard-page.component';
 import { RequestDashboardPageComponent } from './pages/request-dashboard-page/request-dashboard-page.component';
+import { UpdatePaymentPageComponent } from './pages/update-payment-page/update-payment-page.component';
 
 export const routes: Routes = [
   {
@@ -141,6 +142,9 @@ export const routes: Routes = [
   },
   {
     path: 'password/reset', component: RequestPasswordResetPageComponent
+  },
+  {
+    path: 'update-payment', component: UpdatePaymentPageComponent
   },
   {
     path: '404',
