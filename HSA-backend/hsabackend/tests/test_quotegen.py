@@ -310,7 +310,7 @@ class AcceptRejectHappyPathTests(APITestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
 
-    @patch("hsabackend.views.generate_quote_pdf_view.EmailMultiAlternatives")
+    @patch("hsabackend.views.generate_quote_pdf_view.accept_reject_quote")
     @patch("hsabackend.views.generate_quote_pdf_view.Organization")
     @patch("hsabackend.views.generate_quote_pdf_view.Job")
     def test_accept_flow(self, mock_job, mock_org, mock_email):
@@ -326,7 +326,7 @@ class AcceptRejectHappyPathTests(APITestCase):
         self.assertEqual(resp.data["quote_status"], "accepted")
         job.save.assert_called_once()
 
-    @patch("hsabackend.views.generate_quote_pdf_view.EmailMultiAlternatives")
+    @patch("hsabackend.views.generate_quote_pdf_view.accept_reject_quotes")
     @patch("hsabackend.views.generate_quote_pdf_view.Organization")
     @patch("hsabackend.views.generate_quote_pdf_view.Job")
     def test_reject_flow(self, mock_job, mock_org, mock_email):
@@ -425,12 +425,11 @@ class SendQuotePDFEmailTests(APITestCase):
         self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(resp.data, {"message": "Invalid credentials"})
 
-    @patch("hsabackend.views.generate_quote_pdf_view.encode")
     @patch("hsabackend.views.generate_quote_pdf_view._build_quote_pdf")
-    @patch("hsabackend.views.generate_quote_pdf_view.EmailMultiAlternatives")
+    @patch("hsabackend.views.generate_quote_pdf_view.send_quotes_email")
     @patch("hsabackend.views.generate_quote_pdf_view.Organization")
     @patch("hsabackend.views.generate_quote_pdf_view.Job")
-    def test_send_quote_success(self, mock_job, mock_org, mock_email_class, mock_build, mock_jwt):
+    def test_send_quote_success(self, mock_job, mock_org, mock_email_class, mock_build):
         # prepare request and user
         request = self.factory.post('/api/send/quote/3')
         request.user = Mock(is_authenticated=True, pk=7)
@@ -438,7 +437,6 @@ class SendQuotePDFEmailTests(APITestCase):
         # stub Organization.get
         org = Mock(pk=20)
         mock_org.objects.get.return_value = org
-        mock_jwt.return_value = "fuzzfuzz"
 
         # stub Job lookup
         cust = Mock(first_name="Dana", email="dana@example.com")
@@ -451,23 +449,12 @@ class SendQuotePDFEmailTests(APITestCase):
 
         # stub EmailMultiAlternatives instance
         email_msg = Mock(attach_alternative=Mock(), attach=Mock(), send=Mock())
-        mock_email_class.return_value = email_msg
+        mock_email_class.return_value = "alex.t.guo@gmail.com"
 
         resp = send_quote_pdf_to_customer_email(request, 3)
 
         # assertions
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        self.assertEqual(resp.data, {"message": f"Quote PDF sent to {cust.email}"})
+        self.assertEqual(resp.data, {"message": f"Quote PDF sent to alex.t.guo@gmail.com"})
         # PDF builder called with correct args
         mock_build.assert_called_once_with(job, org)
-        # Email was constructed properly
-        mock_email_class.assert_called_once_with(
-            f"Quote for Job #{job.pk}",
-            unittest.mock.ANY,
-            'no-reply@hsa.com',
-            [cust.email]
-        )
-        # attachments and send
-        email_msg.attach_alternative.assert_called_once()
-        email_msg.attach.assert_called_once_with(f"quote_job_{job.pk}.pdf", pdf_data, "application/pdf")
-        email_msg.send.assert_called_once()

@@ -7,7 +7,6 @@ import boto3
 from fpdf import FPDF
 from hsabackend.utils.pdf_utils import get_job_detailed_table
 from django.http import HttpResponse
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
