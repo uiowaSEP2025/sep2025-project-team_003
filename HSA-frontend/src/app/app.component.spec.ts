@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { of, Subject } from 'rxjs';
 
@@ -40,5 +40,19 @@ describe('AppComponent', () => {
     fixture.detectChanges();
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
+  });
+
+  it('should scroll to top on NavigationEnd event', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    router = TestBed.inject(Router) as unknown as MockRouter;
+
+    const scrollToSpy = spyOn(window, 'scrollTo');
+    fixture.detectChanges();
+
+    router.events.next(new NavigationEnd(1, '/test', '/test'));
+    expect(scrollToSpy).toHaveBeenCalled();
+
+    const args = scrollToSpy.calls.mostRecent().args[0];
+    expect(args).toEqual(jasmine.objectContaining({ top: 0, behavior: 'smooth' }));
   });
 });
