@@ -61,6 +61,10 @@ export class EditInvoicePageComponent implements OnInit {
       Validators.min(0), Validators.max(100), integerValidator
     ])
 
+    url = new FormControl("", [
+      Validators.pattern(/^https?:\/\/((([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,}|localhost|\d{1,3}(\.\d{1,3}){3}))(:\d+)?(\/[^\s?#]*)?(\?[^\s#]*)?(#[^\s]*)?$/)
+    ])
+
     matcher = new GenericFormErrorStateMatcher()
   
   
@@ -154,7 +158,7 @@ export class EditInvoicePageComponent implements OnInit {
   }
 
   onSubmit() {
-    if (!this.taxAmount.valid) {
+    if (!this.taxAmount.valid || !this.url.valid) {
       return;
     }
     if (this.selectedJobs.length === 0) {
