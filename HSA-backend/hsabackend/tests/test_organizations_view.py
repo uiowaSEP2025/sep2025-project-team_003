@@ -9,7 +9,7 @@ from django.db.models import QuerySet
 from django.db.models import Q
 from unittest.mock import call
 from django.core.exceptions import ValidationError
-from hsabackend.views.organizations import complete_onboarding, createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail
+from hsabackend.views.organizations import complete_onboarding, createOrganization, deleteOrganization, getOrganizationDetail, editOrganizationDetail, get_payment_link, set_payment_link
 from hsabackend.models.organization import Organization
 from hsabackend.models.customer import Customer
 from hsabackend.models.service import Service
@@ -415,5 +415,35 @@ class orgViewTests(APITestCase):
         mock_job_contractor.save.assert_called_once()
         mock_org.save.assert_called_once()
 
+class GetPaymentLintTest(APITestCase):
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_none_payment_url(self, org):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        mock_org = Mock(spec=Organization)
+        org.return_value = mock_org
+        org.default_payment_url = None
 
+        factory = APIRequestFactory()
+        request = factory.get('api/get/payment-link')
+        request.user = mock_user
 
+        res = get_payment_link(request)
+
+        assert res.status_code == 200
+
+    @patch('hsabackend.utils.auth_wrapper.Organization.objects.get')
+    def test_valid_url(self, org):
+        mock_user = Mock(spec=User)
+        mock_user.is_authenticated = True
+        mock_org = Mock(spec=Organization)
+        org.return_value = mock_org
+        org.default_payment_url = "http://google.com"
+
+        factory = APIRequestFactory()
+        request = factory.get('api/get/payment-link')
+        request.user = mock_user
+
+        res = get_payment_link(request)
+
+        assert res.status_code == 200

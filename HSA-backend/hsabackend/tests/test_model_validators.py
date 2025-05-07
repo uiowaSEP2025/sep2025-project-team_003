@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 import decimal
-from hsabackend.models.model_validators import isValidPhone, isNonEmpty, validate_state, is_valid_percent
+from hsabackend.models.model_validators import isValidPhone, isNonEmpty, validate_state, is_valid_percent, is_valid_http_url
 
 class IsValidPhoneTest(TestCase):
     def test_valid_phone(self):
@@ -77,3 +77,18 @@ class IsValidPercentTest(TestCase):
             is_valid_percent(decimal.Decimal("100"))
         except ValidationError:
             self.fail("is_valid_percent raised ValidationError unexpectedly")
+
+class IsValidURLTest(TestCase):
+    def test_valid_http_url(self):
+        is_valid_http_url("http://example.com")
+
+    def test_valid_https_url(self):
+        is_valid_http_url("https://example.com")
+
+    def test_invalid_scheme(self):
+        with self.assertRaises(ValidationError):
+            is_valid_http_url("ftp://example.com")
+
+    def test_malformed_url(self):
+        with self.assertRaises(ValidationError):
+            is_valid_http_url("not-a-url")
