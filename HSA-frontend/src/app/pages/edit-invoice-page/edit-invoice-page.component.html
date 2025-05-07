@@ -39,9 +39,9 @@
                 <mat-error class="mt-3">You must select a job to include</mat-error>
                 }
             
-                <mat-form-field class="pt-10">
+                <mat-form-field class="pt-10 inputWidth">
                     <mat-label>Tax rate</mat-label>
-                    <input matInput [formControl]="taxAmount" [errorStateMatcher]="matcher" type="number" data-testid="tax-input">
+                    <input matInput [formControl]="taxAmount" [errorStateMatcher]="matcher"  data-testid="tax-input">
                     @if (taxAmount.hasError('required')) {
                     <mat-error>Tax amount is <strong>required</strong></mat-error>
                     }
@@ -50,6 +50,14 @@
                     }
                     @else if (taxAmount.hasError('notInteger')) {
                         <mat-error class="mb-5">Tax must be a whole number</mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field class="pt-10 inputWidth">
+                    <mat-label>Payment URL</mat-label>
+                    <input matInput [formControl]="url" data-testid="tax-input">
+                    @if (url.touched && !url.valid && url.getError("pattern")) {
+                        <mat-error>URL must be like http://google.com</mat-error>
                     }
                 </mat-form-field>
                 <div class="max-w-md pt-3">

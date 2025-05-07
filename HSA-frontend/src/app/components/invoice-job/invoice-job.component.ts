@@ -20,6 +20,7 @@ export interface Invoice {
   taxPercent: string;
   grandTotal: string;
   jobs: Job[];
+  url: string | null;
 }
 
 @Component({

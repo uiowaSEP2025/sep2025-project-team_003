@@ -14,11 +14,13 @@ omit =
   hsabackend/asgi.py
   hsabackend/models.py
   hsabackend/urls.py
+  hsabackend/celery.py
   hsabackend/views/index.py
   hsabackend/wsgi.py
   hsabackend/settings.py
   hsabackend/tests/*
   hsabackend/serializers/*
+  hsabackend/tasks.py
   manage.py
   features/environment.py
   hsabackend/signalhandlers/*

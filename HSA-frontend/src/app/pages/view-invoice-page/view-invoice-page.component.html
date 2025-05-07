@@ -33,6 +33,10 @@
 							<td>Due Date</td>
 							<td>{{invoiceData.dueDate}}</td>
 						</tr>
+						<tr>
+							<td>Payment Link</td>
+							<td>{{invoiceData.url === null ? "N/A" : invoiceData.url}}</td>
+						</tr>
 					</table>
 				<app-invoice-job [data]="invoiceData"></app-invoice-job>
 				<div class="spacer"></div>

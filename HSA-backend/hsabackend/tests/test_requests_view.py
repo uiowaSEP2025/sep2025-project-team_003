@@ -14,11 +14,45 @@ from hsabackend.models.job import Job
 
 class TestCreate(APITestCase):
 
-    def test_org_not_found(self):
-        pass
+    @patch('hsabackend.views.requests.Organization.objects.get')
+    def test_org_not_found(self, org):
+        org.side_effect = Organization.DoesNotExist
+        factory = APIRequestFactory()
+        request = factory.post('/api/create/request/1')
+        res = create_request(request, 1)
 
-    def test_org_not_found(self):
-        pass
+        assert res.status_code == 404
+
+    @patch('hsabackend.views.requests.Organization.objects.get')
+    @patch('hsabackend.views.requests.Request')
+    def test_invalid(self, req, org):
+        mock_org = Mock()
+        org.return_value = mock_org
+
+        mock_req = Mock()
+        req.return_value = mock_req
+        mock_req.full_clean.side_effect = ValidationError({'name': ['Error while saving organization']})
+
+        factory = APIRequestFactory()
+        request = factory.post('/api/create/request/1')
+        res = create_request(request, 1)
+
+        assert res.status_code == 400
+    
+    @patch('hsabackend.views.requests.Organization.objects.get')
+    @patch('hsabackend.views.requests.Request')
+    def test_valid(self, req, org):
+        mock_org = Mock()
+        org.return_value = mock_org
+
+        mock_req = Mock()
+        req.return_value = mock_req
+
+        factory = APIRequestFactory()
+        request = factory.post('/api/create/request/1')
+        res = create_request(request, 1)
+
+        assert res.status_code == 201
 
 class DeleteRequestTest(APITestCase):
     @patch('hsabackend.views.requests.Organization.objects.get')
