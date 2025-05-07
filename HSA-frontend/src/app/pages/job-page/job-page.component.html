@@ -24,7 +24,8 @@
                 [clickableRows]="true" [onRowClick]="redirectJobDetails.bind(this)"
                 [disableEditCheck]="shouldDisableEdit"
                 [disableDeleteCheck]="shouldDisableDelete"
-                [headers]="['Description','Job Status','Start Date','End Date','Customer Name']">
+                [headers]="['Description','Job Status','Start Date','End Date','Customer Name']"
+              >
               </app-table-component>
             </div>
           </mat-tab>
@@ -36,8 +37,9 @@
                 [clickableRows]="true" [onRowClick]="redirectJobDetails.bind(this)"
                 [disableEditCheck]="shouldDisableEdit"
                 [disableDeleteCheck]="shouldDisableDelete"
-                [headers]="['Description','Job Status','Start Date','End Date','Customer Name']"></app-table-component>
-    
+                [headers]="['Description','Job Status','Start Date','End Date','Customer Name']"
+              >
+              </app-table-component>
             </div>
           </mat-tab>
           <mat-tab [label]="'Completed'">
@@ -48,8 +50,9 @@
                 [clickableRows]="true" [onRowClick]="redirectJobDetails.bind(this)"
                 [disableEditCheck]="shouldDisableEdit"
                 [disableDeleteCheck]="shouldDisableDelete"
-                [headers]="['Description','Job Status','Start Date','End Date','Customer Name']"></app-table-component>
-    
+                [headers]="['Description','Job Status','Start Date','End Date','Customer Name']"
+              >
+              </app-table-component>
             </div>
           </mat-tab>
         </mat-tab-group>

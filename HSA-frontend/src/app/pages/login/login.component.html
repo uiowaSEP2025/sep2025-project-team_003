@@ -1,34 +1,37 @@
 <div class="parent">
   <div class="main-heading">
-    <mat-card class="flex p-5 flex-direction: column; items-center">
-      <h1>
-        <span>Login</span>
-      </h1>
-      <form class="flex flex-col justify-center">
-        <mat-form-field>
-          <mat-label>Username</mat-label>
-          <input matInput data-testid="username-input" [formControl]="usernameFormControl" [errorStateMatcher]="matcher"
-            placeholder="username">
-          @if (usernameFormControl.hasError('required')) {
-          <mat-error>Username is <strong>required</strong></mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-label>Password</mat-label>
-          <input matInput data-testid="password-input" placeholder="password" type="password"
-            [formControl]="passwordFormControl" [errorStateMatcher]="matcher">
-          @if (passwordFormControl.hasError('required')) {
-          <mat-error>Password is <strong>required</strong></mat-error>
-          }
-        </mat-form-field>
-        <a [href]="resetLink" class="text-blue-500 hover:underline">Reset password</a>
-        <div class="items-center">
-          <button data-testid="login" mat-flat-button type="submit" data-testid="submit" class="mt-5 mb-5" (click)="onSubmit()">Login</button>
-          <button data-testid="signup" mat-flat-button class="mt-5 mb-5" (click)="navigateToPage('signup')">Sign up</button>
-        </div>
-      </form>
-    </mat-card>
-
+    <div class="table-header">
+      <div class="header-bar">
+        <h1>
+          <span>Login</span>
+        </h1>
+      </div>
+      <hr/>
+      <mat-card class="flex p-5 flex-direction: column; items-center" style="background-color: #dcecfd">
+        <form class="flex flex-col justify-center">
+          <mat-form-field>
+            <mat-label>Username</mat-label>
+            <input matInput data-testid="username-input" [formControl]="usernameFormControl" [errorStateMatcher]="matcher"
+              placeholder="username">
+            @if (usernameFormControl.hasError('required')) {
+            <mat-error>Username is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Password</mat-label>
+            <input matInput data-testid="password-input" placeholder="password" type="password"
+              [formControl]="passwordFormControl" [errorStateMatcher]="matcher">
+            @if (passwordFormControl.hasError('required')) {
+            <mat-error>Password is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+          <a [href]="resetLink" class="text-blue-500 hover:underline">Reset password</a>
+          <div class="items-center">
+            <button data-testid="login" mat-flat-button type="submit" data-testid="submit" class="mt-5 mb-5" (click)="onSubmit()">Login</button>
+            <button data-testid="signup" mat-flat-button class="mt-5 mb-5" (click)="navigateToPage('signup')">Sign up</button>
+          </div>
+        </form>
+      </mat-card>
+    </div>
   </div>
 </div>
