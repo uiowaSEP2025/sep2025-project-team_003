@@ -1,7 +1,7 @@
 from django.test import TestCase
 from decimal import Decimal
 from hsabackend.models.job import Job
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 from hsabackend.models.organization import Organization
 from hsabackend.models.customer import Customer
 from hsabackend.models.invoice import Invoice
@@ -93,3 +93,29 @@ class JobModelCalculationTestCase(TestCase):
             invoice=self.invoice
         )
         self.assertEqual(job_with_short_desc.truncated_job_desc, short_description)
+
+    @patch('hsabackend.models.job.JobMaterial.objects.filter')
+    def test_total_cost(self, jm):
+        mock_jm_1 = Mock()
+        mock_jm_1.units_used = 10   
+        mock_jm_1.price_per_unit = Decimal('19.99')
+        mock_jm_2 = Mock()
+        mock_jm_2.units_used = 15
+        mock_jm_2.price_per_unit = Decimal('19.99')
+        job = job = Job(
+            job_status="created",
+            start_date="2025-05-01",
+            end_date="2025-05-10",
+            description="Fix plumbing issue in basement",
+            organization=Organization(),
+            customer=Customer(),
+            requestor_city="Los Angeles",
+            requestor_state="CA",
+            requestor_zip="90001",
+            requestor_address="1234 Sunset Blvd",
+            flat_fee=Decimal("200.00"),
+            hourly_rate=Decimal("75.00"),
+            minutes_worked=90,
+        )
+        
+        assert job.total_cost == 312.50
