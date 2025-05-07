@@ -23,6 +23,7 @@ describe('ViewInvoicePageComponent', () => {
       taxAmount: "15.50",
       taxPercent: "10",
       grandTotal: "155.50",
+      url: "https://www.paypal.com",
       jobs: [
         {
           flatFee: 100,
@@ -47,7 +48,7 @@ describe('ViewInvoicePageComponent', () => {
             get: (key: string) => '123' // Mock paramMap to return '123' for 'id'
           }),
           queryParams: of({ email: '', fname: '', lname: '', phoneNo: '' }),
-          
+
         };
 
     await TestBed.configureTestingModule({
