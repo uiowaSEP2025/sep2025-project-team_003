@@ -123,7 +123,8 @@ def getInvoices(request):
 @check_authenticated_and_onboarded()
 def updateInvoice(request, id):
     org = request.org
-    json = request.data  
+    json = request.data
+    url = json.get("url", None)
 
     job_ids = json.get("jobIds",[])
 
@@ -165,6 +166,7 @@ def updateInvoice(request, id):
             invoice.issuance_date = issued
             invoice.due_date = due
             invoice.tax = parse_and_return_decimal(tax_percent)
+            invoice.payment_url = url
             invoice.full_clean()
             invoice.save()
 

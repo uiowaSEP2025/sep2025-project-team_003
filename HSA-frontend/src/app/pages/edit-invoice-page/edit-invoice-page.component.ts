@@ -129,7 +129,8 @@ export class EditInvoicePageComponent implements OnInit {
           status: this.status,
           issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value),
           dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
-          tax: this.taxAmount.value.toString()
+          tax: this.taxAmount.value.toString(),
+          url: this.url.value !== "" ? this.url.value : null
         }
         this.invoiceService.updateInvoice(this.invoiceID, data).subscribe(
           {next: (response) => {
@@ -181,7 +182,8 @@ export class EditInvoicePageComponent implements OnInit {
       status: this.status,
       issuedDate: this.stringFormatter.dateFormatter(this.range.controls.issued.value) ,
       dueDate: this.stringFormatter.dateFormatter(this.range.controls.due.value),
-      tax: this.taxAmount.value.toString()
+      tax: this.taxAmount.value.toString(),
+      url: this.url.value !== "" ? this.url.value : null
     }
     this.invoiceService.updateInvoice(this.invoiceID, data).subscribe(
       {next: (response) => {

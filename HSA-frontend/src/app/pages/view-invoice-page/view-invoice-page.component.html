@@ -27,7 +27,7 @@
 						</tr>
 						<tr>
 							<td>Payment Link</td>
-							<td>{{invoiceData.url}}</td>
+							<td>{{invoiceData.url === null ? "N/A" : invoiceData.url}}</td>
 						</tr>
 					</table>
 				<app-invoice-job [data]="invoiceData"></app-invoice-job>

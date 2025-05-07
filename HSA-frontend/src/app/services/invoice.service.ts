@@ -21,7 +21,8 @@ interface UpdateInvoiceInterface {
         status: "created" | "issued" | "paid",
         issuedDate: string,
         dueDate: string, 
-        tax: string
+        tax: string,
+        url: string | null
 }
 
 @Injectable({
