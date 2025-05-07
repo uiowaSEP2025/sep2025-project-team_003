@@ -92,7 +92,7 @@ def generate_quote_pdf(request, id):
 @api_view(["POST"])
 def generate_quote_pdf_as_base64(request, id):
     """
-    Expects JSON body: { "pin": "12345678" }
+    Expects JSON body: { "pin": "JWT TOKEN" }
     Returns the PDF as a base64 string if the pin matches and no link exists yet.
     """
     try:

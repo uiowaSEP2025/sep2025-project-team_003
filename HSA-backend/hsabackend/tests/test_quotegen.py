@@ -108,14 +108,14 @@ class GenerateBase64Tests(APITestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
 
-    @patch("hsabackend.views.generate_quote_pdf_view.Job")
     @patch("hsabackend.views.generate_quote_pdf_view.decode")
+    @patch("hsabackend.views.generate_quote_pdf_view.Job.objects.get")
     def test_base64_not_found(self, mock_job, mock_pin):
-        mock_job.objects.get.side_effect = mock_job.DoesNotExist
+        mock_job.side_effect = Job.DoesNotExist
         mock_pin.return_value="OOga booga"
         request = self.factory.post("/api/ret/quote/100", {"pin": "0000"}, format="json")
         resp = generate_quote_pdf_as_base64(request, 1)
-        self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     @patch("hsabackend.views.generate_quote_pdf_view.decode")
     @patch("hsabackend.views.generate_quote_pdf_view.Job")
