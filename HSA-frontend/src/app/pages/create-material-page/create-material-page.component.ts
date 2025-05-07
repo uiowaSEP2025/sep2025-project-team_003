@@ -6,6 +6,7 @@ import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import { MaterialService } from '../../services/material.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-create-material-page',
@@ -15,6 +16,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatFormField,
     MatInput,
     MatLabel,
+    MatCardModule,
     ReactiveFormsModule
   ],
   templateUrl: './create-material-page.component.html',

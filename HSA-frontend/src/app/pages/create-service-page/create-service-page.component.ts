@@ -6,6 +6,7 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {Router} from '@angular/router';
 import { ServiceService } from '../../services/service.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-create-service-page',
@@ -15,6 +16,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatFormField,
     MatInput,
     MatLabel,
+    MatCardModule,
     ReactiveFormsModule
   ],
   templateUrl: './create-service-page.component.html',

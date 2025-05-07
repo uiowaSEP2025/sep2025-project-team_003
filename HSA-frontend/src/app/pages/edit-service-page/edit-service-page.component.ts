@@ -5,17 +5,19 @@ import {MatInput} from "@angular/material/input";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from '@angular/router';
 import { ServiceService } from '../../services/service.service';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-edit-service-page',
-    imports: [
-        MatButton,
-        MatError,
-        MatFormField,
-        MatInput,
-        MatLabel,
-        ReactiveFormsModule
-    ],
+  imports: [
+    MatButton,
+    MatError,
+    MatFormField,
+    MatInput,
+    MatLabel,
+    MatCardModule,
+    ReactiveFormsModule
+  ],
   templateUrl: './edit-service-page.component.html',
   styleUrl: './edit-service-page.component.scss'
 })

@@ -4,10 +4,18 @@
 			<app-loading-fallback stringToDisplay="Loading the invoice table"></app-loading-fallback>
 		}
 		@else {
-			<h1>
-				<span>Invoices</span>
-			</h1>
-			<app-table-component 
+			<div class="table-header">
+				<div class="header-bar">
+					<h1>
+						<span>Invoices</span>
+					</h1>
+					<button mat-flat-button data-testid="create-button" (click)="navigateToPage('invoices/create')">
+						<mat-icon>add</mat-icon>
+						Add Invoice
+				</button>
+				</div>
+				<hr/>
+				<app-table-component 
 					[loadDataToTable]="this.loadDataToTable.bind(this)" 
 					editRedirect="/edit/invoice"
 					[deleteRequest]="invoiceService.deleteInvoice.bind(invoiceService)"
@@ -17,11 +25,8 @@
 					[hideValues]="['Id', 'Tax']"
 					[clickableRows]="true"
 					[onRowClick]="redirectInvoiceDetails.bind(this)"
-					></app-table-component>
-			<button data-testid="create-button" mat-fab extended class="m-10" (click)="navigateToPage('invoices/create')">
-					<mat-icon>note_add</mat-icon>
-					Add a Invoice
-			</button>
+				></app-table-component>
+			</div>
 		}
   </div>  
 </div>
