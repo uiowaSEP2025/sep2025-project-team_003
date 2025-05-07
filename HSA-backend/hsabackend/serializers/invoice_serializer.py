@@ -1,26 +1,25 @@
 from rest_framework import serializers
 
-from hsabackend.models.customer import Customer
-from hsabackend.models.job import Job
+from hsabackend.models.invoice import Invoice
 from hsabackend.serializers.customer_serializer import CustomerSerializer
 from hsabackend.serializers.discount_serializer import DiscountSerializer
-from hsabackend.models.invoice import Invoice
 from hsabackend.utils.get_data_helpers import get_jobs_for_invoice
+
 
 class InvoiceTableSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invoice
-        fields = ['id','customer','date_issued','date_due','status', 'sales_tax_percent', 'payment_link']
+        fields = ['id','customer','issuance_date','due_date','status', 'tax', 'payment_link']
 
     def to_representation(self, instance):
         representation = {
             "id": instance.id,
             "customer": instance.customer.first_name + " " + instance.customer.last_name,
             "customer_id": instance.customer.id,
-            "date_issued": instance.date_issued,
-            "date_due": instance.date_due,
+            "issuance_date": instance.issuance_date,
+            "due_date": instance.due_date,
             "status": instance.status,
-            "sales_tax_percent": instance.sales_tax_percent,
+            "tax": instance.tax,
             "payment_link": instance.payment_link,
         }
         return representation
@@ -44,7 +43,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
         representation['dateDue'] = instance.date_due
         representation['status'] = instance.status
         representation['paymentLink'] = instance.payment_link
-        representation['salesTaxPercent'] = instance.sales_tax_percent
+        representation['tax'] = instance.tax
         representation['customer'] = customer.data
         representation['discounts'] = discounts.data
         representation['jobs'] = jobs
@@ -64,7 +63,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
         instance.date_issued = validated_data.get('date_issued', instance.date_issued)
         instance.date_due = validated_data.get('date_due', instance.date_due)
         instance.status = validated_data.get('status', instance.status)
-        instance.sales_tax_percent = validated_data.get('sales_tax_percent', instance.sales_tax_percent)
+        instance.tax = validated_data.get('tax', instance.tax)
         instance.customer = validated_data.get('customer', instance.customer)
         instance.payment_link = validated_data.get('payment_link', instance.payment_link)
         instance.save()

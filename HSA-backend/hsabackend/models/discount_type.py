@@ -17,5 +17,5 @@ class DiscountType(models.Model):
         return {
             "id": self.pk, 
             "discount_name": self.discount_name,
-            "discount_percent": format_percent(self.discount_percent)
+            "discount_percent": format_percent(str(self.discount_percent))
         }

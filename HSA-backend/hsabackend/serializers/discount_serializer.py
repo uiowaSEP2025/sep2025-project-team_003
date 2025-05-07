@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from hsabackend.models.discount import Discount
-from hsabackend.serializers.organization_serializer import OrganizationSerializer
+from hsabackend.models.discount_type import DiscountType
 
 
 class DiscountSerializer(serializers.ModelSerializer):
@@ -9,14 +8,14 @@ class DiscountSerializer(serializers.ModelSerializer):
     discount_percent = serializers.DecimalField(max_digits=5, decimal_places=2, required=True)
 
     class Meta:
-        model = Discount
+        model = DiscountType
         fields = ['discount_name','id','discount_percent']
 
     def create(self, validated_data):
         """
         Create and return a new Discount instance, given the validated data.
         """
-        return Discount.objects.create(**validated_data)
+        return DiscountType.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         """
