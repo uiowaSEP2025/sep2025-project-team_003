@@ -5,10 +5,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { ContractorService } from '../../services/contractor.service';
 import { Router } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-create-contractors-page',
-  imports: [MatInputModule,ReactiveFormsModule,FormsModule, MatButton],
+  imports: [MatInputModule,ReactiveFormsModule,FormsModule, MatButton, MatCardModule],
   templateUrl: './create-contractors-page.component.html',
   styleUrl: './create-contractors-page.component.scss'
 })
@@ -50,5 +51,9 @@ export class CreateContractorsPageComponent {
       error: (error) => {
       }}
     )
+  }
+
+  navigateToPage(pagePath: string) {
+    this.router.navigate([`/${pagePath}`]);
   }
 }

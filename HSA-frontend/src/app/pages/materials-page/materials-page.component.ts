@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {Router} from '@angular/router';
-import {MatFabButton} from '@angular/material/button';
+import {MatButtonModule} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {TableComponentComponent} from '../../components/table-component/table-component.component';
 import { MaterialService } from '../../services/material.service';
@@ -10,7 +10,7 @@ import { LoadingFallbackComponent } from '../../components/loading-fallback/load
 @Component({
   selector: 'app-materials-page',
   imports: [
-    MatFabButton,
+    MatButtonModule,
     MatIcon,
     TableComponentComponent,
     CommonModule,

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
 interface Quote {
   job_id: number;
   customer_name: string;
@@ -14,7 +15,7 @@ interface Quote {
   selector: 'app-quotes-dashboard',
   templateUrl: './quotes-dashboard-page.component.html',
   styleUrls: ['./quotes-dashboard-page.component.scss'],
-  imports: [CommonModule]
+  imports: [CommonModule, MatButtonModule]
 })
 export class QuotesDashboardPageComponent implements OnInit {
   quotes: Quote[] = [];

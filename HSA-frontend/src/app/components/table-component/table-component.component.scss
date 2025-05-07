@@ -37,3 +37,11 @@ td , th {
     filter: brightness(90%); // Darken on hover
   }
 }
+
+.container {
+    width: 100%;
+}
+
+.no-shadow {
+    box-shadow: none !important;
+}

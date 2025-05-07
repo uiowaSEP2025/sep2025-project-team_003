@@ -14,3 +14,10 @@ html {
 html, body {
   height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+html {
+  @include mat.toolbar-overrides((
+      container-background-color: #005cbb,
+      container-text-color: white,
+  ));
+}

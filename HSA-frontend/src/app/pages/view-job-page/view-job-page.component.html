@@ -4,89 +4,97 @@
       <app-loading-fallback stringToDisplay="Loading the job"></app-loading-fallback>
     }
     @else {
-      <h1>
-        <span>Job Information</span>
-      </h1>
-      <mat-card class="flex p-5 flex-direction: column; items-left">
+      <div class="table-header">
+        <div class="header-bar">
+          <h1>
+            <span>Job Information</span>
+          </h1>
+          <button mat-flat-button (click)="openQuoteDialog()">
+            <mat-icon>picture_as_pdf</mat-icon>
+            Generate Quote
+          </button>
+        </div>
+        <hr/>
+        <mat-card class="flex p-5 flex-direction: column; items-left"  style="background-color: #9eccfa">
+          <mat-accordion>
+            <mat-expansion-panel [expanded]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title> General Info </mat-panel-title>
+              </mat-expansion-panel-header>
+              <table class="info-table">
+                <tr>
+                  <td>Customer</td>
+                  <td>{{jobData.data.customerName}}</td>
+                </tr>
+                <tr>
+                  <td>Status</td>
+                  <td>{{jobData.data.jobStatus}}</td>
+                </tr>
+                <tr>
+                  <td>Start Date</td>
+                  <td>{{jobData.data.startDate}}</td>
+                </tr>
+                <tr>
+                  <td>End Date</td>
+                  <td>{{jobData.data.endDate}}</td>
+                </tr>
+                <tr>
+                  <td>Description</td>
+                  <td>{{jobData.data.description}}</td>
+                </tr>
+                <tr>
+                  <td>Address</td>
+                  <td>{{jobData.data.requestorAddress + ", " + jobData.data.requestorCity + ", " + jobData.data.requestorState + " " + jobData.data.requestorZip}}</td>
+                </tr>
+                <tr>
+                  <td>Flat Fee</td>
+                  <td>{{formatter.formatCurrency(jobData.data.flatfee)}}</td>
+                </tr>
+                <tr>
+                  <td>Hourly Rate</td>
+                  <td>{{formatter.formatCurrency(jobData.data.hourlyRate)}}</td>
+                </tr>
+                <tr>
+                  <td>Minutes<br>Worked</td>
+                  <td>{{jobData.data.minutesWorked}}</td>
+                </tr>
+                
+              </table>
+            </mat-expansion-panel>
+        </mat-accordion>
+        <div class="spacer"></div>
         <mat-accordion>
           <mat-expansion-panel [expanded]="true">
             <mat-expansion-panel-header>
-              <mat-panel-title> General Info </mat-panel-title>
+              <mat-panel-title> Services </mat-panel-title>
             </mat-expansion-panel-header>
-            <table class="info-table">
-              <tr>
-                <td>Customer</td>
-                <td>{{jobData.data.customerName}}</td>
-              </tr>
-              <tr>
-                <td>Status</td>
-                <td>{{jobData.data.jobStatus}}</td>
-              </tr>
-              <tr>
-                <td>Start Date</td>
-                <td>{{jobData.data.startDate}}</td>
-              </tr>
-              <tr>
-                <td>End Date</td>
-                <td>{{jobData.data.endDate}}</td>
-              </tr>
-              <tr>
-                <td>Description</td>
-                <td>{{jobData.data.description}}</td>
-              </tr>
-              <tr>
-                <td>Address</td>
-                <td>{{jobData.data.requestorAddress + ", " + jobData.data.requestorCity + ", " + jobData.data.requestorState + " " + jobData.data.requestorZip}}</td>
-              </tr>
-              <tr>
-                <td>Flat Fee</td>
-                <td>{{formatter.formatCurrency(jobData.data.flatfee)}}</td>
-              </tr>
-              <tr>
-                <td>Hourly Rate</td>
-                <td>{{formatter.formatCurrency(jobData.data.hourlyRate)}}</td>
-              </tr>
-              <tr>
-                <td>Minutes<br>Worked</td>
-                <td>{{jobData.data.minutesWorked}}</td>
-              </tr>
-              
-            </table>
+            <div>
+              <app-job-display-table
+                [dataSource]="jobData.services"
+                [typeToDisplay]="'service'"
+              ></app-job-display-table>
+            </div>
+            <div>
+              <app-job-display-table
+                [dataSource]="jobData.materials"
+                [typeToDisplay]="'material'"
+              ></app-job-display-table>
+            </div>
+            <div>
+              <app-job-display-table
+                [dataSource]="jobData.contractors"
+                [typeToDisplay]="'contractor'"
+              ></app-job-display-table>
+            </div>
           </mat-expansion-panel>
-      </mat-accordion>
-      <div class="spacer"></div>
-      <mat-accordion>
-        <mat-expansion-panel [expanded]="true">
-          <mat-expansion-panel-header>
-            <mat-panel-title> Services </mat-panel-title>
-          </mat-expansion-panel-header>
-          <div>
-            <app-job-display-table
-              [dataSource]="jobData.services"
-              [typeToDisplay]="'service'"
-            ></app-job-display-table>
-          </div>
-          <div>
-            <app-job-display-table
-              [dataSource]="jobData.materials"
-              [typeToDisplay]="'material'"
-            ></app-job-display-table>
-          </div>
-          <div>
-            <app-job-display-table
-              [dataSource]="jobData.contractors"
-              [typeToDisplay]="'contractor'"
-            ></app-job-display-table>
-          </div>
-        </mat-expansion-panel>
-      </mat-accordion>
-      <div class="spacer"></div>
-      <div class="items-center">
-        <button mat-stroked-button (click)="navigateToPage('jobs')">Return</button>
-        <button mat-flat-button (click)="openQuoteDialog()">Generate Quote</button>
+        </mat-accordion>
+        <div class="spacer"></div>
+        <div class="items-center">
+          <button mat-stroked-button (click)="navigateToPage('jobs')">Return</button>
+        </div>
+        </mat-card>
+        <div class="spacer"></div>
       </div>
-      </mat-card>
     }
-  
 </div>
 

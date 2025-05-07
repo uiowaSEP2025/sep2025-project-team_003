@@ -193,4 +193,8 @@ export class EditInvoicePageComponent implements OnInit {
       }})
       return;
   }
+
+  navigateToPage(pagePath: string) {
+    this.router.navigate([`/${pagePath}`]);
+  }
 }
