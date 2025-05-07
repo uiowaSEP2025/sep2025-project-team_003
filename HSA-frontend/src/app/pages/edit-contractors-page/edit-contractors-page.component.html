@@ -7,9 +7,9 @@
         </h1> 
       </div>
       <hr/>
-      <mat-card class="flex p-5 flex-direction: column; items-center">
-        <form class="flex flex-col justify-center">
-          <mat-form-field>
+      <mat-card class="p-5 wide-card">
+        <form class="parent">
+          <mat-form-field class="full-width-field">
             <mat-label>First Name</mat-label>
             <input matInput 
               [formControl]="firstNameControl" [errorStateMatcher]="matcher"
@@ -18,7 +18,7 @@
                 <mat-error>First Name is <strong>required</strong></mat-error>
               }
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field class="full-width-field">
             <mat-label>Last Name</mat-label>
             <input matInput 
               [formControl]="lastNameControl" [errorStateMatcher]="matcher"
@@ -27,7 +27,7 @@
                 <mat-error>Last Name is <strong>required</strong></mat-error>
               }
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field class="full-width-field">
             <mat-label>Email</mat-label>
             <input matInput 
               [formControl]="emailControl" [errorStateMatcher]="matcher"
@@ -39,7 +39,7 @@
                 <mat-error>Email is <strong>invalid</strong></mat-error>
               }
           </mat-form-field> 
-          <mat-form-field class="example-full-width">
+          <mat-form-field class="full-width-field">
             <mat-label>Phone Number</mat-label>
             <input matInput placeholder="Phone Number"
             [formControl]="phoneControl" pattern="(\(\d{3}\)\s?|\d{3}[-.\s])\d{3}[-.\s]?\d{4}">

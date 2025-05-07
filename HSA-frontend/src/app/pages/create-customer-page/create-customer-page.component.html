@@ -7,23 +7,23 @@
         </h1>
       </div>
       <hr/>
-      <mat-card class="flex p-5 flex-direction: column; items-center" >
-        <form class="flex flex-col justify-center">
-          <mat-form-field>
+      <mat-card class="p-5 wide-card" >
+        <form class="parent">
+          <mat-form-field class="full-width-field">
             <mat-label>First Name</mat-label>
             <input matInput [formControl]="firstNameControl" [errorStateMatcher]="matcher" placeholder="First Name">
             @if (firstNameControl.hasError('required')) {
             <mat-error>First Name is <strong>required</strong></mat-error>
             }
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field class="full-width-field">
             <mat-label>Last Name</mat-label>
             <input matInput [formControl]="lastNameControl" [errorStateMatcher]="matcher" placeholder="Last Name">
             @if (lastNameControl.hasError('required')) {
             <mat-error>Last Name is <strong>required</strong></mat-error>
             }
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field class="full-width-field">
             <mat-label>Email</mat-label>
             <input matInput [formControl]="emailControl" [errorStateMatcher]="matcher" placeholder="Email">
             @if (emailControl.hasError('required')) {
@@ -33,7 +33,7 @@
             <mat-error>Email is <strong>invalid</strong></mat-error>
             }
           </mat-form-field>
-          <mat-form-field class="example-full-width">
+          <mat-form-field class="full-width-field">
             <mat-label>Phone Number</mat-label>
             <input matInput placeholder="Phone Number" [formControl]="phoneControl"
               pattern="(\(\d{3}\)\s?|\d{3}[-.\s])\d{3}[-.\s]?\d{4}">
@@ -44,7 +44,7 @@
             <mat-error>Format is <strong>xxx-xxx-xxxx</strong></mat-error>
             }
           </mat-form-field>
-          <mat-form-field class="example-full-width">
+          <mat-form-field class="full-width-field">
             <mat-label>Add Notes</mat-label>
             <textarea matInput placeholder="" [formControl]="notesControl"></textarea>
           </mat-form-field>

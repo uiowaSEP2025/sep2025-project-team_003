@@ -42,3 +42,8 @@
   justify-content: space-between;
   align-items: center; 
 }
+
+.spacer {
+  flex: 1 1 auto;
+  min-height: 20px;
+}

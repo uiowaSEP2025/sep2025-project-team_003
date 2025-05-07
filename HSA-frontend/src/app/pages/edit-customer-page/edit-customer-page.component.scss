@@ -20,8 +20,14 @@
     margin: auto;
   }
   
-  .main-heading h1{
-    font-size: 50px;
+  .wide-card {
+    width: 400px;
+    margin: 0 auto;
+  }
+  
+  .full-width-field {
+    width: 100%;
+    margin-bottom: 5px;
   }
 
   .table-header {

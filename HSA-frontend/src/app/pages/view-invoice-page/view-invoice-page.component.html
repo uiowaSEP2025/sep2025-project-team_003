@@ -4,10 +4,18 @@
 			<app-loading-fallback stringToDisplay="Loading your invoice"></app-loading-fallback>
 		}
 		@else {
-			<h1>
-				Invoice Information
-			</h1>
-			<mat-card class="flex p-5 items-center">
+			<div class="table-header">
+				<div class="header-bar">
+					<h1>
+						Invoice Information
+					</h1>
+					<button mat-flat-button (click)="navigateViewInvoice()">
+						<mat-icon>picture_as_pdf</mat-icon>
+						Generate Invoice
+				</button>
+				</div>
+				<hr/>
+				<mat-card class="flex p-5 items-center">
 					<table class="info-table" data-testid="info-table">
 						<tr>
 							<td>Customer</td>
@@ -27,12 +35,12 @@
 						</tr>
 					</table>
 				<app-invoice-job [data]="invoiceData"></app-invoice-job>
-					<button mat-fab extended class="m-10" (click)="navigateViewInvoice()">
-							<mat-icon>auto_awesome</mat-icon>
-							Generate Invoice
-					</button>
+				<div class="spacer"></div>
+        		<div class="items-center">
 					<button mat-stroked-button class="mb-5" (click)="navigateToPage('invoices')">Return</button>
+				</div>
 			</mat-card>
+			</div>
 	}
 	</div>
 </div>
