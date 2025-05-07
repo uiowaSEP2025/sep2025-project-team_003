@@ -1,28 +1,19 @@
 <div class="container">
   <div class="sidebar" [ngClass]="{'open': sidebarExpanded}">
-    <div style="background-color: #005cbb;">
+    <div>
       <button class="close-btn" (click)="toggleSidebar()" matTooltip="Close" color="white">✖</button>
     </div>
     <ul>
       <hr/>
       <li><a href="/home">Home</a></li>
-      <hr/>
       <li><a href="/jobs">Jobs</a></li>
-      <hr/>
       <li><a href="/requests">Requests</a></li>
-      <hr/>
       <li><a href="/customers">Customers</a></li>
-      <hr/>
       <li><a href="/services">Services</a></li>
-      <hr/>
       <li><a href="/materials">Materials</a></li>
-      <hr/>
       <li><a href="/contractors">Contractors</a></li>
-      <hr/>
       <li><a href="/booking">Booking</a></li>
-      <hr/>
       <li><a href="/invoices">Invoices</a></li>
-      <hr/>
       <li><a href="/quotes">Quotes</a></li>
     </ul>
   </div>
@@ -35,9 +26,6 @@
   </button>
   <span>HSA</span>
   <span class="flex-auto"></span>
-  <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon" matTooltip="Share">
-    <mat-icon>share</mat-icon>
-  </button>
   @if (isLoggedIn === false) {
     <button mat-icon-button class="example-icon" aria-label="Example icon-button with login icon" (click)="navigateToPage('login')" matTooltip="Login">
       <mat-icon>login</mat-icon>

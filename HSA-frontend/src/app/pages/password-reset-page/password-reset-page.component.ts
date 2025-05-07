@@ -62,9 +62,10 @@ export class PasswordResetPageComponent implements OnInit {
 
         }
       }
-    })
-
-
+    }) 
   }
 
+  navigateToPage(pagePath: string) {
+    this.router.navigate([`/${pagePath}`]);
+  }
 }

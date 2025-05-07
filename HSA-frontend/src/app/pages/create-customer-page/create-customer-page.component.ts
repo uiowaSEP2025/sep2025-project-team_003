@@ -7,10 +7,11 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { CustomerService } from '../../services/customer.service';
 import { Router } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-create-customer-page',
-  imports: [FormsModule, MatInputModule, ReactiveFormsModule, MatButtonModule, MatIconModule],
+  imports: [FormsModule, MatInputModule, ReactiveFormsModule, MatButtonModule, MatIconModule, MatCardModule],
   templateUrl: './create-customer-page.component.html',
   styleUrl: './create-customer-page.component.scss'
 })
@@ -56,4 +57,7 @@ export class CreateCustomerPageComponent {
     )
   }
 
+  navigateToPage(pagePath: string) {
+    this.router.navigate([`/${pagePath}`]);
+  }
 }
