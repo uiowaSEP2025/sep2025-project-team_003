@@ -27,7 +27,8 @@ class Invoice(models.Model):
             "status": self.status,
             "dueDate": "N/A" if self.due_date == None else self.due_date,
             "issuanceDate": "N/A" if self.issuance_date == None else self.issuance_date,
-            "customer": f"{self.customer.first_name}, {self.customer.last_name}"
+            "customer": f"{self.customer.first_name}, {self.customer.last_name}",
+            "url": self.payment_url
         }
     
     def json(self):

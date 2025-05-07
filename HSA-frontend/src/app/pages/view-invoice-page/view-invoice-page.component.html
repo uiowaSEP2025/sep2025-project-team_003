@@ -25,6 +25,10 @@
 							<td>Due Date</td>
 							<td>{{invoiceData.dueDate}}</td>
 						</tr>
+						<tr>
+							<td>Payment Link</td>
+							<td>{{invoiceData.url}}</td>
+						</tr>
 					</table>
 				<app-invoice-job [data]="invoiceData"></app-invoice-job>
 					<button mat-fab extended class="m-10" (click)="navigateViewInvoice()">
