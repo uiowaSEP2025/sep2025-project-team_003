@@ -30,6 +30,7 @@ import { take } from 'rxjs/operators';
 import { StateList } from '../../utils/states-list';
 import { currencyValidator } from '../../utils/currency-validator';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 interface State {
   name: string,
@@ -57,7 +58,8 @@ interface State {
     FormsModule,
     MatTooltipModule,
     MatSelectModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    PageTemplateComponent
   ],
   templateUrl: './edit-job-page.component.html',
   styleUrl: './edit-job-page.component.scss'

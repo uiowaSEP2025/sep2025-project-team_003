@@ -11,6 +11,7 @@ import { ContractorService } from '../../services/contractor.service';
 import { MatSelectModule } from '@angular/material/select';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 import { ContractorNameId } from '../../services/contractor.service';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-booking-page',
@@ -26,8 +27,9 @@ import { ContractorNameId } from '../../services/contractor.service';
     MatCardModule,
     CalendarComponentComponent,
     MatSelectModule,
-    LoadingFallbackComponent
-],
+    LoadingFallbackComponent,
+    PageTemplateComponent
+  ],
   templateUrl: './booking-page.component.html',
   styleUrl: './booking-page.component.scss'
 })

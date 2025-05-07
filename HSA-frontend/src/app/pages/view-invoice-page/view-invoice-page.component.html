@@ -1,4 +1,5 @@
-<div class="parent">
+<app-page-template [title]="'Invoice Information'">
+
   <div class="main-heading">
 		@if (invoiceData === null) {
 			<app-loading-fallback stringToDisplay="Loading your invoice"></app-loading-fallback>
@@ -6,15 +7,11 @@
 		@else {
 			<div class="table-header">
 				<div class="header-bar">
-					<h1>
-						Invoice Information
-					</h1>
-					<button mat-flat-button (click)="navigateViewInvoice()">
+					<button class="mb-4" mat-flat-button (click)="navigateViewInvoice()">
 						<mat-icon>picture_as_pdf</mat-icon>
 						Generate Invoice
 				</button>
 				</div>
-				<hr/>
 				<mat-card class="flex p-5 items-center">
 					<table class="info-table" data-testid="info-table">
 						<tr>
@@ -47,5 +44,5 @@
 			</div>
 	}
 	</div>
-</div>
+</app-page-template>
 

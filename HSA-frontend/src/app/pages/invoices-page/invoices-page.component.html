@@ -1,25 +1,20 @@
-<div class="parent">
-  <div class="main-heading">
+<app-page-template [title]="'Invoices'">
 		@if (invoices === null) {
 			<app-loading-fallback stringToDisplay="Loading the invoice table"></app-loading-fallback>
 		}
 		@else {
 			<div class="table-header">
 				<div class="header-bar">
-					<h1>
-						<span>Invoices</span>
-					</h1>
-					<button mat-flat-button data-testid="create-button" (click)="navigateToPage('invoices/create')">
+					<button class="mb-4" mat-flat-button data-testid="create-button" (click)="navigateToPage('invoices/create')">
 						<mat-icon>add</mat-icon>
 						Add Invoice
 				</button>
 				</div>
-				<hr/>
-				<app-table-component 
-					[loadDataToTable]="this.loadDataToTable.bind(this)" 
+				<app-table-component
+					[loadDataToTable]="this.loadDataToTable.bind(this)"
 					editRedirect="/edit/invoice"
 					[deleteRequest]="invoiceService.deleteInvoice.bind(invoiceService)"
-					searchHint="search by customer name" 
+					searchHint="search by customer name"
 					[fetchedData]="invoices"
 					[headers]="['Status', 'Due Date', 'Customer']"
 					[hideValues]="['Id', 'Tax']"
@@ -28,5 +23,4 @@
 				></app-table-component>
 			</div>
 		}
-  </div>  
-</div>
+</app-page-template>

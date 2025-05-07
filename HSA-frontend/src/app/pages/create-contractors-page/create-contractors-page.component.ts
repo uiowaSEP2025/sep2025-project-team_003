@@ -6,10 +6,11 @@ import { MatButton } from '@angular/material/button';
 import { ContractorService } from '../../services/contractor.service';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-create-contractors-page',
-  imports: [MatInputModule,ReactiveFormsModule,FormsModule, MatButton, MatCardModule],
+  imports: [MatInputModule, ReactiveFormsModule, FormsModule, MatButton, MatCardModule, PageTemplateComponent],
   templateUrl: './create-contractors-page.component.html',
   styleUrl: './create-contractors-page.component.scss'
 })

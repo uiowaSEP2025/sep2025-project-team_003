@@ -6,6 +6,7 @@ import {TableComponentComponent} from '../../components/table-component/table-co
 import { MaterialService } from '../../services/material.service';
 import { CommonModule } from '@angular/common';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-materials-page',
@@ -14,7 +15,8 @@ import { LoadingFallbackComponent } from '../../components/loading-fallback/load
     MatIcon,
     TableComponentComponent,
     CommonModule,
-    LoadingFallbackComponent
+    LoadingFallbackComponent,
+    PageTemplateComponent
   ],
   templateUrl: './materials-page.component.html',
   styleUrl: './materials-page.component.scss'
@@ -22,7 +24,7 @@ import { LoadingFallbackComponent } from '../../components/loading-fallback/load
 export class MaterialsPageComponent implements OnInit {
   materials: any = null
   materialService: MaterialService
-  @ViewChild(TableComponentComponent) tableComponent!: TableComponentComponent 
+  @ViewChild(TableComponentComponent) tableComponent!: TableComponentComponent
 
   constructor(private router: Router, materialService: MaterialService) {
     this.materialService = materialService

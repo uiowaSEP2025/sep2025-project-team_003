@@ -7,6 +7,7 @@ import {MatInput} from '@angular/material/input';
 import { MaterialService } from '../../services/material.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-edit-material-page',
@@ -17,7 +18,8 @@ import { MatCardModule } from '@angular/material/card';
     MatInput,
     MatLabel,
     MatCardModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    PageTemplateComponent
   ],
   templateUrl: './edit-material-page.component.html',
   styleUrl: './edit-material-page.component.scss'

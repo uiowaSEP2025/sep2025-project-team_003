@@ -7,6 +7,7 @@ import {Router} from '@angular/router';
 import { ServiceService } from '../../services/service.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-create-service-page',
@@ -17,7 +18,8 @@ import { MatCardModule } from '@angular/material/card';
     MatInput,
     MatLabel,
     MatCardModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    PageTemplateComponent
   ],
   templateUrl: './create-service-page.component.html',
   styleUrl: './create-service-page.component.scss'

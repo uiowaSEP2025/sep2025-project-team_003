@@ -1,15 +1,12 @@
-<div class="parent">
-  <div class="main-heading">
+<app-page-template [title]="'Jobs'">
+
     @if (false) {
     <app-loading-fallback stringToDisplay="Loading the job table"></app-loading-fallback>
     }
     @else {
       <div class="table-header">
         <div class="header-bar">
-          <h1>
-            <span>Jobs</span>
-          </h1>
-          <button mat-flat-button id="add-job-button" (click)="navigateToPage('jobs/create')">
+          <button class="mb-4" mat-flat-button id="add-job-button" (click)="navigateToPage('jobs/create')">
             <mat-icon>add</mat-icon>
             Add Job
           </button>
@@ -22,7 +19,6 @@
                 [deleteRequest]="jobService.deleteJob.bind(jobService)" [loadDataToTable]="this.loadDataToTable.bind(this)"
                 searchHint="Search by any keywords" [checkbox]="'actions'" [hideValues]="['Id']" [width]="'auto'"
                 [clickableRows]="true" [onRowClick]="redirectJobDetails.bind(this)"
-                [disableEditCheck]="shouldDisableEdit"
                 [disableDeleteCheck]="shouldDisableDelete"
                 [headers]="['Description','Job Status','Start Date','End Date','Customer Name']"
               >
@@ -35,7 +31,6 @@
                 [deleteRequest]="jobService.deleteJob.bind(jobService)" [loadDataToTable]="this.loadDataToTable.bind(this)"
                 searchHint="Search by any keywords" [checkbox]="'actions'" [hideValues]="['Id']" [width]="'auto'"
                 [clickableRows]="true" [onRowClick]="redirectJobDetails.bind(this)"
-                [disableEditCheck]="shouldDisableEdit"
                 [disableDeleteCheck]="shouldDisableDelete"
                 [headers]="['Description','Job Status','Start Date','End Date','Customer Name']"
               >
@@ -48,7 +43,6 @@
                 [deleteRequest]="jobService.deleteJob.bind(jobService)" [loadDataToTable]="this.loadDataToTable.bind(this)"
                 searchHint="Search by any keywords" [checkbox]="'actions'" [hideValues]="['Id']" [width]="'auto'"
                 [clickableRows]="true" [onRowClick]="redirectJobDetails.bind(this)"
-                [disableEditCheck]="shouldDisableEdit"
                 [disableDeleteCheck]="shouldDisableDelete"
                 [headers]="['Description','Job Status','Start Date','End Date','Customer Name']"
               >
@@ -58,5 +52,4 @@
         </mat-tab-group>
       </div>
     }
-  </div>
-</div>
+</app-page-template>

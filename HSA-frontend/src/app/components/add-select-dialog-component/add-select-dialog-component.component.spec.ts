@@ -36,13 +36,13 @@ describe('AddSelectDialogComponentComponent', () => {
         MatDialogModule,
         MatButtonModule,
         AddSelectDialogComponentComponent,
-        TableComponentComponent,    
+        TableComponentComponent,
         LoadingFallbackComponent
       ],
       providers: [
         provideAnimationsAsync(),
         provideHttpClient(),
-        provideHttpClientTesting(), 
+        provideHttpClientTesting(),
         { provide: MatDialogRef, useValue: { close: () => {} } },
         { provide: MAT_DIALOG_DATA, useValue: dialogData },
         { provide: JobService, useClass: MockJobService },
@@ -66,7 +66,7 @@ describe('AddSelectDialogComponentComponent', () => {
   });
 
   it('should initialize with job data', () => {
-    configureTestBed({ 
+    configureTestBed({
       typeOfDialog: 'job',
       dialogData: {},
       searchHint: 'Search jobs',
@@ -88,7 +88,7 @@ describe('AddSelectDialogComponentComponent', () => {
       dialogData: { services: [] },
       materialInputFields: []
     });
-    
+
     component.setSelectedServices([1, 2]);
     expect(component.selectedServices).toEqual([1, 2]);
   });
@@ -99,7 +99,7 @@ describe('AddSelectDialogComponentComponent', () => {
       dialogData: { materials: [] },
       materialInputFields: []
     });
-    
+
     component.setSelectedMaterials([1, 2]);
     expect(component.selectedMaterials).toEqual([1, 2]);
     expect(component.materialInputFields.length).toBe(2);
@@ -111,7 +111,7 @@ describe('AddSelectDialogComponentComponent', () => {
       dialogData: { contractors: [] },
       materialInputFields: []
     });
-    
+
     component.setSelectedContractors([1, 2]);
     expect(component.selectedContractors).toEqual([1, 2]);
   });
@@ -122,7 +122,7 @@ describe('AddSelectDialogComponentComponent', () => {
       dialogData: [],
       headers: ['Templates']
     });
-    
+
     expect(component.getButtonAction()).toBe('apply');
   });
 
@@ -134,7 +134,7 @@ describe('AddSelectDialogComponentComponent', () => {
         { id: 1, unitsUsed: 5, pricePerUnit: 10 }
       ]
     });
-    
+
     expect(component.getUnitsUsedValue(1)).toBe(5);
     expect(component.getPricePerUnitValue(1)).toBe(10);
     expect(component.getUnitsUsedValue(2)).toBe('');
@@ -146,7 +146,7 @@ describe('AddSelectDialogComponentComponent', () => {
       dialogData: 0,
       headers: ['Customer']
     });
-    
+
     component.setSelectedCustomer([456]);
     expect(component.selectedCustomer).toEqual([456]);
     expect(component.isNotSelectedItems).toBeFalse();
@@ -158,7 +158,7 @@ describe('AddSelectDialogComponentComponent', () => {
       dialogData: { jobs: [] },
       materialInputFields: []
     });
-    
+
     component.setSelectedJob([1]);
     expect(component.selectedJob).toEqual([1]);
   });
@@ -169,8 +169,9 @@ describe('AddSelectDialogComponentComponent', () => {
       dialogData: { templates: [] },
       materialInputFields: []
     });
-    
+
     component.setSelectedJobTemplate([1]);
     expect(component.selectedTemplate).toEqual([1]);
   });
 });
+

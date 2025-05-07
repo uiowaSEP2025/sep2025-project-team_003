@@ -5,10 +5,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 import { DiscountsService } from '../../services/discount.service';
 import { MatButtonModule } from '@angular/material/button';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-discounts-page',
-  imports: [TableComponentComponent, MatIconModule, LoadingFallbackComponent,MatButtonModule],
+  imports: [TableComponentComponent, MatIconModule, LoadingFallbackComponent, MatButtonModule, PageTemplateComponent],
   templateUrl: './discounts-page.component.html',
   styleUrl: './discounts-page.component.scss'
 })

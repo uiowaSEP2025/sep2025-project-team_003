@@ -23,12 +23,13 @@ import integerValidator from '../../utils/whole-number-validator';
 import { JobService } from '../../services/job.service';
 import { MatCardModule } from '@angular/material/card';
 import { OrganizationService } from '../../services/organization.service';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-create-invoice-page',
   imports: [TableComponentComponent, CommonModule, MatButtonModule, MatError,
     FormsModule, MatFormFieldModule, InvoiceDatePickerComponent, MatSelectModule,
-    MatLabel, MatInputModule, MatCardModule, ReactiveFormsModule
+    MatLabel, MatInputModule, MatCardModule, ReactiveFormsModule, PageTemplateComponent
   ],
   templateUrl: './create-invoice-page.component.html',
   styleUrl: './create-invoice-page.component.scss'

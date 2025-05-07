@@ -6,6 +6,7 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {ActivatedRoute, Router} from '@angular/router';
 import { ServiceService } from '../../services/service.service';
 import { MatCardModule } from '@angular/material/card';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-edit-service-page',
@@ -16,7 +17,8 @@ import { MatCardModule } from '@angular/material/card';
     MatInput,
     MatLabel,
     MatCardModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    PageTemplateComponent
   ],
   templateUrl: './edit-service-page.component.html',
   styleUrl: './edit-service-page.component.scss'

@@ -1,26 +1,21 @@
-<div class="parent">
+<app-page-template [title]="'Create Invoice'">
+
 	@if(orgHasLink !== null && orgHasLink === false) {
 		<div class="w-full bg-yellow-200 text-yellow-900 text-center py-3 px-4 font-semibold shadow-md mt-5">
-			⚠️ Warning: You do not have a default payment link set up. 
-			Click 
-			<a href="/update-payment" class="text-blue-600 underline ml-1">here</a> 
+			⚠️ Warning: You do not have a default payment link set up.
+			Click
+			<a href="/update-payment" class="text-blue-600 underline ml-1">here</a>
 			to create one.
 		</div>
 	}
-	<div class="main-heading">
+
 		<div class="table-header">
-			<div class="header-bar">
-				<h1>
-					<span>Create Invoice</span>
-				</h1>
-			</div>
-			<hr/>
 			<h2 class="pb-5 pt-5">Select a customer to invoice</h2>
 			<mat-card class="flex p-10 flex-direction: column; items-center">
-				<app-table-component 
+				<app-table-component
 					data-testid="invoice-customers-table"
-					[loadDataToTable]="loadCustomersToTable.bind(this)" 
-					editRedirect="" 
+					[loadDataToTable]="loadCustomersToTable.bind(this)"
+					editRedirect=""
 					[hideValues]="['Actions', 'Id']"
 					[fetchedData]="customers"
 					checkbox="single"
@@ -30,15 +25,15 @@
 					[headers]="['Checkbox','First Name','Last Name', 'Email', 'Phone No']"
 				></app-table-component>
 				@if (selectedCustomersIsError) {
-						<mat-error class="mt-3">You must select a customer to invoice</mat-error>    
+						<mat-error class="mt-3">You must select a customer to invoice</mat-error>
 				}
 
 				<div class="m-10"></div>
 				@if (selectedCustomers.length !== 0) {
-					<app-table-component 
+					<app-table-component
 							data-testid="invoice-quotes-table"
-							[loadDataToTable]="loadJobsToTable.bind(this)" 
-							editRedirect="" 
+							[loadDataToTable]="loadJobsToTable.bind(this)"
+							editRedirect=""
 							[hideValues]="['Actions', 'Id']"
 							[fetchedData]="jobs"
 							checkbox="multiple"
@@ -46,10 +41,10 @@
 							[setCheckedIds]="setSelectedQuotes.bind(this)"
 							[headers]="['Checkbox','Material Subtotal', 'Total Price', 'Job Description']"
 					>
-					</app-table-component> 
+					</app-table-component>
 					@if (selectedJobsIsError) {
-							<mat-error class="mt-3">You must select a job to include</mat-error>    
-					}   
+							<mat-error class="mt-3">You must select a job to include</mat-error>
+					}
 				}
 				<div>
 					<mat-form-field class="mt-5 mr-5">
@@ -61,7 +56,7 @@
 						</mat-select>
 				</mat-form-field>
 				@if (isDateSelectVisible()) {
-						<app-invoice-date-picker 
+						<app-invoice-date-picker
 								[formControll]="range"
 								[dateLabels]="['Issuance date', 'Due date']"
 						></app-invoice-date-picker>
@@ -71,7 +66,7 @@
 						<mat-label>Tax rate</mat-label>
 						<input matInput
 								data-testid="tax-input"
-								[formControl]="taxAmount" 
+								[formControl]="taxAmount"
 								[errorStateMatcher]="matcher"
 								type="number"
 						>
@@ -86,7 +81,7 @@
 						}
 				</mat-form-field>
 				</div>
-				
+
 				<div class="max-w-md pt-5">
 						<p class="text-center text-sm text-gray-600">
 								<strong>Disclaimer:</strong> You are responsible for understanding and complying with the tax laws of your jurisdiction.
@@ -101,5 +96,6 @@
 			</mat-card>
 			<div class="spacer"></div>
 		</div>
-	</div>
-</div>
+</app-page-template>
+
+

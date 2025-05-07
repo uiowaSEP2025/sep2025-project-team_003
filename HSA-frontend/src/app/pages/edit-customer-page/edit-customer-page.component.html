@@ -1,17 +1,10 @@
-<div class="parent">
-  <div class="main-heading">
+<app-page-template [title]="'Edit Customer'">
     <div class="table-header">
-      <div class="header-bar">
-        <h1>
-          <span>Edit Customer</span>
-        </h1> 
-      </div>
-      <hr/>
-      <mat-card class="p-5 wide-card"> 
+      <mat-card class="p-5 wide-card">
         <form class="parent">
           <mat-form-field class="full-width-field">
             <mat-label>First Name</mat-label>
-            <input matInput 
+            <input matInput
               data-testid="first-name-input"
               [formControl]="firstNameControl" [errorStateMatcher]="matcher"
               placeholder="First Name" [value]="lastName">
@@ -21,7 +14,7 @@
           </mat-form-field>
           <mat-form-field class="full-width-field">
             <mat-label>Last Name</mat-label>
-            <input matInput 
+            <input matInput
               data-testid="last-name-input"
               [formControl]="lastNameControl" [errorStateMatcher]="matcher"
               placeholder="Last Name">
@@ -31,7 +24,7 @@
           </mat-form-field>
           <mat-form-field class="full-width-field">
             <mat-label>Email</mat-label>
-            <input matInput 
+            <input matInput
               data-testid="email-input"
               [formControl]="emailControl" [errorStateMatcher]="matcher"
               placeholder="Email">
@@ -41,10 +34,10 @@
               @if (emailControl.hasError('email')) {
                 <mat-error>Email is <strong>invalid</strong></mat-error>
               }
-          </mat-form-field> 
+          </mat-form-field>
           <mat-form-field class="full-width-field">
             <mat-label>Phone Number</mat-label>
-            <input matInput 
+            <input matInput
             data-testid="phone-input"
             placeholder="Phone Number"
             [formControl]="phoneControl" pattern="(\(\d{3}\)\s?|\d{3}[-.\s])\d{3}[-.\s]?\d{4}">
@@ -67,6 +60,4 @@
         </form>
       </mat-card>
     </div>
-  </div>
-</div>
-
+</app-page-template>

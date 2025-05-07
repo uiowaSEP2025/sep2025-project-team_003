@@ -1,12 +1,5 @@
-<div class="parent">
-  <div class="main-heading">
+<app-page-template [title]="'Create Service'">
     <div class="table-header">
-      <div class="header-bar">
-        <h1>
-          Create Service
-        </h1>
-      </div>
-      <hr/>
       <mat-card class="p-5 wide-card">
         <form class="parent" [formGroup]="serviceForm" (ngSubmit)="onSubmit()">
           <mat-form-field class="full-width-field">
@@ -21,15 +14,15 @@
               <mat-error>Service Name is required</mat-error>
             }
           </mat-form-field>
-      
+
           <mat-form-field class="full-width-field">
             <mat-label>Description</mat-label>
-            <textarea 
-              matInput 
+            <textarea
+              matInput
               formControlName="serviceDescription"
               ></textarea>
           </mat-form-field>
-      
+
           <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
             <button mat-flat-button type="submit">Create</button>
             <button mat-stroked-button (click)="navigateToPage('services')">Cancel</button>
@@ -37,5 +30,5 @@
         </form>
       </mat-card>
     </div>
-  </div>
-</div>
+</app-page-template>
+

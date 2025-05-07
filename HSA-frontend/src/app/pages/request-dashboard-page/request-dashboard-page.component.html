@@ -1,26 +1,19 @@
-<div class="parent">
-  <div class="main-heading">
+<app-page-template [title]="'Requests'">
     @if (hasNoData()) {
       <app-loading-fallback stringToDisplay="Loading the request table"></app-loading-fallback>
     }
     @else {
       <div class="table-header">
-        <div class="header-bar">
-          <h1>
-            <span>Requests</span>
-          </h1>
-        </div>
-        <hr/>
         <mat-tab-group class="tab-container" (selectedTabChange)="onTabChange($event)" [disablePagination]="true">
           <mat-tab [label]="'Approved'">
             <div class="small-box mat-elevation-z4">
-              <app-table-component 
-                editRedirect="" 
-                [fetchedData]="tabStates.Approved.data" 
-                [deleteRequest]="requestService.deleteRequest.bind(requestService)" 
+              <app-table-component
+                editRedirect=""
+                [fetchedData]="tabStates.Approved.data"
+                [deleteRequest]="requestService.deleteRequest.bind(requestService)"
                 [approveRequest]="requestService.approveDenyRequest.bind(requestService)"
                 [loadDataToTable]="this.loadDataToTable.bind(this)"
-                searchHint="Search by any keywords" 
+                searchHint="Search by any keywords"
                 [status]="'approved'"
                 [checkbox]="'none'"
                 [hideValues]="['Id']"
@@ -32,13 +25,13 @@
           </mat-tab>
           <mat-tab [label]="'Pending'">
             <div class="large-box mat-elevation-z4">
-              <app-table-component 
-                editRedirect="/jobs/edit" 
-                [fetchedData]="tabStates.Pending.data" 
-                [deleteRequest]="requestService.deleteRequest.bind(requestService)" 
+              <app-table-component
+                editRedirect="/jobs/edit"
+                [fetchedData]="tabStates.Pending.data"
+                [deleteRequest]="requestService.deleteRequest.bind(requestService)"
                 [approveRequest]="requestService.approveDenyRequest.bind(requestService)"
                 [loadDataToTable]="this.loadDataToTable.bind(this)"
-                searchHint="Search by any keywords" 
+                searchHint="Search by any keywords"
                 [status]="'received'"
                 [checkbox]="'approval'"
                 [hideValues]="['Id']"
@@ -51,5 +44,5 @@
         </mat-tab-group>
       </div>
     }
-  </div>
-</div>
+
+</app-page-template>

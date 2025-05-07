@@ -5,21 +5,23 @@ import { InvoiceService } from '../../services/invoice.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-invoices-page',
   imports: [
-    TableComponentComponent, 
-    MatButtonModule, 
+    TableComponentComponent,
+    MatButtonModule,
     MatIconModule,
-    LoadingFallbackComponent
+    LoadingFallbackComponent,
+    PageTemplateComponent
   ],
   templateUrl: './invoices-page.component.html',
   styleUrl: './invoices-page.component.scss'
 })
 export class InvoicesPageComponent implements OnInit{
   invoiceService: InvoiceService
-  
+
 
   constructor (private router: Router, invoiceService: InvoiceService) {
     this.invoiceService = invoiceService

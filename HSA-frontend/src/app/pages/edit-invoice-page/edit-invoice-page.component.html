@@ -1,12 +1,5 @@
-<div class="parent">
-    <div class="main-heading">
+     <app-page-template [title]="'Edit Invoice'">
         <div class="table-header">
-            <div class="header-bar">
-                <h1>
-                    <span>Edit Invoice</span>
-                </h1> 
-            </div>
-            <hr/>
             <mat-card class="flex p-5 flex-direction: column; items-center">
                 <mat-card class="p-5">
                     <div>Editing invoice for customer: {{customerName}}</div>
@@ -14,7 +7,7 @@
                     <div>and due date: {{dueDate}}</div>
                     <div>and status: {{initialStatus}}</div>
                 </mat-card>
-            
+
                 <mat-form-field class="pt-5">
                     <mat-label>Status</mat-label>
                     <mat-select data-testid="status-selector" matNativeControl required [(ngModel)]="status">
@@ -27,9 +20,9 @@
                 <app-invoice-date-picker [formControll]="range"
                     [dateLabels]="['Issuance date', 'Due date']"></app-invoice-date-picker>
                 }
-            
+
                 <h2 class="pb-5">Select new jobs for this invoice</h2>
-            
+
                 <app-table-component data-testid="invoice-quotes-table" [loadDataToTable]="loadJobs.bind(this)"
                     editRedirect="" [hideValues]="['Actions', 'Id', 'Invoice']" [fetchedData]="jobs" checkbox="multiple"
                     [checkedIds]="selectedJobs" [setCheckedIds]="setSelectedJobs.bind(this)" [hideSearch]="true"
@@ -38,7 +31,7 @@
                 @if (selectedJobsisError) {
                 <mat-error class="mt-3">You must select a job to include</mat-error>
                 }
-            
+
                 <mat-form-field class="pt-10 inputWidth">
                     <mat-label>Tax rate</mat-label>
                     <input matInput [formControl]="taxAmount" [errorStateMatcher]="matcher"  data-testid="tax-input">
@@ -76,5 +69,4 @@
                 </div>
             </mat-card>
         </div>
-    </div>
-</div>
+     </app-page-template>

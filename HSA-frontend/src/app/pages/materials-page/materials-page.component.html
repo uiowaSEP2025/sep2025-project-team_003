@@ -1,26 +1,20 @@
-<div class="parent">
-  <div class="main-heading">
+<app-page-template [title]="'Materials'">
     @if (materials === null) {
       <app-loading-fallback stringToDisplay="Loading materials"></app-loading-fallback>
-    } 
+    }
     @else {
       <div class="table-header">
         <div class="header-bar">
-          <h1>
-            <span>Materials</span>
-          </h1>
-          <button mat-flat-button id="add-material-button" (click)="navigateToPage('materials/create')">
+          <button class="mb-4" mat-flat-button id="add-material-button" (click)="navigateToPage('materials/create')">
             <mat-icon>add</mat-icon>
             Add Material
           </button>
         </div>
-        <hr/>
-        <app-table-component editRedirect="/materials/edit" [fetchedData]="materials"
+        <app-table-component class="w-full" editRedirect="/materials/edit" [fetchedData]="materials"
           [deleteRequest]="materialService.deleteMaterial.bind(materialService)"
           [loadDataToTable]="this.loadDataToTable.bind(this)" [hideValues]="['Id']" searchHint="Search by material name"
-          [headers]="['Material Name']" [width]="'40vw'"
+          [headers]="['Material Name']"
         ></app-table-component>
       </div>
     }
-  </div>
-</div>
+</app-page-template>

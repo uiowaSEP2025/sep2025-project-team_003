@@ -1,3 +1,4 @@
+<app-page-template [title]="'Booking and Calendar'">
 @if (contractors === null) {
   <app-loading-fallback stringToDisplay="loading Your bookings"></app-loading-fallback>
 }
@@ -5,12 +6,6 @@
   <div class="parent">
     <div class="main-heading">
       <div class="table-header">
-        <div class="header-bar">
-          <h1>
-            Booking and Calendar
-          </h1>
-        </div>
-        <hr/>
         <mat-card class="flex p-10 flex-direction: column; items-left">
           <app-calendar-component [contractorNames]="contractors"></app-calendar-component>
         </mat-card>
@@ -20,3 +15,4 @@
     </div>
   </div>
 }
+</app-page-template>

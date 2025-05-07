@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { OrganizationService } from '../../services/organization.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-update-payment-page',
@@ -17,7 +18,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatButtonModule,
     MatCardModule,
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    PageTemplateComponent
   ],
   templateUrl: './update-payment-page.component.html',
   styleUrl: './update-payment-page.component.scss'

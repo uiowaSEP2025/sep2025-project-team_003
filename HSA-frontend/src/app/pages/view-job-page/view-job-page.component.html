@@ -1,4 +1,4 @@
-<div class="parent">
+<app-page-template [title]="'Job Information'">
   <div class="main-heading">
     @if (jobData === null) {
       <app-loading-fallback stringToDisplay="Loading the job"></app-loading-fallback>
@@ -6,10 +6,7 @@
     @else {
       <div class="table-header">
         <div class="header-bar">
-          <h1>
-            <span>Job Information</span>
-          </h1>
-          <button mat-flat-button (click)="openQuoteDialog()">
+          <button class="mb-4" mat-flat-button (click)="openQuoteDialog()">
             <mat-icon>picture_as_pdf</mat-icon>
             Generate Quote
           </button>
@@ -58,7 +55,7 @@
                   <td>Minutes<br>Worked</td>
                   <td>{{jobData.data.minutesWorked}}</td>
                 </tr>
-                
+
               </table>
             </mat-expansion-panel>
         </mat-accordion>
@@ -98,3 +95,4 @@
     }
 </div>
 
+</app-page-template>

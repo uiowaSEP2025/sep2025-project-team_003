@@ -8,6 +8,7 @@ import { LoadingFallbackComponent } from '../../components/loading-fallback/load
 import { CommonModule } from '@angular/common';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { TableApiResponse } from '../../interfaces/api-responses/table.api.interface';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-job-page',
@@ -16,7 +17,7 @@ import { TableApiResponse } from '../../interfaces/api-responses/table.api.inter
     MatIconModule,
     LoadingFallbackComponent,
     CommonModule,
-    MatTabsModule],
+    MatTabsModule, PageTemplateComponent],
   templateUrl: './job-page.component.html',
   styleUrl: './job-page.component.scss'
 })

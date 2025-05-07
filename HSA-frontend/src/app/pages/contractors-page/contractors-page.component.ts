@@ -6,10 +6,11 @@ import { Router } from '@angular/router';
 import { ContractorService } from '../../services/contractor.service';
 import { CommonModule } from '@angular/common';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-contractors-page',
-  imports: [TableComponentComponent, MatButtonModule, MatIcon, CommonModule, LoadingFallbackComponent],
+  imports: [TableComponentComponent, MatButtonModule, MatIcon, CommonModule, LoadingFallbackComponent, PageTemplateComponent],
   templateUrl: './contractors-page.component.html',
   styleUrl: './contractors-page.component.scss'
 })

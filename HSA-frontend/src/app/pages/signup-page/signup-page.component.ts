@@ -16,6 +16,7 @@ import { MatCardModule } from '@angular/material/card';
 import { passwordStrengthValidator, validateConfirmMatchesAndNotNull } from '../../utils/password-validators';
 import { AddConfirmDialogComponentComponent } from '../../components/add-confirm-dialog-component/add-confirm-dialog-component.component';
 import { MatDialog } from '@angular/material/dialog';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-signup-page',
@@ -28,7 +29,8 @@ import { MatDialog } from '@angular/material/dialog';
     ReactiveFormsModule,
     MatButton,
     MatSelect,
-    MatOption
+    MatOption,
+    PageTemplateComponent
   ],
   templateUrl: './signup-page.component.html',
   styleUrl: './signup-page.component.scss',
@@ -43,11 +45,11 @@ export class SignupPageComponent {
   @ViewChild('stepper') stepper!: MatStepper;
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private userAccountFormBuilder: FormBuilder,
-    private registrationFormBuilder: FormBuilder, 
+    private registrationFormBuilder: FormBuilder,
     private organizationLocationFormBuilder: FormBuilder,
-    private authService: UserAuthService, 
+    private authService: UserAuthService,
     private tracker: RequestTrackerService,
     private snackBar: MatSnackBar,
     private http: HttpClient,
@@ -139,7 +141,7 @@ export class SignupPageComponent {
         ownerLn: this.registrationForm.get('ownerName')?.value.split(' ').slice(1).join(' '),
         isOnboarding: true,
       }
- 
+
       const userCreateRequest = {
         organizationInfo: organizationCreateRequest,
         firstName: this.userAccountForm.get('userFirstName')?.value,
@@ -148,7 +150,7 @@ export class SignupPageComponent {
         username: this.userAccountForm.get('username')?.value,
         password: this.userAccountForm.get('password')?.value
       }
- 
+
       this.authService.createUser(userCreateRequest).subscribe({
         next: (response) => {
           this.snackBar.open('Organization Created!', '', {
@@ -157,7 +159,7 @@ export class SignupPageComponent {
           this.router.navigate(["login"])
         },
         error: (error) => {
- 
+
         }
       })
     }

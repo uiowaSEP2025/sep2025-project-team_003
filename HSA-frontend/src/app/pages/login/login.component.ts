@@ -9,16 +9,18 @@ import { UserAuthService } from '../../services/user-auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 
 @Component({
   selector: 'app-login',
   imports: [
-    FormsModule, 
-    MatFormFieldModule, 
-    MatInputModule, 
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
     MatButtonModule,
     MatCardModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    PageTemplateComponent
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
@@ -53,7 +55,7 @@ export class LoginComponent {
           if (this.previousUrlPath === 'login') {
             this.previousUrlPath = 'home'
           }
-          
+
           this.navigateToPage(`/${this.previousUrlPath}`)
         },
         error: (error) => {
