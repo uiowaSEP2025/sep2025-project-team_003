@@ -1,28 +1,41 @@
-<div class="filter-buttons">
-    <button (click)="applyFilter('')">All</button>
-    <button (click)="applyFilter('created')">Created</button>
-    <button (click)="applyFilter('accepted')">Accepted</button>
-    <button (click)="applyFilter('rejected')">Rejected</button>
+<div class="parent">
+  <div class="main-heading">
+    <div class="table-header">
+      <div class="header-bar">
+        <h1>
+          <span>Quotes</span>
+        </h1>
+      </div>
+      <hr/>
+      <div class="filter-buttons">
+        <button mat-flat-button [disabled]="filter === ''" (click)="applyFilter('')">All</button>
+        <button mat-flat-button [disabled]="filter === 'created'" (click)="applyFilter('created')">Created</button>
+        <button mat-flat-button [disabled]="filter === 'accepted'"(click)="applyFilter('accepted')">Accepted</button>
+        <button mat-flat-button [disabled]="filter === 'rejected'" (click)="applyFilter('rejected')">Rejected</button>
+      </div>
+      <div class="spacer"></div>
+      <table class="quote-table">
+        <thead>
+          <tr>
+            <th>Job ID</th>
+            <th>Customer</th>
+            <th>Status</th>
+            <th>Start</th>
+            <th>End</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let quote of quotes" (click)="openQuote(quote)">
+            <td>{{ quote.job_id }}</td>
+            <td>{{ quote.customer_name }}</td>
+            <td>{{ quote.quote_status }}</td>
+            <td>{{ quote.start_date || '—' }}</td>
+            <td>{{ quote.end_date || '—' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-  
-  <table class="quote-table">
-    <thead>
-      <tr>
-        <th>Job ID</th>
-        <th>Customer</th>
-        <th>Status</th>
-        <th>Start</th>
-        <th>End</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let quote of quotes" (click)="openQuote(quote)">
-        <td>{{ quote.job_id }}</td>
-        <td>{{ quote.customer_name }}</td>
-        <td>{{ quote.quote_status }}</td>
-        <td>{{ quote.start_date || '—' }}</td>
-        <td>{{ quote.end_date || '—' }}</td>
-      </tr>
-    </tbody>
-  </table>
+</div>
+
   

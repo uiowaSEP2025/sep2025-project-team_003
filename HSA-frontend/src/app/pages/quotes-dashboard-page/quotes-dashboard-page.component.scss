@@ -1,18 +1,18 @@
-.filter-buttons {
-    margin-bottom: 1rem;
-    button {
-      margin-right: 0.5rem;
-      padding: 6px 12px;
-      background-color: #2a9d8f;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      &:hover {
-        background-color: #23867a;
-      }
-    }
-  }
+// .filter-buttons {
+//     margin-bottom: 1rem;
+//     button {
+//       margin-right: 0.5rem;
+//       padding: 6px 12px;
+//       background-color: #2a9d8f;
+//       color: white;
+//       border: none;
+//       border-radius: 5px;
+//       cursor: pointer;
+//       &:hover {
+//         background-color: #23867a;
+//       }
+//     }
+//   }
   
   .quote-table {
     width: 100%;
@@ -56,6 +56,12 @@ header {
 .table {
   background-color:rgb(250, 249, 253);
   width: 100vw;
+  border: 1px solid #000000;
+}
+
+.spacer {
+  flex: 1 1 auto;
+  min-height: 20px;
 }
 
 .table-header {
