@@ -43,10 +43,26 @@ stages:
             # Capture and analyze test results
             TEST_CONTAINER_EXIT_CODE=$(docker inspect frontend-tests --format='{{.State.ExitCode}}')
             
+            # Copy coverage report from container
+            docker cp frontend-tests:/app/HSA-frontend/coverage ./coverage
+            
             # Capture logs regardless of test outcome
             docker logs frontend-tests > $(Build.ArtifactStagingDirectory)/frontend-test-results.txt
             
-            # Check for any Behave test failures
+            # Extract coverage percentage from the coverage/index.html file
+            COVERAGE_PCT=$(grep -o 'headerCovTableEntryHi">[0-9.]*' ./coverage/index.html | grep -o '[0-9.]*' || echo "0")
+            echo "##vso[task.setvariable variable=CoveragePercentage]$COVERAGE_PCT"
+            echo "Total coverage: $COVERAGE_PCT%"
+            
+            # Check coverage threshold
+            MIN_COVERAGE=65
+            if (( $(echo "$COVERAGE_PCT < $MIN_COVERAGE" | bc -l) )); then
+              echo "##vso[task.logissue type=error]Code coverage is below the minimum threshold of $MIN_COVERAGE%. Current coverage: $COVERAGE_PCT%"
+              echo "##vso[task.complete result=Failed;]Code coverage check failed"
+              exit 1
+            fi
+            
+            # Check for any test failures
             if grep -q "FAILED" $(Build.ArtifactStagingDirectory)/frontend-test-results.txt; then
               echo "frontend tests detected failures"
               exit 1
@@ -57,7 +73,7 @@ stages:
               echo "frontend tests failed with exit code $TEST_CONTAINER_EXIT_CODE"
               exit 1
             fi
-          displayName: 'Analyze Test Results'
+          displayName: 'Analyze Test Results and Coverage'
           condition: always()
 
         - task: PublishBuildArtifacts@1
@@ -65,6 +81,14 @@ stages:
           inputs:
             PathtoPublish: '$(Build.ArtifactStagingDirectory)'
             ArtifactName: 'FrontendTestResults'
+          condition: always()
+
+        - task: PublishCodeCoverageResults@1
+          displayName: 'Publish code coverage report'
+          inputs:
+            codeCoverageTool: 'Cobertura'
+            summaryFileLocation: './coverage/cobertura-coverage.xml'
+            reportDirectory: './coverage'
           condition: always()
 
 
