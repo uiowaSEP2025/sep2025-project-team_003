@@ -2,10 +2,10 @@
 # Build a Docker image
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
-trigger: none
+trigger:
+  - minimum-coverage
 
-pr:
-- dev
+pr: none
 
 resources:
 - repo: self
