@@ -43,6 +43,7 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges, OnI
   @ViewChild("week") week!: DayPilotCalendarComponent;
   @ViewChild("navigator") nav!: DayPilotNavigatorComponent;
   @Input({ required: true }) contractorNames!: ContractorNameId[]
+  isMobile: boolean = false
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
@@ -56,6 +57,9 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges, OnI
   updateView() {
     if (window.innerWidth < 768) {
       this.viewDay(); // Switch to day view on smaller screens
+      this.isMobile = true
+    } else {
+      this.isMobile = false
     }
   }
 

@@ -1,37 +1,30 @@
 <mat-toolbar>
-  <mat-toolbar-row>
-  <span class="flex-auto">
-
-  </span>
-    <span>
-				<button (click)="viewDay()"
-                [class]="isDay() ? 'selected button' : 'button'">Day</button>
-				<button (click)="viewWeek()"
-                [class]="!isDay() ? 'selected button' : 'button'">Week</button>
+  <mat-toolbar-row class="toolbar-content-above">
+    <span class="flex-auto"></span>
+    <span class="view-toggle">
+      <button (click)="viewDay()" 
+              [class]="isDay() ? 'selected button' : 'button'">Day</button>
+      <button (click)="viewWeek()" 
+              [disabled]="isMobile"
+              [class]="!isDay() ? 'selected button' : 'button'">Week</button>
     </span>
   </mat-toolbar-row>
-    <mat-toolbar-row class="md:hidden">
-
-			<mat-form-field appearance="fill" class="ml-4" style="width: 40%">
-				<mat-label>Select a contractor</mat-label>
-				<mat-select [formControl]="selectControl" data-testid="contractor">
-				  <mat-option *ngFor="let contractor of contractorNames" [value]="contractor">
-					{{ contractor.name }}
-				  </mat-option>
-				</mat-select>
-			  </mat-form-field>
-  <span class="flex-auto">
-
-    </span>
-  <div class="flex flex-row justify-evenly items-center">
-
-
-    <button mat-raised-button (click)="downloadIcal()">
-      <mat-icon>file_download</mat-icon>
-      {{ isDay() ? "Download all bookings for the day" : "Download all bookings for the week" }}
-    </button>
-  </div>
-    </mat-toolbar-row>
+  <mat-toolbar-row class="toolbar-content-below">
+    <mat-form-field appearance="fill" class="selector">
+      <mat-label>Select a contractor</mat-label>
+      <mat-select [formControl]="selectControl" data-testid="contractor">
+        <mat-option *ngFor="let contractor of contractorNames" [value]="contractor">
+          {{ contractor.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div class="download-button">
+      <button mat-raised-button (click)="downloadIcal()">
+        <mat-icon>file_download</mat-icon>
+        {{ isDay() ? "Download all bookings for the day" : "Download all bookings for the week" }}
+      </button>
+    </div>
+  </mat-toolbar-row>
 </mat-toolbar>
 <div class="sm:hidden mt-4 flex flex-row justify-center items-center">
   <div class=" block align-center" data-testid="nav2">
