@@ -27,10 +27,10 @@
             <td mat-cell *matCellDef="let element; let i = $index;">
               @if (header === "Actions") {
               <div class="flex gap-2">
-                  <button mat-mini-fab class="no-shadow" style="background-color: #9eccfa" (click)="redirectEdit(element.id, element)">
-                    <mat-icon>edit</mat-icon>
-                  </button>
-                <button mat-mini-fab class="no-shadow" click-stop-propagation style="background-color: #9eccfa" (click)="openDeleteDialog(element)">
+                <button mat-mini-fab class="no-shadow" style="background-color: #9eccfa" (click)="redirectEdit(element.id, element)" [disabled]="shouldDisableEdit(element)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-mini-fab class="no-shadow" click-stop-propagation style="background-color: #9eccfa" (click)="openDeleteDialog(element)" [disabled]="shouldDisableDelete(element)">
                   <mat-icon>delete</mat-icon>
                 </button>
               </div>

@@ -5,7 +5,7 @@
 trigger: none
 
 pr:
-- dev
+  - dev
 
 resources:
 - repo: self
@@ -37,7 +37,7 @@ stages:
               --name frontend-tests \
               hsa-frontend-tests:$(tag)
           displayName: 'Run Frontend Unit Tests'
-          continueOnError: true  # Allow subsequent steps to run
+          continueOnError: true
 
         - bash: |
             # Capture and analyze test results
@@ -46,7 +46,26 @@ stages:
             # Capture logs regardless of test outcome
             docker logs frontend-tests > $(Build.ArtifactStagingDirectory)/frontend-test-results.txt
             
-            # Check for any Behave test failures
+            # Extract Lines coverage percentage from the Karma output
+            LINES_COVERAGE=$(grep "Lines" $(Build.ArtifactStagingDirectory)/frontend-test-results.txt | grep -o '[0-9.]*%' | head -1 | sed 's/%//')
+            STATEMENTS_COVERAGE=$(grep "Statements" $(Build.ArtifactStagingDirectory)/frontend-test-results.txt | grep -o '[0-9.]*%' | head -1 | sed 's/%//')
+            BRANCHES_COVERAGE=$(grep "Branches" $(Build.ArtifactStagingDirectory)/frontend-test-results.txt | grep -o '[0-9.]*%' | head -1 | sed 's/%//')
+            FUNCTIONS_COVERAGE=$(grep "Functions" $(Build.ArtifactStagingDirectory)/frontend-test-results.txt | grep -o '[0-9.]*%' | head -1 | sed 's/%//')
+            
+            echo "Lines coverage: $LINES_COVERAGE%"
+            echo "Statements coverage: $STATEMENTS_COVERAGE%"
+            echo "Branches coverage: $BRANCHES_COVERAGE%"
+            echo "Functions coverage: $FUNCTIONS_COVERAGE%"
+            
+            # Check coverage threshold (using Lines coverage as the primary metric)
+            MIN_COVERAGE=60
+            if (( $(echo "$LINES_COVERAGE < $MIN_COVERAGE" | bc -l) )); then
+              echo "##vso[task.logissue type=error]Lines code coverage is below the minimum threshold of $MIN_COVERAGE%. Current coverage: $LINES_COVERAGE%"
+              echo "##vso[task.complete result=Failed;]Code coverage check failed"
+              exit 1
+            fi
+            
+            # Check for any test failures
             if grep -q "FAILED" $(Build.ArtifactStagingDirectory)/frontend-test-results.txt; then
               echo "frontend tests detected failures"
               exit 1
@@ -57,7 +76,7 @@ stages:
               echo "frontend tests failed with exit code $TEST_CONTAINER_EXIT_CODE"
               exit 1
             fi
-          displayName: 'Analyze Test Results'
+          displayName: 'Analyze Test Results and Coverage'
           condition: always()
 
         - task: PublishBuildArtifacts@1
@@ -97,16 +116,16 @@ stages:
         - bash: |
             # Capture and analyze test results
             TEST_CONTAINER_EXIT_CODE=$(docker inspect backend-tests --format='{{.State.ExitCode}}')
-            
+
             # Capture logs regardless of test outcome
             docker logs backend-tests > $(Build.ArtifactStagingDirectory)/backend-test-results.txt
-            
+
             # Check for any Behave test failures
             if grep -q "FAILED" $(Build.ArtifactStagingDirectory)/backend-test-results.txt; then
               echo "backend tests detected failures"
               exit 1
             fi
-            
+
             # Check container exit code
             if [ $TEST_CONTAINER_EXIT_CODE -ne 0 ]; then
               echo "backend tests failed with exit code $TEST_CONTAINER_EXIT_CODE"
@@ -154,16 +173,16 @@ stages:
         - bash: |
             # Capture and analyze test results
             TEST_CONTAINER_EXIT_CODE=$(docker inspect integration-tests --format='{{.State.ExitCode}}')
-            
+
             # Capture logs regardless of test outcome
             docker logs integration-tests > $(Build.ArtifactStagingDirectory)/integration-test-results.txt
-            
+
             # Check for any Behave test failures
             if grep -q "FAILED" $(Build.ArtifactStagingDirectory)/integration-test-results.txt; then
               echo "Integration tests detected failures"
               exit 1
             fi
-            
+
             # Check container exit code
             if [ $TEST_CONTAINER_EXIT_CODE -ne 0 ]; then
               echo "Integration tests failed with exit code $TEST_CONTAINER_EXIT_CODE"
