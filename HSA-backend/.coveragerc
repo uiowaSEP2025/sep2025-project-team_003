@@ -1,18 +1,28 @@
 [report]
 exclude_also =
     def __repr__
+    def __str__
+    def json
     if self.debug:
     if settings.DEBUG
 
+[coverage:run]
 omit =
-  */__init__.py 
   hsabackend/management/*
   hsabackend/middleware/*
   hsabackend/migrations/*
   hsabackend/asgi.py
-  hsabackend/models.py  
+  hsabackend/models.py
   hsabackend/urls.py
+  hsabackend/celery.py
   hsabackend/views/index.py
   hsabackend/wsgi.py
   hsabackend/settings.py
   hsabackend/tests/*
+  hsabackend/serializers/*
+  hsabackend/tasks.py
+  manage.py
+  features/environment.py
+  hsabackend/signalhandlers/*
+  hsabackend/utils/env_utils.py
+  hsabackend/utils/password_reset_route_adder.py

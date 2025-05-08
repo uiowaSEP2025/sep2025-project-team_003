@@ -3,22 +3,35 @@ from django.core.management import call_command
 from hsabackend.models.organization import Organization
 from hsabackend.models.service import Service
 from hsabackend.models.customer import Customer
+from hsabackend.models.contractor import Contractor
 from hsabackend.models.material import Material
 from django.contrib.auth.models import User
 from hsabackend.models.request import Request
+from hsabackend.models.job_service import JobService
 from hsabackend.models.job import Job
-from hsabackend.models.quote import Quote
 from hsabackend.models.discount_type import DiscountType
-from hsabackend.models.invoice  import Invoice
 from hsabackend.models.job_template import JobTemplate
 from hsabackend.models.subscription import Subscription
 from django.utils import timezone
 import traceback
+from hsabackend.models.job_material import JobMaterial
 
 import random
 
+
+def random_currency(min_value=0.01, max_value=1000.00):
+    """
+    Generate a random currency value within a given range.
+    
+    :param min_value: Minimum currency value (default is 0.01)
+    :param max_value: Maximum currency value (default is 1000.00)
+    :param currency_symbol: Currency symbol to prefix (default is "$")
+    :return: A formatted string representing the random currency value
+    """
+    return round(random.uniform(min_value, max_value), 2)
+
 class Command(BaseCommand):
-    """seeds the database with test data. DO NOT RUN ON PROD!"""
+    """seeds the database with test data. DO NOT RUN ON PROD! Is non-deterministic!!!!"""
 
     def handle(self, *args, **options):
         self.stdout.write(
@@ -36,27 +49,30 @@ class Command(BaseCommand):
             usr1  = User.objects.last()
             
             org = Organization.objects.create(
-                org_name = "org",
+                org_name = "devorg",
                 org_email = "org@org.dev",
                 org_city = "Iowa City",
-                org_requestor_state = "IA",
+                org_requestor_state = "Iowa",
                 org_requestor_zip = "52240",
                 org_requestor_address = "123 main st",
                 org_owner_first_name = "Dev",
                 org_owner_last_name = "User",
-                owning_User = usr
+                owning_User = usr,
+                org_phone = "1234567890",
+                is_onboarding = False,
                 )
             org.save()
             org1 = Organization.objects.create(
-                org_name = "org1",
+                org_name = "testorg",
                 org_email = "org1@org1.dev",
                 org_city = "Iowa City",
-                org_requestor_state = "IA",
+                org_requestor_state = "Iowa",
                 org_requestor_zip = "52240",
                 org_requestor_address = "123 main st",
                 org_owner_first_name = "Test",
                 org_owner_last_name = "User",
-                owning_User = usr1
+                owning_User = usr1,
+                org_phone = "1234567890"
                 )
             org1.save()
             
@@ -90,9 +106,13 @@ class Command(BaseCommand):
                 s2.save
 
 
+            first_names = ["Alice", "Bob", "Charlie", "Diana", "Ethan"]
+            last_names = ["Smith", "Johnson", "Williams", "Brown", "Davis"]
+
+
             for i in range(5):
                 c1 = Customer.objects.create(
-                    first_name=f"First{i}",
+                    first_name=random.choice(first_names),
                     last_name=f"Last{i}",
                     email=f"user{i}@example.com",
                     phone_no=f"{random.randint(1000000000, 9999999999)}",
@@ -102,8 +122,8 @@ class Command(BaseCommand):
                 c1.save()
 
                 c2 = Customer.objects.create(
-                    first_name=f"First{i} testuser",
-                    last_name=f"Last{i} testuser",
+                    first_name=random.choice(first_names) + "test",
+                    last_name=random.choice(last_names) + "test",
                     email=f"testuser{i}@example.com",
                     phone_no=f"{random.randint(1000000000, 9999999999)}",
                     notes=f"Sample notes for test user {i}",
@@ -111,13 +131,38 @@ class Command(BaseCommand):
                 )
                 c2.save()
 
-                material_names = [
-                    "Steel Beam",
-                    "Concrete Mix",
-                    "Aluminum Sheet",
-                    "Copper Wire",
-                    "PVC Pipe",
-                ]
+                customers = Customer.objects.filter(organization=org.pk)
+                customers_1 = Customer.objects.filter(organization=org.pk)
+            
+            for i in range(5):
+                con1 = Contractor.objects.create(
+                    first_name=f"First{i}Con",
+                    last_name=f"Last{i}Con",
+                    email=f"con{i}@example.com",
+                    phone=f"{random.randint(1000000000, 9999999999)}",
+                    organization=org
+                )
+                con1.save()
+
+                con2 = Contractor.objects.create(
+                    first_name=f"First{i}ConTest",
+                    last_name=f"Last{i}ConTest",
+                    email=f"testcon{i}@example.com",
+                    phone=f"{random.randint(1000000000, 9999999999)}",
+                    organization=org1
+                )
+                con2.save()
+
+                contractors = Contractor.objects.filter(organization=org.pk)
+                contractors_1 = Contractor.objects.filter(organization=org.pk)
+
+            material_names = [
+                "Steel Beam",
+                "Concrete Mix",
+                "Aluminum Sheet",
+                "Copper Wire",
+                "PVC Pipe",
+            ]
 
             for i in range(5):
                 m = Material.objects.create(
@@ -132,85 +177,8 @@ class Command(BaseCommand):
                 )
                 m1.save()
 
-            mock_requests = [
-                {
-                    "requestor_name": "John Doe",
-                    "requestor_email": "johndoe@example.com",
-                    "requestor_city": "New York",
-                    "requestor_state": "NY",
-                    "requestor_zip": "10001",
-                    "requestor_address": "123 Main St",
-                    "description": "Request for plumbing services due to a leaky faucet.",
-                    "status": "received",
-                },
-                {
-                    "requestor_name": "Jane Smith",
-                    "requestor_email": "janesmith@example.com",
-                    "requestor_city": "Los Angeles",
-                    "requestor_state": "CA",
-                    "requestor_zip": "90001",
-                    "requestor_address": "456 Elm St",
-                    "description": "Request for electrical repair for faulty wiring.",
-                    "status": "approved",
-                },
-                {
-                    "requestor_name": "Alice Johnson",
-                    "requestor_email": "alicej@example.com",
-                    "requestor_city": "Chicago",
-                    "requestor_state": "IL",
-                    "requestor_zip": "60601",
-                    "requestor_address": "789 Oak St",
-                    "description": "Request for HVAC maintenance before winter.",
-                    "status": "received",
-                },
-                {
-                    "requestor_name": "Bob Brown",
-                    "requestor_email": "bobbrown@example.com",
-                    "requestor_city": "Houston",
-                    "requestor_state": "TX",
-                    "requestor_zip": "77001",
-                    "requestor_address": "101 Pine St",
-                    "description": "Request for landscaping services for backyard renovation.",
-                    "status": "received",
-                },
-                {
-                    "requestor_name": "Charlie Davis",
-                    "requestor_email": "charlied@example.com",
-                    "requestor_city": "Phoenix",
-                    "requestor_state": "AZ",
-                    "requestor_zip": "85001",
-                    "requestor_address": "202 Maple St",
-                    "description": "Request for pest control due to ant infestation.",
-                    "status": "approved",
-                },
-            ]
-            for data in mock_requests:
-                r = Request.objects.create(
-                    requestor_name=data["requestor_name"],
-                    requestor_email=data["requestor_email"],
-                    requestor_city=data["requestor_city"],
-                    requestor_state=data["requestor_state"],
-                    requestor_zip=data["requestor_zip"],
-                    requestor_address=data["requestor_address"],
-                    description=data["description"],
-                    status=data["status"],
-                    organization=org,
-                )
-                r.save()
 
-                r = Request.objects.create(
-                    requestor_name=data["requestor_name"].split()[0] + " test",
-                    requestor_email=data["requestor_email"],
-                    requestor_city=data["requestor_city"],
-                    requestor_state=data["requestor_state"],
-                    requestor_zip=data["requestor_zip"],
-                    requestor_address=data["requestor_address"],
-                    description=data["description"],
-                    status=data["status"],
-                    organization=org1,
-                )
-                r.save()
-
+        
                         # List of realistic job descriptions
             job_descriptions = [
                 "Install new HVAC system in the office building.",
@@ -223,11 +191,19 @@ class Command(BaseCommand):
             # Generate 5 mock Job instances
             for i in range(5):
                 j = Job.objects.create(
-                    job_status=random.choice(['created', 'completed']),
+                    job_status=random.choice(['completed']),
                     start_date=timezone.now().date(),
                     end_date=timezone.now().date() + timezone.timedelta(days=random.randint(1, 30)),
                     description=random.choice(job_descriptions),
                     organization=org,
+                    customer=customers[i],
+                    requestor_city = "Iowa City",
+                    requestor_state = "Iowa",
+                    requestor_zip = "52240",
+                    requestor_address = "2 W Washington St",
+                    flat_fee = 0.00,
+                    hourly_rate = 50.00,
+                    minutes_worked = 100
                 )
                 j.save()
 
@@ -237,8 +213,51 @@ class Command(BaseCommand):
                     end_date=timezone.now().date() + timezone.timedelta(days=random.randint(1, 30)),
                     description=random.choice(job_descriptions) + " test",
                     organization=org1,
+                    customer=customers_1[i],
+                    requestor_city = "Iowa City",
+                    requestor_state = "Iowa",
+                    requestor_zip = "52240",
+                    requestor_address = "2 W Washington St",
+                    flat_fee = 0.00,
+                    hourly_rate = 50.00,
+                    minutes_worked = 100
                 )
                 j.save()
+
+            j1 = Job.objects.filter(organization=org)
+            j2 = Job.objects.filter(organization=org1)
+
+            Request.objects.create(
+            requester_first_name="John",
+            requester_last_name="Doe",
+            requester_email="john.doe@example.com",
+            requester_city="Springfield",
+            requester_state="CA",
+            requester_zip="12345",
+            requester_address="123 Elm St",
+            requester_phone="1234567890",
+            description="Need help fixing kitchen sink",
+            availability="Weekends",
+            request_status="received",
+            organization=org,
+            job=j1[0]
+        )
+
+            Request.objects.create(
+                requester_first_name="Jane",
+                requester_last_name="Smith",
+                requester_email="jane.smith@example.com",
+                requester_city="Springfield",
+                requester_state="CA",
+                requester_zip="12345",
+                requester_address="456 Oak St",
+                requester_phone="0987654321",
+                description="Need someone to repair bathroom faucet",
+                availability="Weekdays after 5pm",
+                request_status="approved",
+                organization=org1,
+                job=j2[0]
+            )
 
 
             discount_names = ["Summer Sale", "Black Friday", "Holiday Special", "New Year Discount", "Clearance Sale"]
@@ -263,77 +282,77 @@ class Command(BaseCommand):
             discounts_1 = DiscountType.objects.filter(organization__pk=org1.pk)[:5]
             discounts = DiscountType.objects.filter(organization__pk=org.pk)[:5]
 
-            for i in range(5):
-                issuance_date = timezone.now().date()
-                due_date = issuance_date + timezone.timedelta(days=30)
-                status = 'created' if i % 2 == 0 else 'accepted'
-                material_subtotal = 1000.0 * (i + 1)
-                total_price = material_subtotal * 0.9  # 10% discount
-                jobID = jobs_org_1[i]
-                
-
-                q = Quote.objects.create(
-                    issuance_date=issuance_date,
-                    due_date=due_date,
-                    status=status,
-                    material_subtotal=material_subtotal,
-                    total_price=total_price,
-                    jobID=jobID,
-                    discount_type = random.choice(discounts_1)
-                    )
-                q.save()
-
-                issuance_date = timezone.now().date()
-                due_date = issuance_date + timezone.timedelta(days=30)
-                status = 'created' if i % 2 == 0 else 'accepted'
-                material_subtotal = 1000.0 * (i + 1)
-                total_price = material_subtotal * 0.9  # 10% discount
-                jobID = jobs_org[i]
-                
-
-                q = Quote.objects.create(
-                    issuance_date=issuance_date,
-                    due_date=due_date,
-                    status=status,
-                    material_subtotal=material_subtotal,
-                    total_price=total_price,
-                    jobID=jobID,
-                    discount_type = random.choice(discounts)
-                    )
-                q.save()
-
-
-        
-            customers = Customer.objects.filter(organization=org.pk)
-            customers_1 = Customer.objects.filter(organization=org.pk)
-
-
-            for i in range(5):
-                iv = Invoice.objects.create(
-                    issuance_date=timezone.now().date(),
-                    due_date=timezone.now().date() + timezone.timedelta(days=30),
-                    status='issued',
-                    price=100.0 * (i + 1),
-                    customer=customers[i]
+            
+            # create another job and tie a quote to it
+            j = Job.objects.create(
+                    job_status=random.choice(['completed']),
+                    start_date=timezone.now().date(),
+                    end_date=timezone.now().date() + timezone.timedelta(days=random.randint(1, 30)),
+                    description=random.choice(job_descriptions),
+                    organization=org,
+                    customer=customers[1],
+                    requestor_city = "Iowa City",
+                    requestor_state = "Iowa",
+                    requestor_zip = "52240",
+                    requestor_address = "2 W Washington St",
+                    flat_fee = 0.00,
+                    hourly_rate = 50.00,
+                    minutes_worked = 100
                 )
-                iv.save()
+            j.save()
 
-                iv = Invoice.objects.create(
-                    issuance_date=timezone.now().date(),
-                    due_date=timezone.now().date() + timezone.timedelta(days=30),
-                    status='issued',
-                    price=100.0 * (i + 1),
-                    customer=customers_1[i]
+
+            jobs_for_invoice = Job.objects.filter(
+                customer=customers[1],
+                job_status="completed",
+                customer__organization=org
+            )
+
+            services_org = Service.objects.filter(
+                organization = org
+            )
+
+            s1, s2 = services_org[:len(services_org) // 2], services_org[len(services_org) // 2:]
+
+            for service in s1:
+                js = JobService(job=jobs_for_invoice[0], service = service)
+                js.save()
+
+            for service in s2:
+                js = JobService(job=jobs_for_invoice[1], service = service)
+                js.save()
+
+            mats = Material.objects.filter(organization=org)
+            m1,m2 = mats[:len(mats) // 2], mats[len(mats) // 2:]
+            for m in m1:
+                jm = JobMaterial(
+                    price_per_unit = random_currency(10, 50),
+                    units_used = random.randint(1,100),
+                    job = jobs_for_invoice[0],
+                    material = m
                 )
-                iv.save()
+                jm.save()
+
+            for m in m2:
+                jm = JobMaterial(
+                    price_per_unit = random_currency(0, 50),
+                    units_used = random.randint(1,100),
+                    job = jobs_for_invoice[1],
+                    material = m
+                )
+                jm.save()
+
+            
 
             for i in range(5):
                 j = JobTemplate.objects.create(
                     description=f"Job Template Description {i+1}",
+                    name=f"Template {i+1}",
                     organization=org)
                 j.save()
                 j = JobTemplate.objects.create(
                     description=f"Job Template Description {i+1}",
+                    name=f"Template {i+1}",
                     organization=org1)
                 j.save()
             

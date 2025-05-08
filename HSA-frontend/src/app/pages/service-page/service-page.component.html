@@ -1,18 +1,25 @@
-<div class="parent">
-  <div class="main-heading">
-    <h1>
-      <span>Services</span>
-    </h1>
-    <app-table-component editRedirect="/services/edit" deleteEndpoint="1234"></app-table-component>
-  </div>
-  <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
-    <button mat-fab extended class="m-10" id="add-service-button" (click)="navigateToPage('services/create')">
-      <mat-icon>note_add</mat-icon>
-      Add a Service
-    </button>
-    <button mat-fab extended class="m-10" id="material-list-button" (click)="navigateToPage('materials')">
-      <mat-icon>list</mat-icon>
-      Material lists
-    </button>
-  </div>
-</div>
+<app-page-template [title]="'Services'">
+    @if (services === null) {
+      <app-loading-fallback stringToDisplay="Loading services"></app-loading-fallback>
+    }
+    @else {
+      <div class="table-header">
+        <button class="mb-4 scale-button" mat-flat-button id="add-service-button" (click)="navigateToPage('services/create')">
+          <mat-icon>add</mat-icon>
+          Add Service
+        </button>
+      </div>
+      <div class="tab-container">
+        <app-table-component 
+          editRedirect="/services/edit" 
+          [fetchedData]="services"
+          [deleteRequest]="serviceService.deleteService.bind(serviceService)"
+          [loadDataToTable]="this.loadDataToTable.bind(this)" 
+          [hideValues]="['Id']"
+          searchHint="Search by service name or description"
+          [headers]="['Service Name', 'Service Description']"
+        ></app-table-component>
+      </div>
+      <div class="spacer"></div>
+    }
+</app-page-template>

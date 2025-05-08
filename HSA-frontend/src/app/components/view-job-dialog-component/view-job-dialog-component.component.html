@@ -1,0 +1,130 @@
+<div class="dialog-content">
+  <mat-dialog-content>
+    @if (jobData === null) {
+      <app-loading-fallback stringToDisplay="Loading the job"></app-loading-fallback>
+    }
+    @else {
+      <h1 mat-dialog-title>Job and Booking Information</h1>
+      <div class="tab-container">
+        <mat-card class="p-5 wide-card">
+          <!-- Job General Info Section -->
+          <mat-accordion>
+            <mat-expansion-panel [expanded]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title> Job General Info </mat-panel-title>
+              </mat-expansion-panel-header>
+              <table class="info-table">
+                <tr>
+                  <td>Customer</td>
+                  <td>{{jobData.data.customerName}}</td>
+                </tr>
+                <tr>
+                  <td>Status</td>
+                  <td>{{jobData.data.jobStatus}}</td>
+                </tr>
+                <tr>
+                  <td>Start Date</td>
+                  <td>{{jobData.data.startDate}}</td>
+                </tr>
+                <tr>
+                  <td>End Date</td>
+                  <td>{{jobData.data.endDate}}</td>
+                </tr>
+                <tr>
+                  <td>Description</td>
+                  <td>{{jobData.data.description}}</td>
+                </tr>
+                <tr>
+                  <td>Address</td>
+                  <td>{{jobData.data.requestorAddress + ", " + jobData.data.requestorCity + ", " + jobData.data.requestorState + " " + jobData.data.requestorZip}}</td>
+                </tr>
+                <tr>
+                  <td>Job ID</td>
+                  <td>{{jobData.data.id}}</td>
+                </tr>
+              </table>
+            </mat-expansion-panel>
+          </mat-accordion>
+          
+          <div class="spacer"></div>
+  
+          <mat-accordion>
+            <mat-expansion-panel [expanded]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title> Services </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div>
+                <app-job-display-table
+                  [dataSource]="servicesMaterialsContractors"
+                  [typeToDisplay]="'service'"
+                ></app-job-display-table>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+  
+          <div class="spacer"></div>
+  
+          <mat-accordion>
+            <mat-expansion-panel [expanded]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title> Materials </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div>
+                <app-job-display-table
+                  [dataSource]="servicesMaterialsContractors"
+                  [typeToDisplay]="'material'"
+                ></app-job-display-table>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+  
+          <div class="spacer"></div>
+  
+          <mat-accordion>
+            <mat-expansion-panel [expanded]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title> Contractors </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div>
+                <app-job-display-table
+                  [dataSource]="servicesMaterialsContractors"
+                  [typeToDisplay]="'contractor'"
+                ></app-job-display-table>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+  
+          <div class="spacer"></div>
+  
+          <mat-accordion>
+            <mat-expansion-panel [expanded]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title> Booking Info </mat-panel-title>
+              </mat-expansion-panel-header>
+              <table class="info-table">
+                <tr>
+                  <td>Event Name</td>
+                  <td>{{bookingData.eventName}}</td>
+                </tr>
+                <tr>
+                  <td>Status</td>
+                  <td>{{bookingData.status}}</td>
+                </tr>
+                <tr>
+                  <td>Type</td>
+                  <td>{{bookingData.bookingType}}</td>
+                </tr>
+              </table>
+            </mat-expansion-panel>
+          </mat-accordion>
+  
+        </mat-card>
+      </div>
+      <mat-dialog-actions>
+        <div class="flex flex-row justify-between justify-content: space-between margin-top: 20px">
+          <button data-testid="cancel" mat-stroked-button (click)="onCancel()">Return</button>
+        </div>
+      </mat-dialog-actions>
+    }
+  </mat-dialog-content>
+</div>

@@ -29,6 +29,11 @@
             "assets": [
               {
                 "glob": "**/*",
+                "input": "node_modules/ngx-extended-pdf-viewer/assets/",
+                "output": "/public/"
+              },              
+              {
+                "glob": "**/*",
                 "input": "public"
               }
             ],
@@ -76,7 +81,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumError": "10MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -119,6 +124,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
+            "codeCoverageExclude": ["src/app/utils/**/*"],
             "polyfills": [
               "zone.js",
               "zone.js/testing"
@@ -134,7 +140,8 @@
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "karmaConfig": "karma.conf.js"
           }
         },
         "lint": {

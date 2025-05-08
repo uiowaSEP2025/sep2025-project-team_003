@@ -1,0 +1,27 @@
+<app-page-template [title]="'Invoices'">
+	@if (invoices === null) {
+		<app-loading-fallback stringToDisplay="Loading the invoice table"></app-loading-fallback>
+	}
+	@else {
+		<div class="table-header">
+			<button class="mb-4 scale-button" mat-flat-button data-testid="create-button" (click)="navigateToPage('invoices/create')">
+				<mat-icon>add</mat-icon>
+				Add Invoice
+			</button>
+		</div>
+		<div class="tab-container">
+			<app-table-component
+				[loadDataToTable]="this.loadDataToTable.bind(this)"
+				editRedirect="/edit/invoice"
+				[deleteRequest]="invoiceService.deleteInvoice.bind(invoiceService)"
+				searchHint="search by customer name"
+				[fetchedData]="invoices"
+				[headers]="['Status', 'Due Date', 'Customer']"
+				[hideValues]="['Id', 'Tax']"
+				[clickableRows]="true"
+				[onRowClick]="redirectInvoiceDetails.bind(this)"
+			></app-table-component>
+		</div>
+		<div class="spacer"></div>
+	}
+</app-page-template>

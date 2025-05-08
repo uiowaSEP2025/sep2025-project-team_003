@@ -2,24 +2,44 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { EditCustomerPageComponent } from './edit-customer-page.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
+import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { Router } from '@angular/router';
 
+class MockRouter {
+  navigate = jasmine.createSpy('navigate');
+}
 
 describe('EditCustomerPageComponent', () => {
   let component: EditCustomerPageComponent;
   let fixture: ComponentFixture<EditCustomerPageComponent>;
+  let paramMapSubject: Subject<any>;
+  let router!: Router;
+  let httpMock: HttpTestingController;
 
   beforeEach(async () => {
+    paramMapSubject = new Subject();
     const activatedRouteMock = {
+      paramMap: paramMapSubject.asObservable(),
       queryParams: of({ email: '', fname: '', lname: '', phoneNo: '' })
     };
     await TestBed.configureTestingModule({
       imports: [EditCustomerPageComponent],
-      providers: [{ provide: ActivatedRoute, useValue: activatedRouteMock },provideAnimationsAsync()] // Provide mock ActivatedRoute
+      providers: [
+        { provide: ActivatedRoute, useValue: activatedRouteMock },
+        { provide: Router, useClass: MockRouter },
+        provideAnimationsAsync(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(EditCustomerPageComponent);
+    httpMock = TestBed.inject(HttpTestingController);
+    router = TestBed.inject(Router);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -57,7 +77,7 @@ describe('EditCustomerPageComponent', () => {
     create.click()
     fixture.detectChanges()
     expect(lastName.querySelector('mat-error').textContent).toEqual('Last Name is required')
-    
+
   })
 
   it('should display error when email  is missing', () => {
@@ -123,4 +143,6 @@ describe('EditCustomerPageComponent', () => {
     const errors = Array.from(compiled.querySelectorAll('mat-error'))
     expect(errors.length).toEqual(0)
   })
+
+  
 });

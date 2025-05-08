@@ -1,21 +1,34 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { Router } from '@angular/router';
 import { CreateServicePageComponent } from './create-service-page.component';
 import {provideAnimations} from '@angular/platform-browser/animations';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+
+class MockRouter {
+  navigate = jasmine.createSpy('navigate');
+}
 
 describe('CreateServicePageComponent', () => {
   let component: CreateServicePageComponent;
   let fixture: ComponentFixture<CreateServicePageComponent>;
+  let httpMock: HttpTestingController;
+  let router!: Router;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CreateServicePageComponent],
       providers: [
-        provideAnimations()
+        provideAnimations(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: Router, useClass: MockRouter }
       ],
     })
     .compileComponents();
-
+    router = TestBed.inject(Router);
+    httpMock = TestBed.inject(HttpTestingController);
     fixture = TestBed.createComponent(CreateServicePageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -56,4 +69,6 @@ describe('CreateServicePageComponent', () => {
     const errorTexts = Array.from(compiled.querySelectorAll('mat-error'));
     expect(errorTexts.length).toEqual(0);
   })
+
+  
 });

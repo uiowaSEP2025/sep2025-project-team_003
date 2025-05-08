@@ -2,6 +2,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { CustomersPageComponent } from './customers-page.component';
 import { Router } from '@angular/router';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 class MockRouter {
   navigate = jasmine.createSpy('navigate');
@@ -10,18 +13,25 @@ class MockRouter {
 describe('CustomersPageComponent', () => {
   let component: CustomersPageComponent;
   let fixture: ComponentFixture<CustomersPageComponent>;
+  let httpMock: HttpTestingController;
   let router!: Router;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CustomersPageComponent],
-      providers: [provideAnimationsAsync(), { provide: Router, useClass: MockRouter }]
+      providers: [
+        provideAnimationsAsync(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: Router, useClass: MockRouter }]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(CustomersPageComponent);
-    router = TestBed.inject(Router);
     component = fixture.componentInstance;
+    component.customers = []
+    router = TestBed.inject(Router);
+    httpMock = TestBed.inject(HttpTestingController);
     fixture.detectChanges();
   });
 
@@ -31,15 +41,17 @@ describe('CustomersPageComponent', () => {
 
   it('should render the components', () => {
     const compiled = fixture.debugElement.nativeElement;
-    const table = compiled.querySelector('table')
+    const table = compiled.querySelector('div[data-testid="app-table"]');
     const createButton = compiled.querySelector('button')
     expect(table).toBeTruthy()
     expect(createButton).toBeTruthy()
   })
 
-  it('should call router.navigate with the correct route when redirectCreate is called', () => {
-    component.redirectCreate();
-    expect(router.navigate).toHaveBeenCalledWith(['/customers/create']);
-  });
+  
 
+
+
+  afterEach(() => {
+    (router.navigate as jasmine.Spy).calls.reset();
+  })
 });

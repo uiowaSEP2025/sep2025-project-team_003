@@ -1,7 +1,88 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+@use '_theme-colors.scss' as theme;
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+@include mat.core();
+
+
+html {
+  @include mat.theme((
+    color: (
+      primary: theme.$primary-palette,
+      tertiary: theme.$tertiary-palette,
+      theme-type: light,
+    ),
+    typography: Roboto,
+    density: -1
+  ));
+}
+
+html, body {
+  height: 100%; 
+  overflow-x: hidden;
+}
+
+body { 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+}
+
+html {
+  @include mat.toolbar-overrides((
+      container-background-color: #005cbb,
+      container-text-color: white,
+  ));
+}
+
+.mat-mdc-button,
+.mat-mdc-raised-button,
+.mat-mdc-outlined-button,
+.mat-mdc-unelevated-button {
+  --mdc-shape-small: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); // Material Design easing
+
+  &:hover {
+    // Customize shadow values here
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06) !important;
+    transform: translateY(-1px);
+  }
+
+  // Optional: Add active state
+  &:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  }
+}
+
+// Different shadow intensities for different button types
+.mat-mdc-raised-button {
+  &:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  &:active {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+  }
+}
+
+.mat-mdc-outlined-button {
+  &:hover {
+    // Lighter shadow for outlined buttons
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  }
+}
+
+// Preserve disabled state
+.mat-mdc-button[disabled],
+.mat-mdc-raised-button[disabled],
+.mat-mdc-outlined-button[disabled],
+.mat-mdc-unelevated-button[disabled] {
+  &:hover, &:active {
+    box-shadow: none !important;
+    transform: none;
+  }
+}
+

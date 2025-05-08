@@ -1,0 +1,57 @@
+<app-page-template [title]="'Jobs'">
+    @if (false) {
+      <app-loading-fallback stringToDisplay="Loading the job table"></app-loading-fallback>
+    }
+    @else {
+      <div class="table-header">
+        <div class="header-bar">
+          <button class="mb-4 scale-button" mat-flat-button id="add-job-button" (click)="navigateToPage('jobs/create')">
+            <mat-icon>add</mat-icon>
+            Add Job
+          </button>
+        </div>
+        <mat-tab-group class="tab-container" [disablePagination]="true" (selectedTabChange)="onTabChange($event)">
+          <mat-tab [label]="'Created'">
+            <div class="small-box mat-elevation-z4">
+              <app-table-component editRedirect="/jobs/edit" [fetchedData]="tabStates.Created.data"
+                [deleteRequest]="jobService.deleteJob.bind(jobService)" [loadDataToTable]="this.loadDataToTable.bind(this)"
+                searchHint="Search by any keywords" [checkbox]="'actions'" [hideValues]="['Id']" [width]="'auto'"
+                [clickableRows]="true" [onRowClick]="redirectJobDetails.bind(this)"
+                [disableEditCheck]="shouldDisableEdit"
+                [disableDeleteCheck]="shouldDisableDelete"
+                [headers]="['Description','Job Status','Start Date','End Date','Customer Name']"
+              >
+              </app-table-component>
+            </div>
+          </mat-tab>
+          <mat-tab [label]="'In Progress'">
+            <div class="large-box mat-elevation-z4">
+              <app-table-component editRedirect="/jobs/edit" [fetchedData]="tabStates['In Progress'].data"
+                [deleteRequest]="jobService.deleteJob.bind(jobService)" [loadDataToTable]="this.loadDataToTable.bind(this)"
+                searchHint="Search by any keywords" [checkbox]="'actions'" [hideValues]="['Id']" [width]="'auto'"
+                [clickableRows]="true" [onRowClick]="redirectJobDetails.bind(this)"
+                [disableEditCheck]="shouldDisableEdit"
+                [disableDeleteCheck]="shouldDisableDelete"
+                [headers]="['Description','Job Status','Start Date','End Date','Customer Name']"
+              >
+              </app-table-component>
+            </div>
+          </mat-tab>
+          <mat-tab [label]="'Completed'">
+            <div class="large-box mat-elevation-z4">
+              <app-table-component editRedirect="/jobs/edit" [fetchedData]="tabStates.Completed.data"
+                [deleteRequest]="jobService.deleteJob.bind(jobService)" [loadDataToTable]="this.loadDataToTable.bind(this)"
+                searchHint="Search by any keywords" [checkbox]="'actions'" [hideValues]="['Id']" [width]="'auto'"
+                [clickableRows]="true" [onRowClick]="redirectJobDetails.bind(this)"
+                [disableEditCheck]="shouldDisableEdit"
+                [disableDeleteCheck]="shouldDisableDelete"
+                [headers]="['Description','Job Status','Start Date','End Date','Customer Name']"
+              >
+              </app-table-component>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+      <div class="spacer"></div>
+    }
+</app-page-template>

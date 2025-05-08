@@ -1,0 +1,35 @@
+.dialog-content {
+    padding: 20px;
+  }
+  
+  .instruction-text {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .button-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .pdf-container {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1200px;
+    height: 600px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .pdf-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  

@@ -1,0 +1,36 @@
+<!-- 1) Initial form: only shown while pdfBlobUrl$ is null -->
+<ng-container *ngIf="!(pdfBlobUrl$ | async) as pdfUrl">
+  <div class="quote-sign-container">
+    <h1>Fetching your quote</h1>
+    <app-loading-fallback stringToDisplay="loading"></app-loading-fallback>
+  </div>
+</ng-container>
+
+<!-- 2) PDF editor + Submit button: only shown once pdfBlobUrl$ yields a string -->
+<ng-container *ngIf="(pdfBlobUrl$ | async) as blobUrl">
+  <div class="pdf-container">
+    <ngx-extended-pdf-viewer
+      [src]="blobUrl"
+      useBrowserLocale="true"
+      height="80vh"
+      class="pdf-fullscreen">
+    </ngx-extended-pdf-viewer>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="(pdfBlobUrl$ | async) as blobUrl">
+
+  <div class="submit-wrapper">
+    <button
+      class="btn-submit-big"
+      (click)="onConfirmSubmit()">
+      Submit
+    </button>
+  </div>
+</ng-container>
+<ng-container *ngIf="isSuccess">
+  <div class="submission-success">
+    <h2>Quote submitted successfully!</h2>
+    <p>Thank you for signing. You may now close this page.</p>
+  </div>
+</ng-container>

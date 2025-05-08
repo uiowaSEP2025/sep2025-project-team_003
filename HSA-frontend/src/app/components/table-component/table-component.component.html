@@ -1,37 +1,97 @@
-<div class="mat-elevation-z8 table min-w-lg">
-  <form class="flex justify-between form pb-1">
-    <mat-form-field class="w-full">
-      <mat-label>Search Here</mat-label>
-      <input matInput [formControl]="searchControl">
-      <mat-hint>{{searchHint()}}</mat-hint>
-    </mat-form-field>
-  </form>
-  <table mat-table [dataSource]="data">
-
-    @for (header of headersWithActions; track header) {
-    <ng-container [matColumnDef]="header">
-      <th mat-header-cell *matHeaderCellDef> {{ header }} </th>
-      <td mat-cell *matCellDef="let element">
-        @if (header === "actions") {
-        <div class="flex justify-between">
-          <button mat-mini-fab (click)="redirectEdit()">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-mini-fab>
-            <mat-icon>delete</mat-icon>
-          </button>
-        </div>
-        } @else {
-        {{ element[header] }}
-        }
-      </td>
-    </ng-container>
+<div class="mat-elevation-z8 table min-w-lg container" data-testid="app-table">
+  @if (this.fetchedData === null) {
+    <app-loading-fallback stringToDisplay="Loading the table data"></app-loading-fallback>
+  } @else {
+    @if (!hideSearch) {
+      <form class="flex justify-between form pb-1">
+        <mat-form-field class="w-full">
+          <mat-label>Search Here</mat-label>
+          <input matInput [formControl]="searchControl">
+          <mat-hint>{{searchHint()}}</mat-hint>
+        </mat-form-field>
+      </form>
     }
+    <div #tableContainer tabindex="-1" class="table-container">
+      @if (isDataNotAvailable()) {
+        <p class="empty-message">Nothing to show here</p>
+      }
+      @else {
+        <table mat-table [dataSource]="data" [width]="width">
+          @for (header of headersWithActions; track header) {
+          <ng-container [matColumnDef]="header" >
+            <th mat-header-cell *matHeaderCellDef [style.display]="shouldHideColumn(header) ? 'none' : 'table-cell'">
+              <ng-container>
+                {{ header === "Checkbox" ? "" : header }}
+              </ng-container>
+            </th>
+            <td mat-cell *matCellDef="let element; let i = $index;" [style.display]="shouldHideColumn(header) ? 'none' : 'table-cell'">
+              @if (header === "Actions") {
+              <div class="flex gap-2">
+                <button mat-mini-fab class="no-shadow" style="background-color: #9eccfa" (click)="redirectEdit(element.id, element)" [disabled]="shouldDisableEdit(element)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-mini-fab class="no-shadow" click-stop-propagation style="background-color: #9eccfa" (click)="openDeleteDialog(element)" [disabled]="shouldDisableDelete(element)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+              }
+              @else if (header === "Checkbox") {
+                <mat-checkbox [attr.data-testid]="'checkbox-' + element.id"
+                  [checked]="shouldCheckCheckbox(element.id)"
+                  (change)="handleCheckBoxClick(element.id)"
+                  (change)="handleCheckedRowIndex(element.id)"
+                ></mat-checkbox>
+              }
+              @else if (header === "Unit Used") {
+                <mat-form-field class="form-field" >
+                  <input
+                    [disabled]="!checkedRowIndexes.has(element.id)"
+                    matInput
+                    type="number"
+                    required
+                    placeholder="0"
+                    [value]="getUnitsUsedValue(element.id)"
+                    (input)="handleUnitsUsedField(element.id, $event)"
+                  >
+                </mat-form-field>
+              }
+              @else if (header === "Price Per Unit") {
+                <mat-form-field floatLabel="always" class="form-field">
+                  <input
+                    [disabled]="!checkedRowIndexes.has(element.id)"
+                    matInput
+                    type="text"
+                    class="right-align"
+                    placeholder="0.00"
+                    [value]="getPricePerUnitValue(element.id)"
+                    (input)="handlePricePerUnitField(element.id, $event)"
+                  />
+                  <span matTextPrefix>$&nbsp;</span>
+                </mat-form-field>
 
-    <tr mat-header-row *matHeaderRowDef="headersWithActions"></tr>
-    <tr mat-row *matRowDef="let row; columns: headersWithActions;"></tr>
-  </table>
+              }
+              @else if (header === "Approval" && element.status !== "approved" && element.status !== "denied") {
+                <div class="flex gap-2">
+                  <button mat-mini-fab class="no-shadow" style="background-color: rgb(42, 167, 10);" click-stop-propagation (click)="openApprovalDialog(element, true)">
+                    <mat-icon>done</mat-icon>
+                  </button>
+                <button mat-mini-fab class="no-shadow" style="background-color: rgb(196, 24, 24);" click-stop-propagation (click)="openApprovalDialog(element, false)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+              }
+              @else  {
+                {{ element[stringFormatter.formatCamelToSnake(header)] }}
+              }
+            </td>
+          </ng-container>
+          }
 
-  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons [length]="data.data.length">
-  </mat-paginator>
+          <tr mat-header-row *matHeaderRowDef="headersWithActions"></tr>
+          <tr mat-row class="{{clickableRows ? 'cursor-pointer darkenOnHover' : ''}}" (click)="rowClick(row)" *matRowDef="let row; columns: headersWithActions;"></tr>
+        </table>
+      }
+    </div>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons [length]="dataSize"></mat-paginator>
+  }
 </div>

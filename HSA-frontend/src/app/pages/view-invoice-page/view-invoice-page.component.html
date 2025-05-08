@@ -1,0 +1,48 @@
+<app-page-template [title]="'Invoice Information'">
+
+  <div class="main-heading">
+		@if (invoiceData === null) {
+			<app-loading-fallback stringToDisplay="Loading your invoice"></app-loading-fallback>
+		}
+		@else {
+			<div class="table-header">
+				<div class="header-bar">
+					<button class="mb-4" mat-flat-button (click)="navigateViewInvoice()">
+						<mat-icon>picture_as_pdf</mat-icon>
+						Generate Invoice
+				</button>
+				</div>
+				<mat-card class="flex p-5 items-center">
+					<table class="info-table" data-testid="info-table">
+						<tr>
+							<td>Customer</td>
+							<td>{{invoiceData.customer}}</td>
+						</tr>
+						<tr>
+							<td>Status</td>
+							<td>{{invoiceData.status}}</td>
+						</tr>
+						<tr>
+							<td>Issued Date</td>
+							<td>{{invoiceData.issuanceDate}}</td>
+						</tr>
+						<tr>
+							<td>Due Date</td>
+							<td>{{invoiceData.dueDate}}</td>
+						</tr>
+						<tr>
+							<td>Payment Link</td>
+							<td>{{invoiceData.url === null ? "N/A" : invoiceData.url}}</td>
+						</tr>
+					</table>
+				<app-invoice-job [data]="invoiceData"></app-invoice-job>
+				<div class="spacer"></div>
+        		<div class="items-center">
+					<button mat-stroked-button class="mb-5" (click)="navigateToPage('invoices')">Return</button>
+				</div>
+			</mat-card>
+			</div>
+	}
+	</div>
+</app-page-template>
+

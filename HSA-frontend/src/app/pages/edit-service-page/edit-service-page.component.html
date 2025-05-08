@@ -1,34 +1,36 @@
-<div class="parent">
-  <div class="main-heading">
-    <h1>
-      <span>Edit {{this.currentServiceName}} service</span>
-    </h1>
-  </div>
-  <form class="parent" [formGroup]="serviceForm" (ngSubmit)="onSubmit()">
-    <mat-form-field>
-      <mat-label>New name</mat-label>
-      <input
-        formControlName = "serviceName"
-        matInput
-        placeholder="Ex: Painting"
-        required
-      >
-      @if (serviceForm.get('serviceName')?.touched && serviceForm.get('serviceName')?.hasError('required')) {
-        <mat-error>Service Name is required</mat-error>
-      }
-    </mat-form-field>
-
-    <mat-form-field>
-      <mat-label>Description</mat-label>
-      <textarea
-        formControlName = "serviceDescription"
-        matInput
-      ></textarea>
-    </mat-form-field>
-
-    <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
-      <button mat-flat-button type="submit">Save Changes</button>
-      <button mat-stroked-button (click)="navigateToPage('services')">Cancel</button>
+<app-page-template [title]="'Edit Service'">
+    <div class="table-header">
+      <div class="tab-container">
+        <mat-card class="p-5 wide-card">
+          <form class="parent" [formGroup]="serviceForm" (ngSubmit)="onSubmit()">
+            <mat-form-field class="full-width-field">
+              <mat-label>New name</mat-label>
+              <input
+                formControlName = "serviceName"
+                matInput
+                placeholder="Ex: Painting"
+                required
+              >
+              @if (serviceForm.get('serviceName')?.touched && serviceForm.get('serviceName')?.hasError('required')) {
+                <mat-error>Service Name is required</mat-error>
+              }
+            </mat-form-field>
+  
+            <mat-form-field class="full-width-field">
+              <mat-label>Description</mat-label>
+              <textarea
+                formControlName = "serviceDescription"
+                matInput
+              ></textarea>
+            </mat-form-field>
+  
+            <div class="flex flex-row justify-between justify-content: space-between margin-top: 10px">
+              <button mat-flat-button type="submit">Save Changes</button>
+              <button mat-stroked-button (click)="navigateToPage('services')">Cancel</button>
+            </div>
+          </form>
+        </mat-card>
+      </div>
+      <div class="spacer"></div>
     </div>
-  </form>
-</div>
+</app-page-template>

@@ -1,7 +1,25 @@
-<div class="flex flex-col items-center">
-    <app-table-component editRedirect="/contractors/edit" deleteEndpoint="FIX ME LATER"></app-table-component>
-    <button mat-fab extended class="m-10" (click)="redirectCreate()">
-        <mat-icon>note_add</mat-icon>
-        Add a Contractor
-    </button>
-</div>
+<app-page-template [title]="'Contractors'">
+  @if (contractors === null) {
+    <app-loading-fallback stringToDisplay="Loading contractors"></app-loading-fallback>
+  }
+  @else {
+    <div class="table-header">
+      <button class="mb-4" mat-flat-button id="add-contractor-button" (click)="navigateToPage('contractors/create')">
+        <mat-icon>add</mat-icon>
+        Add Contractor
+      </button>
+    </div>
+    <div class="tab-container">
+      <app-table-component
+        editRedirect="/contractors/edit"
+        [fetchedData]="contractors"
+        [deleteRequest]="contractorService.deleteContractor.bind(contractorService)"
+        [loadDataToTable]="this.loadDataToTable.bind(this)"
+        [hideValues]="['Id']"
+        searchHint="Search by contractor name"
+        [headers]="['First Name', 'Last Name', 'Phone Number', 'Email']"
+      ></app-table-component>
+    </div>
+    <div class="spacer"></div>
+  }
+</app-page-template>

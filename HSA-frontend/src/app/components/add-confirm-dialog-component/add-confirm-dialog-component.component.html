@@ -1,0 +1,6 @@
+<h2 mat-dialog-title>Confirm</h2>
+<mat-dialog-content>Are you sure you want to perform this {{ itemDescription }}?</mat-dialog-content>
+<mat-dialog-actions>
+  <button data-testid="cancel" mat-stroked-button (click)="onCancel()">Cancel</button>
+  <button data-testid="confirm" mat-flat-button type="submit" (click)="onConfirm()">Confirm</button>
+</mat-dialog-actions>

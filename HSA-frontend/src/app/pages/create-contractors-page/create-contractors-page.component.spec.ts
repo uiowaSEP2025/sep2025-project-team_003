@@ -1,19 +1,27 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { CreateContractorsPageComponent } from './create-contractors-page.component';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('CreateContractorsPageComponent', () => {
   let component: CreateContractorsPageComponent;
   let fixture: ComponentFixture<CreateContractorsPageComponent>;
+  let httpMock: HttpTestingController;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CreateContractorsPageComponent],
-      providers: [provideAnimationsAsync()]
+      providers: [
+        provideAnimationsAsync(),
+        provideHttpClient(),
+        provideHttpClientTesting(), 
+      ]
     })
       .compileComponents();
 
     fixture = TestBed.createComponent(CreateContractorsPageComponent);
+    httpMock = TestBed.inject(HttpTestingController);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

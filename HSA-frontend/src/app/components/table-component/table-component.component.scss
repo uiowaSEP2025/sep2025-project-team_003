@@ -1,12 +1,62 @@
 .table {
     background-color:rgb(250, 249, 253);
-    width: 40vw;
 }
-
-
 
 .form {
     border-bottom: solid;
     border-bottom-color: rgb(116, 119, 127);
     border-bottom-width: 1px;
+}
+
+.right-align {
+    text-align: right;
+}
+
+td , th {
+    white-space: normal;
+    word-wrap: break-word;
+    max-width: 500px;
+}
+
+.table-container {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.empty-message {
+    padding: 50px 0;
+    font-size: 1.2rem;
+}
+
+
+.darkenOnHover {
+  filter: brightness(100%); // Default brightness
+
+  &:hover {
+    filter: brightness(90%); // Darken on hover
+  }
+}
+
+.container {
+    width: 100%;
+}
+
+.no-shadow {
+    box-shadow: none !important;
+}
+
+.hide-column {
+    display: none !important;
+  }
+
+.form-field {
+    margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+    .form-field {
+        margin-top: 20px;
+        width: 80px
+    }
 }

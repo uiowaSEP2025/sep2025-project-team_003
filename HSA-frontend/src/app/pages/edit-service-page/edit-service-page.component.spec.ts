@@ -1,31 +1,44 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { EditServicePageComponent } from './edit-service-page.component';
-import {provideRouter, Router} from '@angular/router';
-import {provideAnimations} from '@angular/platform-browser/animations';
-import {of} from 'rxjs';
+import { Router, ActivatedRoute } from '@angular/router';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { of, Subject } from 'rxjs';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+
+class MockRouter {
+  navigate = jasmine.createSpy('navigate');
+}
 
 describe('EditServicePageComponent', () => {
   let component: EditServicePageComponent;
   let fixture: ComponentFixture<EditServicePageComponent>;
   let router: Router;
+  let httpMock: HttpTestingController;
+  let paramMapSubject: Subject<any>;
 
   beforeEach(async () => {
+    paramMapSubject = new Subject();
     const activatedRouteMock = {
-      queryParams: of({ email: '', fname: '', lname: '', phoneNo: '' })
+      paramMap: paramMapSubject.asObservable(),
+      queryParams: of({ material_name: 'larry' })
     };
-
     await TestBed.configureTestingModule({
       imports: [EditServicePageComponent],
       providers: [
-        provideRouter([]),
+        { provide: ActivatedRoute, useValue: activatedRouteMock },
+        { provide: Router, useClass: MockRouter },
         provideAnimations(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
       ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(EditServicePageComponent);
     component = fixture.componentInstance;
+    httpMock = TestBed.inject(HttpTestingController);
     router = TestBed.inject(Router);
     fixture.detectChanges();
   });
@@ -66,4 +79,6 @@ describe('EditServicePageComponent', () => {
     const errors = Array.from(compiled.querySelectorAll('mat-error'))
     expect(errors.length).toEqual(0)
   });
+
+  
 });

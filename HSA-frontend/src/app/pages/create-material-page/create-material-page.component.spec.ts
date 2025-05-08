@@ -1,21 +1,33 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { Router } from '@angular/router';
 import { CreateMaterialPageComponent } from './create-material-page.component';
-import {provideAnimations} from '@angular/platform-browser/animations';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
+class MockRouter {
+  navigate = jasmine.createSpy('navigate');
+}
 describe('CreateMaterialPageComponent', () => {
   let component: CreateMaterialPageComponent;
   let fixture: ComponentFixture<CreateMaterialPageComponent>;
+  let httpMock: HttpTestingController;
+  let router!: Router;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CreateMaterialPageComponent],
       providers: [
-        provideAnimations()
+        provideAnimations(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: Router, useClass: MockRouter }
       ],
     })
-    .compileComponents();
-
+      .compileComponents();
+    router = TestBed.inject(Router);
+    httpMock = TestBed.inject(HttpTestingController);
     fixture = TestBed.createComponent(CreateMaterialPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -29,7 +41,6 @@ describe('CreateMaterialPageComponent', () => {
     const compiled = fixture.debugElement.nativeElement;
     const materialFields = compiled.querySelectorAll('mat-form-field');
     expect(materialFields[0].querySelector('mat-label').textContent).toEqual('Material Name');
-    expect(materialFields[1].querySelector('mat-label').textContent).toEqual('Description');
   })
 
   it('should display error when material name is missing', () => {
@@ -47,9 +58,6 @@ describe('CreateMaterialPageComponent', () => {
     const materialNameField = compiled.querySelectorAll('mat-form-field')[0].querySelector('input');
     materialNameField.value = 'alex';
     materialNameField.dispatchEvent(new Event('input'));
-    const descriptionField = compiled.querySelectorAll('mat-form-field')[1].querySelector('textarea');
-    descriptionField.value = 'guo';
-    descriptionField.dispatchEvent(new Event('input'));
     createButton.click();
     fixture.detectChanges();
 

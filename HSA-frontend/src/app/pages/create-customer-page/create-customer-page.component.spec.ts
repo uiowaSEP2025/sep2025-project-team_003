@@ -1,19 +1,36 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { CreateCustomerPageComponent } from './create-customer-page.component';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { Router } from '@angular/router';
+
+
+class MockRouter {
+  navigate = jasmine.createSpy('navigate');
+}
 
 describe('CreateCustomerPageComponent', () => {
   let component: CreateCustomerPageComponent;
   let fixture: ComponentFixture<CreateCustomerPageComponent>;
-
+  let httpMock: HttpTestingController;
+  let router!: Router;
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CreateCustomerPageComponent],
-      providers: [provideAnimationsAsync()]
+      providers: [
+        provideAnimationsAsync(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: Router, useClass: MockRouter }
+      ]
     })
-    .compileComponents();
+      .compileComponents();
+    router = TestBed.inject(Router);
 
     fixture = TestBed.createComponent(CreateCustomerPageComponent);
+    httpMock = TestBed.inject(HttpTestingController);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -33,7 +50,6 @@ describe('CreateCustomerPageComponent', () => {
 
   })
 
-
   it('should display error when first name is missing', () => {
     const compiled = fixture.debugElement.nativeElement;
     const create = compiled.querySelector('button')
@@ -50,7 +66,7 @@ describe('CreateCustomerPageComponent', () => {
     create.click()
     fixture.detectChanges()
     expect(lastName.querySelector('mat-error').textContent).toEqual('Last Name is required')
-    
+
   })
 
   it('should display error when email  is missing', () => {
@@ -116,5 +132,4 @@ describe('CreateCustomerPageComponent', () => {
     const errors = Array.from(compiled.querySelectorAll('mat-error'))
     expect(errors.length).toEqual(0)
   })
-
 });

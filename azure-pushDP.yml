@@ -21,13 +21,20 @@ steps:
   name: k8config
   inputs:
     secureFile: 'config'
-  
+
+- task: DownloadSecureFile@1
+  name: sshkey
+  inputs:
+    secureFile: 'ssh_keys'
+
 - script: |
     tofu init -reconfigure
     mkdir -p ~/.kube
     mv $(k8config.secureFilePath) ~/.kube/config
+    mv $sshkey.secureFilePath) ~/.ssh/id-gcp
+    chmod 600 ~/.ssh/id-gcp
 
-  displayName: 'Initialize Terraform'
+  displayName: 'Initialize Terraform + SSH via keys'
   env: 
     AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)

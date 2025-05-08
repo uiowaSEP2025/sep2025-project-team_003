@@ -1,13 +1,39 @@
+<div class="container">
+  <div class="sidebar" [ngClass]="{'open': sidebarExpanded}">
+    <div>
+      <button class="close-btn" (click)="toggleSidebar()" matTooltip="Close" color="white">✖</button>
+    </div>
+    <ul>
+      <hr/>
+      <li><a href="/home">Home</a></li>
+      <li><a href="/jobs">Jobs</a></li>
+      <li><a href="/requests">Requests</a></li>
+      <li><a href="/customers">Customers</a></li>
+      <li><a href="/services">Services</a></li>
+      <li><a href="/materials">Materials</a></li>
+      <li><a href="/contractors">Contractors</a></li>
+      <li><a href="/booking">Booking</a></li>
+      <li><a href="/invoices">Invoices</a></li>
+      <li><a href="/quotes">Quotes</a></li>
+    </ul>
+  </div>
+  <div class="overlay" [ngClass]="{'active': sidebarExpanded}"></div>
+</div>
+
 <mat-toolbar>
-  <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+  <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon" (click)="toggleSidebar()" matTooltip="Open sidebar">
     <mat-icon>menu</mat-icon>
   </button>
   <span>HSA</span>
   <span class="flex-auto"></span>
-  <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
-    <mat-icon>favorite</mat-icon>
-  </button>
-  <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
-    <mat-icon>share</mat-icon>
-  </button>
+  @if (isLoggedIn === false) {
+    <button mat-icon-button class="example-icon" aria-label="Example icon-button with login icon" (click)="navigateToPage('login')" matTooltip="Login">
+      <mat-icon>login</mat-icon>
+    </button>
+  }
+  @if (isLoggedIn === true) {
+    <button mat-icon-button class="example-icon" aria-label="Example icon-button with logout icon" (click)="onLogout()" matTooltip="Logout">
+      <mat-icon>logout</mat-icon>
+    </button>
+  }
 </mat-toolbar>

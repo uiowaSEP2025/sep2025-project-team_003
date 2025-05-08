@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>New Request</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #2a9d8f;
+      --primary-dark: #23867a;
+      --bg: #f7f9fa;
+      --card-bg: #ffffff;
+      --border: #e1e5e9;
+      --text: #333333;
+      --radius: 0.5rem;
+      --spacing: 1rem;
+      --font-base: 16px;
+      --error-color: #e74c3c;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: var(--spacing); font-family: 'Inter', sans-serif; font-size: var(--font-base); color: var(--text); background: var(--bg); }
+    h1 { text-align: center; margin-bottom: calc(var(--spacing) * 1.5); font-weight: 600; }
+    .container { max-width: 900px; margin: 0 auto; }
+    .panels { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing); margin-bottom: calc(var(--spacing) * 2); }
+    .scroll-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--spacing);
+      max-height: 250px;
+      overflow-y: auto;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: filter 0.2s, transform 0.2s;
+    }
+    .scroll-panel:hover { filter: brightness(0.95); transform: translateY(-2px); }
+    .scroll-panel h2 { margin-top: 0; margin-bottom: 0.5em; font-size: 1.1rem; font-weight: 600; color: var(--primary-dark); }
+    .scroll-panel ul { list-style: none; padding: 0; margin: 0; }
+    .scroll-panel li { padding: 0.25em 0; border-bottom: 1px solid var(--border); }
+    .scroll-panel li:last-child { border-bottom: none; }
+
+    form { background: var(--card-bg); padding: var(--spacing); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing); }
+    .form-grid .full { grid-column: 1 / -1; }
+    label { display: block; font-weight: 500; margin-bottom: 0.25em; }
+    input, select, textarea {
+      width: 100%; padding: 0.75em; border: 1px solid var(--border); border-radius: var(--radius);
+      font-family: inherit; font-size: 1rem; background: #fff; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:invalid, select:invalid, textarea:invalid { border-color: var(--error-color); }
+    input:invalid:focus, select:invalid:focus, textarea:invalid:focus { box-shadow: 0 0 0 3px rgba(231,76,60,0.2); }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(42,157,143,0.2); }
+    textarea { min-height: 100px; resize: vertical; }
+
+    .btn { padding: 0.75em 1.5em; background: var(--primary); color: #fff; border: none; border-radius: var(--radius); font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .btn:hover { background: var(--primary-dark); }
+    .btn:active { transform: translateY(1px); }
+
+    @media (max-width: 700px) { .panels, .form-grid { grid-template-columns: 1fr; } }
+
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5); display: none;
+      align-items: center; justify-content: center; z-index: 1000;
+    }
+    .modal {
+      background: var(--card-bg); padding: var(--spacing);
+      border-radius: var(--radius); box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      max-width: 90%; width: 300px; text-align: center;
+    }
+    .modal h2 { margin-top: 0; color: var(--primary-dark); }
+    .modal button { margin-top: var(--spacing); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Submit a Request</h1>
+    <div class="panels">
+      <div class="scroll-panel">
+        <h2>Services</h2>
+        <ul>{% for service in services %}<li>{{ service.service_name }}</li>{% empty %}<li><em>No services available.</em></li>{% endfor %}</ul>
+      </div>
+      <div class="scroll-panel">
+        <h2>Contractors</h2>
+        <ul>{% for contractor in contractors %}<li>{{ contractor.first_name }} {{ contractor.last_name }} <small>({{ contractor.email }})</small></li>{% empty %}<li><em>No contractors available.</em></li>{% endfor %}</ul>
+      </div>
+    </div>
+
+    <form id="request-form">
+      <input type="hidden" id="org-id" value="{{ org_id }}">
+      <div class="form-grid">
+        <div>
+          <label for="first-name">First name</label>
+          <input id="first-name" name="requester_first_name" type="text" required>
+        </div>
+        <div>
+          <label for="last-name">Last name</label>
+          <input id="last-name" name="requester_last_name" type="text" required>
+        </div>
+        <div class="full">
+          <label for="email">Email</label>
+          <input id="email" name="requester_email" type="email" required pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" title="Enter a valid email">
+        </div>
+        <div>
+          <label for="city">City</label>
+          <input id="city" name="requester_city" type="text" required>
+        </div>
+        <div>
+          <label for="state">State</label>
+          <select id="state" name="requester_state" required>
+            <option value="" disabled selected>Select a state</option>
+            <option value="AL">Alabama</option>
+            <option value="AK">Alaska</option>
+            <option value="AZ">Arizona</option>
+            <option value="AR">Arkansas</option>
+            <option value="CA">California</option>
+            <option value="CO">Colorado</option>
+            <option value="CT">Connecticut</option>
+            <option value="DE">Delaware</option>
+            <option value="FL">Florida</option>
+            <option value="GA">Georgia</option>
+            <option value="HI">Hawaii</option>
+            <option value="ID">Idaho</option>
+            <option value="IL">Illinois</option>
+            <option value="IN">Indiana</option>
+            <option value="IA">Iowa</option>
+            <option value="KS">Kansas</option>
+            <option value="KY">Kentucky</option>
+            <option value="LA">Louisiana</option>
+            <option value="ME">Maine</option>
+            <option value="MD">Maryland</option>
+            <option value="MA">Massachusetts</option>
+            <option value="MI">Michigan</option>
+            <option value="MN">Minnesota</option>
+            <option value="MS">Mississippi</option>
+            <option value="MO">Missouri</option>
+            <option value="MT">Montana</option>
+            <option value="NE">Nebraska</option>
+            <option value="NV">Nevada</option>
+            <option value="NH">New Hampshire</option>
+            <option value="NJ">New Jersey</option>
+            <option value="NM">New Mexico</option>
+            <option value="NY">New York</option>
+            <option value="NC">North Carolina</option>
+            <option value="ND">North Dakota</option>
+            <option value="OH">Ohio</option>
+            <option value="OK">Oklahoma</option>
+            <option value="OR">Oregon</option>
+            <option value="PA">Pennsylvania</option>
+            <option value="RI">Rhode Island</option>
+            <option value="SC">South Carolina</option>
+            <option value="SD">South Dakota</option>
+            <option value="TN">Tennessee</option>
+            <option value="TX">Texas</option>
+            <option value="UT">Utah</option>
+            <option value="VT">Vermont</option>
+            <option value="VA">Virginia</option>
+            <option value="WA">Washington</option>
+            <option value="WV">West Virginia</option>
+            <option value="WI">Wisconsin</option>
+            <option value="WY">Wyoming</option>
+          </select>
+        </div>
+        <div>
+          <label for="zip">ZIP code</label>
+          <input id="zip" name="requester_zip" type="text" required pattern="^\d{5}$" title="Enter a 5-digit ZIP code">
+        </div>
+        <div class="full">
+          <label for="address">Address</label>
+          <input id="address" name="requester_address" type="text" required>
+        </div>
+        <div class="full">
+          <label for="phone">Phone</label>
+          <input id="phone" name="requester_phone" type="tel" pattern="\d{10}" title="Enter a 10-digit phone number">
+        </div>
+        <div class="full">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" required></textarea>
+        </div>
+        <div class="full">
+          <label for="availability">Availability</label>
+          <textarea id="availability" name="availability" required></textarea>
+        </div>
+      </div>
+      <button type="submit" class="btn">Submit Request</button>
+    </form>
+  </div>
+
+  <!-- Custom Modal -->
+  <div id="modal-overlay" class="modal-overlay">
+    <div class="modal">
+      <h2>Submitted!</h2>
+      <p>Your request has been successfully sent.</p>
+      <button id="modal-close" class="btn">OK</button>
+    </div>
+  </div>
+
+  <script>
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie) document.cookie.split(';').forEach(c => {
+        const [k, v] = c.trim().split('='); if (k === name) cookieValue = decodeURIComponent(v);
+      });
+      return cookieValue;
+    }
+
+    const form = document.getElementById('request-form');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalClose = document.getElementById('modal-close');
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+
+      const csrftoken = getCookie('csrftoken');
+      const payload = {
+        requester_first_name: form.requester_first_name.value.trim(),
+        requester_last_name:  form.requester_last_name.value.trim(),
+        requester_email:      form.requester_email.value.trim(),
+        requester_city:       form.requester_city.value.trim(),
+        requester_state:      form.requester_state.value,
+        requester_zip:        form.requester_zip.value.trim(),
+        requester_address:    form.requester_address.value.trim(),
+        requester_phone:      form.requester_phone.value.replace(/\D/g, '').trim(),
+        description:          form.description.value.trim(),
+        availability:         form.availability.value.trim(),
+        organization:         document.getElementById('org-id').value,
+        job:                  null
+      };
+
+      try {
+        const resp = await fetch("{{ url }}", {
+          method: 'POST', headers: {'Content-Type': 'application/json','X-CSRFToken': csrftoken}, body: JSON.stringify(payload)
+        });
+        if (!resp.ok) throw new Error(await resp.text());
+
+        modalOverlay.style.display = 'flex';
+        form.reset();
+      } catch (err) {
+        console.error('Submission failed:', err);
+        alert('Error submitting request.');
+      }
+    });
+
+    modalClose.addEventListener('click', () => { modalOverlay.style.display = 'none'; });
+  </script>
+</body>
+</html>

@@ -1,25 +1,46 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EditContractorsPageComponent } from './edit-contractors-page.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+
+class MockRouter {
+  navigate = jasmine.createSpy('navigate');
+}
+
 
 describe('EditContractorsPageComponent', () => {
   let component: EditContractorsPageComponent;
   let fixture: ComponentFixture<EditContractorsPageComponent>;
+  let httpMock: HttpTestingController;
+  let paramMapSubject: Subject<any>;
+  let router: Router;
 
   beforeEach(async () => {
+    paramMapSubject = new Subject();
     const activatedRouteMock = {
-          queryParams: of({ email: '', fname: '', lname: '', phoneNo: '' })
-        };
+      paramMap: paramMapSubject.asObservable(),
+      queryParams: of({ email: '', first_name: '', last_name: '', phone: '' })
+    };
+    
     await TestBed.configureTestingModule({
       imports: [EditContractorsPageComponent],
-      providers: [{ provide: ActivatedRoute, useValue: activatedRouteMock},provideAnimationsAsync()]
+      providers: [
+        { provide: ActivatedRoute, useValue: activatedRouteMock},
+        { provide: Router, useClass: MockRouter },
+        provideAnimationsAsync(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ]
     })
     .compileComponents();
 
     fixture = TestBed.createComponent(EditContractorsPageComponent);
     component = fixture.componentInstance;
+    httpMock = TestBed.inject(HttpTestingController);
+    router = TestBed.inject(Router);
     fixture.detectChanges();
   });
 

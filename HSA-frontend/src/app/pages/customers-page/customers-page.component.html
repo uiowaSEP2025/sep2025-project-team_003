@@ -1,7 +1,26 @@
-<div class="flex items-center  flex-col">
-    <app-table-component editRedirect="/customers/edit" deleteEndpoint="1234"></app-table-component>
-    <button mat-fab extended class="m-10" (click)="redirectCreate()">
-        <mat-icon>note_add</mat-icon>
-        Add a Customer
-    </button>
-</div>
+<app-page-template [title]="'Customers'">
+  @if (customers === null) {
+    <app-loading-fallback stringToDisplay="Loading customers"></app-loading-fallback>
+  }
+  @else {
+    <div class="table-header">
+      <button class="mb-4 scale-button" mat-flat-button id="add-customer-button" (click)="navigateToPage('customers/create')">
+        <mat-icon>add</mat-icon>
+        Add Customer
+      </button>
+    </div>
+    <div class="tab-container">
+      <app-table-component
+        editRedirect="/customers/edit"
+        [fetchedData]="customers"
+        [deleteRequest]="customerService.deleteCustomer.bind(customerService)"
+        [loadDataToTable]="this.loadDataToTable.bind(this)"
+        [hideValues]="['Id']"
+        searchHint="Search by customer name"
+        [headers]="['First Name', 'Last Name', 'Email']"
+      ></app-table-component>
+    </div>
+    <div class="spacer"></div>
+  }
+</app-page-template>
+

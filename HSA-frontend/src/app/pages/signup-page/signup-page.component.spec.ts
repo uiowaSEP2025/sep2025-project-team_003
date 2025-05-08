@@ -1,161 +1,107 @@
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import { of, throwError } from 'rxjs';
+import { UserAuthService } from '../../services/user-auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { RequestTrackerService } from '../../utils/request-tracker';
 import { SignupPageComponent } from './signup-page.component';
-import {provideHttpClient} from '@angular/common/http';
-import {HttpTestingController, provideHttpClientTesting} from '@angular/common/http/testing';
-import {provideAnimations} from '@angular/platform-browser/animations';
-import {provideRouter, Router} from '@angular/router';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter, Router } from '@angular/router';
 
+class MockRouter {
+  navigate = jasmine.createSpy('navigate');
+}
 
 describe('SignupPageComponent', () => {
   let component: SignupPageComponent;
-  let fixture: ComponentFixture<SignupPageComponent>;
-  let httpMock: HttpTestingController;
   let router: Router;
+  let fixture: ComponentFixture<SignupPageComponent>;
+  let authService: jasmine.SpyObj<UserAuthService>;
+  let dialog: jasmine.SpyObj<MatDialog>;
 
   beforeEach(async () => {
+    const authSpy = jasmine.createSpyObj('UserAuthService', ['checkUserExist', 'createUser']);
+    const snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
+    const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
+    const trackerSpy = jasmine.createSpyObj('RequestTrackerService', ['startRequest']);
+
     await TestBed.configureTestingModule({
-      imports: [SignupPageComponent],
+      imports: [SignupPageComponent, NoopAnimationsModule],
       providers: [
+        { provide: Router, useClass: MockRouter },
+        { provide: UserAuthService, useValue: authSpy },
+        { provide: MatSnackBar, useValue: snackBarSpy },
+        { provide: MatDialog, useValue: dialogSpy },
+        { provide: RequestTrackerService, useValue: trackerSpy },
         provideHttpClient(),
         provideHttpClientTesting(),
-        provideAnimations(),
         provideRouter([])
-      ],
+      ]
     })
     .compileComponents();
 
     fixture = TestBed.createComponent(SignupPageComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-    httpMock = TestBed.inject(HttpTestingController);
     router = TestBed.inject(Router);
+    component = fixture.componentInstance;
+    authService = TestBed.inject(UserAuthService) as jasmine.SpyObj<UserAuthService>;
+    dialog = TestBed.inject(MatDialog) as jasmine.SpyObj<MatDialog>;
+    fixture.detectChanges();
+  });
 
-    spyOn(component, "ngOnInit").and.callFake(() => {
-      component.loadStates();
+  it('should call checkUserExist and move to next step if valid', () => {
+    component.userAccountForm.setValue({
+      userFirstName: 'John',
+      userLastName: 'Doe',
+      userEmail: 'john@example.com',
+      username: 'johnuser',
+      password: 'Test@1234',
+      confirmPassword: 'Test@1234',
     });
 
-    fixture.detectChanges();
+    authService.checkUserExist.and.returnValue(of({ message: "" }));
+
+    component.stepper = {
+      selected: { completed: false },
+      next: jasmine.createSpy('next')
+    } as any;
+
+    component.onSubmitUserCreation();
+
+    expect(authService.checkUserExist).toHaveBeenCalled();
+    expect(component.registrationForm.get('organizationEmail')?.value).toBe('john@example.com');
+    expect(component.registrationForm.get('ownerName')?.value).toBe('John Doe');
+    expect(component.stepper.next).toHaveBeenCalled();
   });
 
-  it('should create', () => {
-    const request = httpMock.expectOne('states.json');
-    expect(request.request.method).toBe('GET');
-    expect(component).toBeTruthy();
-    httpMock.verify();
+  it('should show error if username already exists', () => {
+    component.userAccountForm.patchValue({
+      username: 'existinguser',
+      password: 'Test@1234'
+    });
+    authService.checkUserExist.and.returnValue(throwError(() => ({ status: 409 })));
+
+    component.stepper = {
+      selected: { completed: false },
+      next: jasmine.createSpy('next')
+    } as any;
+
+    component.onSubmitUserCreation();
+    expect(component.stepper.selected!.completed).toBeFalse();
   });
 
-  it('should have the correct input fields', () => {
-    const compiled = fixture.debugElement.nativeElement;
-    const request = httpMock.expectOne('states.json');
-    expect(request.request.method).toBe('GET');
-    const formFields = compiled.querySelectorAll('mat-form-field');
-    expect(formFields[0].querySelector('mat-label').textContent).toContain('Organization Name');
-    expect(formFields[1].querySelector('mat-label').textContent).toContain('Organization Email');
-    expect(formFields[2].querySelector('mat-label').textContent).toContain('Address 1');
-    expect(formFields[3].querySelector('mat-label').textContent).toContain('Address 2');
-    expect(formFields[4].querySelector('mat-label').textContent).toContain('City');
-    expect(formFields[5].querySelector('mat-label').textContent).toContain('State');
-    expect(formFields[6].querySelector('mat-label').textContent).toContain('Zip Code');
-    expect(formFields[7].querySelector('mat-label').textContent).toContain('Owner Name');
+  it('should not call createUser if dialog is cancelled', fakeAsync(() => {
+    dialog.open.and.returnValue({ afterClosed: () => of(false) } as any);
 
-    const buttonsArray:Element[] = Array.from(compiled.querySelectorAll('button'));
-    const createButton = buttonsArray.filter((el:Element) => (el.textContent == 'Create'))[0];
-    const cancelButton = buttonsArray.filter((el:Element) => (el.textContent == 'Cancel'))[0];
-    expect(createButton).toBeTruthy();
-    expect(cancelButton).toBeTruthy();
-  });
-
-  it('should fetch the state json request', () => {
-    const mockData = [
-      { name:  "Georgia", code:  "GA"},
-      { name:  "Hawaii", code:  "HI"},
-      { name:  "Idaho", code:  "ID"}
-    ];
-
-    //Expect HTTP request and flush the data as response
-    const request = httpMock.expectOne('states.json');
-    expect(request.request.method).toBe('GET');
-    request.flush(mockData);
-
-    //Check the json contents
-    expect(component.states).toEqual(mockData);
-
-    httpMock.verify();
-  });
-
-  it('should populate the state selector on page', () => {
-    const mockData = [
-      { name:  "Georgia", code:  "GA"},
-      { name:  "Idaho", code:  "ID"}
-    ];
-
-    const request = httpMock.expectOne('states.json');
-    expect(request.request.method).toBe('GET');
-    request.flush(mockData);
-
-    expect(component.states).toEqual(mockData);
-    expect(component.states.length).toEqual(2);
-
-    httpMock.verify();
-  });
-
-  it('should be an invalid fields when the fields are empty', () => {
-    const compiled = fixture.debugElement.nativeElement;
-    const request = httpMock.expectOne('states.json');
-    expect(request.request.method).toBe('GET');
-    const buttonsArray:Element[] = Array.from(compiled.querySelectorAll('button'));
-    const createButton = buttonsArray.filter((el:Element) => (el.textContent == 'Create'))[0];
-    expect(createButton).toBeTruthy();
-    (createButton as HTMLElement).click();
-
-    fixture.detectChanges(); // needed to detect the error field
-    const organizationNameErrorText = compiled.querySelectorAll('mat-form-field')[0].querySelector('mat-error');
-    const organizationEmailErrorText = compiled.querySelectorAll('mat-form-field')[1].querySelector('mat-error');
-    const addressOneErrorText = compiled.querySelectorAll('mat-form-field')[2].querySelector('mat-error');
-    const stateErrorText = compiled.querySelectorAll('mat-form-field')[5].querySelector('mat-error');
-    const ownerNameErrorText = compiled.querySelectorAll('mat-form-field')[7].querySelector('mat-error');
-    expect(organizationNameErrorText.textContent).toEqual('Organization Name is required');
-    expect(organizationEmailErrorText.textContent).toEqual('Organization Email is required');
-    expect(addressOneErrorText.textContent).toEqual('Primary Address is required');
-    expect(stateErrorText.textContent).toEqual('State is required');
-    expect(ownerNameErrorText.textContent).toEqual('Valid Owner is required');
-  });
-
-  it('should be an invalid email', async () => {
-    const compiled = fixture.debugElement.nativeElement;
-    const request = httpMock.expectOne('states.json');
-    expect(request.request.method).toBe('GET');
-    const organizationEmailField = compiled.querySelectorAll('mat-form-field')[1];
-    const buttonsArray:Element[] = Array.from(compiled.querySelectorAll('button'));
-    const createButton = buttonsArray.filter((el:Element) => (el.textContent == 'Create'))[0];
-    expect(createButton).toBeTruthy();
-    expect(organizationEmailField).toBeTruthy();
-
-    const emailInput = organizationEmailField.querySelector('input');
-    emailInput.value = "P";
-    emailInput.dispatchEvent(new Event('input'));
-    (createButton as HTMLElement).click();
-
-    fixture.detectChanges(); // needed to detect the error field
-    const organizationEmailErrorText = compiled.querySelectorAll('mat-form-field')[1].querySelector('mat-error');
-    expect(organizationEmailErrorText.textContent).toEqual('Email format is invalid');
-  });
-
-  it('should navigate to home page on cancel button', fakeAsync(() => {
-    const compiled = fixture.debugElement.nativeElement;
-    const request = httpMock.expectOne('states.json');
-    expect(request.request.method).toBe('GET');
-    const buttonsArray:Element[] = Array.from(compiled.querySelectorAll('button'));
-    const cancelButton = buttonsArray.filter((el:Element) => (el.textContent == 'Cancel'))[0];
-
-    spyOn(router, 'navigate');
-    (cancelButton as HTMLElement).click();
+    component.onCreateConfirmDialog();
     tick();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/home']);
+    expect(authService.createUser).not.toHaveBeenCalled();
   }));
 
-  afterEach(() => {
-    httpMock.verify();
+  it('should navigate to the correct page', () => {
+    component.navigateToPage('login');
+    expect(router.navigate).toHaveBeenCalledWith(['/login']);
   });
 });

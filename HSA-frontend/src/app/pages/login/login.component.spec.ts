@@ -3,15 +3,28 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 import { LoginComponent } from './login.component';
+import { of, Subject } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
+  let paramMapSubject: Subject<any>;
 
   beforeEach(async () => {
+    paramMapSubject = new Subject();
+    const activatedRouteMock = {
+      paramMap: paramMapSubject.asObservable(),
+      queryParams: of({ prevPath: 'home' })
+    };
+
     await TestBed.configureTestingModule({
       imports: [LoginComponent],
-      providers: [provideAnimationsAsync(), provideHttpClient(withInterceptorsFromDi())] 
+      providers: [
+        provideAnimationsAsync(), 
+        provideHttpClient(withInterceptorsFromDi()),
+        { provide: ActivatedRoute, useValue: activatedRouteMock },
+      ] 
     })
     .compileComponents();
 
