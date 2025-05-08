@@ -8,7 +8,7 @@ import { NgxExtendedPdfViewerService } from 'ngx-extended-pdf-viewer';
 import { of, Subject } from 'rxjs';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 
-fdescribe('QuoteSignComponent (full coverage)', () => {
+describe('QuoteSignComponent (full coverage)', () => {
   let fixture: ComponentFixture<QuoteSignComponent>;
   let component: QuoteSignComponent;
   let httpMock: HttpTestingController;
