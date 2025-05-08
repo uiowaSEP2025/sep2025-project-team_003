@@ -390,6 +390,7 @@ export class EditJobPageComponent {
       this.snackBar.open('Invalid fields, please revise the form and resubmit', '', {
         duration: 3000
       });
+      return;
     } else {
       //call edit job api
       const editJobRequestJson = {

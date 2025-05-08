@@ -453,6 +453,7 @@ export class CreateJobPageComponent {
       this.snackBar.open('Invalid fields, please revise the form and resubmit', '', {
         duration: 3000
       });
+      return;
     }
 
     let servicesField: { id: any; }[] = []
