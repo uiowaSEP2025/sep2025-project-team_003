@@ -64,3 +64,44 @@
   .inputWidth {
     width: 60%;
 }
+
+@media (max-width: 768px) {
+  .scale-button {
+      scale: 1;
+      padding: 10px;
+  }
+
+  .tab-container {
+      width: auto;
+      min-width: 90vw;
+      max-width: 90vw;
+  } 
+
+  .table-header hr {
+      max-width: 90vw;
+  }
+
+  .card-container {
+    padding: 1px;
+  }
+}
+
+@media (max-height: 400px) {
+  .spacer {
+      flex: 1 1 auto;
+      min-height: 20px;
+    }
+}
+
+.form-fields-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 10px;
+}
+
+.form-field {
+  min-width: 20vw;
+}
