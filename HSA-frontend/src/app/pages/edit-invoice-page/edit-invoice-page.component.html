@@ -8,6 +8,18 @@
                         <div>and due date: {{dueDate}}</div>
                         <div>and status: {{initialStatus}}</div>
                     </mat-card>
+                    <mat-form-field class="form-field">
+                        <mat-label>Status</mat-label>
+                        <mat-select data-testid="status-selector" matNativeControl required [(ngModel)]="status">
+                            <mat-option value="created">created</mat-option>
+                            <mat-option value="issued">issued</mat-option>
+                            <mat-option value="paid">paid</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    @if (isDateSelectVisible()) {
+                    <app-invoice-date-picker [formControll]="range"
+                        [dateLabels]="['Issuance date', 'Due date']"></app-invoice-date-picker>
+                    }
                     <h2 class="pb-5 pt-5">Select new jobs for this invoice</h2>
     
                     <app-table-component data-testid="invoice-quotes-table" [loadDataToTable]="loadJobs.bind(this)"
@@ -20,18 +32,7 @@
                     }
     
                     <div class="form-fields-wrapper">
-                        <mat-form-field class="form-field">
-                            <mat-label>Status</mat-label>
-                            <mat-select data-testid="status-selector" matNativeControl required [(ngModel)]="status">
-                                <mat-option value="created">created</mat-option>
-                                <mat-option value="issued">issued</mat-option>
-                                <mat-option value="paid">paid</mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                        @if (isDateSelectVisible()) {
-                        <app-invoice-date-picker [formControll]="range"
-                            [dateLabels]="['Issuance date', 'Due date']"></app-invoice-date-picker>
-                        }
+                        
         
                         
         
