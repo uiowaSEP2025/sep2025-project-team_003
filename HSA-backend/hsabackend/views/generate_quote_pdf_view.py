@@ -1,37 +1,27 @@
 import os
 import io
 import base64
-import random
 from datetime import datetime
-from hsabackend.utils.env_utils import get_url
 import jwt
 import boto3
 from fpdf import FPDF
 from hsabackend.utils.pdf_utils import get_job_detailed_table
 from django.http import HttpResponse
-from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-
 from hsabackend.models.organization import Organization
 from hsabackend.models.job import Job
-from hsabackend.models.job_service import JobService
-from hsabackend.models.job_material import JobMaterial
 from hsabackend.utils.string_formatters import (
     format_title_case,
     format_phone_number_with_parens,
     format_maybe_null_date,
-    
 )
 from hsabackend.utils.auth_wrapper import check_authenticated_and_onboarded
-from hsabackend.utils.env_utils import get_url
-
+from hsabackend.mailing.quotes_mailer import (send_quotes_email, 
+                            accept_reject_quotes)
 # these wrappers are for stubbing purposes
-def encode(job):
-    return jwt.encode(job.jwt_json(), "vibecodedAPPS-willgetyouHACKED!!", algorithm="HS256")
+
 
 
 def decode(token):
@@ -85,11 +75,9 @@ def _build_quote_pdf(job: Job, org: Organization) -> bytes:
 
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def generate_quote_pdf(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     try:
         job = Job.objects.select_related("customer").get(pk=id, customer__organization=org.pk)
     except Job.DoesNotExist:
@@ -102,27 +90,23 @@ def generate_quote_pdf(request, id):
 
 
 @api_view(["POST"])
-def generate_quote_pdf_as_base64(request, id):
+def generate_quote_pdf_as_base64(request):
     """
-    Expects JSON body: { "pin": "12345678" }
+    Expects JSON body: { "pin": "JWT TOKEN" }
     Returns the PDF as a base64 string if the pin matches and no link exists yet.
     """
+    token = request.data.get("pin", "")
+    try:
+        decoded = decode(token)
+    except Exception:
+        return Response({"message": "Invalid PIN"}, status=status.HTTP_403_FORBIDDEN)
+
+    id = decoded.get("id")
+
     try:
         job = Job.objects.get(pk=id)
     except Job.DoesNotExist:
         return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    provided_pin = str(request.data.get("pin", ""))
-
-    try:
-        decoded = decode(provided_pin)
-    except Exception:
-        return Response({"message": "Invalid PIN"}, status=status.HTTP_403_FORBIDDEN)
-
-
-    if decoded != job.jwt_json():
-        return Response({"message": "Invalid PIN"}, status=status.HTTP_403_FORBIDDEN)
-
     if job.quote_s3_link:
         return Response(
             {"message": "Quote has already been generated", "link": job.quote_s3_link},
@@ -137,11 +121,20 @@ def generate_quote_pdf_as_base64(request, id):
 
 
 @api_view(["POST"])
-def sign_the_quote(request, id):
+def sign_the_quote(request):
     """
-    Expects JSON body: { "quote_pdf_base64": "<base64-string>" }
+    Expects JSON body: { "quote_pdf_base64": "<base64-string>", "token": "JWT token" }
     Decodes and uploads the signed PDF to S3 (public), marks the job pending, and returns the link.
     """
+
+    token = request.data.get("token", "")
+    try:
+        decoded = decode(token)
+    except Exception:
+        return Response({"message": "Invalid PIN"}, status=status.HTTP_403_FORBIDDEN)
+
+    id = decoded.get("id")
+    
     try:
         job = Job.objects.get(pk=id)
     except Job.DoesNotExist:
@@ -190,11 +183,9 @@ def sign_the_quote(request, id):
 
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def send_quote_pdf_to_customer_email(request, id):
-    if not request.user.is_authenticated:
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-
-    org = Organization.objects.get(owning_User=request.user.pk)
+    org = request.org
     try:
         job = Job.objects.select_related("customer").get(pk=id, customer__organization=org.pk)
     except Job.DoesNotExist:
@@ -202,40 +193,14 @@ def send_quote_pdf_to_customer_email(request, id):
 
     # Build PDF
     pdf_bytes = _build_quote_pdf(job, org)
-
-    # Prepare email
-    subject = f"Quote for Job #{job.pk}"
-    from_email = os.environ.get("EMAIL_HOST_USER")
-    to_email = job.customer.email
-
-    token = encode(job)
-
-
-    text_content = (
-        f"Hello {job.customer.first_name},\n\n"
-        f"Please find attached the PDF quote for your requested job, and make a statement at {get_url()}/signquote."
-        f"Use pincode {token} to access signable window.\n\n"
-    )
-    html_content = f"""
-        <p>Hello {job.customer.first_name},</p>
-        <p>{text_content}</p>
-        <p>If you have any questions, just hit reply.</p>
-        <p>Best,<br/>HSA Team</p>
-    """
-
-    msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
-    msg.attach_alternative(html_content, "text/html")
-    msg.attach(f"quote_job_{job.pk}.pdf", pdf_bytes, "application/pdf")
-    msg.send()
+    to_email = send_quotes_email(job, pdf_bytes)
+    
     return Response({"message": f"Quote PDF sent to {to_email}"}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def get_list_of_quotes_by_org(request):
-
-    try:
-        org = Organization.objects.get(owning_User=request.user.pk)
-    except Organization.DoesNotExist:
-        return Response({"message": "Organization not found"}, status=status.HTTP_404_NOT_FOUND)
+    org = request.org
 
     filterby = request.query_params.get("filterby", None)
 
@@ -261,12 +226,10 @@ def get_list_of_quotes_by_org(request):
     return Response({"data":result}, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
+@check_authenticated_and_onboarded()
 def retrieve_quote(request, id):
-
-    try:
-        org = Organization.objects.get(owning_User=request.user.pk)
-    except Organization.DoesNotExist:
-        return Response({"message": "Organization not found"}, status=status.HTTP_404_NOT_FOUND)
+    """This is for handyman to accept/deny quote page to get the quote from s3"""
+    org = request.org
 
     try:
         job = Job.objects.select_related("customer__organization") \
@@ -306,16 +269,14 @@ def retrieve_quote(request, id):
     return Response({"url": presigned_url}, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
+@check_authenticated_and_onboarded()
 def accept_reject_quote(request, id):
     """
     POST /api/quotes/<id>/accept_reject/
     Body: { "decision": "accept" | "reject" }
     """
-    try:
-        org = Organization.objects.get(owning_User=request.user.pk)
-    except Organization.DoesNotExist:
-        return Response({"message": "Organization not found"}, status=status.HTTP_404_NOT_FOUND)
-
+    org = request.org
+    
     try:
         job = Job.objects.select_related("customer__organization")\
             .get(pk=id, customer__organization=org)
@@ -335,35 +296,7 @@ def accept_reject_quote(request, id):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    customer_email = job.customer.email
-    from_email = os.environ.get("EMAIL_HOST_USER") or settings.DEFAULT_FROM_EMAIL
-
-    if decision == "accept":
-        job.quote_status = "accepted"
-        subject = f"Quote #{job.pk} Approved"
-        text = (
-            f"Hello {job.customer.first_name},\n\n"
-            f"Thank you! Your quote for Job #{job.pk} has been accepted.\n\n"
-            "We’ll be in touch shortly to schedule the work.\n\n"
-            "Best,\nHSA Team"
-        )
-    else:  
-        job.quote_status = "rejected"
-        job.quote_s3_link = None
-        subject = f"Quote #{job.pk} Rejected"
-        sign_url = f"{get_url()}/signquote?job_id={job.pk}"
-        text = (
-            f"Hello {job.customer.first_name},\n\n"
-            f"Your quote for Job #{job.pk} was rejected.\n\n"
-            f"If you’d like to make changes and sign again, please visit:\n{sign_url}\n\n"
-            "Feel free to reach out with any questions.\n\n"
-            "Best,\nHSA Team"
-        )
-
-    job.save(update_fields=["quote_status", "quote_s3_link"] if decision == "reject" else ["quote_status"])
-
-    msg = EmailMultiAlternatives(subject, text, from_email, [customer_email])
-    msg.send()
+    accept_reject_quotes(job, decision)
 
     return Response(
         {"quote_status": job.quote_status},

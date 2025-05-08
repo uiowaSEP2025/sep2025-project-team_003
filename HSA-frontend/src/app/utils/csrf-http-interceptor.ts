@@ -2,7 +2,7 @@ import { HttpRequest, HttpHandlerFn, HttpEvent } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
 
-function getCSRFToken(): string {
+export function getCSRFToken(): string {
     const match = document.cookie.match(/(?:^|;)\s*csrftoken=([^;]+)/);
     return match ? decodeURIComponent(match[1]) : "";
 }
