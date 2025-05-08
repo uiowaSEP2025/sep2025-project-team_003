@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import {PageTemplateComponent} from '../../components/page-template/page-template.component';
 import { environment } from '../../../environments/environment';
+import { getCSRFToken } from '../../utils/csrf-http-interceptor';
 
 interface Quote {
   job_id: number;
@@ -23,8 +24,7 @@ interface Quote {
 export class QuotesDashboardPageComponent implements OnInit {
   quotes: Quote[] = [];
   filter: string = '';
-  shouldCSRF: boolean = environment.requireCSRF
-
+  shouldCSRF: boolean = environment.requireCSRF;
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
@@ -39,6 +39,14 @@ export class QuotesDashboardPageComponent implements OnInit {
       },
       error: err => console.error('Failed to load quotes:', err)
     });
+  }
+
+  getHeaders() {
+    const headers: any = { 'Content-Type': 'application/json' };
+    if (this.shouldCSRF) {
+      headers['X-CSRFToken'] = getCSRFToken();
+    }
+    return JSON.stringify(headers);
   }
 
 
@@ -62,31 +70,18 @@ export class QuotesDashboardPageComponent implements OnInit {
                   <button onclick="reject()">Reject</button>
                 </div>
                 <script>
-                  function getCSRFToken(): string {
-                    const match = document.cookie.match(/(?:^|;)\s*csrftoken=([^;]+)/);
-                    return match ? decodeURIComponent(match[1]) : "";
-                  }
-
-                  function getHeaders() {
-                    const headers: any = { 'Content-Type': 'application/json' };
-                    if (${this.shouldCSRF}) {
-                      headers['X-CSRFToken'] = getCSRFToken();
-                    }
-                    return headers;
-                  }
-
+                
                   function accept() {
                     fetch('/api/manage/quote/${quote.job_id}', {
                       method: 'POST',
-                      headers: getHeaders(),
+                      headers: ${this.getHeaders()},
                       body: JSON.stringify({ decision: 'accept' })
                     }).then(res => location.reload());
                   }
-
                   function reject() {
                     fetch('/api/manage/quote/${quote.job_id}', {
                       method: 'POST',
-                      headers: getHeaders(),
+                      headers: ${this.getHeaders()},
                       body: JSON.stringify({ decision: 'reject' })
                     }).then(res => location.reload());
                   }
