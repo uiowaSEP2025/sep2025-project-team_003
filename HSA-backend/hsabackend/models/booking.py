@@ -26,7 +26,9 @@ class Booking(models.Model):
     back_color = models.CharField(max_length=50, default='#6aa84f', blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
-    notified = models.BooleanField(default=False, blank=True)
+    # DO NOT SET THIS in the backend, only for celery worker!!!!
+    notified = models.BooleanField(default=False, blank=True) # have the contractors and the custmer been notified? 
+    
 
     @property
     def booking_date(self):
