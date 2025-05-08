@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild, Input, OnChanges } from '@angular/core';
+import {AfterViewInit, Component, ViewChild, Input, OnChanges, HostListener, OnInit} from '@angular/core';
 import { DayPilot, DayPilotCalendarComponent, DayPilotModule, DayPilotNavigatorComponent } from "@daypilot/daypilot-lite-angular";
 import { BookingService } from '../../services/calendar-data.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -16,7 +16,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import {MatToolbar} from '@angular/material/toolbar';
+import {MatToolbar, MatToolbarRow} from '@angular/material/toolbar';
 
 @Component({
   selector: 'app-calendar-component',
@@ -30,6 +30,7 @@ import {MatToolbar} from '@angular/material/toolbar';
     MatButtonModule,
     MatIconModule,
     MatToolbar,
+    MatToolbarRow,
   ],
   providers: [
     BookingService,
@@ -37,11 +38,26 @@ import {MatToolbar} from '@angular/material/toolbar';
   templateUrl: './calendar-component.component.html',
   styleUrl: './calendar-component.component.scss'
 })
-export class CalendarComponentComponent implements AfterViewInit, OnChanges {
+export class CalendarComponentComponent implements AfterViewInit, OnChanges, OnInit {
   @ViewChild("day") day!: DayPilotCalendarComponent;
   @ViewChild("week") week!: DayPilotCalendarComponent;
   @ViewChild("navigator") nav!: DayPilotNavigatorComponent;
   @Input({ required: true }) contractorNames!: ContractorNameId[]
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.updateView();
+  }
+
+  ngOnInit() {
+    this.updateView();
+  }
+
+  updateView() {
+    if (window.innerWidth < 768) {
+      this.viewDay(); // Switch to day view on smaller screens
+    }
+  }
 
   events: DayPilot.EventData[] = [];
   jobs: any[] = [];
@@ -100,6 +116,15 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges {
 
   configNavigator: DayPilot.NavigatorConfig = {
     showMonths: 3,
+    cellWidth: 25,
+    cellHeight: 25,
+    onVisibleRangeChanged: args => {
+
+    }
+  };
+
+  configNavigator2: DayPilot.NavigatorConfig = {
+    showMonths: 1,
     cellWidth: 25,
     cellHeight: 25,
     onVisibleRangeChanged: args => {
