@@ -58,3 +58,62 @@
   .button:active {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
+
+  .toolbar-content-above {
+    display: flex;
+    align-items: right;
+    justify-content: space-between;
+  }
+
+  .toolbar-content-below {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .selector {
+    width: 100%;
+  }
+
+  .download-button {
+    width: 100%;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: right;
+  }
+
+  @media (max-width: 400px) {
+    .toolbar-content-above {
+      padding-top: 10px;
+      display: flex;
+      flex-direction: column !important;
+    }
+
+    .toolbar-content-below {
+      padding-top: 10px;
+      display: flex;
+      flex-direction: column !important;
+      min-height: 150px;
+    }
+
+    .view-toggle {
+      display: flex;
+      margin: 0 auto;
+      justify-content: center;
+    }
+  
+    .selector,
+    .view-toggle,
+    .download-button {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    
+    .download-button {
+      justify-content: center;
+    }
+  
+    .flex-auto {
+      display: none;
+    }
+  }

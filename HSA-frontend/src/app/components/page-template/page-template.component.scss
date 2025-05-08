@@ -1,0 +1,15 @@
+.divider {
+    max-width: 60vw
+}
+
+.wrap-title {
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+@media (max-width: 768px) {
+    .divider {
+        max-width: 90vw
+    }
+}
