@@ -33,7 +33,7 @@ def send_quotes_email(job: Job, pdf_bytes):
     msg.attach_alternative(html_content, "text/html")
     msg.attach(f"quote_job_{job.pk}.pdf", pdf_bytes, "application/pdf")
     msg.send()
-    print(f"Sent a quote to customer with emailn {to_email[:4]}******")
+    print(f"Sent a quote to customer with email {to_email[:4]}******")
 
     return to_email
 
@@ -64,6 +64,6 @@ def accept_reject_quotes(job: Job, decision: str):
         )
 
     job.save(update_fields=["quote_status", "quote_s3_link"] if decision == "reject" else ["quote_status"])
-
+    print(f"Sent a quote to customer with email {customer_email[:4]}******")
     msg = EmailMultiAlternatives(subject, text, from_email, [customer_email])
     msg.send()
