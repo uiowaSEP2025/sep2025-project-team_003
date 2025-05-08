@@ -6,7 +6,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable, of, Subscription } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
+import { pdfDefaultOptions } from 'ngx-extended-pdf-viewer';
 
+pdfDefaultOptions.assetsFolder = 'static';
 @Component({
   selector: 'app-quote-sign',
   templateUrl: './quote-sign.component.html',
