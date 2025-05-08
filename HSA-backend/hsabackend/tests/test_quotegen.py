@@ -119,10 +119,10 @@ class GenerateBase64Tests(APITestCase):
         org.return_value = mock_org
         
         mock_job.side_effect = Job.DoesNotExist
-        mock_pin.return_value="OOga booga"
+        mock_pin.return_value={"id": 1}
         request = self.factory.post("/api/ret/quote/100", {"pin": "0000"}, format="json")
         request.user = mock_user
-        resp = generate_quote_pdf_as_base64(request, 1)
+        resp = generate_quote_pdf_as_base64(request)
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     @patch("hsabackend.views.generate_quote_pdf_view.decode")
@@ -138,10 +138,10 @@ class GenerateBase64Tests(APITestCase):
 
         job = Mock(quote_s3_link=None)
         mock_job.objects.get.return_value = job
-        mock_pin.return_value = "oogabooga FAIL"
+        mock_pin.side_effect = Exception()
         request = self.factory.post("/api/ret/quote/1", {"pin": "0000"}, format="json")
         request.user = mock_user
-        resp = generate_quote_pdf_as_base64(request, 1)
+        resp = generate_quote_pdf_as_base64(request)
         self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch("hsabackend.views.generate_quote_pdf_view.decode")
@@ -160,7 +160,7 @@ class GenerateBase64Tests(APITestCase):
         mock_pin.return_value = job.jwt_json()
         request = self.factory.post("/api/ret/quote/1", {"pin": "1234"}, format="json")
         request.user = mock_user
-        resp = generate_quote_pdf_as_base64(request, 1)
+        resp = generate_quote_pdf_as_base64(request)
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("link", resp.data)
 
@@ -184,7 +184,7 @@ class GenerateBase64Tests(APITestCase):
 
         request = self.factory.post("/api/ret/quote/1", {"pin": "9999"}, format="json")
         request.user = mock_user
-        resp = generate_quote_pdf_as_base64(request, 1)
+        resp = generate_quote_pdf_as_base64(request)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertEqual(base64.b64decode(resp.data["quote_pdf_base64"]), raw)
 
@@ -197,49 +197,55 @@ class SignTheQuoteTests(APITestCase):
         self.factory = APIRequestFactory()
         os.environ.pop("AWS_BUCKET", None)
 
+    @patch("hsabackend.views.generate_quote_pdf_view.decode")
     @patch("hsabackend.views.generate_quote_pdf_view.Job")
     @patch("hsabackend.utils.auth_wrapper.Organization.objects.get")
-    def test_sign_missing_pdf(self, org, mock_job):
+    def test_sign_missing_pdf(self, org, mock_job, decode):
         mock_user = Mock()
         mock_user.is_authenticated = True
 
         mock_org = Mock()
         mock_org.is_onboarding = False
         org.return_value = mock_org
+        decode.return_value = {"id": 1}
 
         mock_job.objects.get.return_value = Mock()
         request = self.factory.post("/api/quote/sign/1", {})
         request.user = mock_user
-        resp = sign_the_quote(request, 1)
+        resp = sign_the_quote(request)
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
+    @patch("hsabackend.views.generate_quote_pdf_view.decode")
     @patch("hsabackend.views.generate_quote_pdf_view.Job")
     @patch("hsabackend.utils.auth_wrapper.Organization.objects.get")
-    def test_sign_invalid_base64(self, org, mock_job):
+    def test_sign_invalid_base64(self, org, mock_job, decode):
         mock_user = Mock()
         mock_user.is_authenticated = True
 
         mock_org = Mock()
         mock_org.is_onboarding = False
         org.return_value = mock_org
+        decode.return_value = {"id": 1}
         
         mock_job.objects.get.return_value = Mock()
         request = self.factory.post(
             "/api/quote/sign/1", {"signed_pdf_base64": "!!!"}
         )
         request.user = mock_user
-        resp = sign_the_quote(request, 1)
+        resp = sign_the_quote(request)
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
+    @patch("hsabackend.views.generate_quote_pdf_view.decode")
     @patch("hsabackend.views.generate_quote_pdf_view.Job")
     @patch("hsabackend.utils.auth_wrapper.Organization.objects.get")
-    def test_sign_no_bucket(self, org, mock_job):
+    def test_sign_no_bucket(self, org, mock_job, decode):
         mock_user = Mock()
         mock_user.is_authenticated = True
 
         mock_org = Mock()
         mock_org.is_onboarding = False
         org.return_value = mock_org
+        decode.return_value = {"id": 1}
         
         mock_job.objects.get.return_value = Mock()
         pdf_b64 = base64.b64encode(b"A").decode()
@@ -247,19 +253,21 @@ class SignTheQuoteTests(APITestCase):
             "/api/quote/sign/1", {"signed_pdf_base64": pdf_b64}
         )
         request.user = mock_user
-        resp = sign_the_quote(request, 1)
+        resp = sign_the_quote(request)
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
+    @patch("hsabackend.views.generate_quote_pdf_view.decode")
     @patch("hsabackend.views.generate_quote_pdf_view.boto3.client")
     @patch("hsabackend.views.generate_quote_pdf_view.Job")
     @patch("hsabackend.utils.auth_wrapper.Organization.objects.get")
-    def test_sign_success(self, org, mock_job, mock_client):
+    def test_sign_success(self, org, mock_job, mock_client,decode):
         mock_user = Mock()
         mock_user.is_authenticated = True
 
         mock_org = Mock()
         mock_org.is_onboarding = False
         org.return_value = mock_org
+        decode.return_value = {"id": 1}
 
         os.environ["AWS_BUCKET"] = "bucket"
         job = Mock(pk=11, quote_s3_link=None, quote_status=None, save=Mock())
@@ -273,14 +281,14 @@ class SignTheQuoteTests(APITestCase):
             "/api/quote/sign/11", {"signed_pdf_base64": pdf_b64}
         )
         request.user = mock_user
-        resp = sign_the_quote(request, 11)
+        resp = sign_the_quote(request)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertTrue(resp.data["quote_s3_link"].startswith("quotes/quote_11_signed_"))
 
 
-# ------------------------------------------------------------------ #
-#  5. /api/quotes list + accept/reject
-# ------------------------------------------------------------------ #
+# # ------------------------------------------------------------------ #
+# #  5. /api/quotes list + accept/reject
+# # ------------------------------------------------------------------ #
 class GetListOfQuotesByOrgTests(APITestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
