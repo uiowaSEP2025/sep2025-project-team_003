@@ -1,4 +1,6 @@
 FROM node:22-alpine AS frontend
+
+
 # Copy the rest of the application
 COPY . /app/
 # Install Chrome and dependencies
@@ -10,6 +12,9 @@ RUN apk add --no-cache \
     nss \
     freetype \
     ttf-freefont
+
+
+RUN mkdir -p /app/HSA-frontend/coverage && chmod -R 777 /app/HSA-frontend/coverage
 
 # Set Chrome environment variables
 ENV CHROME_BIN=/usr/bin/chromium-browser

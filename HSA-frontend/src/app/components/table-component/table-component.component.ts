@@ -60,6 +60,7 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   @Input() onRowClick: any = null // if clickable rows is enabled this the function that handles the click
   @Input() headers = ['header1', 'header2', 'header3', 'header4'] // headers to render before fetching the data
   // note: headers are decided based on backend json keys
+  @Input() disableEditCheck: ((row: any) => boolean) | null = null
   @Input() disableDeleteCheck: ((row: any) => boolean) | null = null
   searchHint = input<string>("Use me to search the data")
 
@@ -93,6 +94,15 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
     }
     return this.disableDeleteCheck(row)
   }
+
+
+  shouldDisableEdit(row: any):boolean {
+    if (this.disableEditCheck === null) {
+      return false
+    }
+    return this.disableEditCheck(row)
+  }
+
 
 
   ngAfterViewInit() {
