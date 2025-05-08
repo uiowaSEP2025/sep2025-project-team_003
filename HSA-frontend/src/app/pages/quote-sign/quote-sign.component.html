@@ -1,37 +1,8 @@
 <!-- 1) Initial form: only shown while pdfBlobUrl$ is null -->
 <ng-container *ngIf="!(pdfBlobUrl$ | async) as pdfUrl">
   <div class="quote-sign-container">
-    <h1>Sign Your Quote</h1>
-
-    <form
-      [formGroup]="form"
-      (ngSubmit)="onSubmit()"
-      class="quote-sign-form">
-
-      <div class="form-group">
-        <label for="quoteId">Quote ID</label>
-        <input
-          id="quoteId"
-          formControlName="quoteId"
-          placeholder="Enter Quote ID" />
-      </div>
-
-      <div class="form-group">
-        <label for="pin">One-time PIN</label>
-        <input
-          id="pin"
-          type="password"
-          formControlName="pin"
-          placeholder="Enter PIN" />
-      </div>
-
-      <button
-        type="submit"
-        [disabled]="form.invalid"
-        class="btn-submit">
-        Fetch &amp; Sign
-      </button>
-    </form>
+    <h1>Fetching your quote</h1>
+    <app-loading-fallback stringToDisplay="loading"></app-loading-fallback>
   </div>
 </ng-container>
 
@@ -55,5 +26,11 @@
       (click)="onConfirmSubmit()">
       Submit
     </button>
+  </div>
+</ng-container>
+<ng-container *ngIf="isSuccess">
+  <div class="submission-success">
+    <h2>Quote submitted successfully!</h2>
+    <p>Thank you for signing. You may now close this page.</p>
   </div>
 </ng-container>
