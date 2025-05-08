@@ -41,6 +41,10 @@ header {
     justify-content: left;
     background-color: #9eccfa;
   }
+
+  .link-banner {
+    max-width: 60vw;
+  }
   
   .table-header {
     display: flex;
@@ -80,6 +84,10 @@ header {
   }
 
   @media (max-width: 768px) {
+    .link-banner {
+      max-width: 90vw;
+    }
+
     .scale-button {
         scale: 1;
         padding: 10px;

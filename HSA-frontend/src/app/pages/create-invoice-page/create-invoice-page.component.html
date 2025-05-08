@@ -1,7 +1,7 @@
 <app-page-template [title]="'Create Invoice'">
 
 	@if(orgHasLink !== null && orgHasLink === false) {
-		<div class="w-full bg-yellow-200 text-yellow-900 text-center py-3 px-4 font-semibold shadow-md mt-5">
+		<div class="w-full bg-yellow-200 text-yellow-900 text-center py-3 px-4 font-semibold shadow-md mt-5 link-banner">
 			⚠️ Warning: You do not have a default payment link set up.
 			Click
 			<a href="/update-payment" class="text-blue-600 underline ml-1">here</a>

@@ -79,8 +79,8 @@ export class TableComponentComponent implements AfterViewInit, OnChanges, OnDest
   checkedRowIndexes = new Set<number>();
 
   headersWithActions = [...this.headers, 'Actions']
-  headersToHideMobileXDim: string[] = ['Start Date', 'End Date', "Requester Email", "Email", "Phone No", "Phone", "Service Description", "Issuance Date"]
-  headersToHideMobileYDim: string[] = ["Phone No", "Phone"]
+  headersToHideMobileXDim: string[] = ["Job Status", 'Start Date', 'End Date', "Requester Email", "Email", "Phone No", "Phone", "Service Description", "Issuance Date"]
+  headersToHideMobileYDim: string[] = ["Job Status", "Phone No", "Phone"]
   editRedirect = input.required<string>()
   isDataNotAvailable = () => {
     if (this.fetchedData === undefined || this.fetchedData === null || this.fetchedData.data === undefined || this.fetchedData.data === null || this.fetchedData.data.length === 0) {
