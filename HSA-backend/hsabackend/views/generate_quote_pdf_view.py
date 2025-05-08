@@ -90,28 +90,23 @@ def generate_quote_pdf(request, id):
 
 
 @api_view(["POST"])
-@check_authenticated_and_onboarded()
-def generate_quote_pdf_as_base64(request, id):
+def generate_quote_pdf_as_base64(request):
     """
     Expects JSON body: { "pin": "JWT TOKEN" }
     Returns the PDF as a base64 string if the pin matches and no link exists yet.
     """
+    token = request.data.get("pin", "")
     try:
-        job = Job.objects.get(pk=id, organization=request.org)
-    except Job.DoesNotExist:
-        return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    provided_pin = str(request.data.get("pin", ""))
-
-    try:
-        decoded = decode(provided_pin)
+        decoded = decode(token)
     except Exception:
         return Response({"message": "Invalid PIN"}, status=status.HTTP_403_FORBIDDEN)
 
+    id = decoded.get("id")
 
-    if decoded != job.jwt_json():
-        return Response({"message": "Invalid PIN"}, status=status.HTTP_403_FORBIDDEN)
-
+    try:
+        job = Job.objects.get(pk=id)
+    except Job.DoesNotExist:
+        return Response({"message": "Not found"}, status=status.HTTP_404_NOT_FOUND)
     if job.quote_s3_link:
         return Response(
             {"message": "Quote has already been generated", "link": job.quote_s3_link},
@@ -126,14 +121,22 @@ def generate_quote_pdf_as_base64(request, id):
 
 
 @api_view(["POST"])
-@check_authenticated_and_onboarded()
-def sign_the_quote(request, id):
+def sign_the_quote(request):
     """
-    Expects JSON body: { "quote_pdf_base64": "<base64-string>" }
+    Expects JSON body: { "quote_pdf_base64": "<base64-string>", "token": "JWT token" }
     Decodes and uploads the signed PDF to S3 (public), marks the job pending, and returns the link.
     """
+
+    token = request.data.get("token", "")
     try:
-        job = Job.objects.get(pk=id, organization=request.org)
+        decoded = decode(token)
+    except Exception:
+        return Response({"message": "Invalid PIN"}, status=status.HTTP_403_FORBIDDEN)
+
+    id = decoded.get("id")
+    
+    try:
+        job = Job.objects.get(pk=id)
     except Job.DoesNotExist:
         return Response({"message": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -225,6 +228,7 @@ def get_list_of_quotes_by_org(request):
 @api_view(["GET"])
 @check_authenticated_and_onboarded()
 def retrieve_quote(request, id):
+    """This is for handyman to accept/deny quote page to get the quote from s3"""
     org = request.org
 
     try:

@@ -12,8 +12,7 @@ def send_quotes_email(job: Job, pdf_bytes):
     def get_text(token):
             return (
                 f"Hello {job.customer.first_name},\n\n"
-                f"Please find attached the PDF quote for your requested job, and make a statement <a href={get_url() + "/signquote"}>here</a>."
-                f"Use pincode {token} to access signable window.\n\n")
+                f"Please find attached the PDF quote for your requested job, and make a statement <a href={get_url() + f"/signquote?token={token}"}>here</a>.")
 
     # Prepare email
     subject = f"Quote for Job #{job.pk}"
@@ -34,6 +33,7 @@ def send_quotes_email(job: Job, pdf_bytes):
     msg.attach_alternative(html_content, "text/html")
     msg.attach(f"quote_job_{job.pk}.pdf", pdf_bytes, "application/pdf")
     msg.send()
+    print(f"Sent a quote to customer with emailn {to_email[:4]}******")
 
     return to_email
 

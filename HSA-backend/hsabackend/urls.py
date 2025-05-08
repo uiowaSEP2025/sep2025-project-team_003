@@ -123,9 +123,11 @@ urlpatterns = [
     path("api/create/job/<int:id>/contractor", create_job_contractor),
     path("api/delete/job/<int:job_id>/contractor/<int:job_contractor_id>", delete_job_contractor),
     path("api/delete/job/<int:job_id>/contractors", delete_cached_job_contractor),
+    
+    # quote
     path("api/generate/quote/<int:id>", generate_quote_pdf),
-    path('api/ret/quote/<int:id>', generate_quote_pdf_as_base64),
-    path('api/quote/sign/<int:id>', sign_the_quote),
+    path('api/ret/quote', generate_quote_pdf_as_base64),
+    path('api/quote/sign', sign_the_quote),
 
     # job_templates
     path("api/get/jobtemplates", get_job_template_table_data),

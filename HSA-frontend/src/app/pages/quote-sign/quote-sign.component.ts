@@ -1,78 +1,67 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { NgxExtendedPdfViewerModule, NgxExtendedPdfViewerService } from 'ngx-extended-pdf-viewer';
-import { Observable, Subject, Subscription, of } from 'rxjs';
-import { switchMap, map, catchError, tap } from 'rxjs/operators';
-import { pdfDefaultOptions } from 'ngx-extended-pdf-viewer';
-
-pdfDefaultOptions.assetsFolder = 'static';
+import { ActivatedRoute } from '@angular/router';
+import { Observable, of, Subscription } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
+import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 
 @Component({
   selector: 'app-quote-sign',
   templateUrl: './quote-sign.component.html',
   styleUrls: ['./quote-sign.component.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    NgxExtendedPdfViewerModule
-  ]
+  imports: [CommonModule, NgxExtendedPdfViewerModule, LoadingFallbackComponent]
 })
 export class QuoteSignComponent implements OnInit, OnDestroy {
-  form!: FormGroup;
-  pdfBlobUrl$: Observable<string | null>;
+  pdfBlobUrl$!: Observable<string | null>;
   public currentBlobUrl: string | null = null;
-  private submit$ = new Subject<{ quoteId: string; pin: string }>();
   private subs = new Subscription();
+  private token!: string
+  isSuccess = false
 
   constructor(
-    private fb: FormBuilder,
     private http: HttpClient,
+    private route: ActivatedRoute,
     private pdfService: NgxExtendedPdfViewerService
-  ) {
-    this.pdfBlobUrl$ = this.submit$.pipe(
-      switchMap(({ quoteId, pin }) =>
-        this.http.post<{ quote_pdf_base64: string }>(
-          `/api/ret/quote/${quoteId}`, { pin }
+  ) {}
+
+  ngOnInit() {
+    // Access token from URL query params
+    this.route.queryParamMap.subscribe(params => {
+      const token = params.get('token');
+      if (token) {
+        this.token = token
+        // Fetch the PDF using the token
+        this.pdfBlobUrl$ = this.http.post<{ quote_pdf_base64: string }>(
+          'api/ret/quote', {"pin": token} // Adjust the endpoint based on the API
         ).pipe(
           map(resp => {
+            // Convert base64 to binary data
             const binary = atob(resp.quote_pdf_base64);
             const bytes = new Uint8Array(binary.length);
             for (let i = 0; i < binary.length; i++) {
-              bytes[i] = binary.charCodeAt(i);
+              bytes[i] = binary.charCodeAt(i); // Convert binary to byte array
             }
-            const blob = new Blob([bytes], { type: 'application/pdf' });
-            return URL.createObjectURL(blob);
+            const blob = new Blob([bytes], { type: 'application/pdf' }); // Create Blob
+            return URL.createObjectURL(blob); // Generate object URL for PDF
           }),
           catchError((err: HttpErrorResponse) => {
             console.error('PDF fetch error', err);
-            return of(null);
-          })
-        )
-      ),
-      tap(url => this.currentBlobUrl = url)
-    );
+            return of(null); // Return null if there's an error
+          }),
+          tap(url => this.currentBlobUrl = url) // Set the currentBlobUrl to display in template
+        );
 
-    this.subs.add(this.pdfBlobUrl$.subscribe());
-  }
-
-  ngOnInit() {
-    this.form = this.fb.group({
-      quoteId: ['', Validators.required],
-      pin:     ['', Validators.required]
+        this.subs.add(this.pdfBlobUrl$.subscribe()); // Subscribe to the PDF URL observable
+      }
     });
   }
 
   ngOnDestroy() {
+    // Unsubscribe to avoid memory leaks
     this.subs.unsubscribe();
-  }
-
-  onSubmit() {
-    if (this.form.valid) {
-      this.submit$.next(this.form.value);
-    }
   }
 
   async submitQuote() {
@@ -94,11 +83,13 @@ export class QuoteSignComponent implements OnInit, OnDestroy {
     }
     const base64 = btoa(binary);
 
-    const quoteId = this.form.get('quoteId')!.value;
     try {
-      await this.http.post(`/api/quote/sign/${quoteId}`, { signed_pdf_base64: base64 }).toPromise();
+      await this.http.post(`/api/quote/sign`, { signed_pdf_base64: base64, 
+        token: this.token
+       }).toPromise();
+       this.isSuccess = true
       alert('Quote submitted successfully!');
-      this.creload()
+      
     } catch (err) {
       console.error('Error submitting quote', err);
       alert('Failed to submit quote.');
