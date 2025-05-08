@@ -371,7 +371,7 @@ export class CalendarComponentComponent implements AfterViewInit, OnChanges, OnI
     }
 
     const dialogRef = this.dialog.open(BookingDialogComponentComponent, {
-      width: '800px',
+      width: 'auto',
       maxWidth: '90vw',
       height: 'auto',
       maxHeight: '90vh',
