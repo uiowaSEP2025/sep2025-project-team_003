@@ -1,6 +1,6 @@
 import os
 from celery import Celery
-from celery.schedules import crontab
+from datetime import timedelta
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hsabackend.settings")
 app = Celery("hsabackend")
@@ -11,7 +11,7 @@ app.autodiscover_tasks() # run our task every minute
 app.conf.beat_schedule = {
     "check-upcoming-bookings": {
         "task": "hsabackend.tasks.check_upcoming_bookings",
-        "schedule": crontab(minute="*"),  # every minute
+        "schedule": timedelta(minutes=50) # every 50 min
     },
 }
 

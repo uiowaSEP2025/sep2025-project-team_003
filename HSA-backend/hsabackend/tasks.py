@@ -16,21 +16,22 @@ logger = logging.getLogger(__name__)
 @shared_task
 def check_upcoming_bookings():
     """
-    Finds all bookings starting between now and now+15min,
+    Finds all bookings starting between now and now + 60 minutes,
     and emails the customer plus each contractor.
     """
     now = timezone.localtime(timezone.now())
-    window = now + datetime.timedelta(minutes=15)
+    window = now + datetime.timedelta(minutes=60) # 1 hour
 
     logger.debug(f"Looking for bookings between {now} and {window}")
 
     qs = Booking.objects.filter(
         start_time__gte=now,
         start_time__lte=window,
+        notified=False
     )
 
     if not qs.exists():
-        logger.info("No bookings in the next 15 minutes.")
+        logger.info(f"No bookings in the next hour. Current time is {now}")
         return
 
     from_email = os.environ.get('EMAIL_HOST_USER', None)
@@ -39,7 +40,7 @@ def check_upcoming_bookings():
     customer_text_tpl = Template("""
 Hello {{ username }},
 
-You have a meeting scheduled our organization in less than 15 minutes.
+You have a meeting scheduled our organization within the next hour.
 
 Event: "{{ event_name }}"
 Type: {{ booking_type }}
@@ -53,7 +54,7 @@ If you need to reschedule, please contact us.
 <html>
   <body>
     <p>Hello {{ username }},</p>
-    <p>You have a meeting scheduled with our organization in less than 15 minutes.</p>
+    <p>You have a meeting scheduled with our organization within the next hour.</p>
     <ul>
       <li><strong>Event:</strong> {{ event_name }}</li>
       <li><strong>Type:</strong> {{ booking_type }}</li>
@@ -68,7 +69,7 @@ If you need to reschedule, please contact us.
     contractor_text_tpl = Template("""
 Hello {{ contractor_name }},
 
-You have a meeting with customer {{ customer_name }} in less than 15 minutes.
+You have a meeting with customer {{ customer_name }} within the next hour.
 
 Event: "{{ event_name }}"
 Type: {{ booking_type }}
@@ -81,7 +82,7 @@ Please be on time.
 <html>
   <body>
     <p>Hello {{ contractor_name }},</p>
-    <p>You have a meeting with customer <strong>{{ customer_name }}</strong> in less than 15 minutes.</p>
+    <p>You have a meeting with customer <strong>{{ customer_name }}</strong> within the next hour.</p>
     <ul>
       <li><strong>Event:</strong> {{ event_name }}</li>
       <li><strong>Type:</strong> {{ booking_type }}</li>
@@ -128,5 +129,12 @@ Please be on time.
             msg.attach_alternative(html_content, "text/html")
             msg.send()
             logger.info(f"Sent upcoming‐booking email to contractor {contractor_email}")
+
+            try:
+                booking.notified = True
+                booking.save()
+            except Exception as e:
+                logger.error(f"Caught an exception setting the booking as notified {booking}",exc_info=True)
+                
 
     logger.info("All upcoming booking notifications sent.")
