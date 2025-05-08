@@ -7,6 +7,7 @@ import { CustomerService } from '../../services/customer.service';
 import { CommonModule } from '@angular/common';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 import {PageTemplateComponent} from '../../components/page-template/page-template.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-customers-page',
@@ -19,12 +20,13 @@ export class CustomersPageComponent implements OnInit {
   customers: any = null
   customerService: CustomerService
 
-  constructor(private router: Router, customerService: CustomerService) {
+  constructor(private router: Router, customerService: CustomerService, private breakpointObserver: BreakpointObserver) {
     this.customerService = customerService
   }
 
   ngOnInit(): void {
     this.loadDataToTable("", 5, 0);
+    this.breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {});
   }
 
   loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {

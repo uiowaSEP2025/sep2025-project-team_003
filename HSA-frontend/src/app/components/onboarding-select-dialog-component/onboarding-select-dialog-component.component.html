@@ -5,7 +5,8 @@
 			<app-loading-fallback stringToDisplay="Loading the table"></app-loading-fallback>
 		}
 		@else {
-			<app-table-component 
+			<div class="tab-container">
+				<app-table-component 
 				[loadDataToTable]="
 					typeOfDialog === 'customer' 
 						? this.loadCustomersToTable.bind(this) 
@@ -41,6 +42,7 @@
                 [hideSearch]="true"
 				[width]="'700vw'"
 			></app-table-component> 
+			</div>
 		}
 	</mat-dialog-content>
 	<mat-dialog-actions>

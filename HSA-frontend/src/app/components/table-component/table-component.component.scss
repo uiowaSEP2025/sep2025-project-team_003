@@ -45,3 +45,18 @@ td , th {
 .no-shadow {
     box-shadow: none !important;
 }
+
+.hide-column {
+    display: none !important;
+  }
+
+.form-field {
+    margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+    .form-field {
+        margin-top: 20px;
+        width: 80px
+    }
+}

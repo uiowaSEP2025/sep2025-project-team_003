@@ -1,11 +1,12 @@
 <div class="dialog-content">
-	<h2 mat-dialog-title> {{ this.typeOfDialog === 'template' ? 'Apply template' : 'Select new' + this.typeOfDialog }}</h2>
+	<h2 mat-dialog-title> {{ this.typeOfDialog === 'template' ? 'Apply template' : 'Select new ' + this.typeOfDialog }}</h2>
 	<mat-dialog-content>
 		@if (dialogData === null) {
 			<app-loading-fallback stringToDisplay="Loading the job"></app-loading-fallback>
 		}
 		@else {
-			<app-table-component 
+			<div class="tab-container">
+				<app-table-component 
 				[loadDataToTable]="
 					typeOfDialog === 'template'
 					? this.loadJobTemplatesToTable.bind(this)
@@ -51,8 +52,9 @@
 									: this.setSelectedContractors.bind(this)"
 				[setMaterialInputFields]="this.setMaterialInput.bind(this)"
 				[searchHint]="this.searchHint"
-				[width]="'700vw'"
 			></app-table-component> 
+			</div>
+			
 		}
 	</mat-dialog-content>
 	<mat-dialog-actions>

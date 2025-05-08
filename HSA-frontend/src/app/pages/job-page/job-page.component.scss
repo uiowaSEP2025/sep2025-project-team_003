@@ -15,7 +15,7 @@ header {
 }
 
 .main-heading{
-    max-width: 1600px;
+    max-width: 80vw;
     text-align: center;
     margin: auto;
 }
@@ -36,6 +36,7 @@ header {
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    max-width: 80vw;
 }
 
 .table-header h1 {
@@ -49,15 +50,40 @@ header {
     border: 1px solid black;
     margin-top: 4px;
     margin-bottom: 16px;
+    max-width: 80vw;
 }
 
 .tab-container {
     width: auto;
-    min-width: 60vw;
-    max-width: 60vw;
+    min-width: 80vw;
+    max-width: 80vw;
 }
+
 
 .tab-content {
     width: 100%;
     height: 100%;
+}
+
+@media (max-width: 768px) {
+    .scale-button {
+        scale: 1;
+    }
+
+    .tab-container {
+        width: auto;
+        min-width: 90vw;
+        max-width: 90vw;
+    } 
+
+    .table-header hr {
+        max-width: 90vw;
+    }
+}
+
+@media (max-height: 400px) {
+    .spacer {
+        flex: 1 1 auto;
+        min-height: 20px;
+      }
 }

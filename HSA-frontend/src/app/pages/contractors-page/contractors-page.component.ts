@@ -7,6 +7,7 @@ import { ContractorService } from '../../services/contractor.service';
 import { CommonModule } from '@angular/common';
 import { LoadingFallbackComponent } from '../../components/loading-fallback/loading-fallback.component';
 import {PageTemplateComponent} from '../../components/page-template/page-template.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-contractors-page',
@@ -18,12 +19,13 @@ export class ContractorsPageComponent implements OnInit  {
   contractors: any = null
   contractorService: ContractorService
 
-  constructor(private router: Router, contractorService: ContractorService) {
+  constructor(private router: Router, contractorService: ContractorService, private breakpointObserver: BreakpointObserver) {
     this.contractorService = contractorService
   }
 
   ngOnInit(): void {
     this.loadDataToTable("", 5, 0);
+    this.breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {});
   }
 
   loadDataToTable(searchTerm: string, pageSize: number, offSet: number) {

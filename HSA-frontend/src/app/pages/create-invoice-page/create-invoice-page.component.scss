@@ -33,6 +33,18 @@ header {
     flex: 1 1 auto;
     min-height: 20px;
   }
+
+  .card-container {
+    display: flex;
+    padding: 5px;
+    flex-direction: column;
+    justify-content: left;
+    background-color: #9eccfa;
+  }
+
+  .link-banner {
+    max-width: 60vw;
+  }
   
   .table-header {
     display: flex;
@@ -69,4 +81,49 @@ header {
   .tab-content {
     width: 100%;
     height: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .link-banner {
+      max-width: 90vw;
+    }
+
+    .scale-button {
+        scale: 1;
+        padding: 10px;
+    }
+  
+    .tab-container {
+        width: auto;
+        min-width: 90vw;
+        max-width: 90vw;
+    } 
+  
+    .table-header hr {
+        max-width: 90vw;
+    }
+  
+    .card-container {
+      padding: 1px;
+    }
+  }
+  
+  @media (max-height: 400px) {
+    .spacer {
+        flex: 1 1 auto;
+        min-height: 20px;
+      }
+  }
+
+  .form-fields-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 10px;
+  }
+  
+  .form-field {
+    min-width: 20vw;
   }
