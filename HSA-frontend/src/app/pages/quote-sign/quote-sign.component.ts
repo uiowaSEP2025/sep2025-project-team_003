@@ -31,6 +31,7 @@ export class QuoteSignComponent implements OnInit, OnDestroy {
     // Access token from URL query params
     this.route.queryParamMap.subscribe(params => {
       const token = params.get('token');
+      console.log('succ')
       if (token) {
         this.token = token
         // Fetch the PDF using the token
