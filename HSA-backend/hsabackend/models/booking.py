@@ -26,6 +26,7 @@ class Booking(models.Model):
     back_color = models.CharField(max_length=50, default='#6aa84f', blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    notified = models.BooleanField(default=False, blank=True)
 
     @property
     def booking_date(self):
